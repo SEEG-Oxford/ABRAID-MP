@@ -280,11 +280,11 @@ public class HealthMapDataConverterTest {
         when(locationConverter.convert(healthMapLocation1)).thenReturn(location1);
 
         // healthMapAlert1 is successfully converted into diseaseOccurrence1
-        DiseaseOccurrence diseaseOccurrence1 = new DiseaseOccurrence();
+        DiseaseOccurrence diseaseOccurrence1 = new DiseaseOccurrence(1);
         mockConvertAndAcquire(healthMapAlert1, location1, diseaseOccurrence1, true);
 
         // healthMapAlert2 is not successfully converted into diseaseOccurrence2
-        when(alertConverter.convert(healthMapAlert2, location1)).thenReturn(null);
+        when(alertConverter.convert(healthMapAlert2, location1)).thenReturn(new ArrayList<DiseaseOccurrence>());
 
         // Act
         Set<DiseaseOccurrence> actualOccurrences = healthMapDataConverter.convert(locations, retrievalEndDate);
@@ -294,10 +294,53 @@ public class HealthMapDataConverterTest {
         verifyWriteLastRetrievalEndDate(retrievalEndDate);
     }
 
+    @Test
+    public void convertAlertResultsInMultipleOccurrences() {
+        // Arrange
+        // Create a location with 1 alert
+        HealthMapLocation healthMapLocation1 = new HealthMapLocation();
+        HealthMapAlert healthMapAlert1 = new HealthMapAlert();
+        healthMapLocation1.setAlerts(Arrays.asList(healthMapAlert1));
+        List<HealthMapLocation> locations = Arrays.asList(healthMapLocation1);
+
+        DateTime retrievalEndDate = DateTime.now();
+
+        // healthMapLocation1 is successfully converted into location1
+        Location location1 = new Location();
+        when(locationConverter.convert(healthMapLocation1)).thenReturn(location1);
+
+        // healthMapAlert1 is successfully converted into diseaseOccurrence1 and diseaseOccurrence2
+        DiseaseOccurrence diseaseOccurrence1 = new DiseaseOccurrence(1);
+        DiseaseOccurrence diseaseOccurrence2 = new DiseaseOccurrence(2);
+        DiseaseOccurrence diseaseOccurrence3 = new DiseaseOccurrence(3);
+        List<DiseaseOccurrence> occurrences = Arrays.asList(diseaseOccurrence1, diseaseOccurrence2, diseaseOccurrence3);
+        List<Boolean> areOccurrencesSaved = Arrays.asList(true, false, true);
+        mockConvertAndAcquire(healthMapAlert1, location1, occurrences, areOccurrencesSaved);
+
+        // healthMapAlert2 is not successfully converted into diseaseOccurrence2
+        when(alertConverter.convert(healthMapAlert1, location1)).thenReturn(occurrences);
+
+        // Act
+        Set<DiseaseOccurrence> actualOccurrences = healthMapDataConverter.convert(locations, retrievalEndDate);
+
+        // Assert
+        assertSavedOccurrences(actualOccurrences, diseaseOccurrence1, diseaseOccurrence3);
+        verifyWriteLastRetrievalEndDate(retrievalEndDate);
+    }
+
     private void mockConvertAndAcquire(HealthMapAlert healthMapAlert, Location location,
                                        DiseaseOccurrence diseaseOccurrence, boolean isOccurrenceSaved) {
-        when(alertConverter.convert(same(healthMapAlert), same(location))).thenReturn(diseaseOccurrence);
-        when(diseaseOccurrenceDataAcquirer.acquire(same(diseaseOccurrence))).thenReturn(isOccurrenceSaved);
+        mockConvertAndAcquire(healthMapAlert, location, Arrays.asList(diseaseOccurrence),
+                Arrays.asList(isOccurrenceSaved));
+    }
+
+    private void mockConvertAndAcquire(HealthMapAlert healthMapAlert, Location location,
+                                       List<DiseaseOccurrence> diseaseOccurrences, List<Boolean> areOccurrencesSaved) {
+        when(alertConverter.convert(same(healthMapAlert), same(location))).thenReturn(diseaseOccurrences);
+        for (int i = 0; i < diseaseOccurrences.size(); i++) {
+            when(diseaseOccurrenceDataAcquirer.acquire(same(diseaseOccurrences.get(i))))
+                    .thenReturn(areOccurrencesSaved.get(i));
+        }
     }
 
     // Ensure that the saved occurrences are as expected.

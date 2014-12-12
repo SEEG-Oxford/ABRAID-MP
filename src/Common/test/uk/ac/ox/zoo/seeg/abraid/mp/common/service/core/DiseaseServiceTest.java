@@ -22,6 +22,7 @@ public class DiseaseServiceTest {
     private DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao;
     private DiseaseGroupDao diseaseGroupDao;
     private HealthMapDiseaseDao healthMapDiseaseDao;
+    private HealthMapSubDiseaseDao healthMapSubDiseaseDao;
     private ValidatorDiseaseGroupDao validatorDiseaseGroupDao;
     private AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao;
     private AdminUnitGlobalDao adminUnitGlobalDao;
@@ -35,6 +36,7 @@ public class DiseaseServiceTest {
         diseaseOccurrenceReviewDao = mock(DiseaseOccurrenceReviewDao.class);
         diseaseGroupDao = mock(DiseaseGroupDao.class);
         healthMapDiseaseDao = mock(HealthMapDiseaseDao.class);
+        healthMapSubDiseaseDao = mock(HealthMapSubDiseaseDao.class);
         validatorDiseaseGroupDao = mock(ValidatorDiseaseGroupDao.class);
         adminUnitDiseaseExtentClassDao = mock(AdminUnitDiseaseExtentClassDao.class);
         adminUnitGlobalDao = mock(AdminUnitGlobalDao.class);
@@ -42,8 +44,8 @@ public class DiseaseServiceTest {
         diseaseExtentClassDao = mock(DiseaseExtentClassDao.class);
         nativeSQL = mock(NativeSQL.class);
         diseaseService = new DiseaseServiceImpl(diseaseOccurrenceDao, diseaseOccurrenceReviewDao, diseaseGroupDao,
-                healthMapDiseaseDao, validatorDiseaseGroupDao, adminUnitDiseaseExtentClassDao, adminUnitGlobalDao,
-                adminUnitTropicalDao, diseaseExtentClassDao, nativeSQL);
+                healthMapDiseaseDao, healthMapSubDiseaseDao, validatorDiseaseGroupDao, adminUnitDiseaseExtentClassDao,
+                adminUnitGlobalDao, adminUnitTropicalDao, diseaseExtentClassDao, nativeSQL);
     }
 
     @Test
@@ -91,6 +93,19 @@ public class DiseaseServiceTest {
 
         // Assert
         assertThat(testDiseases).isSameAs(diseases);
+    }
+
+    @Test
+    public void getAllHealthMapSubDiseases() {
+        // Arrange
+        List<HealthMapSubDisease> subDiseases = Arrays.asList(new HealthMapSubDisease());
+        when(healthMapSubDiseaseDao.getAll()).thenReturn(subDiseases);
+
+        // Act
+        List<HealthMapSubDisease> testSubDiseases = diseaseService.getAllHealthMapSubDiseases();
+
+        // Assert
+        assertThat(testSubDiseases).isSameAs(subDiseases);
     }
 
     @Test

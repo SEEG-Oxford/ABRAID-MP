@@ -8,6 +8,7 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -76,6 +77,62 @@ public final class ParseUtils {
             convertedString = null;
         }
         return convertedString;
+    }
+
+    /**
+     * Parses a list of strings into a list of integers using parseInteger(). Only returns successfully-parsed integers.
+     * @param strings A list of strings to parse.
+     * @return The parsed integers.
+     */
+    public static List<Integer> parseIntegers(List<String> strings) {
+        List<Integer> parsedIntegers = null;
+
+        if (strings != null) {
+            parsedIntegers = new ArrayList<>();
+            for (String string : strings) {
+                Integer integer = ParseUtils.parseInteger(string);
+                if (integer != null) {
+                    parsedIntegers.add(integer);
+                }
+            }
+        }
+
+        return parsedIntegers;
+    }
+
+    /**
+     * Converts a list of strings using convertString().
+     * @param strings A list of strings to convert.
+     * @return The converted strings.
+     */
+    public static List<String> convertStrings(List<String> strings) {
+        List<String> convertedStrings = null;
+
+        if (strings != null) {
+            convertedStrings = new ArrayList<>();
+            for (String string : strings) {
+                convertedStrings.add(ParseUtils.convertString(string));
+            }
+        }
+
+        return convertedStrings;
+    }
+
+    /**
+     * Splits the specified comma-delimited text. All tokens are trimmed and empty tokens are ignored.
+     * @param text The text to split.
+     * @return The split text.
+     */
+    public static List<String> splitCommaDelimitedString(String text) {
+        List<String> splitList = new ArrayList<>();
+
+        if (StringUtils.hasText(text)) {
+            // Note: all tokens are trimmed and empty tokens are ignored
+            String[] splitArray = StringUtils.tokenizeToStringArray(text, ",", true, true);
+            Collections.addAll(splitList, splitArray);
+        }
+
+        return splitList;
     }
 
     /**

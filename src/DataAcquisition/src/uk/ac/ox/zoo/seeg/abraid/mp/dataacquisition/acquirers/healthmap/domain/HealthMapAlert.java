@@ -5,6 +5,7 @@ import org.joda.time.DateTime;
 import org.springframework.util.StringUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.ParseUtils;
 
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,10 +23,14 @@ public class HealthMapAlert {
     @JsonProperty("feed_id")
     private Integer feedId;
     private String disease;
+    private List<String> diseases;
     @JsonProperty("disease_id")
     private Integer diseaseId;
+    @JsonProperty("disease_ids")
+    private List<Integer> diseaseIds;
     private String summary;
     private DateTime date;
+    private DateTime reviewed;
     private String link;
     @JsonProperty("descr")
     private String description;
@@ -33,6 +38,9 @@ public class HealthMapAlert {
     private String originalUrl;
     @JsonProperty("feed_lang")
     private String feedLanguage;
+    private String comment;
+    @JsonProperty("place_category")
+    private List<String> placeCategories;
 
     public HealthMapAlert() {
     }
@@ -67,20 +75,32 @@ public class HealthMapAlert {
         this.feedId = ParseUtils.parseInteger(feedId);
     }
 
-    public String getDisease() {
-        return disease;
-    }
-
     public void setDisease(String disease) {
         this.disease = ParseUtils.convertString(disease);
     }
 
-    public Integer getDiseaseId() {
-        return diseaseId;
+    public List<String> getDiseases() {
+        return retrieveListOrSingleItem(diseases, disease);
+    }
+
+    public void setDiseases(List<String> diseases) {
+        this.diseases = ParseUtils.convertStrings(diseases);
     }
 
     public void setDiseaseId(String diseaseId) {
         this.diseaseId = ParseUtils.parseInteger(diseaseId);
+    }
+
+    public List<Integer> getDiseaseIds() {
+        return retrieveListOrSingleItem(diseaseIds, diseaseId);
+    }
+
+    /**
+     * Sets the disease IDs. Only those that are successfully parsed to integers are added.
+     * @param diseaseIds The disease IDs.
+     */
+    public void setDiseaseIds(List<String> diseaseIds) {
+        this.diseaseIds = ParseUtils.parseIntegers(diseaseIds);
     }
 
     public String getSummary() {
@@ -97,6 +117,14 @@ public class HealthMapAlert {
 
     public void setDate(DateTime date) {
         this.date = date;
+    }
+
+    public DateTime getReviewed() {
+        return reviewed;
+    }
+
+    public void setReviewed(DateTime reviewed) {
+        this.reviewed = reviewed;
     }
 
     public String getLink() {
@@ -131,6 +159,22 @@ public class HealthMapAlert {
         this.feedLanguage = ParseUtils.convertString(feedLanguage);
     }
 
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = ParseUtils.convertString(comment);
+    }
+
+    public List<String> getPlaceCategories() {
+        return placeCategories;
+    }
+
+    public void setPlaceCategories(List<String> placeCategories) {
+        this.placeCategories = ParseUtils.convertStrings(placeCategories);
+    }
+
     /**
      * Extracts the alert ID from the link.
      * @return The alert ID, or null if it could not be extracted from the link.
@@ -144,5 +188,29 @@ public class HealthMapAlert {
             }
         }
         return alertId;
+    }
+
+    /**
+     * Gets the comment, split into constituent parts and sanitised.
+     * @return The split comment, or an empty list if no comment.
+     */
+    public Set<String> getSplitComment() {
+        Set<String> splitComment = new HashSet<>();
+        for (String part : ParseUtils.splitCommaDelimitedString(comment)) {
+            // For each comment part, remove whitespace and make lowercase
+            splitComment.add(part.replaceAll("\\s", "").toLowerCase());
+        }
+        return splitComment;
+    }
+
+    private <T> List<T> retrieveListOrSingleItem(List<T> list, T item) {
+        // Returns a non-null list of items, either from the input list or the input item
+        if (list != null && list.size() > 0) {
+            return list;
+        } else if (item != null) {
+            return Arrays.asList(item);
+        } else {
+            return new ArrayList<>();
+        }
     }
 }

@@ -23,6 +23,7 @@ public class HealthMapLookupData {
 
     private Map<Integer, HealthMapCountry> countryMap;
     private Map<Integer, HealthMapDisease> diseaseMap;
+    private Map<String, HealthMapSubDisease> subDiseaseMap;
     private Map<Integer, Feed> feedMap;
     private Map<String, LocationPrecision> geoNamesMap;
     private Provenance healthMapProvenance;
@@ -56,6 +57,18 @@ public class HealthMapLookupData {
             diseaseMap = index(diseases, on(HealthMapDisease.class).getId());
         }
         return diseaseMap;
+    }
+
+    /**
+     * Gets a list of HealthMap sub-diseases, indexed by sub-disease name.
+     * @return A list of HealthMap sub-diseases, indexed by sub-disease name.
+     */
+    public Map<String, HealthMapSubDisease> getSubDiseaseMap() {
+        if (subDiseaseMap == null) {
+            List<HealthMapSubDisease> subDiseases = diseaseService.getAllHealthMapSubDiseases();
+            subDiseaseMap = index(subDiseases, on(HealthMapSubDisease.class).getName());
+        }
+        return subDiseaseMap;
     }
 
     /**

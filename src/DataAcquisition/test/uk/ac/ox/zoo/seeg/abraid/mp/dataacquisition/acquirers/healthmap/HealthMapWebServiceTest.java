@@ -44,12 +44,25 @@ public class HealthMapWebServiceTest {
                 // Alert 1
                 "{" +
                 "\"feed\": \"Food and Agriculture Org\"," +
+                "\"reviewed\": \"\"," +
+                "\"disease_ids\": [" +
+                "\"271\"" +
+                "]," +
+                "\"diseases\": [" +
+                "\"Avian Influenza H7N9\"" +
+                "]," +
+                "\"species_ids\": [" +
+                "\"132\"" +
+                "]," +
+                "\"species\": [" +
+                "\"Humans\"" +
+                "]," +
                 "\"disease\": \"Avian Influenza H7N9\"," +
                 "\"summary\": \"Confirmed Influenza - Avian in Guangdong Sheng, China - human\"," +
                 "\"date\": \"2014-01-07 00:00:00-0500\"," +
                 "\"formatted_date\": \" 7 January 2014 00:00:00 EST\"," +
                 "\"link\": \"http://healthmap.org/ln.php?2161280\"," +
-                "\"descr\": null," +
+                "\"descr\": \"\"," +
                 "\"rating\": {" +
                 "\"count\": \"1\"," +
                 "\"rating\": \"4.0000\"" +
@@ -72,14 +85,27 @@ public class HealthMapWebServiceTest {
                 // Alert 2
                 "{" +
                 "\"feed\": \"Google News\"," +
+                "\"reviewed\": \"\"," +
+                "\"disease_ids\": [" +
+                "\"271\"" +
+                "]," +
+                "\"diseases\": [" +
+                "\"Avian Influenza H7N9\"" +
+                "]," +
+                "\"species_ids\": [" +
+                "\"132\"" +
+                "]," +
+                "\"species\": [" +
+                "\"Humans\"" +
+                "]," +
                 "\"disease\": \"Avian Influenza H7N9\"," +
                 "\"summary\": \"Two New Cases Of Human H7N9 Infections Reported In China - RTT News\"," +
                 "\"date\": \"2014-01-06 16:07:33-0500\"," +
                 "\"formatted_date\": \" 6 January 2014 16:07:33 EST\"," +
                 "\"link\": \"http://healthmap.org/ln.php?2155089\"," +
-                "\"descr\": \"The United Nations World Health Organization (WHO) revealed Monday that China&#39;s " +
+                "\"descr\": \"The United Nations World Health Organization (WHO) revealed Monday that China's " +
                 "National Health and Family Planning Commission had notified it in mid-December of two new laboratory" +
-                "-confirmed cases of human infection with avian influenza A(H7N9) ;...\"," +
+                "-confirmed cases of human infection with avian influenza A(H7N9) \"," +
                 "\"rating\": {" +
                 "\"count\": 0," +
                 "\"rating\": 4" +
@@ -91,12 +117,12 @@ public class HealthMapWebServiceTest {
                 "url=http://www.rttnews.com/2247181/two-new-cases-of-human-h7n9-infections-reported-in-china.aspx?type" +
                 "%3Dmsgn%26utm_source%3Dgoogle%26utm_campaign%3Dsitemap\"," +
                 "\"disease_id\": \"271\"," +
-                "\"feed_id\": \"1\"" +
+                "\"feed_id\": \"4\"" +
                 "}" +
                 "]" +
                 "}";
 
-        // Location with a mixture of real and dummy data (1 alert)
+        // Location with a mixture of real and dummy data (2 alerts)
         String jsonLocation2 = "{" +
                 "\"country\": null," +
                 "\"place_name\": \"Lenvik, Troms, Norway\"," +
@@ -112,7 +138,7 @@ public class HealthMapWebServiceTest {
                 "\"disease\": \"Meningitis\"," +
                 "\"summary\": \"Konstaterte smittsom hjernehinnebetennelse på 2-åring -Folkebladet.no\"," +
                 "\"link\": \"unknown\"," +
-                "\"descr\": \"Du\\nbør\\noppgradere\\nnettleseren\\ndin\"," +
+                "\"descr\": \"Dubøroppgraderenettleserendin\"," +
                 "\"rating\": {" +
                 "\"count\": 0," +
                 "\"rating\": 3" +
@@ -131,6 +157,36 @@ public class HealthMapWebServiceTest {
                 "\"original_url\": \"http://www.folkebladet.no/nyheter/article8911579.ece\"," +
                 "\"disease_id\": \"84\"," +
                 "\"feed_id\": \"20\"" +
+                "}," +
+                // Alert 2 (reviewed and commented, with multiple diseases)
+                "{" +
+                "\"feed\": \"ABRAID PubMed\"," +
+                "\"reviewed\": \"2014-12-03 14:27:57-0500\"," +
+                "\"disease_ids\": [\"80\"," +
+                "\"124\"]," +
+                "\"diseases\": [\"Malaria\"," +
+                "\"Schistosomiasis\"]," +
+                "\"species_ids\": [\"132\"," +
+                "\"132\"]," +
+                "\"species\": [\"Humans\"," +
+                "\"Humans\"]," +
+                "\"disease\": \"Malaria\"," +
+                "\"summary\": \"Concomitant infection by Plasmodium falciparum and Schistosoma haematobium among school children in a rural area of Senegal.\"," +
+                "\"date\": \"2010-03-06 00:00:00-0500\"," +
+                "\"formatted_date\": \" 6 March 2010 00:00:00 EST\"," +
+                "\"link\": \"http:\\/\\/healthmap.org\\/ln.php?2576498\"," +
+                "\"descr\": \"Malaria is endemic in lowland and coastal regions of Papua New Guinea (PNG)...\"," +
+                "\"rating\": {" +
+                "\"count\": 0," +
+                "\"rating\": 3" +
+                "}," +
+                "\"comment\": \"s h, p f, p m, \"," +
+                "\"species_name\": \"Humans\"," +
+                "\"dup_count\": \"0\"," +
+                "\"place_category\": [\"Imported Case\"]," +
+                "\"original_url\": \"http:\\/\\/www.ncbi.nlm.nih.gov\\/pubmed\\/21129869\"," +
+                "\"disease_id\": \"80\"," +
+                "\"feed_id\": \"172\"" +
                 "}" +
                 "]" +
                 "}";
@@ -160,25 +216,24 @@ public class HealthMapWebServiceTest {
         assertThat(location1Alert1.getAlertId()).isEqualTo(2161280);
         assertThatDatesAreEqual(location1Alert1.getDate(), new DateTime("2014-01-07T05:00:00+0000"));
         assertThat(location1Alert1.getDescription()).isNull();
-        assertThat(location1Alert1.getDisease()).isEqualTo("Avian Influenza H7N9");
+        assertThat(location1Alert1.getDiseases()).containsExactly("Avian Influenza H7N9");
         assertThat(location1Alert1.getFeed()).isEqualTo("Food and Agriculture Org");
         assertThat(location1Alert1.getLink()).isEqualTo("http://healthmap.org/ln.php?2161280");
         assertThat(location1Alert1.getOriginalUrl()).isEqualTo("http://empres-i.fao.org/empres-i/2/obd?idOutbreak=" +
                 "182133&rss=t");
         assertThat(location1Alert1.getSummary()).isEqualTo("Confirmed Influenza - Avian in Guangdong Sheng, China -" +
                 " human");
-        assertThat(location1Alert1.getDiseaseId()).isEqualTo(271);
+        assertThat(location1Alert1.getDiseaseIds()).containsExactly(271);
         assertThat(location1Alert1.getFeedId()).isEqualTo(10);
         assertThat(location1Alert1.getFeedLanguage()).isEqualTo("zh");
 
         HealthMapAlert location1Alert2 = location1.getAlerts().get(1);
         assertThat(location1Alert2.getAlertId()).isEqualTo(2155089);
         assertThatDatesAreEqual(location1Alert2.getDate(), new DateTime("2014-01-06T21:07:33+0000"));
-        assertThat(location1Alert2.getDescription()).isEqualTo("The United Nations World Health Organization (WHO)" +
-                " revealed Monday that China&#39;s National Health and Family Planning Commission had notified it" +
-                " in mid-December of two new laboratory-confirmed cases of human infection with avian influenza" +
-                " A(H7N9) ;...");
-        assertThat(location1Alert2.getDisease()).isEqualTo("Avian Influenza H7N9");
+        assertThat(location1Alert2.getDescription()).isEqualTo("The United Nations World Health Organization (WHO) " +
+                "revealed Monday that China's National Health and Family Planning Commission had notified it in " +
+                "mid-December of two new laboratory-confirmed cases of human infection with avian influenza A(H7N9)");
+        assertThat(location1Alert2.getDiseases()).containsExactly("Avian Influenza H7N9");
         assertThat(location1Alert2.getFeed()).isEqualTo("Google News");
         assertThat(location1Alert2.getLink()).isEqualTo("http://healthmap.org/ln.php?2155089");
         assertThat(location1Alert2.getOriginalUrl()).isEqualTo("http://news.google.com/news/url?sa=t&fd=R&usg=AFQjCN" +
@@ -186,8 +241,8 @@ public class HealthMapWebServiceTest {
                 "ions-reported-in-china.aspx?type%3Dmsgn%26utm_source%3Dgoogle%26utm_campaign%3Dsitemap");
         assertThat(location1Alert2.getSummary()).isEqualTo("Two New Cases Of Human H7N9 Infections Reported In China" +
                 " - RTT News");
-        assertThat(location1Alert2.getDiseaseId()).isEqualTo(271);
-        assertThat(location1Alert2.getFeedId()).isEqualTo(1);
+        assertThat(location1Alert2.getDiseaseIds()).containsExactly(271);
+        assertThat(location1Alert2.getFeedId()).isEqualTo(4);
         assertThat(location1Alert2.getFeedLanguage()).isNull();
 
         HealthMapLocation location2 = healthMapLocations.get(1);
@@ -198,21 +253,42 @@ public class HealthMapWebServiceTest {
         assertThat(location2.getLongitude()).isEqualTo(17.987391);
         assertThat(location2.getPlaceBasicType()).isNull();
         assertThat(location2.getPlaceName()).isEqualTo("Lenvik, Troms, Norway");
-        assertThat(location2.getAlerts()).hasSize(1);
+        assertThat(location2.getAlerts()).hasSize(2);
 
         HealthMapAlert location2Alert1 = location2.getAlerts().get(0);
         assertThat(location2Alert1.getAlertId()).isNull();
         assertThat(location2Alert1.getDate()).isNull();
-        assertThat(location2Alert1.getDescription()).isEqualTo("Du\nbør\noppgradere\nnettleseren\ndin");
-        assertThat(location2Alert1.getDisease()).isEqualTo("Meningitis");
+        assertThat(location2Alert1.getReviewed()).isNull();
+        assertThat(location2Alert1.getDescription()).isEqualTo("Dubøroppgraderenettleserendin");
+        assertThat(location2Alert1.getDiseases()).containsExactly("Meningitis");
         assertThat(location2Alert1.getFeed()).isEqualTo("HM Community News Reports");
         assertThat(location2Alert1.getLink()).isEqualTo("unknown");
         assertThat(location2Alert1.getOriginalUrl()).isEqualTo("http://www.folkebladet.no/nyheter/article8911579.ece");
         assertThat(location2Alert1.getSummary()).isEqualTo("Konstaterte smittsom hjernehinnebetennelse på 2-åring " +
                 "-Folkebladet.no");
-        assertThat(location2Alert1.getDiseaseId()).isEqualTo(84);
+        assertThat(location2Alert1.getDiseaseIds()).containsExactly(84);
         assertThat(location2Alert1.getFeedId()).isEqualTo(20);
         assertThat(location2Alert1.getFeedLanguage()).isNull();
+        assertThat(location2Alert1.getPlaceCategories()).isEmpty();
+
+        HealthMapAlert location2Alert2 = location2.getAlerts().get(1);
+        assertThat(location2Alert2.getAlertId()).isEqualTo(2576498);
+        assertThatDatesAreEqual(location2Alert2.getDate(), new DateTime("2010-03-06T00:00:00-0500"));
+        assertThatDatesAreEqual(location2Alert2.getReviewed(), new DateTime("2014-12-03T14:27:57-0500"));
+        assertThat(location2Alert2.getDescription()).isEqualTo("Malaria is endemic in lowland and coastal regions of " +
+                "Papua New Guinea (PNG)...");
+        assertThat(location2Alert2.getDiseases()).containsExactly("Malaria", "Schistosomiasis");
+        assertThat(location2Alert2.getDiseaseIds()).containsExactly(80, 124);
+        assertThat(location2Alert2.getFeed()).isEqualTo("ABRAID PubMed");
+        assertThat(location2Alert2.getLink()).isEqualTo("http://healthmap.org/ln.php?2576498");
+        assertThat(location2Alert2.getOriginalUrl()).isEqualTo("http://www.ncbi.nlm.nih.gov/pubmed/21129869");
+        assertThat(location2Alert2.getSummary()).isEqualTo("Concomitant infection by Plasmodium falciparum and " +
+                "Schistosoma haematobium among school children in a rural area of Senegal.");
+        assertThat(location2Alert2.getFeedId()).isEqualTo(172);
+        assertThat(location2Alert2.getFeedLanguage()).isNull();
+        assertThat(location2Alert2.getComment()).isEqualTo("s h, p f, p m,");
+        assertThat(location2Alert2.getSplitComment()).containsOnly("sh", "pf", "pm");
+        assertThat(location2Alert2.getPlaceCategories()).containsExactly("Imported Case");
     }
 
     @Test
@@ -290,6 +366,35 @@ public class HealthMapWebServiceTest {
 
         // Assert
         assertThat(caughtException()).isInstanceOf(RuntimeException.class);
+    }
+
+    @Test
+    public void parseHealthMapJsonContainingMultipleDiseases() {
+        String alertJson = "[{" +
+                "\"alerts\": [" +
+                "{" +
+                "\"feed\": \"HM Community News Reports\"," +
+                "\"disease\": \"This disease should be ignored\"," +
+                "\"disease_id\": \"999\"," +
+                "\"diseases\": [\"Meningitis\", \"Hookworm\"]," +
+                "\"disease_ids\": [84, \"invalid\", \"64\"]" +
+                "}" +
+                "]" +
+                "}]";
+
+        HealthMapWebService webService = getHealthMapWebService(new WebServiceClient());
+        List<HealthMapLocation> locations = webService.parseJson(alertJson);
+
+        assertThat(locations).hasSize(1);
+        assertThat(locations.get(0).getAlerts()).hasSize(1);
+        assertThat(locations.get(0).getAlerts()).hasSize(1);
+        HealthMapAlert alert = locations.get(0).getAlerts().get(0);
+        assertThat(alert.getDiseases()).hasSize(2);
+        assertThat(alert.getDiseases().get(0)).isEqualTo("Meningitis");
+        assertThat(alert.getDiseases().get(1)).isEqualTo("Hookworm");
+        assertThat(alert.getDiseaseIds()).hasSize(2);
+        assertThat(alert.getDiseaseIds().get(0)).isEqualTo(84);
+        assertThat(alert.getDiseaseIds().get(1)).isEqualTo(64);
     }
 
     private String getHealthMapBaseUrl() {
