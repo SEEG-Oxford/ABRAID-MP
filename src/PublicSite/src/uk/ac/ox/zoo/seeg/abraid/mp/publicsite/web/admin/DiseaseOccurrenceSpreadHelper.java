@@ -4,11 +4,16 @@ import org.apache.commons.lang.builder.CompareToBuilder;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Country;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceStatus;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.DiseaseOccurrenceSpreadTable;
 
 import java.util.*;
+
+import static ch.lambdaj.Lambda.*;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.core.IsNot.not;
 
 /**
  * Helper class for generating a disease occurrence spread table for a particular disease group.
@@ -29,7 +34,7 @@ public class DiseaseOccurrenceSpreadHelper {
 
     /**
      * Gets a disease occurrence spread table for the specified disease group. This is a count of disease occurrences
-     * by country (rows) and year (columns).
+     * (excluding country-level points) by the country they occur in (rows) and year (columns).
      * @param diseaseGroupId The disease group ID.
      * @return A disease occurrence spread table.
      */
@@ -38,7 +43,7 @@ public class DiseaseOccurrenceSpreadHelper {
             return new DiseaseOccurrenceSpreadTable(DISEASE_GROUP_DOES_NOT_EXIST_MESSAGE);
         }
 
-        // Get disease occurrences by disease group and multiple statuses.
+        // Get disease occurrences by disease group and multiple statuses, excluding country-level points.
         List<DiseaseOccurrence> occurrences = getOccurrencesForTable(diseaseGroupId);
 
         if (occurrences.size() > 0) {
@@ -52,11 +57,16 @@ public class DiseaseOccurrenceSpreadHelper {
     }
 
     private List<DiseaseOccurrence> getOccurrencesForTable(int diseaseGroupId) {
-        return diseaseService.getDiseaseOccurrencesByDiseaseGroupIdAndStatuses(
+        List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesByDiseaseGroupIdAndStatuses(
                 diseaseGroupId,
                 DiseaseOccurrenceStatus.READY,
                 DiseaseOccurrenceStatus.IN_REVIEW,
-                DiseaseOccurrenceStatus.AWAITING_BATCHING);
+                DiseaseOccurrenceStatus.AWAITING_BATCHING
+        );
+        return filter(
+            having(on(DiseaseOccurrence.class).getLocation().getPrecision(), not(equalTo(LocationPrecision.COUNTRY))),
+            occurrences
+        );
     }
 
     private List<Country> getCountries() {
