@@ -20,15 +20,20 @@ class Chain(object):
         labels = y.copy()
         count = 0
         while count < 5:
-            layer = Layer(data, labels)
-            self.layers.append(layer)
+            try:
+                layer = Layer(data, labels)
+            except ValueError:
+                """ The number of classes has to be greater than one. """
+                break
+            else:
+                self.layers.append(layer)
 
-            results = [layer.predict(x) for x in data]
-            to_next_layer = [i for (i, r) in enumerate(results) if r is None]
+                results = [layer.predict(x) for x in data]
+                to_next_layer = [i for (i, r) in enumerate(results) if r is None]
 
-            data = np.array(data[to_next_layer])
-            labels = np.array(labels[to_next_layer])
-            count += 1
+                data = np.array(data[to_next_layer])
+                labels = np.array(labels[to_next_layer])
+                count += 1
 
     def predict(self, x):
         """ Iterate through the layers until a trusted prediction is found. """
