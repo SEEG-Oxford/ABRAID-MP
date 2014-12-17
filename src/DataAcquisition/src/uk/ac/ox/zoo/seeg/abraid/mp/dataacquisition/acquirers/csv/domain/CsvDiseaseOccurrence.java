@@ -20,16 +20,16 @@ public class CsvDiseaseOccurrence {
     private String diseaseGroupName;
     private String occurrenceDate;
     private String feedName;
-    private String alertTitle;
     private String summary;
     private String url;
+    private String alertTitle;
 
     public CsvDiseaseOccurrence() {
     }
 
     public CsvDiseaseOccurrence(String site, Double longitude, Double latitude, String precision, String countryName,
-                                String diseaseGroupName, String occurrenceDate, String feedName, String alertTitle,
-                                String summary, String url) {
+                                String diseaseGroupName, String occurrenceDate, String feedName,
+                                String summary, String url, String alertTitle) {
         this.site = site;
         this.longitude = longitude;
         this.latitude = latitude;
@@ -38,9 +38,9 @@ public class CsvDiseaseOccurrence {
         this.diseaseGroupName = diseaseGroupName;
         this.occurrenceDate = occurrenceDate;
         this.feedName = feedName;
-        this.alertTitle = alertTitle;
         this.summary = summary;
         this.url = url;
+        this.alertTitle = alertTitle;
     }
 
     public String getSite() {
@@ -107,14 +107,6 @@ public class CsvDiseaseOccurrence {
         this.feedName = ParseUtils.convertString(feedName);
     }
 
-    public String getAlertTitle() {
-        return alertTitle;
-    }
-
-    public void setAlertTitle(String alertTitle) {
-        this.alertTitle = ParseUtils.convertString(alertTitle);
-    }
-
     public String getSummary() {
         return summary;
     }
@@ -129,6 +121,14 @@ public class CsvDiseaseOccurrence {
 
     public void setUrl(String url) {
         this.url = ParseUtils.convertString(url);
+    }
+
+    public String getAlertTitle() {
+        return alertTitle;
+    }
+
+    public void setAlertTitle(String alertTitle) {
+        this.alertTitle = ParseUtils.convertString(alertTitle);
     }
 
     ///COVERAGE:OFF - generated code
@@ -150,9 +150,9 @@ public class CsvDiseaseOccurrence {
         if (precision != null ? !precision.equals(that.precision) : that.precision != null) return false;
         if (site != null ? !site.equals(that.site) : that.site != null) return false;
         if (feedName != null ? !feedName.equals(that.feedName) : that.feedName != null) return false;
-        if (alertTitle != null ? !alertTitle.equals(that.alertTitle) : that.alertTitle != null) return false;
         if (summary != null ? !summary.equals(that.summary) : that.summary != null) return false;
         if (url != null ? !url.equals(that.url) : that.url != null) return false;
+        if (alertTitle != null ? !alertTitle.equals(that.alertTitle) : that.alertTitle != null) return false;
 
         return true;
     }
@@ -167,9 +167,9 @@ public class CsvDiseaseOccurrence {
         result = 31 * result + (diseaseGroupName != null ? diseaseGroupName.hashCode() : 0);
         result = 31 * result + (occurrenceDate != null ? occurrenceDate.hashCode() : 0);
         result = 31 * result + (feedName != null ? feedName.hashCode() : 0);
-        result = 31 * result + (alertTitle != null ? alertTitle.hashCode() : 0);
         result = 31 * result + (summary != null ? summary.hashCode() : 0);
         result = 31 * result + (url != null ? url.hashCode() : 0);
+        result = 31 * result + (alertTitle != null ? alertTitle.hashCode() : 0);
         return result;
     }
     ///CHECKSTYLE:ON
@@ -192,9 +192,9 @@ public class CsvDiseaseOccurrence {
                 .addColumn("diseaseGroupName")
                 .addColumn("occurrenceDate")
                 .addColumn("feedName")
-                .addColumn("alertTitle")
                 .addColumn("summary")
                 .addColumn("url")
+                .addColumn("alertTitle")
                 .build();
 
         return ParseUtils.readFromCsv(csv, CsvDiseaseOccurrence.class, schema);

@@ -23,9 +23,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Copyright (c) 2014 University of Oxford
  */
 public class CsvDataAcquirerIntegrationTest extends AbstractDataAcquisitionSpringIntegrationTests {
-    private static final String CSV_HEADER = "Site,Longitude,Latitude,Precision,Country,Disease,Occurrence Date,Feed Name,Alert Title,Summary,URL\n";
-    private static final String CSV_OCCURRENCE1 = "\"Kuala Lumpur, Federal Territory of Kuala Lumpur, Malaysia\",101.7,3.16667,precise,Malaysia,dengue,10/3/2014,\"SEEG Data 2014\",\"Dengue -- Kuala Lumpur, Malaysia\",,onm.php?id=XX_ALERT_ID_XX\n";
-    private static final String CSV_OCCURRENCE2 = "New Zealand,176.61475,-38.53923,Country,New Zealand,dengue,13/01/2014,SEEG Data 2014,Regional dengue outbreak unprecedented - SPC - Radio New Zealand,\"SPC says the number of dengue fever outbreaks in the Paific over the past year is unprecedented and more research needs to be done into its cause. Duration: 3′ 21″. Play now; Download: Ogg | MP3 ;...\",\n";
+    private static final String CSV_HEADER = "Site,Longitude,Latitude,Precision,Country,Disease,Occurrence Date,Feed,Summary,URL,Alert Title\n";
+    private static final String CSV_OCCURRENCE1 = "\"Kuala Lumpur, Federal Territory of Kuala Lumpur, Malaysia\",101.7,3.16667,precise,Malaysia,dengue,10/3/2014,\"SEEG Data 2014\",,onm.php?id=XX_ALERT_ID_XX,\"Dengue -- Kuala Lumpur, Malaysia\"\n";
+    private static final String CSV_OCCURRENCE2 = "New Zealand,176.61475,-38.53923,Country,New Zealand,dengue,13/01/2014,SEEG Data 2014,\"SPC says the number of dengue fever outbreaks in the Paific over the past year is unprecedented and more research needs to be done into its cause. Duration: 3′ 21″. Play now; Download: Ogg | MP3 ;...\",,Regional dengue outbreak unprecedented - SPC - Radio New Zealand\n";
     private static final String TEST_FOLDER = "DataAcquisition/test/uk/ac/ox/zoo/seeg/abraid/mp/dataacquisition/acquirers/csv";
     private static final String TEST_ISO_8859_1_FILE = "dengue_iso-8859-1.csv";
 
