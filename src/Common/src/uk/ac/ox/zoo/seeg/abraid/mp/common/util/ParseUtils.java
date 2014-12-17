@@ -80,7 +80,7 @@ public final class ParseUtils {
     }
 
     /**
-     * Parses a list of strings into a list of integers using parseInteger(). Only returns successfully-parsed integers.
+     * Parses a list of strings into a list of integers using parseInteger().
      * @param strings A list of strings to parse.
      * @return The parsed integers.
      */
@@ -90,10 +90,7 @@ public final class ParseUtils {
         if (strings != null) {
             parsedIntegers = new ArrayList<>();
             for (String string : strings) {
-                Integer integer = ParseUtils.parseInteger(string);
-                if (integer != null) {
-                    parsedIntegers.add(integer);
-                }
+                parsedIntegers.add(ParseUtils.parseInteger(string));
             }
         }
 
