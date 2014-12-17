@@ -25,7 +25,7 @@ define([
                 return "<span class='text-" + self.notices()[0].priority + "'>" + self.notices()[0].message + "</span>";
             }
 
-            return "Log in via ABRAID account";
+            return "";
         }, self);
 
         // Actions

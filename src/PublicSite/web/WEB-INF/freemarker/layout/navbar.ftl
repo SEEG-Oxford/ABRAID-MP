@@ -23,7 +23,7 @@
             </button>
         </@security.authorize>
         <@security.authorize ifAnyGranted="ROLE_ANONYMOUS">
-            <button type="button" class="navbar-toggle" style="padding: 6px 13px; margin-right: 20px" data-bind="popover: {template: 'login-template', placement: 'bottom', title: 'Login'}">
+            <button type="button" class="navbar-toggle" style="padding: 6px 13px; margin-right: 20px" data-bind="popover: {template: 'login-template', placement: 'bottom', title: 'Log in'}">
                 <span class="glyphicon glyphicon-user"></span>
             </button>
         </@security.authorize>
@@ -81,8 +81,8 @@
     <@security.authorize ifAnyGranted="ROLE_ANONYMOUS">
         <ul class="collapse navbar-collapse nav navbar-nav navbar-right" id="login-nav">
             <li style="width: 280px; text-align: right; padding-right: 50px">
-                <a href="#" data-bind="popover: {template: 'login-template', placement: 'bottom', title: 'Login'}">
-                    Login
+                <a href="#" data-bind="popover: {template: 'login-template', placement: 'bottom', title: 'Log in'}">
+                    Log in
                     <span class="fa fa-lg fa-sign-in"></span>
                 </a>
             </li>
