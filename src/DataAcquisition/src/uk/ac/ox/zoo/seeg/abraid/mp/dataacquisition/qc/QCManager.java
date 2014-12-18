@@ -95,8 +95,9 @@ public class QCManager {
 
     private boolean performQCStage3(Location location) {
         // Ensure that the location is within the geometries associated with the location's country. If not, snap
-        // to the geometries if within the maximum distance away.
-        boolean passed = true;
+        // to the geometries if within the maximum distance away. By default the stage fails, because if a country
+        // geometry is not found then the country is not of interest.
+        boolean passed = false;
         String message = NO_COUNTRIES_MESSAGE;
 
         MultiPolygon countryGeometry = getCountryGeometryForLocation(location);
