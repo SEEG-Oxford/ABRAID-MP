@@ -1,10 +1,12 @@
 import contextlib
-import machine_weighting_predictor as mwp
 import numpy as np
 import os
 import shutil
 import tempfile
 import unittest
+
+# <Path to>/ABRAID-MP/python must be in your PYTHONPATH.
+from src import machine_weighting_predictor as mwp
 
 DFE = 'distanceFromExtent'
 ES = 'environmentalSuitability'

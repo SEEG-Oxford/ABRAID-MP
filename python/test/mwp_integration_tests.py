@@ -1,6 +1,5 @@
 import contextlib
 import json
-import machine_weighting_predictor
 import os
 import shutil
 import tempfile
@@ -8,6 +7,9 @@ import testdata
 import unittest
 from flask import url_for
 from flask.ext.testing import TestCase
+
+# <Path to>/ABRAID-MP/python must be in your PYTHONPATH.
+from src import machine_weighting_predictor as mwp
 
 DFE = 'distanceFromExtent'
 ES = 'environmentalSuitability'
@@ -37,7 +39,7 @@ def move_to_temp_directory():
 class MachineWeightingPredictorTestCase(TestCase):
 
     def create_app(self):
-        return machine_weighting_predictor.app
+        return mwp.app
 
     def _post_json(self, method, json_content):
         url = url_for(method, disease_group_id=DISEASE_GROUP_ID)
@@ -76,22 +78,22 @@ class MachineWeightingPredictorTestCase(TestCase):
             assert 'Trained predictor saved' in response.data
 
     def test_predict_returns_invalid_json_for_missing_feature(self):
-        machine_weighting_predictor.PREDICTORS[DISEASE_GROUP_ID] = MockPredictor(None)
-        machine_weighting_predictor.FEED_CLASSES[DISEASE_GROUP_ID] = {}
+        mwp.PREDICTORS[DISEASE_GROUP_ID] = MockPredictor(None)
+        mwp.FEED_CLASSES[DISEASE_GROUP_ID] = {}
         datapoint = {'unexpectedFeature': 456}
         response = self._post_json('predict', datapoint)
         self.assert400(response)
         assert 'Invalid JSON' in response.data
 
     def test_predict_returns_no_prediction(self):
-        machine_weighting_predictor.PREDICTORS[DISEASE_GROUP_ID] = MockPredictor(None)
+        mwp.PREDICTORS[DISEASE_GROUP_ID] = MockPredictor(None)
         response = self._post_json('predict', {ES: 0.8, DFE: 150, FEED: 1})
         self.assert200(response)
         assert 'No prediction' in response.data
 
     def test_predict_returns_prediction(self):
         prediction = 0.8
-        machine_weighting_predictor.PREDICTORS[DISEASE_GROUP_ID] = MockPredictor(prediction)
+        mwp.PREDICTORS[DISEASE_GROUP_ID] = MockPredictor(prediction)
         response = self._post_json('predict', {ES: 0.8, DFE: 150, FEED: 1})
         self.assert200(response)
         assert str(prediction) in response.data
