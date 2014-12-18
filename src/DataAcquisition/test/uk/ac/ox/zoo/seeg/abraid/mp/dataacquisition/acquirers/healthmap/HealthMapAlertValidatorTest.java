@@ -22,6 +22,14 @@ public class HealthMapAlertValidatorTest {
     }
 
     @Test
+    public void alertWithDiseaseIdMissingInListIsInvalid() {
+        HealthMapAlert alert = createHealthMapAlert(5);
+        alert.setDiseaseIds(Arrays.asList("123", null, "456"));
+        alert.setDiseases(Arrays.asList("Disease 1", "Disease 2", "Disease 3"));
+        actAndAssertMessage(alert, "Missing disease ID within list in HealthMap alert (alert ID 5)");
+    }
+
+    @Test
     public void alertWithNoDiseaseNamesIsInvalid() {
         HealthMapAlert alert = createHealthMapAlert(5);
         alert.setDiseaseIds(Arrays.asList("123", "456"));
