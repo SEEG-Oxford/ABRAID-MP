@@ -22,7 +22,11 @@ def _get_random_subset_indexes(subset_size, n):
 
 
 def _coefficient_of_variation(args):
-    return np.std(args) / np.mean(args)
+    mu = np.mean(args)
+    if mu == 0:
+        return np.std(args)
+    else:
+        return np.std(args) / mu
 
 
 class Layer(object):
