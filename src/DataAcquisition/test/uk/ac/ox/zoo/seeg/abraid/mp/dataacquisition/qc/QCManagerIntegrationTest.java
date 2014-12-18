@@ -57,10 +57,9 @@ public class QCManagerIntegrationTest extends AbstractDataAcquisitionSpringInteg
         Location location = new Location("Philippines", 122.86711, 11.73469, LocationPrecision.COUNTRY, philippinesId);
 
         // Act
-        boolean hasPassedQc = qcManager.performQC(location);
+        qcManager.performQC(location);
 
         // Assert
-        assertThat(hasPassedQc).isTrue();
         assertThat(location.getAdminUnitQCGaulCode()).isNull();
         assertThat(location.getQcMessage()).contains("QC stage 2 passed: location (122.86711,11.73469) replaced with " +
                 "fixed country centroid (120.81897,15.37497).");
@@ -126,10 +125,9 @@ public class QCManagerIntegrationTest extends AbstractDataAcquisitionSpringInteg
                 indonesiaId);
 
         // Act
-        boolean hasPassedQc = qcManager.performQC(location);
+        qcManager.performQC(location);
 
         // Assert
-        assertThat(hasPassedQc).isTrue();
         assertThat(location.getQcMessage()).contains("QC stage 2 passed: " +
                 "location (116.36700,-0.27000) snapped to land (distance 2.209km).");
     }
@@ -153,7 +151,7 @@ public class QCManagerIntegrationTest extends AbstractDataAcquisitionSpringInteg
     }
 
     @Test
-    public void passesStage3IfNoHealthMapCountryOrCountryGaulCodeSpecified() {
+    public void failsStage3IfNoHealthMapCountryOrCountryGaulCodeSpecified() {
         // Arrange
         Location location = new Location("Door County, Wisconsin, United States", -87.3001, 44.91666,
                 LocationPrecision.ADMIN2);
@@ -162,10 +160,10 @@ public class QCManagerIntegrationTest extends AbstractDataAcquisitionSpringInteg
         boolean hasPassedQc = qcManager.performQC(location);
 
         // Assert
-        assertThat(hasPassedQc).isTrue();
+        assertThat(hasPassedQc).isFalse();
         assertThat(location.getAdminUnitQCGaulCode()).isEqualTo(31738);
         assertThat(location.getQcMessage()).isEqualTo("QC stage 1 passed: closest distance is 8.76% of the square " +
-                "root of the area. QC stage 2 passed: location already within land. QC stage 3 passed: no country " +
+                "root of the area. QC stage 2 passed: location already within land. QC stage 3 failed: no country " +
                 "geometries associated with this location.");
     }
 
@@ -179,9 +177,9 @@ public class QCManagerIntegrationTest extends AbstractDataAcquisitionSpringInteg
         boolean hasPassedQc = qcManager.performQC(location);
 
         // Assert
-        assertThat(hasPassedQc).isTrue();
+        assertThat(hasPassedQc).isFalse();
         assertThat(location.getAdminUnitQCGaulCode()).isNull();
-        assertThat(location.getQcMessage()).contains("QC stage 3 passed: no country geometries associated with " +
+        assertThat(location.getQcMessage()).contains("QC stage 3 failed: no country geometries associated with " +
                 "this location.");
     }
 
