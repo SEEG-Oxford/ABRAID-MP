@@ -20,6 +20,7 @@ public class Main {
             "classpath:uk/ac/ox/zoo/seeg/abraid/mp/datamanager/config/beans.xml";
     private static final Logger LOGGER = Logger.getLogger(Main.class);
     private static final String STARTED_MESSAGE = "Data Manager version %s: started";
+    private static final String FINISHED_MESSAGE = "Data Manager finished";
 
     private DataAcquisitionManager dataAcquisitionManager;
     private ModelRunManager modelRunManager;
@@ -66,10 +67,11 @@ public class Main {
      */
     public static void runMain(ApplicationContext context, String[] args) {
         Main main = (Main) context.getBean("main");
-        logStarted(main.applicationVersion);
+        main.logStarted();
         main.runDataAcquisition(args);
         main.updateExpertsWeightings();
         main.prepareForAndRequestModelRuns();
+        main.logFinished();
     }
 
     /**
@@ -103,9 +105,13 @@ public class Main {
         }
     }
 
-    private static void logStarted(String applicationVersion) {
+    private void logStarted() {
         String message = String.format(STARTED_MESSAGE, applicationVersion);
         LOGGER.info(message);
         System.out.println(message);
+    }
+
+    private void logFinished() {
+        LOGGER.info(FINISHED_MESSAGE);
     }
 }

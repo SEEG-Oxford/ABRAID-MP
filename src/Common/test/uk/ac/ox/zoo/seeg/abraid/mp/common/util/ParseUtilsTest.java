@@ -112,7 +112,7 @@ public class ParseUtilsTest {
     @Test
     public void parseValidAndInvalidIntegers() {
         List<Integer> parsedIntegers = ParseUtils.parseIntegers(Arrays.asList("1", null, "2", "text", "3"));
-        assertThat(parsedIntegers).containsExactly(1, 2, 3);
+        assertThat(parsedIntegers).containsExactly(1, null, 2, null, 3);
     }
 
     @Test

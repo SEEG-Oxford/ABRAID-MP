@@ -12,6 +12,8 @@ import java.util.List;
  */
 public class HealthMapAlertValidator {
     private static final String DISEASE_IDS_NOT_FOUND = "Missing disease IDs in HealthMap alert (alert ID %d)";
+    private static final String DISEASE_ID_NOT_FOUND_WITHIN_LIST = "Missing disease ID within list in HealthMap alert" +
+            " (alert ID %d)";
     private static final String DISEASES_NOT_FOUND = "Missing diseases in HealthMap alert (alert ID %d)";
     private static final String DISEASE_IDS_DO_NOT_MATCH_NAMES = "HealthMap alert has %d disease ID(s) but %d " +
             "disease name(s) (alert ID %d)";
@@ -32,6 +34,7 @@ public class HealthMapAlertValidator {
      */
     public String validate() {
         String errorMessage = validateDiseaseIdsMissing();
+        errorMessage = (errorMessage != null) ? errorMessage : validateDiseaseIdMissingWithinList();
         errorMessage = (errorMessage != null) ? errorMessage : validateDiseasesMissing();
         errorMessage = (errorMessage != null) ? errorMessage : validateDiseaseIdsDoNotMatchNames();
         errorMessage = (errorMessage != null) ? errorMessage : validatePlaceCategoriesAreNotToBeIgnored();
@@ -41,6 +44,13 @@ public class HealthMapAlertValidator {
     private String validateDiseaseIdsMissing() {
         if (alert.getDiseaseIds().size() == 0) {
             return String.format(DISEASE_IDS_NOT_FOUND, alert.getAlertId());
+        }
+        return null;
+    }
+
+    private String validateDiseaseIdMissingWithinList() {
+        if (alert.getDiseaseIds().contains(null)) {
+            return String.format(DISEASE_ID_NOT_FOUND_WITHIN_LIST, alert.getAlertId());
         }
         return null;
     }

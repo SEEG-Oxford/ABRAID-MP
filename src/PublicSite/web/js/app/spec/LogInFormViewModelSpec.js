@@ -128,8 +128,8 @@ define(["app/LogInFormViewModel"], function (LogInFormViewModel) {
         });
 
         describe("holds a message field which", function () {
-            it("starts with a welcome message", function () {
-                expect(vm.message()).toBe("Log in via ABRAID account");
+            it("starts blank", function () {
+                expect(vm.message()).toBe("");
             });
 
             it("is updated during submit", function () {

@@ -16,6 +16,7 @@
     <#if (table.errorMessage)??>
         <div class="alert alert-warning" role="alert">${table.errorMessage}</div>
     <#else>
+        <div class="alert alert-info" role="alert">These counts exclude country-level occurrences.</div>
         <table class="table table-condensed">
             <thead>
             <tr>

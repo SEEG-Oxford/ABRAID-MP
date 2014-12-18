@@ -34,6 +34,22 @@ public class HealthMapLocationValidatorTest {
     }
 
     @Test
+    public void placeNameIsMissing() {
+        // Arrange
+        HealthMapLocation location = new HealthMapLocation();
+        location.setLatitude("10");
+        location.setLongitude("20");
+        location.setCountryId("1");
+
+        // Act
+        HealthMapLocationValidator validator = new HealthMapLocationValidator(location, getCountryMap());
+        String message = validator.validate();
+
+        // Assert
+        assertThat(message).isEqualTo("Missing place name in HealthMap location");
+    }
+
+    @Test
     public void latitudeIsMissing() {
         // Arrange
         HealthMapLocation location = new HealthMapLocation();

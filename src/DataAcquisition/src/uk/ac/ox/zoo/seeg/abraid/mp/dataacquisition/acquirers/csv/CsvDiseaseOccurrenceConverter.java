@@ -76,9 +76,9 @@ public class CsvDiseaseOccurrenceConverter {
         Alert alert = new Alert();
         Feed feed = csvLookupData.getFeedForManuallyUploadedData(csvDiseaseOccurrence.getFeedName(), isGoldStandard);
         alert.setFeed(feed);
-        alert.setTitle(csvDiseaseOccurrence.getAlertTitle());
         alert.setSummary(csvDiseaseOccurrence.getSummary());
         alert.setUrl(csvDiseaseOccurrence.getUrl());
+        alert.setTitle(csvDiseaseOccurrence.getAlertTitle());
         return alert;
     }
 

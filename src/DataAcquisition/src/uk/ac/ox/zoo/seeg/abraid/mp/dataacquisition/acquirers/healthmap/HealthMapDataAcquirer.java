@@ -92,7 +92,7 @@ public class HealthMapDataAcquirer {
 
     /**
      * Gets the start date for the HealthMap alerts retrieval. This is the first of these that is non-null:
-     * 1. The end date of the last retrieval, as stored in database field Provenance.LastRetrievalEndDate
+     * 1. The end date of the last retrieval, as stored in database field provenance.last_retrieval_end_date
      * 2. The default start date
      * 3. n days before now, where n is specified as the parameter "default start date days before now"
      * 4. 7 days before now

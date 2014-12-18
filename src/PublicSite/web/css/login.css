@@ -3,45 +3,19 @@
  * Copyright (c) 2014 University of Oxford
  */
 
-.login-pane {
-    text-align: center;
+#login-form {
+    margin: 0 !important;
 }
-.login-pane .btn {
-    width: 100%;
-}
-.login-pane .form-group{
+#login-form .form-group{
     margin-bottom: 5px;
 }
-.login-pane .form-info{
-    text-align: left;
+#login-form .form-info{
+    text-align: left !important;
 }
-.login-pane p {
-    margin-bottom: 0px;
+#login-form .btn {
+    width: 100% !important;
 }
-.login-pane input {
-    width: 100%;
-}
-.login-pane hr {
-    padding: 0;
-    border: none;
-    border-top: medium double #000000;
-    color: #000000;
-    position: relative;
-    text-align: center;
-    margin-top: 15px;
-    margin-bottom: 15px;
-    z-index: -998;
-}
-.login-pane hr:after {
-    content: "or";
-    display: inline-block;
-    position: relative;
-    top: -0.9em;
-    font-size: 1em;
-    padding: 0 0.5em;
-    background: white;
-    z-index: -999;
-}
-.login-pane .login-header {
-    height: 24px;
+#login-form p {
+    text-align: center !important;
+    margin-bottom: 0;
 }

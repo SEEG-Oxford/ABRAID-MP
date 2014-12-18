@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap;
 
+import org.springframework.util.StringUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapCountry;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.domain.HealthMapLocation;
 
@@ -11,6 +12,7 @@ import java.util.Map;
  * Copyright (c) 2014 University of Oxford
  */
 public class HealthMapLocationValidator {
+    private static final String PLACE_NAME_MISSING = "Missing place name in HealthMap location";
     private static final String LAT_LONG_MISSING = "Missing lat/long in HealthMap location (place name \"%s\")";
     private static final String COUNTRY_MISSING = "Missing country ID in HealthMap location (place name \"%s\")";
     private static final String COUNTRY_DOES_NOT_EXIST =
@@ -29,10 +31,18 @@ public class HealthMapLocationValidator {
      * @return An error message if invalid, or null if valid.
      */
     public String validate() {
-        String errorMessage = validateLatLongMissing();
+        String errorMessage = validatePlaceNameMissing();
+        errorMessage = (errorMessage != null) ? errorMessage : validateLatLongMissing();
         errorMessage = (errorMessage != null) ? errorMessage : validateCountryMissing();
         errorMessage = (errorMessage != null) ? errorMessage : validateCountryDoesNotExist();
         return errorMessage;
+    }
+
+    private String validatePlaceNameMissing() {
+        if (!StringUtils.hasText(location.getPlaceName())) {
+            return String.format(PLACE_NAME_MISSING);
+        }
+        return null;
     }
 
     private String validateLatLongMissing() {

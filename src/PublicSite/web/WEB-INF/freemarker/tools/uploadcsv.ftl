@@ -82,11 +82,6 @@
                     <td>The source of the data</td>
                 </tr>
                 <tr>
-                    <td>Alert Title</td>
-                    <td>No</td>
-                    <td>Text to display in the Data Validator</td>
-                </tr>
-                <tr>
                     <td>Summary</td>
                     <td>No</td>
                     <td>Text to display in the Data Validator</td>
@@ -95,6 +90,11 @@
                     <td>URL</td>
                     <td>No</td>
                     <td>URL to display in the Data Validator</td>
+                </tr>
+                <tr>
+                    <td>Alert Title</td>
+                    <td>No</td>
+                    <td>Text to display in the Data Validator</td>
                 </tr>
                 </tbody>
             </table>
