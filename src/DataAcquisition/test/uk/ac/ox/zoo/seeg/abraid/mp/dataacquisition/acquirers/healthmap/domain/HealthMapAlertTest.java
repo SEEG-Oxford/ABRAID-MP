@@ -47,36 +47,31 @@ public class HealthMapAlertTest {
     @Test
     public void noDiseaseIdsReturnsDiseaseId() {
         HealthMapAlert alert = createHealthMapAlertWithDiseaseIds("123", new ArrayList<String>());
-        assertThat(alert.getDiseaseIds()).hasSize(1);
-        assertThat(alert.getDiseaseIds()).contains(123);
+        assertThat(alert.getDiseaseIds()).containsExactly(123);
     }
 
     @Test
     public void nullDiseaseIdsReturnsDiseaseId() {
         HealthMapAlert alert = createHealthMapAlertWithDiseaseIds("123", null);
-        assertThat(alert.getDiseaseIds()).hasSize(1);
-        assertThat(alert.getDiseaseIds()).contains(123);
+        assertThat(alert.getDiseaseIds()).containsExactly(123);
     }
 
     @Test
     public void diseaseIdsButNoDiseaseIdReturnsDiseaseIds() {
         HealthMapAlert alert = createHealthMapAlertWithDiseaseIds(null, Arrays.asList("123", "456"));
-        assertThat(alert.getDiseaseIds()).hasSize(2);
-        assertThat(alert.getDiseaseIds()).contains(123, 456);
+        assertThat(alert.getDiseaseIds()).containsExactly(123, 456);
     }
 
     @Test
     public void diseaseIdsAndDiseaseIdReturnsDiseases() {
         HealthMapAlert alert = createHealthMapAlertWithDiseaseIds("789", Arrays.asList("123", "456"));
-        assertThat(alert.getDiseaseIds()).hasSize(2);
-        assertThat(alert.getDiseaseIds()).contains(123, 456);
+        assertThat(alert.getDiseaseIds()).containsExactly(123, 456);
     }
 
     @Test
     public void setDiseaseIdsOnlyAddsSuccessfullyParsedDiseasesToTheList() {
         HealthMapAlert alert = createHealthMapAlertWithDiseaseIds(null, Arrays.asList("123", "some text", "456"));
-        assertThat(alert.getDiseaseIds()).hasSize(2);
-        assertThat(alert.getDiseaseIds()).contains(123, 456);
+        assertThat(alert.getDiseaseIds()).containsExactly(123, null, 456);
     }
 
     @Test
@@ -88,56 +83,49 @@ public class HealthMapAlertTest {
     @Test
     public void noDiseasesReturnsDisease() {
         HealthMapAlert alert = createHealthMapAlertWithDiseases("Disease 1", new ArrayList<String>());
-        assertThat(alert.getDiseases()).hasSize(1);
-        assertThat(alert.getDiseases()).contains("Disease 1");
+        assertThat(alert.getDiseases()).containsExactly("Disease 1");
     }
 
     @Test
     public void nullDiseasesReturnsDisease() {
         HealthMapAlert alert = createHealthMapAlertWithDiseases("Disease 1", null);
-        assertThat(alert.getDiseases()).hasSize(1);
-        assertThat(alert.getDiseases()).contains("Disease 1");
+        assertThat(alert.getDiseases()).containsExactly("Disease 1");
     }
 
     @Test
     public void diseasesButNoDiseaseReturnsDiseases() {
         HealthMapAlert alert = createHealthMapAlertWithDiseases(null, Arrays.asList("Disease 1", "Disease 2"));
-        assertThat(alert.getDiseases()).hasSize(2);
-        assertThat(alert.getDiseases()).contains("Disease 1", "Disease 2");
+        assertThat(alert.getDiseases()).containsExactly("Disease 1", "Disease 2");
     }
 
     @Test
     public void diseasesAndDiseaseReturnsDiseases() {
         HealthMapAlert alert = createHealthMapAlertWithDiseases("Disease 3", Arrays.asList("Disease 1", "Disease 2"));
-        assertThat(alert.getDiseases()).hasSize(2);
-        assertThat(alert.getDiseases()).contains("Disease 1", "Disease 2");
+        assertThat(alert.getDiseases()).containsExactly("Disease 1", "Disease 2");
     }
 
     @Test
     public void splitCommentReturnsEmptyListForANullComment() {
         HealthMapAlert alert = createHealthMapAlertWithComment(null);
-        assertThat(alert.getSplitComment()).hasSize(0);
+        assertThat(alert.getSplitComment()).isEmpty();
     }
 
     @Test
     public void splitCommentReturnsEmptyListForAWhitespaceComment() {
         HealthMapAlert alert = createHealthMapAlertWithComment("    ");
-        assertThat(alert.getSplitComment()).hasSize(0);
+        assertThat(alert.getSplitComment()).isEmpty();
     }
 
     @Test
     public void splitCommentReturnsOneListItemForOneSubdisease() {
         HealthMapAlert alert = createHealthMapAlertWithComment("  pf  ");
-        assertThat(alert.getSplitComment()).hasSize(1);
-        assertThat(alert.getSplitComment()).contains("pf");
+        assertThat(alert.getSplitComment()).containsExactly("pf");
     }
 
     @Test
     public void splitCommentReturnsTwoListItemsForTwoSubdiseasesWithEmptyTokenAndWhitespaceAndCapitals() {
         HealthMapAlert alert = createHealthMapAlertWithComment("P f, , p V");
-        assertThat(alert.getSplitComment()).hasSize(2);
-        assertThat(alert.getSplitComment()).contains("pf");
-        assertThat(alert.getSplitComment()).contains("pv");
+        assertThat(alert.getSplitComment()).containsOnly("pv", "pf");
     }
 
     private HealthMapAlert createHealthMapAlert(String link) {
