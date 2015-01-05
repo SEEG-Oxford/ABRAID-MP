@@ -1,10 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain;
 
 import org.joda.time.DateTime;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceStatistics;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator.DiseaseGroupForModelRunValidator;
 
 import java.util.List;
@@ -182,8 +179,8 @@ public class JsonModelRunInformationBuilder {
                 String pluralEnding = (batchOccurrenceCount == 1) ? "" : "s";
                 text = String.format(" (including batching of %d occurrence%s for validation, %s)",
                         batchOccurrenceCount, pluralEnding, batchDateText);
-            } else {
-                // Batching is not complete
+            } else if (lastRequestedModelRun.getStatus().equals(ModelRunStatus.COMPLETED)) {
+                // Model run is complete but batching is not complete
                 text = String.format(" (but batching not yet completed, %s)", batchDateText);
             }
         }
