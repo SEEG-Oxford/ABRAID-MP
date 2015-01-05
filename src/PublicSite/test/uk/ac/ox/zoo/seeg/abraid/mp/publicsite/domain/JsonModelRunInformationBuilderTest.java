@@ -94,7 +94,24 @@ public class JsonModelRunInformationBuilderTest {
     }
 
     @Test
-    public void populateLastModelRunTextWhenFailed() {
+    public void populateLastModelRunTextWhenFailedAndBatchingRequested() {
+        // Arrange
+        ModelRun modelRun = new ModelRun("name", 87, "host", new DateTime("2014-07-01T08:07:06"));
+        modelRun.setStatus(ModelRunStatus.FAILED);
+        modelRun.setResponseDate(new DateTime("2014-07-02T13:08:07"));
+        modelRun.setBatchStartDate(new DateTime("2006-12-30T00:00:00"));
+        modelRun.setBatchEndDate(new DateTime("2006-12-31T23:59:59.999"));
+        JsonModelRunInformationBuilder builder = new JsonModelRunInformationBuilder();
+
+        // Act
+        JsonModelRunInformation information = builder.populateLastModelRunText(modelRun).get();
+
+        // Assert
+        assertThat(information.getLastModelRunText()).isEqualTo("failed on 2 Jul 2014 13:08:07");
+    }
+
+    @Test
+    public void populateLastModelRunTextWhenFailedAndBatchingNotRequested() {
         // Arrange
         ModelRun modelRun = new ModelRun("name", 87, "host", new DateTime("2014-07-01T08:07:06"));
         modelRun.setStatus(ModelRunStatus.FAILED);
