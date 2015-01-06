@@ -1,8 +1,11 @@
 <#--
-    A template email sent in response to the processing of failed model runs.
+    A template email sent in response to the processing of a failed model run.
     Copyright (c) 2014 University of Oxford
 -->
-The model run "${name}", failed to complete successfully after 2 attempts, on "${server}".
+A model run failed to complete after 2 attempts.
+
+Run name: ${name!"?"}
+Host: ${server!"?"}
 
 ===============
 Output text:
