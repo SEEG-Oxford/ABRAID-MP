@@ -12,11 +12,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRunStatus;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Main controller for the model output handler.
@@ -30,14 +34,19 @@ public class MainController extends AbstractController {
     private static final String LOG_COULD_NOT_DELETE_TEMP_FILE = "Could not delete temporary file \"%s\"";
     private static final String INTERNAL_SERVER_ERROR_MESSAGE =
             "Model outputs handler failed with error \"%s\". See ModelOutputHandler server logs for more details.";
+    private static final String MODEL_FAILURE_EMAIL_TEMPLATE = "modelFailureEmail.ftl";
+    private static final String MODEL_FAILURE_EMAIL_SUBJECT = "Failed Model Run";
 
-    private MainHandler mainHandler;
-    private HandlersAsyncWrapper handlersAsyncWrapper;
+    private final MainHandler mainHandler;
+    private final HandlersAsyncWrapper handlersAsyncWrapper;
+    private final EmailService emailService;
 
     @Autowired
-    public MainController(MainHandler mainHandler, HandlersAsyncWrapper handlersAsyncWrapper) {
+    public MainController(
+            MainHandler mainHandler, HandlersAsyncWrapper handlersAsyncWrapper, EmailService emailService) {
         this.mainHandler = mainHandler;
         this.handlersAsyncWrapper = handlersAsyncWrapper;
+        this.emailService = emailService;
     }
 
     /**
@@ -60,6 +69,9 @@ public class MainController extends AbstractController {
             modelRunZip = null;
             // Continue handling the outputs
             ModelRun modelRun = mainHandler.handleOutputs(modelRunZipFile);
+            if (modelRun.getStatus() == ModelRunStatus.FAILED) {
+                sendModelFailureEmail(modelRun);
+            }
             handlersAsyncWrapper.handle(modelRun);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -70,6 +82,15 @@ public class MainController extends AbstractController {
         }
 
         return createSuccessResponse();
+    }
+
+    private void sendModelFailureEmail(ModelRun modelRun) {
+        Map<String, String> data = new HashMap<>();
+        data.put("name", modelRun.getName());
+        data.put("output", modelRun.getOutputText());
+        data.put("error", modelRun.getErrorText());
+        data.put("server", modelRun.getRequestServer());
+        emailService.sendEmailInBackground(MODEL_FAILURE_EMAIL_SUBJECT, MODEL_FAILURE_EMAIL_TEMPLATE, data);
     }
 
     private File saveRequestBodyToTemporaryFile(byte[] modelRunZip) throws IOException {
