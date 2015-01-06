@@ -10,6 +10,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.kubek2k.springockito.annotations.ReplaceWithMock;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -22,6 +23,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvCovariateInfluence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvEffectCurveCovariateInfluence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvSubmodelStatistic;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
 import uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.geoserver.GeoserverRestService;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.SpringockitoWebContextLoader;
@@ -32,6 +34,7 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.extractProperty;
@@ -53,6 +56,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration("file:ModelOutputHandler/web")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class MainControllerIntegrationTest extends AbstractSpringIntegrationTests {
+    private static final String TEST_MODEL_RUN_SERVER = "host";
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder(); ///CHECKSTYLE:SUPPRESS VisibilityModifier
 
@@ -71,6 +75,10 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
     @ReplaceWithMock
     @Autowired
     private GeoserverRestService geoserverRestService;
+
+    @ReplaceWithMock
+    @Autowired
+    private EmailService emailService;
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -160,6 +168,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
         assertThatRasterWrittenToFile(run, "prediction_uncertainty.tif", "uncertainty");
         assertThatRasterWrittenToFile(run, "extent.tif", "extent");
         assertThatNoRastersPublishedToGeoserver();
+        assertThatFailureEmailSent("", expectedErrorText);
     }
 
     @Test
@@ -184,6 +193,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
         assertThat(run.getOutputText()).isNullOrEmpty();
         assertThat(run.getErrorText()).isEqualTo(expectedErrorText);
         assertThatNoRastersPublishedToGeoserver();
+        assertThatFailureEmailSent("", expectedErrorText);
     }
 
     @Test
@@ -303,7 +313,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
     }
 
     private void insertModelRun(String name) {
-        ModelRun modelRun = new ModelRun(name, TEST_MODEL_RUN_DISEASE_GROUP_ID, "host", DateTime.now());
+        ModelRun modelRun = new ModelRun(name, TEST_MODEL_RUN_DISEASE_GROUP_ID, TEST_MODEL_RUN_SERVER, DateTime.now());
         modelRunDao.save(modelRun);
     }
 
@@ -399,5 +409,22 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
         assertThat(extractProperty("meanInfluence").from(database)).isEqualTo(extractProperty("meanInfluence").from(file));
         assertThat(extractProperty("upperQuantile").from(database)).isEqualTo(extractProperty("upperQuantile").from(file));
         assertThat(extractProperty("lowerQuantile").from(database)).isEqualTo(extractProperty("lowerQuantile").from(file));
+    }
+
+    private void assertThatFailureEmailSent(String outputText, String errorText) {
+        Class<Map<String, String>> argType = (Class<Map<String, String>>) (Class) Map.class;
+        ArgumentCaptor<Map<String, String>> captor = ArgumentCaptor.forClass(argType);
+
+        verify(emailService).sendEmailInBackground(
+                eq("Failed Model Run"),
+                eq("modelFailureEmail.ftl"),
+                captor.capture());
+
+        Map<String, String> actual = captor.getValue();
+
+        assertThat(actual.get("name")).isEqualTo(TEST_MODEL_RUN_NAME);
+        assertThat(actual.get("server")).isEqualTo(TEST_MODEL_RUN_SERVER);
+        assertThat(actual.get("output")).isEqualTo(outputText);
+        assertThat(actual.get("error")).isEqualTo(errorText);
     }
 }
