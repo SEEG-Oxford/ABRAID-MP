@@ -18,23 +18,20 @@ SET simplified_geom = aust.geom
 FROM admin_unit_simplified_tropical aust
 WHERE aut.gaul_code = aust.gaul_code;
 
--- Add spatial indexes to the newly-populated columns
-DROP INDEX IF EXISTS ix_admin_unit_global_simplified_geom;
-DROP INDEX IF EXISTS ix_admin_unit_tropical_simplified_geom;
-CREATE INDEX ix_admin_unit_global_simplified_geom ON admin_unit_global USING GIST (simplified_geom);
-CREATE INDEX ix_admin_unit_tropical_simplified_geom ON admin_unit_tropical USING GIST (simplified_geom);
-
--- Rename other spatial indexes to conform to our naming standard
+-- Add spatial indexes
 DROP INDEX IF EXISTS ix_admin_unit_global_geom;
+DROP INDEX IF EXISTS ix_admin_unit_global_simplified_geom;
 DROP INDEX IF EXISTS ix_admin_unit_qc_geom;
 DROP INDEX IF EXISTS ix_admin_unit_tropical_geom;
+DROP INDEX IF EXISTS ix_admin_unit_tropical_simplified_geom;
 DROP INDEX IF EXISTS ix_country_geom;
 DROP INDEX IF EXISTS ix_land_sea_border_geom;
-ALTER INDEX admin_unit_global_geom_gist RENAME TO ix_admin_unit_global_geom;
-ALTER INDEX admin_unit_qc_geom_gist RENAME TO ix_admin_unit_qc_geom;
-ALTER INDEX admin_unit_tropical_geom_gist RENAME TO ix_admin_unit_tropical_geom;
-ALTER INDEX country_geom_gist RENAME TO ix_country_geom;
-ALTER INDEX land_sea_border_geom_gist RENAME TO ix_land_sea_border_geom;
+CREATE INDEX ix_admin_unit_global_geom ON admin_unit_global USING GIST (geom);
+CREATE INDEX ix_admin_unit_global_simplified_geom ON admin_unit_global USING GIST (simplified_geom);
+CREATE INDEX ix_admin_unit_qc_geom ON admin_unit_qc USING GIST (geom);
+CREATE INDEX ix_admin_unit_tropical_geom ON admin_unit_tropical USING GIST (geom);
+CREATE INDEX ix_admin_unit_tropical_simplified_geom ON admin_unit_tropical USING GIST (simplified_geom);
+CREATE INDEX ix_land_sea_border_geom ON land_sea_border USING GIST (geom);
 
 -- Add NOT NULL constraints to all geometry columns (they are nullable in tables.sql because of the test data)
 ALTER TABLE admin_unit_global ALTER simplified_geom SET NOT NULL;
@@ -48,7 +45,7 @@ ALTER TABLE country ALTER geom SET NOT NULL;
 DROP TABLE admin_unit_simplified_global;
 DROP TABLE admin_unit_simplified_tropical;
 
--- Amend country table to indicate the 58 African countries that should be considered when calculating the minimum data spread
+-- Amend country table to indicate the African countries that should be considered when calculating the minimum data spread
 UPDATE country SET for_min_data_spread = true WHERE gaul_code in
 (4, 6, 8, 29, 35, 42, 43, 45, 47, 49, 50, 58, 59, 66, 68, 70, 74, 76, 77, 79, 89, 90, 94, 102, 105, 106, 133, 142, 144, 145, 150, 152, 155,
 159, 161, 169, 170, 172, 181, 182, 205, 214, 217, 221, 226, 235, 243, 248, 253, 257, 268, 270, 271, 40760, 40762, 40765, 61013, 1013965); 
