@@ -11,6 +11,12 @@
 
 # Model version = ${model_version}
 
+# Get warnings as they occur (not batched)
+options(warn=1)
+
+# Stash a list of the default packages
+default.pkgs <- search()[ifelse(unlist(gregexpr("package:",search()))==1,TRUE,FALSE)]
+
 # Define a function to setup and execute the model
 attempt_model_run <- function() {
     # Set verbosity
@@ -173,7 +179,6 @@ attempt_model_run <- function() {
             max_cpus,
             load_seegSDM,
             parallel_flag)
-        innerResult <- 1
         </#if>
         innerResult # return
     }, error = function(e) {
@@ -189,19 +194,51 @@ attempt_model_run <- function() {
     return(result)
 }
 
-# Attempt the model run in a tempory environment
-result <- do.call(attempt_model_run, list(), env=new.env())
+attempt_model_run_with_clean_environment <- function() {
+    print("Before")
+    print(ls())
+    print(ls(envir = globalenv()))
+    print(search())
 
-if (result == 1) {
-    # Set up for a 2nd attempt at running the model
+    # Replace the environment of the attempt_model_run function, too ensure runs are completely independant
+    environment(attempt_model_run) <- new.env()
+
+    # Perform model run
+    attempt_model_run()
+}
+
+clean_up_model_run <- function() {
+    write("=== First model run attempt failed. Cleaning. ===", stdout())
+    write("=== First model run attempt failed. Cleaning. ===", stderr())
+
+    # Move the results directory
     if (file.exists("results")) {
         file.rename("results", "results_first")
     }
-    write("=== First model run attempt failed. Results moved to 'results_first'. Retrying. ===", stdout())
-    write("=== First model run attempt failed. Results moved to 'results_first'. Retrying. ===", stderr())
 
-    # Retry the model run in a new tempory environment
-    result <- do.call(attempt_model_run, list(), env=new.env())
+    # Unset result variable in the global environment
+    if (exists("result", inherits = TRUE)) {
+        rm("result", inherits = TRUE)
+    }
+
+    # Detach all non-default packages
+    all.pkgs <- search()[ifelse(unlist(gregexpr("package:",search()))==1,TRUE,FALSE)]
+    detach.pkgs <- setdiff(all.pkgs, default.pkgs)
+    suppressWarnings(lapply(detach.pkgs, detach, character.only = TRUE, unload = TRUE, force = TRUE))
+
+    write("=== First model run attempt failed. Retrying. ===", stdout())
+    write("=== First model run attempt failed. Retrying. ===", stderr())
+}
+
+# Attempt the model run
+result <- attempt_model_run_with_clean_environment()
+
+if (result == 1) {
+    # Set up for a 2nd attempt at running the model
+    clean_up_model_run()
+
+    # Reattempt try the model run
+    result <- attempt_model_run_with_clean_environment()
 }
 
 quit(status=result)
