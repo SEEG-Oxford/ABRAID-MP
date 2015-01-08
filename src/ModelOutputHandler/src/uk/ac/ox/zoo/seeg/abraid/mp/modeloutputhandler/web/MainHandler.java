@@ -57,12 +57,14 @@ public class MainHandler {
     private final ModelRunService modelRunService;
     private final GeoserverRestService geoserver;
     private final RasterFilePathFactory rasterFilePathFactory;
+    private final RasterExtentMaskHelper rasterExtentMaskHelper;
 
     public MainHandler(ModelRunService modelRunService, GeoserverRestService geoserver,
-                       RasterFilePathFactory rasterFilePathFactory) {
+                       RasterFilePathFactory rasterFilePathFactory, RasterExtentMaskHelper rasterExtentMaskHelper) {
         this.modelRunService = modelRunService;
         this.geoserver = geoserver;
         this.rasterFilePathFactory = rasterFilePathFactory;
+        this.rasterExtentMaskHelper = rasterExtentMaskHelper;
     }
 
     /**
@@ -100,9 +102,9 @@ public class MainHandler {
         handleValidationStatisticsFile(modelRun, validationStatisticsFile);
         handleRelativeInfluenceFile(modelRun, relativeInfluenceFile);
         handleEffectCurvesFile(modelRun, effectCurvesFile);
+        handleExtentInputRaster(modelRun, extentInputRaster);
         handleMeanPredictionRaster(modelRun, meanPredictionRaster);
         handlePredictionUncertaintyRaster(modelRun, predUncertaintyRaster);
-        handleExtentInputRaster(modelRun, extentInputRaster);
 
         return modelRun;
     }
@@ -195,10 +197,16 @@ public class MainHandler {
         if (raster != null) {
             try {
                 LOGGER.info(String.format(LOG_SAVING_FILE, PREDICTION_RASTER, raster.length, modelRun.getName()));
-                File file = rasterFilePathFactory.getMeanPredictionRasterFile(modelRun);
-                saveRaster(file, raster);
+
+                File fullFile = rasterFilePathFactory.getFullMeanPredictionRasterFile(modelRun);
+                saveRaster(fullFile, raster);
+
+                File maskedFile = rasterFilePathFactory.getMaskedMeanPredictionRasterFile(modelRun);
+                File maskFile = rasterFilePathFactory.getExtentInputRasterFile(modelRun);
+                rasterExtentMaskHelper.maskRaster(maskedFile, fullFile, maskFile);
+
                 if (modelRun.getStatus() == ModelRunStatus.COMPLETED) {
-                    geoserver.publishGeoTIFF(file);
+                    geoserver.publishGeoTIFF(maskedFile);
                 }
             } catch (Exception e) {
                 throw new IOException(String.format(LOG_COULD_NOT_SAVE, PREDICTION_RASTER, modelRun.getName()), e);
@@ -210,10 +218,16 @@ public class MainHandler {
         if (raster != null) {
             try {
                 LOGGER.info(String.format(LOG_SAVING_FILE, UNCERTAINTY_RASTER, raster.length, modelRun.getName()));
-                File file = rasterFilePathFactory.getPredictionUncertaintyRasterFile(modelRun);
-                saveRaster(file, raster);
+
+                File fullFile = rasterFilePathFactory.getFullPredictionUncertaintyRasterFile(modelRun);
+                saveRaster(fullFile, raster);
+
+                File maskedFile = rasterFilePathFactory.getMaskedPredictionUncertaintyRasterFile(modelRun);
+                File maskFile = rasterFilePathFactory.getExtentInputRasterFile(modelRun);
+                rasterExtentMaskHelper.maskRaster(maskedFile, fullFile, maskFile);
+
                 if (modelRun.getStatus() == ModelRunStatus.COMPLETED) {
-                    geoserver.publishGeoTIFF(file);
+                    geoserver.publishGeoTIFF(maskedFile);
                 }
             } catch (Exception e) {
                 throw new IOException(String.format(LOG_COULD_NOT_SAVE, UNCERTAINTY_RASTER, modelRun.getName()), e);
