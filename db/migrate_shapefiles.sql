@@ -31,6 +31,7 @@ CREATE INDEX ix_admin_unit_global_simplified_geom ON admin_unit_global USING GIS
 CREATE INDEX ix_admin_unit_qc_geom ON admin_unit_qc USING GIST (geom);
 CREATE INDEX ix_admin_unit_tropical_geom ON admin_unit_tropical USING GIST (geom);
 CREATE INDEX ix_admin_unit_tropical_simplified_geom ON admin_unit_tropical USING GIST (simplified_geom);
+CREATE INDEX ix_country_geom ON country USING GIST (geom);
 CREATE INDEX ix_land_sea_border_geom ON land_sea_border USING GIST (geom);
 
 -- Add NOT NULL constraints to all geometry columns (they are nullable in tables.sql because of the test data)
