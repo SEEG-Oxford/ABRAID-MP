@@ -42,6 +42,7 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
     private ModelRun modelRunDengue3;
     private ModelRun modelRunDengue4;
     private ModelRun modelRunDengue5;
+    private ModelRun modelRunDengue6;
     private ModelRun modelRunMalarias1;
 
     @Before
@@ -257,19 +258,19 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
     }
 
     @Test
-    public void getLastCompletedModelRunReturnsNullIfNoModelRuns() {
+    public void getMostRecentlyRequestedModelRunWhichCompletedReturnsNullIfNoModelRuns() {
         // Arrange
         int diseaseGroupId = 87;
 
         // Act
-        ModelRun modelRun = modelRunDao.getLastCompletedModelRun(diseaseGroupId);
+        ModelRun modelRun = modelRunDao.getMostRecentlyRequestedModelRunWhichCompleted(diseaseGroupId);
 
         // Assert
         assertThat(modelRun).isNull();
     }
 
     @Test
-    public void getLastCompletedModelRunReturnsNullIfNoCompletedModelRuns() {
+    public void getMostRecentlyRequestedModelRunWhichCompletedReturnsNullIfNoCompletedModelRuns() {
         // Arrange
         int diseaseGroupId = 87;
         modelRunDao.save(modelRunMalarias1);
@@ -278,28 +279,14 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
         modelRunDao.save(modelRunDengue1);
 
         // Act
-        ModelRun modelRun = modelRunDao.getLastCompletedModelRun(diseaseGroupId);
+        ModelRun modelRun = modelRunDao.getMostRecentlyRequestedModelRunWhichCompleted(diseaseGroupId);
 
         // Assert
         assertThat(modelRun).isNull();
     }
 
     @Test
-    public void getLastCompletedModelRunReturnsNullIfCompletedModelRunHasNoResponseDate() {
-        // Arrange
-        int diseaseGroupId = 87;
-        modelRunDengue2.setResponseDate(null);
-        modelRunDao.save(modelRunDengue2);
-
-        // Act
-        ModelRun modelRun = modelRunDao.getLastCompletedModelRun(diseaseGroupId);
-
-        // Assert
-        assertThat(modelRun).isNull();
-    }
-
-    @Test
-    public void getLastCompletedModelRunReturnsNonNullIfCompletedModelRuns() {
+    public void getMostRecentlyRequestedModelRunWhichCompletedReturnsCorrectValueIfCompletedModelRuns() {
         // Arrange
         int diseaseGroupId = 87;
         modelRunDao.save(modelRunMalarias1);
@@ -310,7 +297,67 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
         modelRunDao.save(modelRunDengue5);
 
         // Act
-        ModelRun modelRun = modelRunDao.getLastCompletedModelRun(diseaseGroupId);
+        ModelRun modelRun = modelRunDao.getMostRecentlyRequestedModelRunWhichCompleted(diseaseGroupId);
+
+        // Assert
+        assertThat(modelRun).isEqualTo(modelRunDengue3);
+    }
+
+    @Test
+    public void getMostRecentlyFinishedModelRunWhichCompletedReturnsNullIfNoModelRuns() {
+        // Arrange
+        int diseaseGroupId = 87;
+
+        // Act
+        ModelRun modelRun = modelRunDao.getMostRecentlyFinishedModelRunWhichCompleted(diseaseGroupId);
+
+        // Assert
+        assertThat(modelRun).isNull();
+    }
+
+    @Test
+    public void getMostRecentlyFinishedModelRunWhichCompletedReturnsNullIfNoCompletedModelRuns() {
+        // Arrange
+        int diseaseGroupId = 87;
+        modelRunDao.save(modelRunMalarias1);
+        modelRunDao.save(modelRunDengue4);
+        modelRunDao.save(modelRunDengue5);
+        modelRunDao.save(modelRunDengue1);
+
+        // Act
+        ModelRun modelRun = modelRunDao.getMostRecentlyFinishedModelRunWhichCompleted(diseaseGroupId);
+
+        // Assert
+        assertThat(modelRun).isNull();
+    }
+
+    @Test
+    public void getMostRecentlyFinishedModelRunWhichCompletedReturnsNullIfCompletedModelRunHasNoResponseDate() {
+        // Arrange
+        int diseaseGroupId = 87;
+        modelRunDengue2.setResponseDate(null);
+        modelRunDao.save(modelRunDengue2);
+
+        // Act
+        ModelRun modelRun = modelRunDao.getMostRecentlyFinishedModelRunWhichCompleted(diseaseGroupId);
+
+        // Assert
+        assertThat(modelRun).isNull();
+    }
+
+    @Test
+    public void getMostRecentlyFinishedModelRunWhichCompletedReturnsCorrectValueIfCompletedModelRuns() {
+        // Arrange
+        int diseaseGroupId = 87;
+        modelRunDao.save(modelRunMalarias1);
+        modelRunDao.save(modelRunDengue1);
+        modelRunDao.save(modelRunDengue2);
+        modelRunDao.save(modelRunDengue3);
+        modelRunDao.save(modelRunDengue4);
+        modelRunDao.save(modelRunDengue5);
+
+        // Act
+        ModelRun modelRun = modelRunDao.getMostRecentlyFinishedModelRunWhichCompleted(diseaseGroupId);
 
         // Assert
         assertThat(modelRun).isEqualTo(modelRunDengue2);

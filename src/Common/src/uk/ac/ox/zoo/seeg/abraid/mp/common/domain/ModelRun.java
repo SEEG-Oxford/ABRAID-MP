@@ -27,7 +27,17 @@ import java.util.List;
                         "    where diseaseGroupId=:diseaseGroupId)"
         ),
         @NamedQuery(
-                name = "getLastCompletedModelRun",
+                name = "getMostRecentlyRequestedModelRunWhichCompleted",
+                query = "from ModelRun " +
+                        "where diseaseGroupId=:diseaseGroupId " +
+                        "and status = 'COMPLETED' " +
+                        "and requestDate =" +
+                        "   (select max(requestDate) from ModelRun" +
+                        "    where diseaseGroupId=:diseaseGroupId" +
+                        "    and status = 'COMPLETED')"
+        ),
+        @NamedQuery(
+                name = "getMostRecentlyFinishedModelRunWhichCompleted",
                 query = "from ModelRun " +
                         "where diseaseGroupId=:diseaseGroupId " +
                         "and status = 'COMPLETED' " +

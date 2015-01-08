@@ -66,16 +66,32 @@ public class ModelRunServiceTest {
     }
 
     @Test
-    public void getLastCompletedModelRun() {
+    public void getMostRecentlyRequestedModelRunWhichCompleted() {
         // Arrange
         int diseaseGroupId = 87;
         ModelRun expectedModelRun = new ModelRun();
         ModelRunDao modelRunDao = mock(ModelRunDao.class);
-        when(modelRunDao.getLastCompletedModelRun(diseaseGroupId)).thenReturn(expectedModelRun);
+        when(modelRunDao.getMostRecentlyRequestedModelRunWhichCompleted(diseaseGroupId)).thenReturn(expectedModelRun);
         ModelRunService modelRunService = new ModelRunServiceImpl(modelRunDao, 7);
 
         // Act
-        ModelRun actualModelRun = modelRunService.getLastCompletedModelRun(diseaseGroupId);
+        ModelRun actualModelRun = modelRunService.getMostRecentlyRequestedModelRunWhichCompleted(diseaseGroupId);
+
+        // Assert
+        assertThat(actualModelRun).isEqualTo(expectedModelRun);
+    }
+
+    @Test
+    public void getMostRecentlyFinishedModelRunWhichCompleted() {
+        // Arrange
+        int diseaseGroupId = 87;
+        ModelRun expectedModelRun = new ModelRun();
+        ModelRunDao modelRunDao = mock(ModelRunDao.class);
+        when(modelRunDao.getMostRecentlyFinishedModelRunWhichCompleted(diseaseGroupId)).thenReturn(expectedModelRun);
+        ModelRunService modelRunService = new ModelRunServiceImpl(modelRunDao, 7);
+
+        // Act
+        ModelRun actualModelRun = modelRunService.getMostRecentlyFinishedModelRunWhichCompleted(diseaseGroupId);
 
         // Assert
         assertThat(actualModelRun).isEqualTo(expectedModelRun);

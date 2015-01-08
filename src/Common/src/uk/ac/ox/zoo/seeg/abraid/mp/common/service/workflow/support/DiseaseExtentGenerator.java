@@ -74,7 +74,7 @@ public class DiseaseExtentGenerator {
         List<DiseaseExtentClass> diseaseExtentClasses = diseaseService.getAllDiseaseExtentClasses();
 
         // Determine whether the model has been successfully run
-        ModelRun modelRun = modelRunService.getLastCompletedModelRun(diseaseGroupId);
+        ModelRun modelRun = modelRunService.getMostRecentlyRequestedModelRunWhichCompleted(diseaseGroupId);
         boolean hasModelBeenSuccessfullyRun = (modelRun != null);
 
         return new DiseaseExtentGeneratorHelper(diseaseGroup, currentDiseaseExtent, adminUnits, diseaseExtentClasses,

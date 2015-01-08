@@ -33,11 +33,18 @@ public interface ModelRunService {
     ModelRun getLastRequestedModelRun(int diseaseGroupId);
 
     /**
-     * Gets the latest completed model run for the specified disease group.
+     * Gets the latest completed model run (by request date) for the specified disease group.
      * @param diseaseGroupId The specified disease group's ID.
      * @return The latest completed model run, or null if there are no completed model runs.
      */
-    ModelRun getLastCompletedModelRun(int diseaseGroupId);
+    ModelRun getMostRecentlyRequestedModelRunWhichCompleted(int diseaseGroupId);
+
+    /**
+     * Gets the latest completed model run (by response date) for the specified disease group.
+     * @param diseaseGroupId The specified disease group's ID.
+     * @return The latest completed model run, or null if there are no completed model runs.
+     */
+    ModelRun getMostRecentlyFinishedModelRunWhichCompleted(int diseaseGroupId);
 
     /**
      * Returns whether or not disease occurrence batching has ever completed for the specified disease group.
