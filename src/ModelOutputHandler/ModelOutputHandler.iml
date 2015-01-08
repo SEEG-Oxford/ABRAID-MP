@@ -15,7 +15,7 @@
       </configuration>
     </facet>
     <facet type="Spring" name="Spring">
-      <configuration process_explicitly_annotated="false">
+      <configuration>
         <fileset id="fileset" name="ModelOutputHandler Application Context" removed="false">
           <file>file://$MODULE_DIR$/src/uk/ac/ox/zoo/seeg/abraid/mp/modeloutputhandler/beans.xml</file>
           <file>file://$MODULE_DIR$/web/WEB-INF/applicationContext.xml</file>
