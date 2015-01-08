@@ -15,7 +15,7 @@
 options(warn=1)
 
 # Stash a list of the default packages
-default.pkgs <- search()[ifelse(unlist(gregexpr("package:",search()))==1,TRUE,FALSE)]
+default.pkgs <- search()
 
 # Define a function to setup and execute the model
 attempt_model_run <- function() {
@@ -222,7 +222,7 @@ clean_up_model_run <- function() {
     }
 
     # Detach all non-default packages
-    all.pkgs <- search()[ifelse(unlist(gregexpr("package:",search()))==1,TRUE,FALSE)]
+    all.pkgs <- search()
     detach.pkgs <- setdiff(all.pkgs, default.pkgs)
     suppressWarnings(lapply(detach.pkgs, detach, character.only = TRUE, unload = TRUE, force = TRUE))
 
