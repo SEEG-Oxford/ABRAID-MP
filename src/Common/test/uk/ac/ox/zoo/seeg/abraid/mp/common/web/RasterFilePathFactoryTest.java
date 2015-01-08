@@ -23,17 +23,17 @@ public class RasterFilePathFactoryTest {
     }
 
     @Test
-    public void getMeanPredictionRasterFileReturnsCorrectFile() {
+    public void getFullMeanPredictionRasterFileReturnsCorrectFile() {
         ModelRun modelRun = new ModelRun("testname", 87, "host", DateTime.now());
-        File file = builder.getMeanPredictionRasterFile(modelRun);
+        File file = builder.getFullMeanPredictionRasterFile(modelRun);
         assertThat(file.getName()).isEqualTo("testname_mean.tif");
         assertThat(file.getParent()).isEqualTo(getCurrentDirectory());
     }
 
     @Test
-    public void getPredictionUncertaintyRasterFileReturnsCorrectFile() {
+    public void getFullPredictionUncertaintyRasterFileReturnsCorrectFile() {
         ModelRun modelRun = new ModelRun("testname", 87, "host", DateTime.now());
-        File file = builder.getPredictionUncertaintyRasterFile(modelRun);
+        File file = builder.getFullPredictionUncertaintyRasterFile(modelRun);
         assertThat(file.getName()).isEqualTo("testname_uncertainty.tif");
         assertThat(file.getParent()).isEqualTo(getCurrentDirectory());
     }

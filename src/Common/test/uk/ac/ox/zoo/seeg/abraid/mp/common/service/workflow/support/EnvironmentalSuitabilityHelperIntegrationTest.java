@@ -117,7 +117,7 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractSprin
     }
 
     private void mockGetRasterFileForModelRun(ModelRun modelRun) {
-        when(rasterFilePathFactory.getMeanPredictionRasterFile(same(modelRun)))
+        when(rasterFilePathFactory.getFullMeanPredictionRasterFile(same(modelRun)))
                 .thenReturn(new File(LARGE_RASTER_FILENAME));
     }
 
