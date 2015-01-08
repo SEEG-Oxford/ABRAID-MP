@@ -3,7 +3,7 @@
   <component name="FacetManager">
     <facet type="Spring" name="Spring">
       <configuration>
-        <fileset id="fileset" name="Spring Application Context" removed="false">
+        <fileset id="fileset" name="DataManager Application Context" removed="false">
           <file>file://$MODULE_DIR$/src/uk/ac/ox/zoo/seeg/abraid/mp/datamanager/config/beans.xml</file>
         </fileset>
       </configuration>
@@ -23,4 +23,3 @@
     <orderEntry type="library" name="datamanager-lib" level="project" />
   </component>
 </module>
-
