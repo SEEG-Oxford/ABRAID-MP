@@ -16,9 +16,14 @@
     </facet>
     <facet type="Spring" name="Spring">
       <configuration>
-        <fileset id="fileset" name="Spring Application Context" removed="false">
+        <fileset id="fileset" name="ModelOutputHandler Application Context" removed="false">
           <file>file://$MODULE_DIR$/src/uk/ac/ox/zoo/seeg/abraid/mp/modeloutputhandler/beans.xml</file>
           <file>file://$MODULE_DIR$/web/WEB-INF/applicationContext.xml</file>
+          <file>file://$MODULE_DIR$/web/WEB-INF/spring-security.xml</file>
+          <file>file://$MODULE_DIR$/web/WEB-INF/modeloutput-security-properties.xml</file>
+        </fileset>
+        <fileset id="fileset2" name="ModelOutputHandler Web Application Context" removed="false">
+          <dependency>fileset</dependency>
           <file>file://$MODULE_DIR$/web/WEB-INF/abraid-servlet-beans.xml</file>
         </fileset>
       </configuration>

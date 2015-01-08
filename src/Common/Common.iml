@@ -7,15 +7,17 @@
           <unit-entry name="sessionFactory" value="dataSource" />
         </datasource-map>
         <naming-strategy-map />
-        <deploymentDescriptor name="hibernate.cfg.xml" url="file://$MODULE_DIR$/src/uk/ac/ox/zoo/seeg/abraid/mp/common/config/hibernate.cfg.xml" />
       </configuration>
     </facet>
     <facet type="Spring" name="Spring">
       <configuration>
-        <fileset id="fileset" name="Spring Application Context" removed="false">
+        <fileset id="fileset" name="Common Application Context" removed="false">
           <file>file://$MODULE_DIR$/src/uk/ac/ox/zoo/seeg/abraid/mp/common/config/beans-database.xml</file>
           <file>file://$MODULE_DIR$/src/uk/ac/ox/zoo/seeg/abraid/mp/common/config/beans-service.xml</file>
           <file>file://$MODULE_DIR$/src/uk/ac/ox/zoo/seeg/abraid/mp/common/config/beans.xml</file>
+        </fileset>
+        <fileset id="fileset2" name="Common Test Application Context" removed="false">
+          <file>file://$MODULE_DIR$/testutils/uk/ac/ox/zoo/seeg/abraid/mp/testutils/test-context.xml</file>
         </fileset>
       </configuration>
     </facet>
