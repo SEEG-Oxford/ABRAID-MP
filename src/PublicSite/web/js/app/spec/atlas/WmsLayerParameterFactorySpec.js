@@ -47,7 +47,7 @@ define([
                     service: "WMS",
                     version: "1.1.0",
                     request: "GetMap",
-                    bbox: "-180.0,-60.0,180.0,85.0",
+                    bbox: "-180.1,-60.0,180.0,85.0",// BBox min set to -180.1 due to bug in Geoserver (should be -180.0)
                     width: 1656,
                     height: 667,
                     srs: "EPSG:4326"
