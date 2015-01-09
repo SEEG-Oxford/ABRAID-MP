@@ -45,7 +45,7 @@ public class MainHandler {
     private static final String RELATIVE_INFLUENCE_CSV = "relative influence csv";
     private static final String EFFECT_CURVES_CSV = "effect curves csv";
     private static final String LOG_SAVING_FILE =
-            "Saving relative %s (%s bytes) for model run \"%s\"";
+            "Saving %s (%s bytes) for model run \"%s\"";
     private static final String LOG_COULD_NOT_SAVE =
             "Could not save %s for model run \"%s\"";
     private static final String RASTER_FILE_ALREADY_EXISTS =
@@ -204,7 +204,7 @@ public class MainHandler {
 
                 File maskedFile = rasterFilePathFactory.getMaskedMeanPredictionRasterFile(modelRun);
                 File maskFile = rasterFilePathFactory.getExtentInputRasterFile(modelRun);
-                rasterExtentMaskHelper.maskRaster(maskedFile, fullFile, maskFile, RasterUtils.NO_DATA_VALUE);
+                rasterExtentMaskHelper.maskRaster(maskedFile, fullFile, maskFile, 0);
 
                 if (modelRun.getStatus() == ModelRunStatus.COMPLETED) {
                     geoserver.publishGeoTIFF(maskedFile);
