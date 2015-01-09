@@ -7,6 +7,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.DistanceFromDiseaseExtentHelper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.EnvironmentalSuitabilityHelper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.MachineWeightingPredictor;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.util.RasterUtils;
 
 import java.util.List;
 
@@ -73,7 +74,7 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
                     addValidationParameters(occurrence, raster);
                 }
             } finally {
-                disposeResource(raster);
+                RasterUtils.disposeRaster(raster);
             }
         }
     }
@@ -134,7 +135,7 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
             raster = esHelper.getLatestMeanPredictionRaster(occurrence.getDiseaseGroup());
             addValidationParameters(occurrence, raster);
         } finally {
-            disposeResource(raster);
+            RasterUtils.disposeRaster(raster);
         }
     }
 
@@ -199,11 +200,5 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
             }
         }
         return diseaseGroup;
-    }
-
-    private void disposeResource(GridCoverage2D raster) {
-        if (raster != null) {
-            raster.dispose(true);
-        }
     }
 }
