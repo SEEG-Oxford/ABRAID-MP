@@ -45,10 +45,7 @@ public class RasterExtentMaskHelper {
                 int extentValue = extentRaster.getSample(i, j, 0);
 
                 if (extentValue == extentAbsenceValue) {
-                    int value = raster.getSample(i, j, 0);
-                    if (value != maskValue && value != RasterUtils.NO_DATA_VALUE) {
-                        raster.setSample(i, j, 0, maskValue);
-                    }
+                    raster.setSample(i, j, 0, maskValue);
                 }
             }
         }
