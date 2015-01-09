@@ -27,7 +27,8 @@ public class ExtentDataWriterImpl implements ExtentDataWriter {
      * @throws java.io.IOException If the data could not be written.
      */
     @Override
-    public void write(final Map<Integer, Integer> extentData, File sourceRasterFile, File targetFile) throws IOException {
+    public void write(final Map<Integer, Integer> extentData, File sourceRasterFile, File targetFile)
+            throws IOException {
         RasterUtils.transformRaster(sourceRasterFile, targetFile, new File[0], new RasterTransformation() {
             @Override
             public void transform(WritableRaster raster, Raster[] referenceRasters) {

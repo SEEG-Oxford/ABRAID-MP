@@ -26,17 +26,18 @@ public class RasterExtentMaskHelper {
         this.extentAbsenceValue = diseaseService.getDiseaseExtentClass(DiseaseExtentClass.ABSENCE).getWeighting();
     }
 
-    public void maskRaster(File targetFile, File sourceRasterFile, File extentRasterFile) throws IOException {
+    public void maskRaster(final File targetFile, final File sourceRasterFile,
+                           final File extentRasterFile, final int maskValue) throws IOException {
         File[] referenceRasterFiles = new File[] { extentRasterFile };
         RasterUtils.transformRaster(sourceRasterFile, targetFile, referenceRasterFiles, new RasterTransformation() {
             @Override
             public void transform(WritableRaster raster, Raster[] referenceRasters) {
-                transformRaster(raster, referenceRasters[0]);
+                transformRaster(raster, referenceRasters[0], maskValue);
             }
         });
     }
 
-    private void transformRaster(WritableRaster raster, Raster extentRaster) {
+    private void transformRaster(WritableRaster raster, Raster extentRaster, int maskValue) {
         LOGGER.info(LOG_TRANSFORMING_RASTER_DATA);
 
         for (int i = 0; i < raster.getWidth(); i++) {
@@ -45,8 +46,8 @@ public class RasterExtentMaskHelper {
 
                 if (extentValue == extentAbsenceValue) {
                     int value = raster.getSample(i, j, 0);
-                    if (value != RasterUtils.NO_DATA_VALUE) {
-                        raster.setSample(i, j, 0, 0);
+                    if (value != maskValue && value != RasterUtils.NO_DATA_VALUE) {
+                        raster.setSample(i, j, 0, maskValue);
                     }
                 }
             }

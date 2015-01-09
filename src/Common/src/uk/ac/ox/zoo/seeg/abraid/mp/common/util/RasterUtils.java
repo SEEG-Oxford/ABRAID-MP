@@ -42,6 +42,7 @@ public final class RasterUtils {
     private static final String LOG_READING_RASTER =
             "Reading raster: %s.";
     public static final int NO_DATA_VALUE = -9999;
+    public static final int UNKNOWN_VALUE = +9999;
     private static final AbstractGridFormat GEOTIFF_FORMAT = new GeoTiffFormat();
     private static final float GEOTIFF_COMPRESSION_LEVEL = 0.9F;
     private static final String GEOTIFF_COMPRESSION_TYPE = "Deflate";

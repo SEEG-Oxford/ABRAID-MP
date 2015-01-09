@@ -16,6 +16,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvEffectCurveCovariateInfluen
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvSubmodelStatistic;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelOutputsMetadata;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.util.RasterUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParser;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.ModelOutputConstants;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.RasterFilePathFactory;
@@ -203,7 +204,7 @@ public class MainHandler {
 
                 File maskedFile = rasterFilePathFactory.getMaskedMeanPredictionRasterFile(modelRun);
                 File maskFile = rasterFilePathFactory.getExtentInputRasterFile(modelRun);
-                rasterExtentMaskHelper.maskRaster(maskedFile, fullFile, maskFile);
+                rasterExtentMaskHelper.maskRaster(maskedFile, fullFile, maskFile, RasterUtils.NO_DATA_VALUE);
 
                 if (modelRun.getStatus() == ModelRunStatus.COMPLETED) {
                     geoserver.publishGeoTIFF(maskedFile);
@@ -224,7 +225,7 @@ public class MainHandler {
 
                 File maskedFile = rasterFilePathFactory.getMaskedPredictionUncertaintyRasterFile(modelRun);
                 File maskFile = rasterFilePathFactory.getExtentInputRasterFile(modelRun);
-                rasterExtentMaskHelper.maskRaster(maskedFile, fullFile, maskFile);
+                rasterExtentMaskHelper.maskRaster(maskedFile, fullFile, maskFile, RasterUtils.UNKNOWN_VALUE);
 
                 if (modelRun.getStatus() == ModelRunStatus.COMPLETED) {
                     geoserver.publishGeoTIFF(maskedFile);
