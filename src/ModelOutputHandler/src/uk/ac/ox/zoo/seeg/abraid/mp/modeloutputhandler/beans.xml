@@ -23,5 +23,6 @@
     <bean id="diseaseExtentGenerationHandler" class="uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web.DiseaseExtentGenerationHandler" autowire="constructor"/>
     <bean id="diseaseOccurrenceHandler" class="uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web.DiseaseOccurrenceHandler" autowire="constructor"/>
     <bean id="diseaseOccurrenceHandlerHelper" class="uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web.DiseaseOccurrenceHandlerHelper" autowire="constructor"/>
+    <bean id="rasterExtentMaskHelper" class="uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web.RasterExtentMaskHelper" autowire="constructor"/>
 
 </beans>
