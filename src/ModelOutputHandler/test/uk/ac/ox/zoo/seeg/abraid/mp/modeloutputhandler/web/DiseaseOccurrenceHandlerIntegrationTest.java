@@ -156,7 +156,7 @@ public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringInteg
         modelRunService.saveModelRun(modelRun);
         flushAndClear();
 
-        when(rasterFilePathFactory.getMeanPredictionRasterFile(eq(modelRun)))
+        when(rasterFilePathFactory.getFullMeanPredictionRasterFile(eq(modelRun)))
                 .thenReturn(new File(LARGE_RASTER_FILENAME));
         return modelRun;
     }
