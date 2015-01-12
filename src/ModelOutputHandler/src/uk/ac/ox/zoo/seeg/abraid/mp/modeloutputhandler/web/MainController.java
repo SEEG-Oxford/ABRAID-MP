@@ -69,6 +69,7 @@ public class MainController extends AbstractController {
             modelRunZip = null;
             // Continue handling the outputs
             ModelRun modelRun = mainHandler.handleOutputs(modelRunZipFile);
+            mainHandler.handleOldRasterDeletion(modelRun.getDiseaseGroupId());
             if (modelRun.getStatus() == ModelRunStatus.FAILED) {
                 sendModelFailureEmail(modelRun);
             }

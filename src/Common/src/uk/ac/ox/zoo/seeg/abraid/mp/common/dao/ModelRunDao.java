@@ -71,4 +71,6 @@ public interface ModelRunDao {
      * @return The ordered list of servers.
      */
     List<String> getModelRunRequestServersByUsage();
+
+    Collection<ModelRun> getModelRunsForDiseaseGroup(int diseaseGroupId);
 }

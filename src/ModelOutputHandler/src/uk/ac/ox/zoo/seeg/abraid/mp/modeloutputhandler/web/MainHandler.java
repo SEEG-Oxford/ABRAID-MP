@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.List;
 
 import static ch.lambdaj.collection.LambdaCollections.with;
@@ -108,6 +109,27 @@ public class MainHandler {
         handlePredictionUncertaintyRaster(modelRun, predUncertaintyRaster);
 
         return modelRun;
+    }
+
+    public void handleOldRasterDeletion(int diseaseGroupId) {
+        ModelRun keep = modelRunService.getMostRecentlyFinishedModelRunWhichCompleted(diseaseGroupId);
+        Collection<ModelRun> delete = modelRunService.getModelRunsForDiseaseGroup(diseaseGroupId);
+        delete.remove(keep);
+
+        for(ModelRun run : delete) {
+            File[] files = new File[] {
+                rasterFilePathFactory.getFullMeanPredictionRasterFile(run),
+                rasterFilePathFactory.getFullPredictionUncertaintyRasterFile(run)
+            };
+            for (File file : files) {
+                if (file.exists()) {
+                    if (!file.delete()) {
+                        LOGGER.warn("bad");
+                    }
+                }
+            }
+        }
+
     }
 
     private JsonModelOutputsMetadata extractMetadata(ZipFile zipFile) throws ZipException, IOException {

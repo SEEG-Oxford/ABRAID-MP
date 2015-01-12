@@ -89,6 +89,11 @@ public class ModelRunDaoImpl extends AbstractDao<ModelRun, Integer> implements M
         return query.list();
     }
 
+    @Override
+    public Collection<ModelRun> getModelRunsForDiseaseGroup(int diseaseGroupId) {
+        return listNamedQuery("getModelRunsForDiseaseGroup", "diseaseGroupId", diseaseGroupId);
+    }
+
     private ModelRun firstOrNull(List<ModelRun> modelRuns) {
         return (modelRuns != null && modelRuns.size() > 0) ? modelRuns.get(0) : null;
     }

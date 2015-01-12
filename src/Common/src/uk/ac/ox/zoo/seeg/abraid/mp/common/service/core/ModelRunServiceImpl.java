@@ -104,4 +104,9 @@ public class ModelRunServiceImpl implements ModelRunService {
     public List<String> getModelRunRequestServersByUsage() {
         return modelRunDao.getModelRunRequestServersByUsage();
     }
+
+    @Override
+    public Collection<ModelRun> getModelRunsForDiseaseGroup(int diseaseGroupId) {
+        return modelRunDao.getModelRunsForDiseaseGroup(diseaseGroupId);
+    }
 }
