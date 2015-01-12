@@ -39,7 +39,8 @@ public class ModelRunDaoImpl extends AbstractDao<ModelRun, Integer> implements M
      */
     @Override
     public ModelRun getMostRecentlyRequestedModelRunWhichCompleted(int diseaseGroupId) {
-        return firstOrNull(listNamedQuery("getMostRecentlyRequestedModelRunWhichCompleted", "diseaseGroupId", diseaseGroupId));
+        return firstOrNull(listNamedQuery(
+                "getMostRecentlyRequestedModelRunWhichCompleted", "diseaseGroupId", diseaseGroupId));
     }
 
     /**
