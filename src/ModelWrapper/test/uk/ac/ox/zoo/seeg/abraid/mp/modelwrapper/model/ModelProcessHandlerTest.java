@@ -46,7 +46,7 @@ public class ModelProcessHandlerTest {
         target.onProcessFailed(mockProcessException);
 
         // Assert
-        verify(mockStatusReporter).report(ModelRunStatus.FAILED, "", "Error message: expectedMessage. Standard error: ");
+        verify(mockStatusReporter).report(ModelRunStatus.FAILED, "", "Error message: expectedMessage. " + System.lineSeparator() + "Standard error: " + System.lineSeparator());
     }
 
     @Test
