@@ -195,12 +195,7 @@ attempt_model_run <- function() {
 }
 
 attempt_model_run_with_clean_environment <- function() {
-    print("Before")
-    print(ls())
-    print(ls(envir = globalenv()))
-    print(search())
-
-    # Replace the environment of the attempt_model_run function, too ensure runs are completely independant
+    # Replace the environment of the attempt_model_run function, to ensure runs are completely independent
     environment(attempt_model_run) <- new.env()
 
     # Perform model run
