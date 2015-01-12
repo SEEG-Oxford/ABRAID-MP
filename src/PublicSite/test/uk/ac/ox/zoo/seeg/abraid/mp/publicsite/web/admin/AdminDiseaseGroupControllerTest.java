@@ -92,7 +92,8 @@ public class AdminDiseaseGroupControllerTest {
         DiseaseGroup diseaseGroup = new DiseaseGroup(87);
 
         when(modelRunService.getLastRequestedModelRun(diseaseGroupId)).thenReturn(lastRequestedModelRun);
-        when(modelRunService.getLastCompletedModelRun(diseaseGroupId)).thenReturn(lastCompletedModelRun);
+        when(modelRunService.getMostRecentlyFinishedModelRunWhichCompleted(diseaseGroupId))
+                .thenReturn(lastCompletedModelRun);
         when(diseaseService.getDiseaseOccurrenceStatistics(diseaseGroupId)).thenReturn(statistics);
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
 

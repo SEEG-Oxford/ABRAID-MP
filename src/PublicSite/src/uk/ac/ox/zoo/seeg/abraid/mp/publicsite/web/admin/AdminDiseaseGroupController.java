@@ -115,7 +115,7 @@ public class AdminDiseaseGroupController extends AbstractController {
     @ResponseBody
     public ResponseEntity<JsonModelRunInformation> getModelRunInformation(@PathVariable Integer diseaseGroupId) {
         ModelRun lastRequestedModelRun = modelRunService.getLastRequestedModelRun(diseaseGroupId);
-        ModelRun lastCompletedModelRun = modelRunService.getLastCompletedModelRun(diseaseGroupId);
+        ModelRun lastCompletedModelRun = modelRunService.getMostRecentlyFinishedModelRunWhichCompleted(diseaseGroupId);
         DiseaseOccurrenceStatistics statistics = diseaseService.getDiseaseOccurrenceStatistics(diseaseGroupId);
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         List<DiseaseOccurrence> goldStandardOccurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(

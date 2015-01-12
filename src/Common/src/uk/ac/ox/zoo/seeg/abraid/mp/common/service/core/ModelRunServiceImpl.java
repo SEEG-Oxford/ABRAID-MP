@@ -51,13 +51,23 @@ public class ModelRunServiceImpl implements ModelRunService {
     }
 
     /**
-     * Gets the latest completed model run for the specified disease group.
+     * Gets the latest completed model run (by request date) for the specified disease group.
      * @param diseaseGroupId The specified disease group's ID.
      * @return The latest completed model run, or null if there are no completed model runs.
      */
     @Override
-    public ModelRun getLastCompletedModelRun(int diseaseGroupId) {
-        return modelRunDao.getLastCompletedModelRun(diseaseGroupId);
+    public ModelRun getMostRecentlyRequestedModelRunWhichCompleted(int diseaseGroupId) {
+        return modelRunDao.getMostRecentlyRequestedModelRunWhichCompleted(diseaseGroupId);
+    }
+
+    /**
+     * Gets the latest completed model run (by response date) for the specified disease group.
+     * @param diseaseGroupId The specified disease group's ID.
+     * @return The latest completed model run, or null if there are no completed model runs.
+     */
+    @Override
+    public ModelRun getMostRecentlyFinishedModelRunWhichCompleted(int diseaseGroupId) {
+        return modelRunDao.getMostRecentlyFinishedModelRunWhichCompleted(diseaseGroupId);
     }
 
     @Override

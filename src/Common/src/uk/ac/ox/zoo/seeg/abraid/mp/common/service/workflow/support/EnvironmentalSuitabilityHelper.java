@@ -55,7 +55,7 @@ public class EnvironmentalSuitabilityHelper {
      * or null if no such raster exists.
      */
     public GridCoverage2D getLatestMeanPredictionRaster(DiseaseGroup diseaseGroup) {
-        ModelRun modelRun = modelRunService.getLastCompletedModelRun(diseaseGroup.getId());
+        ModelRun modelRun = modelRunService.getMostRecentlyRequestedModelRunWhichCompleted(diseaseGroup.getId());
         if (modelRun != null) {
             File rasterFile = rasterFilePathFactory.getMeanPredictionRasterFile(modelRun);
             return readRasterFile(rasterFile);

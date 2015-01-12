@@ -82,7 +82,7 @@ public class DiseaseExtentGeneratorTest {
         mockGetDiseaseOccurrencesForUpdatedDiseaseExtent(diseaseGroup.getDiseaseExtentParameters(),
                                                          new ArrayList<DiseaseOccurrence>());
         mockGetExistingDiseaseExtent(new ArrayList<AdminUnitDiseaseExtentClass>());
-        mockGetLastCompletedModelRun(false);
+        mockGetMostRecentlyRequestedModelRunWhichCompleted(false);
 
         // Act
         diseaseExtentGenerator.generateDiseaseExtent(diseaseGroup, minimumOccurrenceDate, false);
@@ -101,7 +101,7 @@ public class DiseaseExtentGeneratorTest {
         standardMocks();
         mockGetDiseaseOccurrencesForInitialDiseaseExtent(getOccurrences());
         mockGetExistingDiseaseExtent(new ArrayList<AdminUnitDiseaseExtentClass>());
-        mockGetLastCompletedModelRun(false);
+        mockGetMostRecentlyRequestedModelRunWhichCompleted(false);
 
         // Act
         diseaseExtentGenerator.generateDiseaseExtent(diseaseGroup, minimumOccurrenceDate, false);
@@ -120,7 +120,7 @@ public class DiseaseExtentGeneratorTest {
         standardMocks();
         mockGetDiseaseOccurrencesForInitialDiseaseExtentUsingGoldStandardOccurrences(getOccurrences());
         mockGetExistingDiseaseExtent(new ArrayList<AdminUnitDiseaseExtentClass>());
-        mockGetLastCompletedModelRun(false);
+        mockGetMostRecentlyRequestedModelRunWhichCompleted(false);
 
         // Act
         diseaseExtentGenerator.generateDiseaseExtent(diseaseGroup, minimumOccurrenceDate, true);
@@ -157,7 +157,7 @@ public class DiseaseExtentGeneratorTest {
                 new ArrayList<DiseaseOccurrence>());
         mockGetExistingDiseaseExtent(existingDiseaseExtent);
         mockGetRelevantReviews(new ArrayList<AdminUnitReview>());
-        mockGetLastCompletedModelRun(true);
+        mockGetMostRecentlyRequestedModelRunWhichCompleted(true);
 
         // Act
         diseaseExtentGenerator.generateDiseaseExtent(diseaseGroup, minimumOccurrenceDate, false);
@@ -180,7 +180,7 @@ public class DiseaseExtentGeneratorTest {
         mockGetDiseaseOccurrencesForUpdatedDiseaseExtent(diseaseGroup.getDiseaseExtentParameters(), getOccurrences());
         mockGetExistingDiseaseExtent(existingDiseaseExtent);
         mockGetRelevantReviews(new ArrayList<AdminUnitReview>());
-        mockGetLastCompletedModelRun(true);
+        mockGetMostRecentlyRequestedModelRunWhichCompleted(true);
 
         // Act
         diseaseExtentGenerator.generateDiseaseExtent(diseaseGroup, minimumOccurrenceDate, false);
@@ -203,7 +203,7 @@ public class DiseaseExtentGeneratorTest {
         mockGetDiseaseOccurrencesForUpdatedDiseaseExtent(diseaseGroup.getDiseaseExtentParameters(), getOccurrences());
         mockGetExistingDiseaseExtent(existingDiseaseExtent);
         mockGetRelevantReviews(getReviews());
-        mockGetLastCompletedModelRun(true);
+        mockGetMostRecentlyRequestedModelRunWhichCompleted(true);
 
         // Act
         diseaseExtentGenerator.generateDiseaseExtent(diseaseGroup, minimumOccurrenceDate, false);
@@ -231,7 +231,7 @@ public class DiseaseExtentGeneratorTest {
 
         mockGetExistingDiseaseExtent(existingDiseaseExtent);
         mockGetRelevantReviews(new ArrayList<AdminUnitReview>());
-        mockGetLastCompletedModelRun(true);
+        mockGetMostRecentlyRequestedModelRunWhichCompleted(true);
 
         // Act
         diseaseExtentGenerator.generateDiseaseExtent(diseaseGroup, minimumOccurrenceDate, false);
@@ -259,7 +259,7 @@ public class DiseaseExtentGeneratorTest {
         mockGetDiseaseOccurrencesForUpdatedDiseaseExtent(parameters, getOccurrences());
         mockGetExistingDiseaseExtent(existingDiseaseExtent);
         mockGetRelevantReviews(new ArrayList<AdminUnitReview>());
-        mockGetLastCompletedModelRun(false);
+        mockGetMostRecentlyRequestedModelRunWhichCompleted(false);
 
         // Act
         diseaseExtentGenerator.generateDiseaseExtent(diseaseGroup, minimumOccurrenceDate, false);
@@ -287,7 +287,7 @@ public class DiseaseExtentGeneratorTest {
 
         mockGetExistingDiseaseExtent(existingDiseaseExtent);
         mockGetRelevantReviews(new ArrayList<AdminUnitReview>());
-        mockGetLastCompletedModelRun(true);
+        mockGetMostRecentlyRequestedModelRunWhichCompleted(true);
 
         // Act
         diseaseExtentGenerator.generateDiseaseExtent(diseaseGroup, minimumOccurrenceDate, true);
@@ -366,9 +366,9 @@ public class DiseaseExtentGeneratorTest {
         when(expertService.getAllAdminUnitReviewsForDiseaseGroup(diseaseGroupId)).thenReturn(reviews);
     }
 
-    private void mockGetLastCompletedModelRun(boolean hasModelBeenSuccessfullyRun) {
+    private void mockGetMostRecentlyRequestedModelRunWhichCompleted(boolean hasModelBeenSuccessfullyRun) {
         ModelRun modelRun = hasModelBeenSuccessfullyRun ? new ModelRun() : null;
-        when(modelRunService.getLastCompletedModelRun(diseaseGroupId)).thenReturn(modelRun);
+        when(modelRunService.getMostRecentlyRequestedModelRunWhichCompleted(diseaseGroupId)).thenReturn(modelRun);
     }
 
     private void expectGetDiseaseOccurrencesForDiseaseExtent(int times) {
