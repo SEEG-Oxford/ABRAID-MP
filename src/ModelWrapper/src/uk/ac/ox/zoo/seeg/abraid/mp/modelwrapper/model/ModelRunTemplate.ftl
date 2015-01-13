@@ -232,7 +232,7 @@ if (result == 1) {
     # Set up for a 2nd attempt at running the model
     clean_up_model_run()
 
-    # Reattempt try the model run
+    # Reattempt the model run
     result <- attempt_model_run_with_clean_environment()
 }
 
