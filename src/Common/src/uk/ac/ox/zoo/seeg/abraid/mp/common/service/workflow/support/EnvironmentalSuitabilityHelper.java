@@ -48,6 +48,7 @@ public class EnvironmentalSuitabilityHelper {
      * Gets the latest mean prediction raster for the disease group. This can then be used to find the environmental
      * suitability of points. Use this routine in conjunction with findEnvironmentalSuitability(occurrence, raster)
      * when you have several occurrences in the same disease group.
+     * Note: The raster returned by the method must be disposed using RasterUtils.disposeRaster when no longer in use.
      * @param diseaseGroup The disease group.
      * @return The mean prediction raster returned by the most recent completed model run for this disease group,
      * or null if no such raster exists.

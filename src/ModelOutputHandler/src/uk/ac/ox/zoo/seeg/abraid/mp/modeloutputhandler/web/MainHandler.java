@@ -63,14 +63,14 @@ public class MainHandler {
     private final ModelRunService modelRunService;
     private final GeoserverRestService geoserver;
     private final RasterFilePathFactory rasterFilePathFactory;
-    private final RasterExtentMaskHelper rasterExtentMaskHelper;
+    private final ModelOutputRasterMaskingHelper modelOutputRasterMaskingHelper;
 
     public MainHandler(ModelRunService modelRunService, GeoserverRestService geoserver,
-                       RasterFilePathFactory rasterFilePathFactory, RasterExtentMaskHelper rasterExtentMaskHelper) {
+                       RasterFilePathFactory rasterFilePathFactory, ModelOutputRasterMaskingHelper modelOutputRasterMaskingHelper) {
         this.modelRunService = modelRunService;
         this.geoserver = geoserver;
         this.rasterFilePathFactory = rasterFilePathFactory;
-        this.rasterExtentMaskHelper = rasterExtentMaskHelper;
+        this.modelOutputRasterMaskingHelper = modelOutputRasterMaskingHelper;
     }
 
     /**
@@ -115,6 +115,13 @@ public class MainHandler {
         return modelRun;
     }
 
+    /**
+     * Handles the deletion of old model outputs. These are limited to pre-masking raster files that are no longer the
+     * newest model run, for the given disease group.
+     * @param diseaseGroupId The given disease group's id.
+     * @return A boolean which is true if the deletions succeeded,
+     *         or is false if one or more files could not be deleted (e.g. are currently in use elsewhere).
+     */
     public boolean handleOldRasterDeletion(int diseaseGroupId) {
         ModelRun keep = modelRunService.getMostRecentlyFinishedModelRunWhichCompleted(diseaseGroupId);
         Collection<ModelRun> delete = modelRunService.getModelRunsForDiseaseGroup(diseaseGroupId);
@@ -234,7 +241,7 @@ public class MainHandler {
 
                 File maskedFile = rasterFilePathFactory.getMaskedMeanPredictionRasterFile(modelRun);
                 File maskFile = rasterFilePathFactory.getExtentInputRasterFile(modelRun);
-                rasterExtentMaskHelper.maskRaster(maskedFile, fullFile, maskFile, 0);
+                modelOutputRasterMaskingHelper.maskRaster(maskedFile, fullFile, maskFile, 0);
 
                 if (modelRun.getStatus() == ModelRunStatus.COMPLETED) {
                     geoserver.publishGeoTIFF(maskedFile);
@@ -255,7 +262,7 @@ public class MainHandler {
 
                 File maskedFile = rasterFilePathFactory.getMaskedPredictionUncertaintyRasterFile(modelRun);
                 File maskFile = rasterFilePathFactory.getExtentInputRasterFile(modelRun);
-                rasterExtentMaskHelper.maskRaster(maskedFile, fullFile, maskFile, RasterUtils.UNKNOWN_VALUE);
+                modelOutputRasterMaskingHelper.maskRaster(maskedFile, fullFile, maskFile, RasterUtils.UNKNOWN_VALUE);
 
                 if (modelRun.getStatus() == ModelRunStatus.COMPLETED) {
                     geoserver.publishGeoTIFF(maskedFile);
