@@ -13,7 +13,7 @@ public interface RasterTransformation {
     /**
      * Perform a raster transformation operation.
      * @param raster The raster which should be updated.
-     * @param referenceRasters One or more reference rasters which may be compared against when updating the main raster.
+     * @param referenceRasters One or more rasters which may be compared against when updating the main raster.
      */
     void transform(WritableRaster raster, Raster[] referenceRasters);
 }
