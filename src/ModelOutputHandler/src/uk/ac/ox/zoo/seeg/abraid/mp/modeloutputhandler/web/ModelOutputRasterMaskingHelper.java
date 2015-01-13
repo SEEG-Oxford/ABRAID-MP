@@ -21,14 +21,17 @@ public class ModelOutputRasterMaskingHelper {
             "Masking out known absence regions in model output raster.";
 
     private final int extentAbsenceValue;
+    private final File waterBodiesMaskRasterFile;
 
-    public ModelOutputRasterMaskingHelper(DiseaseService diseaseService) {
+    public ModelOutputRasterMaskingHelper(DiseaseService diseaseService, File waterBodiesMaskRasterFile) {
+        this.waterBodiesMaskRasterFile = waterBodiesMaskRasterFile;
         this.extentAbsenceValue = diseaseService.getDiseaseExtentClass(DiseaseExtentClass.ABSENCE).getWeighting();
     }
 
     /**
      * Creates a new file at the targetFile location based on the sourceRasterFile but where pixels aligned with
-     * DiseaseExtentClass.ABSENCE pixels in the extentRasterFile have been replaced with extentMaskValue.
+     * DiseaseExtentClass.ABSENCE pixels in the extentRasterFile have been replaced with extentMaskValue. Pixels aligned
+     * with known water bodies will also get set to RasterUtils.NO_DATA_VALUE.
      * @param targetFile The location at which to write the updated file.
      * @param sourceRasterFile The raster to be transformed
      * @param extentRasterFile The extent raster to compare against.
@@ -37,24 +40,33 @@ public class ModelOutputRasterMaskingHelper {
      */
     public void maskRaster(final File targetFile, final File sourceRasterFile,
                            final File extentRasterFile, final int extentMaskValue) throws IOException {
-        File[] referenceRasterFiles = new File[] {extentRasterFile};
+        File[] referenceRasterFiles = new File[] {extentRasterFile, waterBodiesMaskRasterFile};
         RasterUtils.transformRaster(sourceRasterFile, targetFile, referenceRasterFiles, new RasterTransformation() {
             @Override
             public void transform(WritableRaster raster, Raster[] referenceRasters) {
-                transformRaster(raster, referenceRasters[0], extentMaskValue);
+                transformRaster(raster, referenceRasters[0], extentMaskValue, referenceRasters[1]);
             }
         });
     }
 
-    private void transformRaster(WritableRaster raster, Raster extentRaster, int maskValue) {
+    private void transformRaster(WritableRaster raster, Raster extentRaster, int extentMaskValue,
+                                 Raster waterBodiesMaskRaster) {
         LOGGER.info(LOG_TRANSFORMING_RASTER_DATA);
 
         for (int i = 0; i < raster.getWidth(); i++) {
             for (int j = 0; j < raster.getHeight(); j++) {
-                int extentValue = extentRaster.getSample(i, j, 0);
+                int rasterValue = raster.getSample(i, j, 0);
+                if (rasterValue != RasterUtils.NO_DATA_VALUE) {
+                    int waterBodiesValue = waterBodiesMaskRaster.getSample(i, j, 0);
+                    if (waterBodiesValue != RasterUtils.NO_DATA_VALUE) {
+                        raster.setSample(i, j, 0, RasterUtils.NO_DATA_VALUE);
+                    } else {
+                        int extentValue = extentRaster.getSample(i, j, 0);
+                        if (extentValue == extentAbsenceValue) {
+                            raster.setSample(i, j, 0, extentMaskValue);
+                        }
+                    }
 
-                if (extentValue == extentAbsenceValue) {
-                    raster.setSample(i, j, 0, maskValue);
                 }
             }
         }
