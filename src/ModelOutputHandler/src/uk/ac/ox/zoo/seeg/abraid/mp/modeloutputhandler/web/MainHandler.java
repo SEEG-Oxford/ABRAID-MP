@@ -53,6 +53,10 @@ public class MainHandler {
             "Raster file \"%s\" already exists";
     private static final String FAILED_TO_CREATE_DIRECTORY_FOR_OUTPUT_RASTERS =
             "Failed to create directory for output rasters: %s";
+    private static final String UNABLE_TO_DELETE_RASTER =
+            "Unable to delete outdated 'full' raster file '%s'. Will reattempt deletion at next model run.";
+    private static final String DELETED_OUTDATED_RASTER =
+            "Deleted outdated 'full' raster file '%s'";
 
     private static final Charset UTF8 = StandardCharsets.UTF_8;
 
@@ -111,11 +115,12 @@ public class MainHandler {
         return modelRun;
     }
 
-    public void handleOldRasterDeletion(int diseaseGroupId) {
+    public boolean handleOldRasterDeletion(int diseaseGroupId) {
         ModelRun keep = modelRunService.getMostRecentlyFinishedModelRunWhichCompleted(diseaseGroupId);
         Collection<ModelRun> delete = modelRunService.getModelRunsForDiseaseGroup(diseaseGroupId);
         delete.remove(keep);
 
+        boolean result = true;
         for(ModelRun run : delete) {
             File[] files = new File[] {
                 rasterFilePathFactory.getFullMeanPredictionRasterFile(run),
@@ -124,12 +129,15 @@ public class MainHandler {
             for (File file : files) {
                 if (file.exists()) {
                     if (!file.delete()) {
-                        LOGGER.warn("bad");
+                        result = false;
+                        LOGGER.warn(String.format(UNABLE_TO_DELETE_RASTER, file.getAbsolutePath()));
+                    } else {
+                        LOGGER.info(String.format(DELETED_OUTDATED_RASTER, file.getAbsolutePath()));
                     }
                 }
             }
         }
-
+        return result;
     }
 
     private JsonModelOutputsMetadata extractMetadata(ZipFile zipFile) throws ZipException, IOException {
