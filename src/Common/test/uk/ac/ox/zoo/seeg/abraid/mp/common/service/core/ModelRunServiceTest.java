@@ -169,6 +169,6 @@ public class ModelRunServiceTest {
 
         // Assert
         assertThat(result).isEqualTo(expectedRuns);
-        verify(modelRunDao).getLastRequestedModelRun(87);
+        verify(modelRunDao).getModelRunsForDiseaseGroup(87);
     }
 }

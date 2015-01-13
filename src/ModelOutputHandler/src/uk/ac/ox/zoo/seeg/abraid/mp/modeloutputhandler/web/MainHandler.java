@@ -65,8 +65,10 @@ public class MainHandler {
     private final RasterFilePathFactory rasterFilePathFactory;
     private final ModelOutputRasterMaskingHelper modelOutputRasterMaskingHelper;
 
-    public MainHandler(ModelRunService modelRunService, GeoserverRestService geoserver,
-                       RasterFilePathFactory rasterFilePathFactory, ModelOutputRasterMaskingHelper modelOutputRasterMaskingHelper) {
+    public MainHandler(ModelRunService modelRunService,
+                       GeoserverRestService geoserver,
+                       RasterFilePathFactory rasterFilePathFactory,
+                       ModelOutputRasterMaskingHelper modelOutputRasterMaskingHelper) {
         this.modelRunService = modelRunService;
         this.geoserver = geoserver;
         this.rasterFilePathFactory = rasterFilePathFactory;
@@ -123,12 +125,12 @@ public class MainHandler {
      *         or is false if one or more files could not be deleted (e.g. are currently in use elsewhere).
      */
     public boolean handleOldRasterDeletion(int diseaseGroupId) {
-        ModelRun keep = modelRunService.getMostRecentlyFinishedModelRunWhichCompleted(diseaseGroupId);
+        ModelRun keep = modelRunService.getMostRecentlyRequestedModelRunWhichCompleted(diseaseGroupId);
         Collection<ModelRun> delete = modelRunService.getModelRunsForDiseaseGroup(diseaseGroupId);
         delete.remove(keep);
 
         boolean result = true;
-        for(ModelRun run : delete) {
+        for (ModelRun run : delete) {
             File[] files = new File[] {
                 rasterFilePathFactory.getFullMeanPredictionRasterFile(run),
                 rasterFilePathFactory.getFullPredictionUncertaintyRasterFile(run)

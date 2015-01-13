@@ -37,7 +37,7 @@ public class ModelOutputRasterMaskingHelper {
      */
     public void maskRaster(final File targetFile, final File sourceRasterFile,
                            final File extentRasterFile, final int extentMaskValue) throws IOException {
-        File[] referenceRasterFiles = new File[] { extentRasterFile };
+        File[] referenceRasterFiles = new File[] {extentRasterFile};
         RasterUtils.transformRaster(sourceRasterFile, targetFile, referenceRasterFiles, new RasterTransformation() {
             @Override
             public void transform(WritableRaster raster, Raster[] referenceRasters) {

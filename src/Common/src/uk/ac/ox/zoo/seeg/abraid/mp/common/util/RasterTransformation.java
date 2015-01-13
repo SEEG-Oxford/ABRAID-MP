@@ -15,5 +15,5 @@ public interface RasterTransformation {
      * @param raster The raster which should be updated.
      * @param referenceRasters One or more reference raster which may be compared against when updating the main raster.
      */
-    public void transform(WritableRaster raster, Raster[] referenceRasters);
+    void transform(WritableRaster raster, Raster[] referenceRasters);
 }

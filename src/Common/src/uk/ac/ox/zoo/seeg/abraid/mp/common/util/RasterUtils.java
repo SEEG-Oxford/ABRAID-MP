@@ -18,6 +18,7 @@ import org.opengis.parameter.ParameterValue;
 
 import javax.media.jai.PlanarImage;
 import java.awt.image.Raster;
+import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
@@ -53,13 +54,13 @@ public final class RasterUtils {
             new Hints(Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, GeometryUtils.WGS_84_CRS);
 
     /**
-     * The standard raster NODATA value (-9999)
+     * The standard raster NODATA value (-9999).
      */
     public static final int NO_DATA_VALUE = -9999;
 
     /**
-     * A alternative raster NODATA value, to be used instead of RasterUtils.NO_DATA_VALUE for pixel where the value is
-     * intentionally excluded.
+     * A alternative raster NODATA value, to be used instead of RasterUtils.NO_DATA_VALUE for pixels where the value is
+     * intentionally excluded, but which are on land.
      */
     public static final int UNKNOWN_VALUE = +9999;
 
@@ -89,12 +90,12 @@ public final class RasterUtils {
 
             // Load reference rasters
             LOGGER.info(LOG_LOADING_REFERENCE_RASTERS);
-            for (int i=0; i < numberOfReferenceRasters; i++) {
+            for (int i = 0; i < numberOfReferenceRasters; i++) {
                 referenceRasters[i] = loadRaster(referenceRasterFiles[i]);
             }
             // Extract raw data from the reference rasters
             Raster[] referenceRastersData = new Raster[numberOfReferenceRasters];
-            for (int i=0; i < numberOfReferenceRasters; i++) {
+            for (int i = 0; i < numberOfReferenceRasters; i++) {
                 referenceRastersData[i] = referenceRasters[i].getRenderedImage().getData();
             }
 
@@ -107,7 +108,7 @@ public final class RasterUtils {
             saveRaster(targetRasterFile, rasterData, rasterExtent, rasterProperties);
         } finally {
             disposeRaster(sourceRaster);
-            for (int i=0; i < numberOfReferenceRasters; i++) {
+            for (int i = 0; i < numberOfReferenceRasters; i++) {
                 disposeRaster(referenceRasters[i]);
             }
         }
@@ -177,7 +178,10 @@ public final class RasterUtils {
      */
     public static void disposeRaster(GridCoverage2D raster) {
         if (raster != null) {
-            ImageUtilities.disposePlanarImageChain((PlanarImage) raster.getRenderedImage());
+            RenderedImage image = raster.getRenderedImage();
+            if (image != null) {
+                ImageUtilities.disposePlanarImageChain((PlanarImage) image);
+            }
             raster.dispose(true);
         }
     }
