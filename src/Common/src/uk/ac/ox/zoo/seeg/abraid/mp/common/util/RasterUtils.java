@@ -46,13 +46,22 @@ public final class RasterUtils {
             "Reading raster: %s.";
     private static final String CANNOT_FIND_FILE_MESSAGE = "Cannot find raster file %s";
 
-    public static final int NO_DATA_VALUE = -9999;
-    public static final int UNKNOWN_VALUE = +9999;
     private static final AbstractGridFormat GEOTIFF_FORMAT = new GeoTiffFormat();
     private static final float GEOTIFF_COMPRESSION_LEVEL = 0.9F;
     private static final String GEOTIFF_COMPRESSION_TYPE = "Deflate";
     private static final Hints RASTER_READ_HINTS =
             new Hints(Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, GeometryUtils.WGS_84_CRS);
+
+    /**
+     * The standard raster NODATA value (-9999)
+     */
+    public static final int NO_DATA_VALUE = -9999;
+
+    /**
+     * A alternative raster NODATA value, to be used instead of RasterUtils.NO_DATA_VALUE for pixel where the value is
+     * intentionally excluded.
+     */
+    public static final int UNKNOWN_VALUE = +9999;
 
     /**
      * Applies a transformation operation to a raster file and saves the updated raster at a new location.
