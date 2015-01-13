@@ -67,20 +67,26 @@ public class MainController extends AbstractController {
 
             // Save the request body to a temporary file
             modelRunZipFile = saveRequestBodyToTemporaryFile(modelRunZip);
+
             // Ensure the request body is eligible for garbage collection
             modelRunZip = null;
+
             // Continue handling the outputs
             ModelRun modelRun = mainHandler.handleOutputs(modelRunZipFile);
-            boolean deleteResult = mainHandler.handleOldRasterDeletion(modelRun.getDiseaseGroupId());
 
+            // Delete old pre-mask raster outputs (outside of the "mainHandler.handleOutputs" transaction)
+            boolean deleteResult = mainHandler.handleOldRasterDeletion(modelRun.getDiseaseGroupId());
             if (!deleteResult) {
                 sendCleanUpFailureEmail(modelRun);
             }
 
+            // Announce failed model runs
             if (modelRun.getStatus() == ModelRunStatus.FAILED) {
                 sendModelFailureEmail(modelRun);
 
             }
+
+            // Do background post processing (e.g. validation parameter updates)
             handlersAsyncWrapper.handle(modelRun);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);

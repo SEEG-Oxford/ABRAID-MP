@@ -444,6 +444,28 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
         assertThat(result.get(2)).isEqualTo("host1");
     }
 
+    @Test
+    public void getModelRunsForDiseaseGroupGetsCorrectSetOfModelRuns() {
+        // Arrange
+        modelRunDao.save(modelRunDengue1);
+        modelRunDao.save(modelRunDengue2);
+        modelRunDao.save(modelRunDengue3);
+        modelRunDao.save(modelRunDengue4);
+        modelRunDao.save(modelRunDengue5);
+        modelRunDao.save(modelRunMalarias1);
+
+        // Act
+        Collection<ModelRun> result = modelRunDao.getModelRunsForDiseaseGroup(87);
+
+        // Assert
+        assertThat(result).hasSize(5);
+        assertThat(result).contains(modelRunDengue1);
+        assertThat(result).contains(modelRunDengue2);
+        assertThat(result).contains(modelRunDengue3);
+        assertThat(result).contains(modelRunDengue4);
+        assertThat(result).contains(modelRunDengue5);
+    }
+
     private ModelRunAdminUnitDiseaseExtentClass createAdminUnitDiseaseExtentClass(
             ModelRun run, String diseaseExtentClass,
             Integer adminUnitTropicalGaul, Integer adminUnitGlobalGaul) {

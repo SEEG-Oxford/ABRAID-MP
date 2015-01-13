@@ -23,7 +23,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * foo
+ * Utilities for working with raster files.
  * Copyright (c) 2014 University of Oxford
  */
 public final class RasterUtils {
@@ -54,6 +54,14 @@ public final class RasterUtils {
     private static final Hints RASTER_READ_HINTS =
             new Hints(Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, GeometryUtils.WGS_84_CRS);
 
+    /**
+     * Applies a transformation operation to a raster file and saves the updated raster at a new location.
+     * @param sourceRasterFile The file location of the raster to be transformed.
+     * @param targetRasterFile The file location at which to save the updated raster.
+     * @param referenceRasterFiles The file locations of any additional raster required to perform the transformation.
+     * @param transformation The RasterTransformation to be performed.
+     * @throws IOException thrown if unable to complete the transformation.
+     */
     public static void transformRaster(File sourceRasterFile, File targetRasterFile, File[] referenceRasterFiles,
                                        RasterTransformation transformation) throws IOException {
         int numberOfReferenceRasters = referenceRasterFiles.length;
@@ -96,6 +104,13 @@ public final class RasterUtils {
         }
     }
 
+    /**
+     * Load a raster file from a given location. This function assumes WGS84 GeoTiff files.
+     * NOTE: All loaded rasters must subsequently be disposed using RasterUtils.disposeRaster.
+     * @param location The file location from which to load the raster.
+     * @return The raster coverage object.
+     * @throws IOException thrown if unable to load the raster.
+     */
     public static GridCoverage2D loadRaster(File location) throws IOException {
         LOGGER.info(String.format(LOG_READING_RASTER, location.getAbsolutePath()));
         if (location.exists()) {
@@ -117,8 +132,16 @@ public final class RasterUtils {
         }
     }
 
-    public static void saveRaster(File location, WritableRaster raster, Envelope2D extents, GridSampleDimension[] properties)
-            throws IOException {
+    /**
+     * Save a set of raster data at a given location.
+     * @param location The file location at which to save the raster.
+     * @param raster The raw pixel values for the raster.
+     * @param extents The extent of the raster.
+     * @param properties The meta-data for the raster.
+     * @throws IOException thrown if unable to save the raster.
+     */
+    public static void saveRaster(File location, WritableRaster raster,
+                                  Envelope2D extents, GridSampleDimension[] properties) throws IOException {
         GridCoverage2D targetRaster = null;
         GridCoverageWriter writer = null;
 
@@ -138,6 +161,18 @@ public final class RasterUtils {
         }
     }
 
+    /**
+     * Correctly dispose of a GridCoverage2D raster object.
+     * This includes disposing the PlanarImage object that has a read lock on the raster file.
+     * @param raster The raster to be disposed.
+     */
+    public static void disposeRaster(GridCoverage2D raster) {
+        if (raster != null) {
+            ImageUtilities.disposePlanarImageChain((PlanarImage) raster.getRenderedImage());
+            raster.dispose(true);
+        }
+    }
+
     private static GeneralParameterValue[] getGeoTiffWriteParameters() {
         GeoTiffWriteParams writeParams = new GeoTiffWriteParams();
         writeParams.setCompressionMode(GeoTiffWriteParams.MODE_EXPLICIT);
@@ -148,13 +183,6 @@ public final class RasterUtils {
         return new GeneralParameterValue[] {
                 parameterValue
         };
-    }
-
-    public static void disposeRaster(GridCoverage2D raster) {
-        if (raster != null) {
-            ImageUtilities.disposePlanarImageChain((PlanarImage) raster.getRenderedImage());
-            raster.dispose(true);
-        }
     }
 
     private static void disposeResource(GridCoverage2DReader reader) throws IOException {

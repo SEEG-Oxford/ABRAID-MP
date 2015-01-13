@@ -24,27 +24,37 @@ public class RasterFilePathFactory {
     }
 
     /**
-     * Gets the location of the mean prediction raster file for the specified model run.
+     * Gets the location of the masked mean prediction raster file for the specified model run.
      * @param modelRun The model run.
-     * @return A mean prediction raster file location.
+     * @return A masked mean prediction raster file location.
      */
     public File getMaskedMeanPredictionRasterFile(ModelRun modelRun) {
         return getMaskedRasterFile(modelRun, MEAN_PREDICTION_RASTER_TYPE);
     }
 
+    /**
+     * Gets the location of the pre-masking mean prediction raster file for the specified model run.
+     * @param modelRun The model run.
+     * @return A pre-masking mean prediction raster file location.
+     */
     public File getFullMeanPredictionRasterFile(ModelRun modelRun) {
         return getFullRasterFile(modelRun, MEAN_PREDICTION_RASTER_TYPE);
     }
 
     /**
-     * Gets the location of the prediction uncertainty raster file for the specified model run.
+     * Gets the location of the masked prediction uncertainty raster file for the specified model run.
      * @param modelRun The model run.
-     * @return A prediction uncertainty raster file location.
+     * @return A masked prediction uncertainty raster file location.
      */
     public File getMaskedPredictionUncertaintyRasterFile(ModelRun modelRun) {
         return getMaskedRasterFile(modelRun, PREDICTION_UNCERTAINTY_RASTER_TYPE);
     }
 
+    /**
+     * Gets the location of the pre-masking prediction uncertainty raster file for the specified model run.
+     * @param modelRun The model run.
+     * @return A pre-masking prediction uncertainty raster file location.
+     */
     public File getFullPredictionUncertaintyRasterFile(ModelRun modelRun) {
         return getFullRasterFile(modelRun, PREDICTION_UNCERTAINTY_RASTER_TYPE);
     }

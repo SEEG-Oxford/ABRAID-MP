@@ -155,4 +155,20 @@ public class ModelRunServiceTest {
         // Assert
         assertThat(actualResult.getMillis()).isEqualTo(expectedResult.getMillis());
     }
+
+    @Test
+    public void getModelRunsForDiseaseGroup() {
+        // Arrange
+        Collection<ModelRun> expectedRuns = Arrays.asList(mock(ModelRun.class), mock(ModelRun.class));
+        ModelRunDao modelRunDao = mock(ModelRunDao.class);
+        when(modelRunDao.getModelRunsForDiseaseGroup(anyInt())).thenReturn(expectedRuns);
+        ModelRunService modelRunService = new ModelRunServiceImpl(modelRunDao, 7);
+
+        // Act
+        Collection<ModelRun> result = modelRunService.getModelRunsForDiseaseGroup(87);
+
+        // Assert
+        assertThat(result).isEqualTo(expectedRuns);
+        verify(modelRunDao).getLastRequestedModelRun(87);
+    }
 }

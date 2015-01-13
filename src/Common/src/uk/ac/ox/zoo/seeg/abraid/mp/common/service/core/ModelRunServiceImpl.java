@@ -105,6 +105,11 @@ public class ModelRunServiceImpl implements ModelRunService {
         return modelRunDao.getModelRunRequestServersByUsage();
     }
 
+    /**
+     * Gets all the model runs for the given disease group.
+     * @param diseaseGroupId The specified disease group's ID.
+     * @return All the model runs for the given disease group
+     */
     @Override
     public Collection<ModelRun> getModelRunsForDiseaseGroup(int diseaseGroupId) {
         return modelRunDao.getModelRunsForDiseaseGroup(diseaseGroupId);
