@@ -101,7 +101,7 @@ public class ModelProcessHandler implements ProcessHandler {
         // Create error text
         String errorText = getErrorStream().toString();
         if (StringUtils.hasText(errorMessage)) {
-            errorText = String.format("Error message: %s. Standard error: %s", errorMessage, errorText);
+            errorText = String.format("Error message: %s. %nStandard error: %n%s", errorMessage, errorText);
         }
 
         // Create output text

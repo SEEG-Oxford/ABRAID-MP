@@ -11,176 +11,229 @@
 
 # Model version = ${model_version}
 
-# Set verbosity
-verbose <- ${verbose?string("TRUE","FALSE")}
+# Get warnings as they occur (not batched)
+options(warn=1)
 
-# Set max CPUs
-max_cpus <- ${max_cpu?c}
+# Stash a list of the default packages
+default.pkgs <- search()
 
-# Set parallel execution
-parallel_flag <- TRUE
+# Define a function to setup and execute the model
+attempt_model_run <- function() {
+    # Set verbosity
+    verbose <- ${verbose?string("TRUE","FALSE")}
 
-# Define occurrence data
-occurrence_path <- "${occurrence_file}"
+    # Set max CPUs
+    max_cpus <- ${max_cpu?c}
 
-# Define disease extent data
-extent_path <- "${extent_file}"
+    # Set parallel execution
+    parallel_flag <- TRUE
 
-# Define covariates to use.
-# If you would like to use these covariate files please contact abraid@zoo.ox.ac.uk, as we cannot release them in all circumstances.
-covariate_paths <- c(
-<#list covariate_files as covariate>
-    "${covariate}"<#if covariate_has_next>,</#if>
-</#list>
-)
+    # Define occurrence data
+    occurrence_path <- "${occurrence_file}"
 
-covariate_names <- c(
-<#list covariate_names as covariate>
-    "${covariate}"<#if covariate_has_next>,</#if>
-</#list>
-)
+    # Define disease extent data
+    extent_path <- "${extent_file}"
 
-# Define admin unit rasters to use.
-# If you would like to use these admin unit rasters (or related shape files) please contact abraid@zoo.ox.ac.uk, as we cannot release them in all circumstances.
-admin1_path <- "${admin1_file}"
-admin2_path <- "${admin2_file}"
+    # Define covariates to use.
+    # If you would like to use these covariate files please contact abraid@zoo.ox.ac.uk, as we cannot release them in all circumstances.
+    covariate_paths <- c(
+    <#list covariate_files as covariate>
+        "${covariate}"<#if covariate_has_next>,</#if>
+    </#list>
+    )
 
-# Create a temp dir for intermediate rasters
-dir.create('temp')
+    covariate_names <- c(
+    <#list covariate_names as covariate>
+        "${covariate}"<#if covariate_has_next>,</#if>
+    </#list>
+    )
 
-# Set CRAN mirror
-local({r <- getOption("repos")
-    r["CRAN"] <- "http://cran.r-project.org"
-    options(repos=r)
-})
+    # Define admin unit rasters to use.
+    # If you would like to use these admin unit rasters (or related shape files) please contact abraid@zoo.ox.ac.uk, as we cannot release them in all circumstances.
+    admin1_path <- "${admin1_file}"
+    admin2_path <- "${admin2_file}"
 
-<#if !dry_run>
-# Load devtools
-if (!require('devtools', quietly=TRUE)) {
-    install.packages('devtools', quiet=TRUE)
-    library('devtools', quietly=TRUE)
-}
+    # Create a temp dir for intermediate rasters
+    dir.create('temp')
 
-# Load the model and its dependencies via devtools
-# The full model is available from GitHub at https://github.com/SEEG-Oxford/seegSDM
-install_deps('model')
-load_all('model', recompile=TRUE)
-rasterOptions(tmpdir="temp")
-</#if>
+    # Set CRAN mirror
+    local({r <- getOption("repos")
+        r["CRAN"] <- "http://cran.r-project.org"
+        options(repos=r)
+    })
 
-# Define a function that can be used to load the model on cluster nodes
-load_seegSDM <- function () {
-    library('devtools', quietly=TRUE)
-    load_all('model')
+    <#if !dry_run>
+    # Load devtools
+    if (!require('devtools', quietly=TRUE)) {
+        install.packages('devtools', quiet=TRUE)
+        library('devtools', quietly=TRUE)
+    }
+
+    # Load the model and its dependencies via devtools
+    # The full model is available from GitHub at https://github.com/SEEG-Oxford/seegSDM
+    install_deps('model')
+    load_all('model', recompile=TRUE)
     rasterOptions(tmpdir="temp")
-}
-
-<#if dry_run>
-find_dry_run_file <- function(suffix, extension) {
-    # Get disease abbreviation (working directory prefix before underscore)
-    install.packages('stringr', quiet=TRUE)
-    library('stringr', quietly=TRUE)
-    disease_abbreviation <- str_extract(basename(getwd()),"^[^_]*")
-
-    # Get files in the dry run outputs directory that are predefined output files for the specified disease and suffix
-    # e.g. "mal_2014-11-18-18-02-04_c7a1950d-ecd0-4720-8edd-4432cdcae08a_mean.tif" matches if "mal" is the disease
-    # abbreviation and "mean" is the suffix
-    predefined_file_pattern <- paste(disease_abbreviation, "_.*", suffix, "\\.", extension, sep = "")
-    predefined_files <- list.files(path="../dry_run_outputs/", pattern=predefined_file_pattern, full.names=TRUE)
-
-    if (length(predefined_files) >= 1) {
-        # Predefined output file found, so copy it to the desired output path
-        return(predefined_files[1])
-    } else {
-        return(NA)
-    }
-}
-
-# Define a function to create an output raster for model dry runs
-create_dry_run_raster <- function(suffix, output_path) {
-    predefined_file <- find_dry_run_file(suffix, "tif")
-    if (!is.na(predefined_file)) {
-        # Predefined output raster file found, so copy it to the desired output path
-        file.copy(predefined_file, output_path)
-    } else {
-        # Predefined output raster not found, so generate a raster with random pixels
-        writeRaster(setExtent(raster(replicate(72, runif(29)), crs=crs("+proj=longlat +datum=WGS84 +no_defs")), extent(-180, 180, -60, 85)),
-                    filename=output_path, format="GTiff", NAflag=-9999, options=c("COMPRESS=DEFLATE","ZLEVEL=9"))
-    }
-}
-
-create_dry_run_csv <- function(suffix, output_path, fallback_data) {
-    predefined_file <- find_dry_run_file(suffix, "csv")
-    if (!is.na(predefined_file)) {
-        # Predefined output csv file found, so copy it to the desired output path
-        file.copy(predefined_file, output_path)
-    } else {
-        # Predefined output csv not found, so generate a csv from fallback_data
-        fileConn <- file(output_path)
-        writeLines(fallback_data, fileConn)
-        close(fileConn)
-    }
-}
-
-do_dry_run <- function() {
-    # Skip dry run on travis
-    if (!is.na(Sys.getenv("CONTINUOUS_INTEGRATION", unset = NA))) {
-        return()
-    }
-    # Create a small fake result set
-    if (!require('rgdal', quietly=TRUE)) {
-        install.packages('rgdal', quiet=TRUE)
-        library('rgdal', quietly=TRUE)
-    }
-    if (!require('raster', quietly=TRUE)) {
-        install.packages('raster', quiet=TRUE)
-        library('raster', quietly=TRUE)
-    }
-    rasterOptions(tmpdir="temp")
-    dir.create('results')
-    create_dry_run_raster("mean", "results/mean_prediction.tif")
-    create_dry_run_raster("uncertainty", "results/prediction_uncertainty.tif")
-    create_dry_run_csv("statistics", "results/statistics.csv", c(
-        '"deviance","rmse","kappa","auc","sens","spec","pcc","kappa_sd","auc_sd","sens_sd","spec_sd","pcc_sd","thresh"',
-        '1,2,3,4,5,6,7,8,9,10,11,12,13'))
-    create_dry_run_csv("influence", "results/relative_influence.csv", c(
-        '"","file_path","covariate","mean","2.5%","97.5%"',
-        '"X","path/upr_u.tif","GRUMP urban surface","1","2","3"'))
-    create_dry_run_csv("effect", "results/effect_curves.csv", c(
-        '"","file_path","covariate","covariate","mean","2.5%","97.5%"',
-        '"1","path/upr_u.tif","GRUMP urban surface","0","-3","-5","0.3"'))
-}
-</#if>
-
-# Run the model
-result <- tryCatch({
-    innerResult <- -1
-    <#if dry_run>
-    do_dry_run()
-    innerResult <- 0
-    <#else>
-    innerResult <- runABRAID(
-        occurrence_path,
-        extent_path,
-        admin1_path,
-        admin2_path,
-        covariate_paths,
-        covariate_names,
-        rep(FALSE, length(covariate_paths)),
-        verbose,
-        max_cpus,
-        load_seegSDM,
-        parallel_flag)
     </#if>
-    innerResult # return
-}, error = function(e) {
-    print(paste("Error:  ", e))
-    return(1)
-})
 
-# Delete temp dir for intermediate rasters
-unlink("temp", TRUE)
+    # Define a function that can be used to load the model on cluster nodes
+    load_seegSDM <- function () {
+        library('devtools', quietly=TRUE)
+        load_all('model')
+        rasterOptions(tmpdir="temp")
+    }
 
-# Set exit code
-print(paste("Exit code:  ", result))
+    <#if dry_run>
+    find_dry_run_file <- function(suffix, extension) {
+        # Get disease abbreviation (working directory prefix before underscore)
+        install.packages('stringr', quiet=TRUE)
+        library('stringr', quietly=TRUE)
+        disease_abbreviation <- str_extract(basename(getwd()),"^[^_]*")
+
+        # Get files in the dry run outputs directory that are predefined output files for the specified disease and suffix
+        # e.g. "mal_2014-11-18-18-02-04_c7a1950d-ecd0-4720-8edd-4432cdcae08a_mean.tif" matches if "mal" is the disease
+        # abbreviation and "mean" is the suffix
+        predefined_file_pattern <- paste(disease_abbreviation, "_.*", suffix, "\\.", extension, sep = "")
+        predefined_files <- list.files(path="../dry_run_outputs/", pattern=predefined_file_pattern, full.names=TRUE)
+
+        if (length(predefined_files) >= 1) {
+            # Predefined output file found, so copy it to the desired output path
+            return(predefined_files[1])
+        } else {
+            return(NA)
+        }
+    }
+
+    # Define a function to create an output raster for model dry runs
+    create_dry_run_raster <- function(suffix, output_path) {
+        predefined_file <- find_dry_run_file(suffix, "tif")
+        if (!is.na(predefined_file)) {
+            # Predefined output raster file found, so copy it to the desired output path
+            file.copy(predefined_file, output_path)
+        } else {
+            # Predefined output raster not found, so generate a raster with random pixels
+            writeRaster(setExtent(raster(replicate(72, runif(29)), crs=crs("+proj=longlat +datum=WGS84 +no_defs")), extent(-180, 180, -60, 85)),
+                        filename=output_path, format="GTiff", NAflag=-9999, options=c("COMPRESS=DEFLATE","ZLEVEL=9"))
+        }
+    }
+
+    create_dry_run_csv <- function(suffix, output_path, fallback_data) {
+        predefined_file <- find_dry_run_file(suffix, "csv")
+        if (!is.na(predefined_file)) {
+            # Predefined output csv file found, so copy it to the desired output path
+            file.copy(predefined_file, output_path)
+        } else {
+            # Predefined output csv not found, so generate a csv from fallback_data
+            fileConn <- file(output_path)
+            writeLines(fallback_data, fileConn)
+            close(fileConn)
+        }
+    }
+
+    do_dry_run <- function() {
+        # Skip dry run on travis
+        if (!is.na(Sys.getenv("CONTINUOUS_INTEGRATION", unset = NA))) {
+            return()
+        }
+        # Create a small fake result set
+        if (!require('rgdal', quietly=TRUE)) {
+            install.packages('rgdal', quiet=TRUE)
+            library('rgdal', quietly=TRUE)
+        }
+        if (!require('raster', quietly=TRUE)) {
+            install.packages('raster', quiet=TRUE)
+            library('raster', quietly=TRUE)
+        }
+        rasterOptions(tmpdir="temp")
+        dir.create('results')
+        create_dry_run_raster("mean", "results/mean_prediction.tif")
+        create_dry_run_raster("uncertainty", "results/prediction_uncertainty.tif")
+        create_dry_run_csv("statistics", "results/statistics.csv", c(
+            '"deviance","rmse","kappa","auc","sens","spec","pcc","kappa_sd","auc_sd","sens_sd","spec_sd","pcc_sd","thresh"',
+            '1,2,3,4,5,6,7,8,9,10,11,12,13'))
+        create_dry_run_csv("influence", "results/relative_influence.csv", c(
+            '"","file_path","covariate","mean","2.5%","97.5%"',
+            '"X","path/upr_u.tif","GRUMP urban surface","1","2","3"'))
+        create_dry_run_csv("effect", "results/effect_curves.csv", c(
+            '"","file_path","covariate","covariate","mean","2.5%","97.5%"',
+            '"1","path/upr_u.tif","GRUMP urban surface","0","-3","-5","0.3"'))
+    }
+    </#if>
+
+    # Run the model
+    result <- tryCatch({
+        innerResult <- -1
+        <#if dry_run>
+        do_dry_run()
+        innerResult <- 0
+        <#else>
+        innerResult <- runABRAID(
+            occurrence_path,
+            extent_path,
+            admin1_path,
+            admin2_path,
+            covariate_paths,
+            covariate_names,
+            rep(FALSE, length(covariate_paths)),
+            verbose,
+            max_cpus,
+            load_seegSDM,
+            parallel_flag)
+        </#if>
+        innerResult # return
+    }, error = function(e) {
+        write(paste("Error:  ", e), stdout())
+        return(1)
+    })
+
+    # Delete temp dir for intermediate rasters
+    unlink("temp", TRUE)
+
+    # Set exit code
+    write(paste("Exit code:  ", result), stdout())
+    return(result)
+}
+
+attempt_model_run_with_clean_environment <- function() {
+    # Replace the environment of the attempt_model_run function, to ensure runs are completely independent
+    environment(attempt_model_run) <- new.env()
+
+    # Perform model run
+    attempt_model_run()
+}
+
+clean_up_model_run <- function() {
+    write("=== First model run attempt failed. Cleaning. ===", stdout())
+    write("=== First model run attempt failed. Cleaning. ===", stderr())
+
+    # Move the results directory
+    if (file.exists("results")) {
+        file.rename("results", "results_first")
+    }
+
+    # Unset result variable in the global environment
+    if (exists("result", inherits = TRUE)) {
+        rm("result", inherits = TRUE)
+    }
+
+    # Detach all non-default packages
+    all.pkgs <- search()
+    detach.pkgs <- setdiff(all.pkgs, default.pkgs)
+    suppressWarnings(lapply(detach.pkgs, detach, character.only = TRUE, unload = TRUE, force = TRUE))
+
+    write("=== First model run attempt failed. Retrying. ===", stdout())
+    write("=== First model run attempt failed. Retrying. ===", stderr())
+}
+
+# Attempt the model run
+result <- attempt_model_run_with_clean_environment()
+
+if (result == 1) {
+    # Set up for a 2nd attempt at running the model
+    clean_up_model_run()
+
+    # Reattempt the model run
+    result <- attempt_model_run_with_clean_environment()
+}
+
 quit(status=result)
