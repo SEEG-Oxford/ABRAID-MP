@@ -125,23 +125,23 @@ public class MainHandler {
      *         or is false if one or more files could not be deleted (e.g. are currently in use elsewhere).
      */
     public boolean handleOldRasterDeletion(int diseaseGroupId) {
-        ModelRun keep = modelRunService.getMostRecentlyRequestedModelRunWhichCompleted(diseaseGroupId);
-        Collection<ModelRun> delete = modelRunService.getModelRunsForDiseaseGroup(diseaseGroupId);
-        delete.remove(keep);
+        ModelRun runToKeep = modelRunService.getMostRecentlyRequestedModelRunWhichCompleted(diseaseGroupId);
+        Collection<ModelRun> runsToDelete = modelRunService.getModelRunsForDiseaseGroup(diseaseGroupId);
+        runsToDelete.remove(runToKeep);
 
         boolean result = true;
-        for (ModelRun run : delete) {
-            File[] files = new File[] {
-                rasterFilePathFactory.getFullMeanPredictionRasterFile(run),
-                rasterFilePathFactory.getFullPredictionUncertaintyRasterFile(run)
+        for (ModelRun runToDelete : runsToDelete) {
+            File[] filesToDelete = new File[] {
+                rasterFilePathFactory.getFullMeanPredictionRasterFile(runToDelete),
+                rasterFilePathFactory.getFullPredictionUncertaintyRasterFile(runToDelete)
             };
-            for (File file : files) {
-                if (file.exists()) {
-                    if (!file.delete()) {
+            for (File fileToDelete : filesToDelete) {
+                if (fileToDelete.exists()) {
+                    if (!fileToDelete.delete()) {
                         result = false;
-                        LOGGER.warn(String.format(UNABLE_TO_DELETE_RASTER, file.getAbsolutePath()));
+                        LOGGER.warn(String.format(UNABLE_TO_DELETE_RASTER, fileToDelete.getAbsolutePath()));
                     } else {
-                        LOGGER.info(String.format(DELETED_OUTDATED_RASTER, file.getAbsolutePath()));
+                        LOGGER.info(String.format(DELETED_OUTDATED_RASTER, fileToDelete.getAbsolutePath()));
                     }
                 }
             }

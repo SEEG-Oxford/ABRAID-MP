@@ -83,7 +83,6 @@ public class MainController extends AbstractController {
             // Announce failed model runs
             if (modelRun.getStatus() == ModelRunStatus.FAILED) {
                 sendModelFailureEmail(modelRun);
-
             }
 
             // Do background post processing (e.g. validation parameter updates)
