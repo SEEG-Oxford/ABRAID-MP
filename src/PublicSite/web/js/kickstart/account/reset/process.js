@@ -10,7 +10,8 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
             "app/user/reset/PasswordResetProcessFormViewModel",
             "domReady!",
             "shared/navbar",
-            "login"
+            "login",
+            "analytics"
         ], function (ko, PasswordResetProcessFormViewModel, doc) {
             ko.applyBindings(
                 ko.validatedObservable(new PasswordResetProcessFormViewModel(baseUrl, data.id, data.key)),

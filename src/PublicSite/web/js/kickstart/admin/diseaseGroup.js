@@ -16,7 +16,8 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
         "app/admin/diseasegroups/DiseaseGroupSetupViewModel",
         "app/admin/diseasegroups/SyncDiseasesViewModel",
         "domReady!",
-        "shared/navbar"
+        "shared/navbar",
+        "analytics"
     ], function (ko, DiseaseExtentParametersViewModel, DiseaseGroupAdministrationViewModel, DiseaseGroupsListViewModel,
                  DiseaseGroupSettingsViewModel, ModelRunParametersViewModel, DiseaseGroupSetupViewModel,
                  SyncDiseasesViewModel, doc) {

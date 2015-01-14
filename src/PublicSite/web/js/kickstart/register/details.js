@@ -13,7 +13,8 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
         "app/user/DiseaseInterestListViewModel",
         "domReady!",
         "shared/navbar",
-        "login"
+        "login",
+        "analytics"
     ], function (ko, $, _, AccountDetailsFormViewModel, DiseaseInterestListViewModel, doc) {
             var redirectPage = function (newURL) {
                 doc.location = newURL;

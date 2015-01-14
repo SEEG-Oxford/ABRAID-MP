@@ -17,7 +17,8 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
         "app/datavalidation/SelectedAdminUnitViewModel",
         "app/datavalidation/SidePanelViewModel",
         "app/datavalidation/SpinnerViewModel",
-        "domReady!"
+        "domReady!",
+        "analytics"
     ], function (ko, $, CounterViewModel, LatestOccurrencesViewModel, setupMap, ModalView, SelectedPointViewModel,
                  SelectedLayerViewModel, SelectedAdminUnitViewModel, SidePanelViewModel, SpinnerViewModel, doc) {
             setupMap(baseUrl, data.wmsUrl, data.loggedIn, alert);

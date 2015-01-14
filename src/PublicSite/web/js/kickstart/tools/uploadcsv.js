@@ -10,7 +10,8 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
         "ko",
         "app/tools/UploadCsvViewModel",
         "domReady!",
-        "shared/navbar"
+        "shared/navbar",
+        "analytics"
     ], function (ko, UploadCsvViewModel, doc) {
         ko.applyBindings(
             ko.validatedObservable(new UploadCsvViewModel(baseUrl)),

@@ -8,7 +8,8 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
     require([
         "ko",
         "app/user/PasswordChangeFormViewModel",
-        "domReady!"
+        "domReady!",
+        "analytics"
     ], function (ko, PasswordChangeFormViewModel, doc) {
             ko.applyBindings(
                 ko.validatedObservable(new PasswordChangeFormViewModel(baseUrl)),
