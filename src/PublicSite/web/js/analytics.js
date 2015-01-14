@@ -5,7 +5,7 @@
  * Copyright (c) 2014 University of Oxford
  */
 /*global window:false*/
-define(["require"], function (require) {
+define(["ko", "require"], function (ko, require) {
     "use strict";
 
     // Setup temporary Google Analytics objects.
@@ -27,4 +27,8 @@ define(["require"], function (require) {
     // object after it loads. This allows us to add events to `window.ga` even
     // before the library has fully loaded.
     require(["//www.google-analytics.com/analytics.js"]);
+
+    ko.postbox.subscribe("tracking-action-event", function (payload) {
+        window.ga("send", "event", payload.category, payload.action, payload.label, payload.value);
+    });
 });

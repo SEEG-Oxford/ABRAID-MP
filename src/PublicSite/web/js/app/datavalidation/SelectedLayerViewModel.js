@@ -46,10 +46,11 @@ define(["ko"], function (ko) {
 
         // Publish the changes
         ko.computed(function () {
+            var isOccurrenceLayer = (self.selectedType() === DISEASE_OCCURRENCES);
             return {
                 type: self.selectedType(),
-                diseaseId: (self.selectedType() === DISEASE_OCCURRENCES) ? self.selectedDiseaseSet().id :
-                                                                           self.selectedDisease().id
+                diseaseId: isOccurrenceLayer ? self.selectedDiseaseSet().id : self.selectedDisease().id,
+                diseaseName: isOccurrenceLayer ? self.selectedDiseaseSet().name : self.selectedDisease().name
             };
         }, self).publishOn("layers-changed");
     };
