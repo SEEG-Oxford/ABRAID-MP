@@ -9,7 +9,7 @@
     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
     ga('create', 'UA-366737-6', {
-        'cookieDomain': 'www.abraid.ox.ac.uk'
+        'cookieDomain': 'none'
     });
     ga('send', 'pageview');
 </script>
