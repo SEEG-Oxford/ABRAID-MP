@@ -21,10 +21,11 @@ public class ModelOutputRasterMaskingHelper {
             "Masking out known absence regions in model output raster.";
 
     private final int extentAbsenceValue;
-    private final File waterBodiesMaskRasterFile;
+    private final WaterBodiesMaskRasterFileLocator waterBodiesMaskRasterFileLocator;
 
-    public ModelOutputRasterMaskingHelper(DiseaseService diseaseService, File waterBodiesMaskRasterFile) {
-        this.waterBodiesMaskRasterFile = waterBodiesMaskRasterFile;
+    public ModelOutputRasterMaskingHelper(DiseaseService diseaseService,
+                                          WaterBodiesMaskRasterFileLocator waterBodiesMaskRasterFileLocator) {
+        this.waterBodiesMaskRasterFileLocator = waterBodiesMaskRasterFileLocator;
         this.extentAbsenceValue = diseaseService.getDiseaseExtentClass(DiseaseExtentClass.ABSENCE).getWeighting();
     }
 
@@ -40,7 +41,7 @@ public class ModelOutputRasterMaskingHelper {
      */
     public void maskRaster(final File targetFile, final File sourceRasterFile,
                            final File extentRasterFile, final int extentMaskValue) throws IOException {
-        File[] referenceRasterFiles = new File[] {extentRasterFile, waterBodiesMaskRasterFile};
+        File[] referenceRasterFiles = new File[] {extentRasterFile, waterBodiesMaskRasterFileLocator.getFile()};
         RasterUtils.transformRaster(sourceRasterFile, targetFile, referenceRasterFiles, new RasterTransformation() {
             @Override
             public void transform(WritableRaster raster, Raster[] referenceRasters) {

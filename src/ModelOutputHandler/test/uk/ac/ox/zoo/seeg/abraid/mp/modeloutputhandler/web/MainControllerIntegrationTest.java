@@ -74,6 +74,10 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
 
     @ReplaceWithMock
     @Autowired
+    private WaterBodiesMaskRasterFileLocator waterBodiesMaskRasterFileLocator;
+
+    @ReplaceWithMock
+    @Autowired
     private GeoserverRestService geoserverRestService;
 
     @ReplaceWithMock
@@ -92,6 +96,8 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
     @Before
     public void setup() {
         when(rasterFileDirectory.getAbsolutePath()).thenReturn(testFolder.getRoot().getAbsolutePath());
+        when(waterBodiesMaskRasterFileLocator.getFile()).thenReturn(new File(TEST_DATA_PATH, "waterbodies.tif"));
+
 
         // Set up Spring test in standalone mode
         this.mockMvc = MockMvcBuilders
