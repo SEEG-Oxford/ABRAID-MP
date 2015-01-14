@@ -26,3 +26,4 @@ public class DiseaseOccurrenceHandler {
         helper.continueBatchingInitialisation(modelRun.getDiseaseGroupId(), batchingInitialisationDate);
     }
 }
+
