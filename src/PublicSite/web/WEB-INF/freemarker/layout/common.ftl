@@ -11,6 +11,7 @@
             <link rel="stylesheet" href="<@spring.url "/css/login.css" />">
         </#if>
         ${endOfHead}
+        <#include "googleanalytics.ftl" />
     </#assign>
 
     <@shared.page title=title endOfHead=publicSiteEndOfHeadContent mainjs=mainjs templates=templates
@@ -20,7 +21,11 @@
 </#macro>
 
 <#macro minimalPage title endOfHead="">
-    <@page title=title endOfHead=endOfHead mainjs="/js/kickstart/minimal" includeNavBar=false includeFooter=false>
+    <#assign publicSiteEndOfHeadContent>
+        ${endOfHead}
+        <#include "googleanalytics.ftl" />
+    </#assign>
+    <@page title=title endOfHead=publicSiteEndOfHeadContent mainjs="/js/kickstart/minimal" includeNavBar=false includeFooter=false>
         <#nested/>
     </@page>
 </#macro>
