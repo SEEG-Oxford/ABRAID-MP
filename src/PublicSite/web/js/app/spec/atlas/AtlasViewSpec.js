@@ -35,6 +35,7 @@ define([
             // Clear postbox subscriptions (prevents test from bleeding into each other).
             // Might be problematic if we swap to minified.
             ko.postbox._subscriptions["active-atlas-layer"] = [];  // jshint ignore:line
+            ko.postbox._subscriptions["tracking-action-event"] = [];  // jshint ignore:line
 
             // Reset the leaflet spies
             leafletMock.map.calls.reset();
@@ -120,11 +121,23 @@ define([
                 ko.postbox.publish("active-atlas-layer", "new layer");
                 expect(leafletMock.tileLayer.wms.calls.first().args[0]).toBe("wms url qwertyuiop");
                 expect(leafletMock.tileLayer.wms.calls.first().args[1]).toEqual({ "display": "new layer" });
+            });
 
+            it("and announces the change as an analytics trackable event", function () {
+                new AtlasView("wms url qwertyuiop", wmsLayerParameterFactoryMock); // jshint ignore:line
+
+                ko.postbox.subscribe("tracking-action-event", function (payload) {
+                    expect(payload.category).toBe("atlas");
+                    expect(payload.action).toBe("layer-view");
+                    expect(payload.label).toBe("new layer");
+                    expect(payload.value).toBeUndefined();
+                });
+
+                ko.postbox.publish("active-atlas-layer", "new layer");
             });
         });
 
-        describe("removes the wms layer to the map", function () {
+        describe("removes the wms layer on the map", function () {
             it("in response to empty 'active-atlas-layer' events ", function () {
                 var view = new AtlasView("wms", wmsLayerParameterFactoryMock);
                 ko.postbox.publish("active-atlas-layer", "old layer");
