@@ -5,7 +5,7 @@
  * Copyright (c) 2014 University of Oxford
  */
 /*global window:false*/
-define(["ko", "require"], function (ko, require) {
+define(["require", "ko", "jquery", "jquery.cookiecuttr", "domReady!"], function (require, ko, $) {
     "use strict";
 
     // Setup temporary Google Analytics objects.
@@ -18,9 +18,18 @@ define(["ko", "require"], function (ko, require) {
         "cookieDomain": "www.abraid.ox.ac.uk"
     });
 
+    //If not in an iframe (avoids maps/help double counting)
     if (window.location === window.parent.location) {
-        // Announce page view, if not in an iframe (avoids maps/help double counting)
+        // Announce page view
         window.ga("send", "pageview");
+
+        // Show cookie warning
+        $.cookieCuttr({
+            cookieAnalytics: true,
+            cookieAnalyticsMessage: "This site uses cookies to track usage and preferences.",
+            cookieAcceptButtonText: "OK",
+            cookieWhatAreLinkText: "?"
+        });
     }
 
     // Asynchronously load Google Analytics, letting it take over our `window.ga`
@@ -31,4 +40,6 @@ define(["ko", "require"], function (ko, require) {
     ko.postbox.subscribe("tracking-action-event", function (payload) {
         window.ga("send", "event", payload.category, payload.action, payload.label, payload.value);
     });
+
+
 });
