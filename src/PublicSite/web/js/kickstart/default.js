@@ -4,7 +4,8 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
 
     require([
         "shared/navbar",
-        "login"
+        "login",
+        "analytics"
     ], function () {
     });
 });

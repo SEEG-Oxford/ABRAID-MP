@@ -10,7 +10,8 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
         "ko",
         "app/admin/ExpertAdministrationViewModel",
         "domReady!",
-        "shared/navbar"
+        "shared/navbar",
+        "analytics"
     ], function (ko, ExpertAdministrationViewModel, doc) {
 
         ko.applyBindings(

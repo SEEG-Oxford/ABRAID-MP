@@ -2,7 +2,7 @@
     The system administration page for experts.
     Copyright (c) 2014 University of Oxford
 -->
-<#import "../shared/layout/common.ftl" as c/>
+<#import "../layout/common.ftl" as c/>
 <#import "../shared/layout/table.ftl" as t/>
 
 <#assign bootstrapData>

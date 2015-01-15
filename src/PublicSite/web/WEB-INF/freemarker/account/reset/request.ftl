@@ -2,7 +2,7 @@
     The page from which new password reset requests are issued.
     Copyright (c) 2014 University of Oxford
 -->
-<#import "../../shared/layout/common.ftl" as c/>
+<#import "../../layout/common.ftl" as c/>
 <#import "../../shared/layout/form.ftl" as f/>
 <#import "../../shared/layout/panel.ftl" as p/>
 <@c.page title="ABRAID MP - Password Reset" mainjs="/js/kickstart/account/reset/request">

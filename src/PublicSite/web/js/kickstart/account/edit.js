@@ -12,7 +12,8 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
         "app/user/AccountDetailsFormViewModel",
         "app/user/DiseaseInterestListViewModel",
         "domReady!",
-        "shared/navbar"
+        "shared/navbar",
+        "analytics"
     ], function (ko, $, _, AccountDetailsFormViewModel, DiseaseInterestListViewModel, doc) {
             var redirectPage = function () {
                 // In this version of the view, we don't want a redirect.

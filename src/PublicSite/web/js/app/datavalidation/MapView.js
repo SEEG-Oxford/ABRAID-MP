@@ -435,6 +435,12 @@ define([
             } else {
                 switchDiseaseExtentLayer(data.diseaseId);
             }
+
+            ko.postbox.publish("tracking-action-event", {
+                "category": "validator",
+                "action": validationTypeIsDiseaseOccurrenceLayer ? "layer-view-occurrence" : "layer-view-extent",
+                "label": data.diseaseName
+            });
         });
 
         ko.postbox.subscribe("admin-unit-selected", function (data) {

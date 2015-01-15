@@ -15,7 +15,8 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
         "app/atlas/StatisticsViewModel",
         "app/atlas/WmsLayerParameterFactory",
         "app/atlas/LegendViewModel",
-        "domReady!"
+        "domReady!",
+        "analytics"
     ], function (ko, AtlasView, CovariateInfluencesViewModel, DownloadLinksViewModel, LayerSelectorViewModel,
                  ModelRunDetailsViewModel, StatisticsViewModel, WmsLayerParameterFactory, LegendViewModel, doc) {
         var wmsParamFactory = new WmsLayerParameterFactory();

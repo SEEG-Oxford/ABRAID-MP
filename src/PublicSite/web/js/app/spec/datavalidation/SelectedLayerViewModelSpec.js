@@ -73,12 +73,14 @@ define([
             it("fires the 'layers-changed' event when its value changes, for 'disease occurrences'", function () {
                 // Arrange
                 var diseaseId = 0;
-                var newDiseaseSet = { id: diseaseId };
+                var diseaseName = "abc";
+                var newDiseaseSet = { id: diseaseId, name: diseaseName };
                 vm.selectedType("disease occurrences");
 
                 // Arrange assertions
                 var subscription = ko.postbox.subscribe("layers-changed", function (value) {
                     expect(value.diseaseId).toBe(diseaseId);
+                    expect(value.diseaseName).toBe(diseaseName);
                 });
 
                 // Act
@@ -112,12 +114,14 @@ define([
                 it("for 'disease extent'", function () {
                     // Arrange
                     var diseaseId = 0;
-                    var newDisease = { id: diseaseId };
+                    var diseaseName = "abc";
+                    var newDisease = { id: diseaseId, name: diseaseName };
                     vm.selectedType("disease extent");
 
                     // Arrange assertions
                     var subscription = ko.postbox.subscribe("layers-changed", function (value) {
                         expect(value.diseaseId).toBe(diseaseId);
+                        expect(value.diseaseName).toBe(diseaseName);
                     });
 
                     // Act
