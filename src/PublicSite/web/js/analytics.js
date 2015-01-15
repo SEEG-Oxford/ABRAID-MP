@@ -1,4 +1,4 @@
-/* Google Universal Analytics tracking code with the the ABRAID www.abraid.ox.ac.uk account ID,
+/* Google Universal Analytics tracking code with the ABRAID www.abraid.ox.ac.uk account ID,
  * expressed as an AMD for RequireJS compatibility.
  * https://gist.github.com/ismyrnow/6252718
  *
@@ -13,7 +13,7 @@ define(["ko", "require"], function (ko, require) {
     window.ga = function () { (window.ga.q = window.ga.q || []).push(arguments); };
     window.ga.l = 1 * new Date();
 
-    // Immediately add a pageview event to the queue.
+    // Setup analytics account
     window.ga("create", "UA-366737-6", {
         "cookieDomain": "www.abraid.ox.ac.uk"
     });

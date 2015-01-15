@@ -44,7 +44,9 @@ define([
                 self.map.addLayer(self.currentLayer);
 
                 ko.postbox.publish(
-                    "tracking-action-event", { "category": "atlas", "action": "layer-view", "label": layer });
+                    "tracking-action-event",
+                    { "category": "atlas", "action": "layer-view", "label": layer }
+                );
             }
         });
     };
