@@ -15,11 +15,11 @@ define(["ko", "require"], function (ko, require) {
 
     // Immediately add a pageview event to the queue.
     window.ga("create", "UA-366737-6", {
-        "cookieDomain": "none"
+        "cookieDomain": "www.abraid.ox.ac.uk"
     });
 
     if (window.location === window.parent.location) {
-        // Announce page load, if not in an iframe (avoids maps/help double counting)
+        // Announce page view, if not in an iframe (avoids maps/help double counting)
         window.ga("send", "pageview");
     }
 
