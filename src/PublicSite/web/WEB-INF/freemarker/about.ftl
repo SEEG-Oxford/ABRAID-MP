@@ -1,4 +1,4 @@
-<#import "shared/layout/common.ftl" as c/>
+<#import "layout/common.ftl" as c/>
 <#import "/spring.ftl" as spring />
 <#macro linkTemplate newTab link icon>
     <span class="fa-stack fa-lg">

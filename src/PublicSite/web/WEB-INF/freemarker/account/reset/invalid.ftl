@@ -2,7 +2,7 @@
     The page shown when an invalid password reset request is attempted.
     Copyright (c) 2014 University of Oxford
 -->
-<#import "../../shared/layout/common.ftl" as c/>
+<#import "../../layout/common.ftl" as c/>
 <#import "../../shared/layout/form.ftl" as f/>
 <#import "../../shared/layout/panel.ftl" as p/>
 <#import "/spring.ftl" as spring />
