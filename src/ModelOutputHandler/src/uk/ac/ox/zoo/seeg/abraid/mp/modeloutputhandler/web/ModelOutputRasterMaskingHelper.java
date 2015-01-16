@@ -44,7 +44,7 @@ public class ModelOutputRasterMaskingHelper {
         File[] referenceRasterFiles = new File[] {extentRasterFile, waterBodiesMaskRasterFileLocator.getFile()};
         RasterUtils.transformRaster(sourceRasterFile, targetFile, referenceRasterFiles, new RasterTransformation() {
             @Override
-            public void transform(WritableRaster raster, Raster[] referenceRasters) {
+            public void transform(WritableRaster raster, Raster[] referenceRasters) throws IOException {
                 transformRaster(raster, referenceRasters[0], extentMaskValue, referenceRasters[1]);
             }
         });

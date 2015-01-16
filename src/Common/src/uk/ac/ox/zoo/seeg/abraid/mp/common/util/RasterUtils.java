@@ -42,7 +42,7 @@ public final class RasterUtils {
     private static final String LOG_LOADING_REFERENCE_RASTERS =
             "Loading reference rasters.";
     private static final Object LOG_TRANSFORMING_RASTER_DATA =
-            "Applying raster transforming raster.";
+            "Applying raster transformation.";
     private static final String LOG_READING_RASTER =
             "Reading raster: %s.";
     private static final String CANNOT_FIND_FILE_MESSAGE = "Cannot find raster file %s";

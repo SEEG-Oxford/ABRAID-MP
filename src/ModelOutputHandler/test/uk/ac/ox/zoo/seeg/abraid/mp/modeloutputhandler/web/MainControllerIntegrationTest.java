@@ -332,10 +332,10 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
     }
 
     private void assertThatRasterWrittenToFile(ModelRun run, String expectedFileName, String type) throws IOException {
-        byte[] expectedRaster = loadTestFile(expectedFileName);
-        byte[] actualRaster = FileUtils.readFileToByteArray(Paths.get(testFolder.getRoot().getAbsolutePath(), run.getName() + "_" + type + ".tif").toFile());
+        File expectedFile = Paths.get(TEST_DATA_PATH, expectedFileName).toFile();
+        File actualFile = Paths.get(testFolder.getRoot().getAbsolutePath(), run.getName() + "_" + type + ".tif").toFile();
 
-        assertThat(new String(actualRaster)).isEqualTo(new String(expectedRaster));
+        assertThat(actualFile).hasContentEqualTo(expectedFile);
     }
 
     private void assertThatRasterFileDoesNotExist(ModelRun run, String type) throws IOException {

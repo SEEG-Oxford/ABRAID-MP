@@ -31,7 +31,7 @@ public class ExtentDataWriterImpl implements ExtentDataWriter {
             throws IOException {
         RasterUtils.transformRaster(sourceRasterFile, targetFile, new File[0], new RasterTransformation() {
             @Override
-            public void transform(WritableRaster raster, Raster[] referenceRasters) {
+            public void transform(WritableRaster raster, Raster[] referenceRasters) throws IOException {
                 transformRaster(extentData, raster);
             }
         });
