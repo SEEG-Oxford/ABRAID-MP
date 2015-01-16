@@ -345,7 +345,7 @@ public class SubmodelStatistic {
     }
 
     /**
-     * Checks that the submodel statistic contains a value for each of the main field (excludes standard deviations).
+     * Checks that the submodel statistic contains a value for each of the main fields (excludes standard deviations).
      * @return true if all required fields present, otherwise false.
      */
     protected boolean containsAllRequiredPropertiesForSummarising() {

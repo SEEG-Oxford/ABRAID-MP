@@ -54,7 +54,8 @@ public class MainHandler {
     private static final String FAILED_TO_CREATE_DIRECTORY_FOR_OUTPUT_RASTERS =
             "Failed to create directory for output rasters: %s";
     private static final String UNABLE_TO_DELETE_RASTER =
-            "Unable to delete outdated 'full' raster file '%s'. Will reattempt deletion at next model run.";
+            "Unable to delete outdated 'full' raster file '%s'. " +
+            "Will reattempt deletion when the next model run for disease group '%d' completes.";
     private static final String DELETED_OUTDATED_RASTER =
             "Deleted outdated 'full' raster file '%s'";
 
@@ -139,9 +140,11 @@ public class MainHandler {
                 if (fileToDelete.exists()) {
                     if (!fileToDelete.delete()) {
                         result = false;
-                        LOGGER.warn(String.format(UNABLE_TO_DELETE_RASTER, fileToDelete.getAbsolutePath()));
+                        LOGGER.warn(String.format(UNABLE_TO_DELETE_RASTER,
+                                                  fileToDelete.getAbsolutePath(), runToDelete.getDiseaseGroupId()));
                     } else {
-                        LOGGER.info(String.format(DELETED_OUTDATED_RASTER, fileToDelete.getAbsolutePath()));
+                        LOGGER.info(String.format(DELETED_OUTDATED_RASTER,
+                                                  fileToDelete.getAbsolutePath()));
                     }
                 }
             }
