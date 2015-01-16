@@ -138,8 +138,10 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
         assertThatRelativeInfluencesInDatabaseMatchesFile(run, "relative_influence.csv");
         assertThatEffectCurvesInDatabaseMatchesFile(run, "effect_curves.csv");
 
+        assertThatRasterWrittenToFile(run, "mean_prediction_full.tif", "mean_full");
         assertThatRasterWrittenToFile(run, "mean_prediction.tif", "mean");
         assertThatRasterPublishedToGeoserver(run, "mean");
+        assertThatRasterWrittenToFile(run, "prediction_uncertainty_full.tif", "uncertainty_full");
         assertThatRasterWrittenToFile(run, "prediction_uncertainty.tif", "uncertainty");
         assertThatRasterPublishedToGeoserver(run, "uncertainty");
         assertThatRasterWrittenToFile(run, "extent.tif", "extent");
@@ -170,7 +172,9 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
         assertThatRelativeInfluencesInDatabaseMatchesFile(run, "relative_influence.csv");
         assertThatEffectCurvesInDatabaseMatchesFile(run, "effect_curves.csv");
 
+        assertThatRasterFileDoesNotExist(run, "mean_full");
         assertThatRasterWrittenToFile(run, "mean_prediction.tif", "mean");
+        assertThatRasterFileDoesNotExist(run, "uncertainty_full");
         assertThatRasterWrittenToFile(run, "prediction_uncertainty.tif", "uncertainty");
         assertThatRasterWrittenToFile(run, "extent.tif", "extent");
         assertThatNoRastersPublishedToGeoserver();
@@ -332,6 +336,11 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
         byte[] actualRaster = FileUtils.readFileToByteArray(Paths.get(testFolder.getRoot().getAbsolutePath(), run.getName() + "_" + type + ".tif").toFile());
 
         assertThat(new String(actualRaster)).isEqualTo(new String(expectedRaster));
+    }
+
+    private void assertThatRasterFileDoesNotExist(ModelRun run, String type) throws IOException {
+        File file = Paths.get(testFolder.getRoot().getAbsolutePath(), run.getName() + "_" + type + ".tif").toFile();
+        assertThat(file).doesNotExist();
     }
 
     private void assertThatRasterPublishedToGeoserver(ModelRun run, String type) throws IOException, TemplateException {
