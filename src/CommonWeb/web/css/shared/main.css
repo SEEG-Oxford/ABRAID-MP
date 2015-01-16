@@ -223,3 +223,30 @@ button.btn[type=submit] {
         display: table-cell;
     }
 }
+/* cookiecuttr overrides */
+html > body > div.cc-cookies {
+    top: 50px;
+    width: 100%;
+    padding: 5px 10px;
+    font-weight: bold;
+}
+html > body > div.cc-cookies> a.cc-cookie-accept {
+    padding: 1px 4px 0 3px;
+    margin-left: 6px;
+    float: none;
+    background: #337AB7 linear-gradient(to bottom, #337AB7 0%, #265A88 100%) repeat-x;
+    border: 1px solid #245580;
+    border-radius: 4px;
+    transition: none;
+}
+html > body > div.cc-cookies> a.cc-cookie-accept:hover {
+    background-color: #265A88;
+    background-position: 0px -15px;
+}
+html > body > div.cc-cookies> a.cc-cookie-accept:active {
+    background-color: #265A88;
+    border-color: #245580;
+}
+html > body > .cc-cookies > a {
+    float: right;
+}
