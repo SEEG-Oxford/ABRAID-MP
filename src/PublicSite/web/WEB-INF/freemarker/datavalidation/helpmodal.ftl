@@ -17,7 +17,7 @@
                 <h4 class="modal-title" id="helpModalLabel">ABRAID-MP Data Validation</h4>
             </div>
             <div class="modal-body">
-                <iframe src="<@spring.url "/help"/>"></iframe>
+                <iframe src="<@spring.url "/datavalidation/help"/>"></iframe>
             </div>
         </div>
     </div>

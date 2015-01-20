@@ -3,7 +3,7 @@
     This content will reside in an IFrame, on the Help Modal accessed from within the Data Validation page.
     Copyright (c) 2014 University of Oxford
 -->
-<#import "layout/common.ftl" as c/>
+<#import "../layout/common.ftl" as c/>
 <#import "/spring.ftl" as spring />
 <#assign endOfHeadContent>
     <link rel="stylesheet" href="<@spring.url"/css/help.css"/>">
