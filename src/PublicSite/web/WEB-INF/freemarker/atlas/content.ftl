@@ -31,13 +31,15 @@
         <#include "layerselector.ftl"/>
         <#include "modelrundetails.ftl"/>
         <div class="leaflet-bottom leaflet-left" id="legend" style="display: none" data-bind="visible: true">
-            <div class="legend leaflet-bar leaflet-control" style="display: none" data-bind="visible: type() == 'continuous'">
-                <i style="background-color:#a44883;"></i><span>1</span><br>
-                <i style="background-color:#a44883; background-image: -webkit-gradient(linear, left top, left bottom, from(#a44883), to(#cf93ba)); background-image: -webkit-linear-gradient(top, #a44883, #cf93ba); background-image: -moz-linear-gradient(top, #a44883, #cf93ba); background-image: -o-linear-gradient(top, #a44883, #cf93ba); background-image: linear-gradient(to bottom, #a44883, #cf93ba);"></i><br>
-                <i style="background-color:#cf93ba; background-image: -webkit-gradient(linear, left top, left bottom, from(#cf93ba), to(#ffffcb)); background-image: -webkit-linear-gradient(top, #cf93ba, #ffffcb); background-image: -moz-linear-gradient(top, #cf93ba, #ffffcb); background-image: -o-linear-gradient(top, #cf93ba, #ffffcb); background-image: linear-gradient(to bottom, #cf93ba, #ffffcb);"></i><br>
-                <i style="background-color:#ffffcb; background-image: -webkit-gradient(linear, left top, left bottom, from(#ffffcb), to(#c3d4bb)); background-image: -webkit-linear-gradient(top, #ffffcb, #c3d4bb); background-image: -moz-linear-gradient(top, #ffffcb, #c3d4bb); background-image: -o-linear-gradient(top, #ffffcb, #c3d4bb); background-image: linear-gradient(to bottom, #ffffcb, #c3d4bb);"></i><br>
-                <i style="background-color:#c3d4bb; background-image: -webkit-gradient(linear, left top, left bottom, from(#c3d4bb), to(#91ab84)); background-image: -webkit-linear-gradient(top, #c3d4bb, #91ab84); background-image: -moz-linear-gradient(top, #c3d4bb, #91ab84); background-image: -o-linear-gradient(top, #c3d4bb, #91ab84); background-image: linear-gradient(to bottom, #c3d4bb, #91ab84);"></i><br>
-                <i style="background-color:#91ab84;"></i><span>0</span><br>
+            <div class="legend leaflet-bar leaflet-control continuous" style="display: none" data-bind="visible: type() == 'continuous'">
+                <div style="text-align: center">Probability of<br>infections occurring<br></div>
+                <i style="background-color:#769766;"></i>
+                <i style="background-color:#769766; background-image: -webkit-gradient(linear, left, right, from(#769766), to(#b5caaa)); background-image: -webkit-linear-gradient(left, #769766, #b5caaa); background-image: -moz-linear-gradient(left, #769766, #b5caaa); background-image: -o-linear-gradient(left, #769766, #b5caaa); background-image: linear-gradient(to right, #769766, #b5caaa);"></i>
+                <i style="background-color:#b5caaa; background-image: -webkit-gradient(linear, left, right, from(#b5caaa), to(#ffffbf)); background-image: -webkit-linear-gradient(left, #b5caaa, #ffffbf); background-image: -moz-linear-gradient(left, #b5caaa, #ffffbf); background-image: -o-linear-gradient(left, #b5caaa, #ffffbf); background-image: linear-gradient(to right, #b5caaa, #ffffbf);"></i>
+                <i style="background-color:#ffffbf; background-image: -webkit-gradient(linear, left, right, from(#ffffbf), to(#c478a9)); background-image: -webkit-linear-gradient(left, #ffffbf, #c478a9); background-image: -moz-linear-gradient(left, #ffffbf, #c478a9); background-image: -o-linear-gradient(left, #ffffbf, #c478a9); background-image: linear-gradient(to right, #ffffbf, #c478a9);"></i>
+                <i style="background-color:#c478a9; background-image: -webkit-gradient(linear, left, right, from(#c478a9), to(#8e1b65)); background-image: -webkit-linear-gradient(left, #c478a9, #8e1b65); background-image: -moz-linear-gradient(left, #c478a9, #8e1b65); background-image: -o-linear-gradient(left, #c478a9, #8e1b65); background-image: linear-gradient(to right, #c478a9, #8e1b65);"></i>
+                <i style="background-color:#8e1b65;"></i><br>
+                <span style="width: 50%; float: left">0</span><span style="width: 50%; float: right; text-align: right">1</span>
             </div>
             <div class="legend leaflet-bar leaflet-control" style="display: none" data-bind="visible: type() == 'discrete'">
                 <i style="background:#8e1b65"></i><span>Presence</span><br>
@@ -48,7 +50,7 @@
             </div>
         </div>
     </div>
-    <#include "atlasdisclaimer.ftl"/>
+    <#--<#include "atlasdisclaimer.ftl"/>-->
 
     <!-- Base url -->
     <script>

@@ -27,6 +27,7 @@
     cursor: pointer !important;
 }
 .legend {
+    width: 154px;
     background-color: white;
     padding: 6px 8px;
     line-height: 18px;
