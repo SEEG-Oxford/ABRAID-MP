@@ -125,9 +125,6 @@ html, body, #dataValidation {
     width: 100px;
     text-align: center;
 }
-#adminUnitTable tbody tr td:last-child, #adminUnitTable thead tr th:last-child  {
-    width: 178px;
-}
 .highlight {
     border-top: 2px solid #aaaaaa;
     border-bottom: 2px solid #aaaaaa;

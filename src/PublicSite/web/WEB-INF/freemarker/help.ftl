@@ -32,8 +32,8 @@
     <div class="panel">
         <div class="panel-body">
             <p>
-                The Data Validator allows disease experts* to contribute to two components of the ABRAID platform.
-                Experts can validate new disease occurrence data coming into the platform, and provide an expert
+                The Data Validator allows disease experts* to contribute to two components of the ABRAID system.
+                Experts can validate new disease occurrence data coming into the system, and provide an expert
                 opinion on the geographical extent of a disease at a national/state level. Both contributions will
                 feed into our mapping process and help ensure the final outputs are valid.
             </p>
@@ -42,6 +42,10 @@
                 expert on the range of diseases found within a particular geographical region, or a combination of
                 both. All expertise in these fields is useful, and you are not expected to validate or comment on
                 areas outside your field of expertise.
+            </p>
+            <p>
+                To see this help text again, click the <i class="fa fa-info-circle"></i> button on the Data Validation
+                page at any time.
             </p>
         </div>
     </div>

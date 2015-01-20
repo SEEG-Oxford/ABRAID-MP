@@ -15,7 +15,7 @@
                 <thead>
                     <tr>
                         <th>Occurrences</th>
-                        <th>Administrative Unit</th>
+                        <th>Country/State</th>
                     </tr>
                 </thead>
                 <tbody data-bind="foreach: adminUnits" >
