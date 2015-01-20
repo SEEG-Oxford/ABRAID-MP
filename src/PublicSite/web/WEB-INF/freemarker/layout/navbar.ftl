@@ -1,6 +1,5 @@
 <#--
     Page header with links between pages.
-    Currently holds log in form, but this will be replaced by ABRAID logo.
     Copyright (c) 2014 University of Oxford
 -->
 <#assign security=JspTaglibs["http://www.springframework.org/security/tags"] />
