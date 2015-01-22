@@ -2,6 +2,7 @@
  * AMD defining the view model for the atlas layer selector.
  * Copyright (c) 2014 University of Oxford
  * - Events published:
+ * -- 'active-atlas-type'
  * -- 'active-atlas-layer'
  * -- 'selected-run'
  */
@@ -36,5 +37,10 @@ define([
         self.selectedLayer = ko.computed(function () {
             return self.selectedRun().id ? self.selectedRun().id + "_" + self.selectedType().id : undefined;
         }, self).publishOn("active-atlas-layer");
+
+        ko.computed(function () {
+            return self.selectedType().id || "";
+        }, self).publishOn("active-atlas-type");
+
     };
 });

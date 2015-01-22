@@ -9,7 +9,7 @@ html, body {
     margin: 0;
 }
 #modelRunDetails div.leaflet-bar.leaflet-control a {
-    min-width: 200px;
+    min-width: 222px;
     padding: 0 5px;
     text-align: center;
 }
@@ -72,7 +72,19 @@ html, body {
     display: table-cell;
     float: none;
 }
-#legend .continuous i {
-    width: 23px;
-    margin-right: 0;
+#continuousKey {
+    float: left;
+    width: 142px
+}
+#continuousKey i {
+    width: 20px;
+    margin: 0;
+}
+#legendText {
+    float: left;
+    max-width: 350px;
+    border-left: 1px solid #eee;
+    margin-left: 8px;
+    padding-left: 8px;
+    font-style: italic;
 }
