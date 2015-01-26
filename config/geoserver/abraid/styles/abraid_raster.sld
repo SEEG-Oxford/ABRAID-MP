@@ -15,6 +15,7 @@
                             <sld:ColorMapEntry color="#ffffcb" opacity="1" quantity="0.5"/>
                             <sld:ColorMapEntry color="#cf93ba" opacity="1" quantity="0.75"/>
                             <sld:ColorMapEntry color="#a44883" opacity="1" quantity="1.0"/>
+                            <sld:ColorMapEntry color="#eaeaea" opacity="1" quantity="+9999"/>
                         </sld:ColorMap>
                     </sld:RasterSymbolizer>
                 </sld:Rule>

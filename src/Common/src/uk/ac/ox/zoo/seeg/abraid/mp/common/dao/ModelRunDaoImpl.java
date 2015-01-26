@@ -89,6 +89,16 @@ public class ModelRunDaoImpl extends AbstractDao<ModelRun, Integer> implements M
         return query.list();
     }
 
+    /**
+     * Gets all the model runs for the given disease group.
+     * @param diseaseGroupId The specified disease group's ID.
+     * @return All the model runs for the given disease group
+     */
+    @Override
+    public Collection<ModelRun> getModelRunsForDiseaseGroup(int diseaseGroupId) {
+        return listNamedQuery("getModelRunsForDiseaseGroup", "diseaseGroupId", diseaseGroupId);
+    }
+
     private ModelRun firstOrNull(List<ModelRun> modelRuns) {
         return (modelRuns != null && modelRuns.size() > 0) ? modelRuns.get(0) : null;
     }

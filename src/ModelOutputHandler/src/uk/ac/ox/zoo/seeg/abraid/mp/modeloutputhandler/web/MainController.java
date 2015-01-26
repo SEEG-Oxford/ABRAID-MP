@@ -35,7 +35,9 @@ public class MainController extends AbstractController {
     private static final String INTERNAL_SERVER_ERROR_MESSAGE =
             "Model outputs handler failed with error \"%s\". See ModelOutputHandler server logs for more details.";
     private static final String MODEL_FAILURE_EMAIL_TEMPLATE = "modelFailureEmail.ftl";
+    private static final String CLEANUP_FAILURE_EMAIL_TEMPLATE = "cleanUpFailureEmail.ftl";
     private static final String MODEL_FAILURE_EMAIL_SUBJECT = "Failed Model Run";
+    private static final String CLEANUP_FAILURE_EMAIL_SUBJECT = "Failed to clean up outdated raster files";
 
     private final MainHandler mainHandler;
     private final HandlersAsyncWrapper handlersAsyncWrapper;
@@ -65,13 +67,25 @@ public class MainController extends AbstractController {
 
             // Save the request body to a temporary file
             modelRunZipFile = saveRequestBodyToTemporaryFile(modelRunZip);
+
             // Ensure the request body is eligible for garbage collection
             modelRunZip = null;
+
             // Continue handling the outputs
             ModelRun modelRun = mainHandler.handleOutputs(modelRunZipFile);
+
+            // Delete old pre-mask raster outputs (outside of the "mainHandler.handleOutputs" transaction)
+            boolean deleteResult = mainHandler.handleOldRasterDeletion(modelRun.getDiseaseGroupId());
+            if (!deleteResult) {
+                sendCleanUpFailureEmail(modelRun);
+            }
+
+            // Announce failed model runs
             if (modelRun.getStatus() == ModelRunStatus.FAILED) {
                 sendModelFailureEmail(modelRun);
             }
+
+            // Do background post processing (e.g. validation parameter updates)
             handlersAsyncWrapper.handle(modelRun);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -91,6 +105,13 @@ public class MainController extends AbstractController {
         data.put("error", modelRun.getErrorText());
         data.put("server", modelRun.getRequestServer());
         emailService.sendEmailInBackground(MODEL_FAILURE_EMAIL_SUBJECT, MODEL_FAILURE_EMAIL_TEMPLATE, data);
+    }
+
+    private void sendCleanUpFailureEmail(ModelRun modelRun) {
+        HashMap<String, String> data = new HashMap<>();
+        data.put("disease", Integer.toString(modelRun.getDiseaseGroupId()));
+        emailService.sendEmailInBackground(
+                CLEANUP_FAILURE_EMAIL_SUBJECT, CLEANUP_FAILURE_EMAIL_TEMPLATE, data);
     }
 
     private File saveRequestBodyToTemporaryFile(byte[] modelRunZip) throws IOException {

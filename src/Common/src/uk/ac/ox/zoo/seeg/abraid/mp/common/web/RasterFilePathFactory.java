@@ -13,7 +13,9 @@ public class RasterFilePathFactory {
     private static final String MEAN_PREDICTION_RASTER_TYPE = "mean";
     private static final String EXTENT_INPUT_RASTER_TYPE = "extent";
     private static final String PREDICTION_UNCERTAINTY_RASTER_TYPE = "uncertainty";
-    private static final String FILENAME_FORMAT = "%s_%s.tif";
+    private static final String FULL_FILENAME_FORMAT = "%s_%s_full.tif";
+    private static final String MASKED_FILENAME_FORMAT = "%s_%s.tif";
+    private static final String EXTENT_FILENAME_FORMAT = "%s_%s.tif";
 
     private File rasterFileDirectory;
 
@@ -22,21 +24,39 @@ public class RasterFilePathFactory {
     }
 
     /**
-     * Gets the location of the mean prediction raster file for the specified model run.
+     * Gets the location of the masked mean prediction raster file for the specified model run.
      * @param modelRun The model run.
-     * @return A mean prediction raster file location.
+     * @return A masked mean prediction raster file location.
      */
-    public File getMeanPredictionRasterFile(ModelRun modelRun) {
-        return getRasterFile(modelRun, MEAN_PREDICTION_RASTER_TYPE);
+    public File getMaskedMeanPredictionRasterFile(ModelRun modelRun) {
+        return getMaskedRasterFile(modelRun, MEAN_PREDICTION_RASTER_TYPE);
     }
 
     /**
-     * Gets the location of the prediction uncertainty raster file for the specified model run.
+     * Gets the location of the pre-masking mean prediction raster file for the specified model run.
      * @param modelRun The model run.
-     * @return A prediction uncertainty raster file location.
+     * @return A pre-masking mean prediction raster file location.
      */
-    public File getPredictionUncertaintyRasterFile(ModelRun modelRun) {
-        return getRasterFile(modelRun, PREDICTION_UNCERTAINTY_RASTER_TYPE);
+    public File getFullMeanPredictionRasterFile(ModelRun modelRun) {
+        return getFullRasterFile(modelRun, MEAN_PREDICTION_RASTER_TYPE);
+    }
+
+    /**
+     * Gets the location of the masked prediction uncertainty raster file for the specified model run.
+     * @param modelRun The model run.
+     * @return A masked prediction uncertainty raster file location.
+     */
+    public File getMaskedPredictionUncertaintyRasterFile(ModelRun modelRun) {
+        return getMaskedRasterFile(modelRun, PREDICTION_UNCERTAINTY_RASTER_TYPE);
+    }
+
+    /**
+     * Gets the location of the pre-masking prediction uncertainty raster file for the specified model run.
+     * @param modelRun The model run.
+     * @return A pre-masking prediction uncertainty raster file location.
+     */
+    public File getFullPredictionUncertaintyRasterFile(ModelRun modelRun) {
+        return getFullRasterFile(modelRun, PREDICTION_UNCERTAINTY_RASTER_TYPE);
     }
 
     /**
@@ -45,11 +65,19 @@ public class RasterFilePathFactory {
      * @return A prediction uncertainty raster file location.
      */
     public File getExtentInputRasterFile(ModelRun modelRun) {
-        return getRasterFile(modelRun, EXTENT_INPUT_RASTER_TYPE);
+        return getFile(modelRun, EXTENT_INPUT_RASTER_TYPE, EXTENT_FILENAME_FORMAT);
     }
 
-    private File getRasterFile(ModelRun modelRun, String type) {
-        String fileName = String.format(FILENAME_FORMAT, modelRun.getName(), type);
+    private File getFullRasterFile(ModelRun modelRun, String type) {
+        return getFile(modelRun, type, FULL_FILENAME_FORMAT);
+    }
+
+    private File getMaskedRasterFile(ModelRun modelRun, String type) {
+        return getFile(modelRun, type, MASKED_FILENAME_FORMAT);
+    }
+
+    private File getFile(ModelRun modelRun, String type, String pattern) {
+        String fileName = String.format(pattern, modelRun.getName(), type);
         return Paths.get(rasterFileDirectory.getAbsolutePath(), fileName).toFile();
     }
 }

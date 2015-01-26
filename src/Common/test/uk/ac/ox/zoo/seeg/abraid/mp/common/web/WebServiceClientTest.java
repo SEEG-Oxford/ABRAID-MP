@@ -15,8 +15,8 @@ public class WebServiceClientTest {
     private static final String GET_URL = "http://www.google.co.uk";
 
     // This is a POST data echo service
-    private static final String POST_URL = "https://httpbin.org/post";
-    private static final String PUT_URL = "https://httpbin.org/put";
+    private static final String POST_URL = "https://eu.httpbin.org/post";
+    private static final String PUT_URL = "https://eu.httpbin.org/put";
 
     @Test
     public void makeGetRequestThrowsExceptionIfUnknownHost() {
@@ -141,7 +141,8 @@ public class WebServiceClientTest {
         // Assert
         assertThat(response).containsIgnoringCase("\"Content-Type\": \"text/xml\"");
         assertThat(response).containsIgnoringCase("\"data\": \"" + xml + "\"");
-        assertThat(response).containsIgnoringCase("\"url\": \"" + POST_URL + "\"");
+        String expectedReportUrl = POST_URL.replace("https", "http"); // Temp httpbin bug workaround see: https://github.com/Runscope/httpbin/issues/207
+        assertThat(response).containsIgnoringCase("\"url\": \"" + expectedReportUrl + "\"");
     }
 
     @Test
@@ -180,7 +181,8 @@ public class WebServiceClientTest {
         // Assert
         assertThat(response).containsIgnoringCase("\"Content-Type\": \"text/xml\"");
         assertThat(response).containsIgnoringCase("\"data\": \"" + xml + "\"");
-        assertThat(response).containsIgnoringCase("\"url\": \"" + PUT_URL + "\"");
+        String expectedReportUrl = PUT_URL.replace("https", "http"); // Temp httpbin bug workaround see: https://github.com/Runscope/httpbin/issues/207
+        assertThat(response).containsIgnoringCase("\"url\": \"" + expectedReportUrl + "\"");
     }
 
 

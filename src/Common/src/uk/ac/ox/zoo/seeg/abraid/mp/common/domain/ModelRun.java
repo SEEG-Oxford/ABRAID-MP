@@ -66,6 +66,11 @@ import java.util.List;
                         "order by " +
                             "sum(case(status) when 'IN_PROGRESS' then 1 else 0 end) asc, " +
                             "sum(case(status) when 'IN_PROGRESS' then 0 else 1 end) asc"
+        ),
+        @NamedQuery(
+                name = "getModelRunsForDiseaseGroup",
+                query = "from ModelRun " +
+                        "where diseaseGroupId=:diseaseGroupId "
         )
 })
 @Entity

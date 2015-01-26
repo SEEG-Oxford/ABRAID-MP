@@ -410,7 +410,7 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
         modelRun.setResponseDate(DateTime.now());
         modelRunService.saveModelRun(modelRun);
 
-        when(rasterFilePathFactory.getMeanPredictionRasterFile(same(modelRun)))
+        when(rasterFilePathFactory.getFullMeanPredictionRasterFile(same(modelRun)))
                 .thenReturn(new File(LARGE_RASTER_FILENAME));
     }
 

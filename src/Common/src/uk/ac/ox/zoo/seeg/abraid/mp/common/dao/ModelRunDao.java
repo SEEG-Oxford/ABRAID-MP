@@ -71,4 +71,11 @@ public interface ModelRunDao {
      * @return The ordered list of servers.
      */
     List<String> getModelRunRequestServersByUsage();
+
+    /**
+     * Gets all the model runs for the given disease group.
+     * @param diseaseGroupId The specified disease group's ID.
+     * @return All the model runs for the given disease group
+     */
+    Collection<ModelRun> getModelRunsForDiseaseGroup(int diseaseGroupId);
 }

@@ -16,6 +16,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvEffectCurveCovariateInfluen
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvSubmodelStatistic;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelOutputsMetadata;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.util.RasterUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParser;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.ModelOutputConstants;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.RasterFilePathFactory;
@@ -26,6 +27,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.List;
 
 import static ch.lambdaj.collection.LambdaCollections.with;
@@ -44,25 +46,34 @@ public class MainHandler {
     private static final String RELATIVE_INFLUENCE_CSV = "relative influence csv";
     private static final String EFFECT_CURVES_CSV = "effect curves csv";
     private static final String LOG_SAVING_FILE =
-            "Saving relative %s (%s bytes) for model run \"%s\"";
+            "Saving %s (%s bytes) for model run \"%s\"";
     private static final String LOG_COULD_NOT_SAVE =
             "Could not save %s for model run \"%s\"";
     private static final String RASTER_FILE_ALREADY_EXISTS =
             "Raster file \"%s\" already exists";
     private static final String FAILED_TO_CREATE_DIRECTORY_FOR_OUTPUT_RASTERS =
             "Failed to create directory for output rasters: %s";
+    private static final String UNABLE_TO_DELETE_RASTER =
+            "Unable to delete outdated 'full' raster file '%s'. " +
+            "Will reattempt deletion when the next model run for disease group '%d' completes.";
+    private static final String DELETED_OUTDATED_RASTER =
+            "Deleted outdated 'full' raster file '%s'";
 
     private static final Charset UTF8 = StandardCharsets.UTF_8;
 
     private final ModelRunService modelRunService;
     private final GeoserverRestService geoserver;
     private final RasterFilePathFactory rasterFilePathFactory;
+    private final ModelOutputRasterMaskingHelper modelOutputRasterMaskingHelper;
 
-    public MainHandler(ModelRunService modelRunService, GeoserverRestService geoserver,
-                       RasterFilePathFactory rasterFilePathFactory) {
+    public MainHandler(ModelRunService modelRunService,
+                       GeoserverRestService geoserver,
+                       RasterFilePathFactory rasterFilePathFactory,
+                       ModelOutputRasterMaskingHelper modelOutputRasterMaskingHelper) {
         this.modelRunService = modelRunService;
         this.geoserver = geoserver;
         this.rasterFilePathFactory = rasterFilePathFactory;
+        this.modelOutputRasterMaskingHelper = modelOutputRasterMaskingHelper;
     }
 
     /**
@@ -100,11 +111,45 @@ public class MainHandler {
         handleValidationStatisticsFile(modelRun, validationStatisticsFile);
         handleRelativeInfluenceFile(modelRun, relativeInfluenceFile);
         handleEffectCurvesFile(modelRun, effectCurvesFile);
+        handleExtentInputRaster(modelRun, extentInputRaster);
         handleMeanPredictionRaster(modelRun, meanPredictionRaster);
         handlePredictionUncertaintyRaster(modelRun, predUncertaintyRaster);
-        handleExtentInputRaster(modelRun, extentInputRaster);
 
         return modelRun;
+    }
+
+    /**
+     * Handles the deletion of old model outputs. These are limited to pre-masking raster files that are no longer the
+     * newest model run, for the given disease group.
+     * @param diseaseGroupId The given disease group's id.
+     * @return A boolean which is true if the deletions succeeded,
+     *         or is false if one or more files could not be deleted (e.g. are currently in use elsewhere).
+     */
+    public boolean handleOldRasterDeletion(int diseaseGroupId) {
+        ModelRun runToKeep = modelRunService.getMostRecentlyRequestedModelRunWhichCompleted(diseaseGroupId);
+        Collection<ModelRun> runsToDelete = modelRunService.getModelRunsForDiseaseGroup(diseaseGroupId);
+        runsToDelete.remove(runToKeep);
+
+        boolean result = true;
+        for (ModelRun runToDelete : runsToDelete) {
+            File[] filesToDelete = new File[] {
+                rasterFilePathFactory.getFullMeanPredictionRasterFile(runToDelete),
+                rasterFilePathFactory.getFullPredictionUncertaintyRasterFile(runToDelete)
+            };
+            for (File fileToDelete : filesToDelete) {
+                if (fileToDelete.exists()) {
+                    if (!fileToDelete.delete()) {
+                        result = false;
+                        LOGGER.warn(String.format(UNABLE_TO_DELETE_RASTER,
+                                                  fileToDelete.getAbsolutePath(), runToDelete.getDiseaseGroupId()));
+                    } else {
+                        LOGGER.info(String.format(DELETED_OUTDATED_RASTER,
+                                                  fileToDelete.getAbsolutePath()));
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     private JsonModelOutputsMetadata extractMetadata(ZipFile zipFile) throws ZipException, IOException {
@@ -195,10 +240,16 @@ public class MainHandler {
         if (raster != null) {
             try {
                 LOGGER.info(String.format(LOG_SAVING_FILE, PREDICTION_RASTER, raster.length, modelRun.getName()));
-                File file = rasterFilePathFactory.getMeanPredictionRasterFile(modelRun);
-                saveRaster(file, raster);
+
+                File fullFile = rasterFilePathFactory.getFullMeanPredictionRasterFile(modelRun);
+                saveRaster(fullFile, raster);
+
+                File maskedFile = rasterFilePathFactory.getMaskedMeanPredictionRasterFile(modelRun);
+                File maskFile = rasterFilePathFactory.getExtentInputRasterFile(modelRun);
+                modelOutputRasterMaskingHelper.maskRaster(maskedFile, fullFile, maskFile, 0);
+
                 if (modelRun.getStatus() == ModelRunStatus.COMPLETED) {
-                    geoserver.publishGeoTIFF(file);
+                    geoserver.publishGeoTIFF(maskedFile);
                 }
             } catch (Exception e) {
                 throw new IOException(String.format(LOG_COULD_NOT_SAVE, PREDICTION_RASTER, modelRun.getName()), e);
@@ -210,10 +261,16 @@ public class MainHandler {
         if (raster != null) {
             try {
                 LOGGER.info(String.format(LOG_SAVING_FILE, UNCERTAINTY_RASTER, raster.length, modelRun.getName()));
-                File file = rasterFilePathFactory.getPredictionUncertaintyRasterFile(modelRun);
-                saveRaster(file, raster);
+
+                File fullFile = rasterFilePathFactory.getFullPredictionUncertaintyRasterFile(modelRun);
+                saveRaster(fullFile, raster);
+
+                File maskedFile = rasterFilePathFactory.getMaskedPredictionUncertaintyRasterFile(modelRun);
+                File maskFile = rasterFilePathFactory.getExtentInputRasterFile(modelRun);
+                modelOutputRasterMaskingHelper.maskRaster(maskedFile, fullFile, maskFile, RasterUtils.UNKNOWN_VALUE);
+
                 if (modelRun.getStatus() == ModelRunStatus.COMPLETED) {
-                    geoserver.publishGeoTIFF(file);
+                    geoserver.publishGeoTIFF(maskedFile);
                 }
             } catch (Exception e) {
                 throw new IOException(String.format(LOG_COULD_NOT_SAVE, UNCERTAINTY_RASTER, modelRun.getName()), e);
