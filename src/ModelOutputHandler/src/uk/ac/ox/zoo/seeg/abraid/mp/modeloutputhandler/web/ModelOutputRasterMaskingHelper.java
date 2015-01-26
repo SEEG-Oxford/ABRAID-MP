@@ -13,7 +13,7 @@ import java.io.IOException;
 
 /**
  * Helper class to perform the masking transformation on model output rasters.
- * Copyright (c) 2014 University of Oxford
+ * Copyright (c) 2015 University of Oxford
  */
 public class ModelOutputRasterMaskingHelper {
     private static final Logger LOGGER = Logger.getLogger(ModelOutputRasterMaskingHelper.class);

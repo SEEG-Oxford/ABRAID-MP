@@ -15,7 +15,7 @@ import static org.mockito.Mockito.when;
 
 /**
  * Tests the ModelOutputRasterMaskingHelper class.
- * Copyright (c) 2014 University of Oxford
+ * Copyright (c) 2015 University of Oxford
  */
 public class ModelOutputRasterMaskingHelperTest {
     private static final String TEST_DATA_PATH = "ModelOutputHandler/test/uk/ac/ox/zoo/seeg/abraid/mp/modeloutputhandler/web/testdata";

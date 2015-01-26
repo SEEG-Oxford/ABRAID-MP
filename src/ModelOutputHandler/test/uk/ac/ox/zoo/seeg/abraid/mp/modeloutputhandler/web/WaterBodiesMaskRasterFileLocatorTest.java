@@ -9,7 +9,7 @@ import static org.mockito.Mockito.mock;
 
 /**
  * Tests the WaterBodiesMaskRasterFileLocator class.
- * Copyright (c) 2014 University of Oxford
+ * Copyright (c) 2015 University of Oxford
  */
 public class WaterBodiesMaskRasterFileLocatorTest {
     @Test

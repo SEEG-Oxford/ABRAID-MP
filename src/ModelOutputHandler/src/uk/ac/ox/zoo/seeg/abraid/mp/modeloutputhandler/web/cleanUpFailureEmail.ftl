@@ -1,6 +1,6 @@
 <#--
     A template email sent in response to the failure to clean up unmasked raster files.
-    Copyright (c) 2014 University of Oxford
+    Copyright (c) 2015 University of Oxford
 -->
 The system has failed to clean up one or more outdated raster files (unmasked raster files that are no longer needed).
 

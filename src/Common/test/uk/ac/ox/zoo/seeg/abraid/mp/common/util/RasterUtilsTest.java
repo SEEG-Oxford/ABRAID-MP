@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 
 /**
  * Tests the RasterUtils class.
- * Copyright (c) 2014 University of Oxford
+ * Copyright (c) 2015 University of Oxford
  */
 public class RasterUtilsTest {
     private static final String TEST_DATA_PATH = "Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/util";

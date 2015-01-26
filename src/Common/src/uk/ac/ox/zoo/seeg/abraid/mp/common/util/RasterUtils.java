@@ -25,7 +25,7 @@ import java.io.IOException;
 
 /**
  * Utilities for working with raster files.
- * Copyright (c) 2014 University of Oxford
+ * Copyright (c) 2015 University of Oxford
  */
 public final class RasterUtils {
     private RasterUtils() {
