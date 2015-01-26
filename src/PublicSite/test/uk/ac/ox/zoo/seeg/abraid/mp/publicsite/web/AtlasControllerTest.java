@@ -131,7 +131,7 @@ public class AtlasControllerTest {
         when(modelRun1.getCovariateInfluences()).thenReturn(Arrays.asList(new CovariateInfluence("Name", 20.2)));
         when(modelRun2.getCovariateInfluences()).thenReturn(new ArrayList<CovariateInfluence>());
         when(modelRun3.getCovariateInfluences()).thenReturn(new ArrayList<CovariateInfluence>());
-        when(modelRun1.getSubmodelStatistics()).thenReturn(Arrays.asList(new SubmodelStatistic(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8)));
+        when(modelRun1.getSubmodelStatistics()).thenReturn(Arrays.asList(new SubmodelStatistic(0.4, 0.5, 0.6, 0.7, 0.8)));
         when(modelRun2.getSubmodelStatistics()).thenReturn(new ArrayList<SubmodelStatistic>());
         when(modelRun3.getSubmodelStatistics()).thenReturn(new ArrayList<SubmodelStatistic>());
 
