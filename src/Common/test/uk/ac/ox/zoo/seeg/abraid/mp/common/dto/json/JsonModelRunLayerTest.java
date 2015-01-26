@@ -31,6 +31,9 @@ public class JsonModelRunLayerTest {
 
         when(modelRun.getName()).thenReturn("expectedName");
         when(modelRun.getRequestDate()).thenReturn(new DateTime(1413210069L * 1000));
+        when(modelRun.getOccurrenceDataRangeStartDate()).thenReturn(new DateTime(1213210069L * 1000));
+        when(modelRun.getOccurrenceDataRangeEndDate()).thenReturn(new DateTime(1313210069L * 1000));
+        when(modelRun.getRequestDate()).thenReturn(new DateTime(1413210069L * 1000));
         when(modelRun.getCovariateInfluences()).thenReturn(Arrays.asList(covariateInfluence));
         when(modelRun.getSubmodelStatistics()).thenReturn(Arrays.asList(submodelStatistic));
 
@@ -40,6 +43,8 @@ public class JsonModelRunLayerTest {
         // Assert
         assertThat(result.getId()).isEqualTo("expectedName");
         assertThat(result.getDate()).isEqualTo("2014-10-13");
+        assertThat(result.getRangeStart()).isEqualTo("2008-06-11");
+        assertThat(result.getRangeEnd()).isEqualTo("2011-08-13");
         assertThat(result.isAutomatic()).isEqualTo(automaticRun);
     }
 }

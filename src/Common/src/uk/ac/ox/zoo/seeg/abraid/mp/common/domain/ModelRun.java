@@ -143,6 +143,17 @@ public class ModelRun {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime batchingCompletedDate;
 
+    // The occurrence date of the earliest associated disease occurrence.
+    @Column(name = "occurrence_data_range_start_date")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime occurrenceDataRangeStartDate;
+
+    // The occurrence date of the latest associated disease occurrence.
+    @Column(name = "occurrence_data_range_end_date")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime occurrenceDataRangeEndDate;
+
+
     // List of effect curve covariate influence data points associated with this model run.
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "modelRun")
     private List<EffectCurveCovariateInfluence> effectCurveCovariateInfluences;
@@ -311,6 +322,22 @@ public class ModelRun {
         this.inputDiseaseExtent = inputDiseaseExtent;
     }
 
+    public DateTime getOccurrenceDataRangeStartDate() {
+        return occurrenceDataRangeStartDate;
+    }
+
+    public void setOccurrenceDataRangeStartDate(DateTime occurrenceDataRangeStartDate) {
+        this.occurrenceDataRangeStartDate = occurrenceDataRangeStartDate;
+    }
+
+    public DateTime getOccurrenceDataRangeEndDate() {
+        return occurrenceDataRangeEndDate;
+    }
+
+    public void setOccurrenceDataRangeEndDate(DateTime occurrenceDataRangeEndDate) {
+        this.occurrenceDataRangeEndDate = occurrenceDataRangeEndDate;
+    }
+
     ///COVERAGE:OFF - generated code
     ///CHECKSTYLE:OFF AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     @Override
@@ -339,6 +366,10 @@ public class ModelRun {
             return false;
         if (responseDate != null ? !responseDate.equals(modelRun.responseDate) : modelRun.responseDate != null)
             return false;
+        if (occurrenceDataRangeStartDate != null ? !occurrenceDataRangeStartDate.equals(modelRun.occurrenceDataRangeStartDate) : modelRun.occurrenceDataRangeStartDate != null)
+            return false;
+        if (occurrenceDataRangeEndDate != null ? !occurrenceDataRangeEndDate.equals(modelRun.occurrenceDataRangeEndDate) : modelRun.occurrenceDataRangeEndDate != null)
+            return false;
         if (status != modelRun.status) return false;
 
         return true;
@@ -359,6 +390,8 @@ public class ModelRun {
         result = 31 * result + (batchEndDate != null ? batchEndDate.hashCode() : 0);
         result = 31 * result + (batchOccurrenceCount != null ? batchOccurrenceCount.hashCode() : 0);
         result = 31 * result + (batchingCompletedDate != null ? batchingCompletedDate.hashCode() : 0);
+        result = 31 * result + (occurrenceDataRangeStartDate != null ? occurrenceDataRangeStartDate.hashCode() : 0);
+        result = 31 * result + (occurrenceDataRangeEndDate != null ? occurrenceDataRangeEndDate.hashCode() : 0);
         return result;
     }
     ///CHECKSTYLE:ON
