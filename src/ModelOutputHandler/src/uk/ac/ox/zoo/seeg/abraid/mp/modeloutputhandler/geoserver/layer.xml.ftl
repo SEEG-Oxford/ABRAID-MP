@@ -6,7 +6,7 @@
     <name>${basename}</name>
     <type>RASTER</type>
     <defaultStyle>
-        <name>abraid_raster</name>
+        <name>abraid_${basename?split("_")?last}</name>
         <workspace>abraid</workspace>
     </defaultStyle>
     <attribution>

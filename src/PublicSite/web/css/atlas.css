@@ -80,11 +80,11 @@ html, body {
     display: table-cell;
     float: none;
 }
-#continuousKey {
+.continuousKey {
     float: left;
     width: 142px
 }
-#continuousKey i {
+.continuousKey i {
     width: 20px;
     margin: 0;
 }
