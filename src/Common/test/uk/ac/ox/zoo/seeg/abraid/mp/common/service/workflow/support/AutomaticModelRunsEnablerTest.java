@@ -69,8 +69,13 @@ public class AutomaticModelRunsEnablerTest {
         DiseaseOccurrence occurrence2 = new DiseaseOccurrence();
         occurrence1.setOccurrenceDate(DateTime.now().minusDays(21));
         occurrence2.setOccurrenceDate(DateTime.now().minusDays(1));
-        when(diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId)).thenReturn(
-                Arrays.asList(occurrence1, occurrence2));
+        when(diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(
+                diseaseGroupId,
+                DiseaseOccurrenceStatus.READY,
+                DiseaseOccurrenceStatus.AWAITING_BATCHING
+        )).thenReturn(
+                Arrays.asList(occurrence1, occurrence2)
+        );
 
         // Act
         automaticModelRunsEnabler.enable(diseaseGroupId);

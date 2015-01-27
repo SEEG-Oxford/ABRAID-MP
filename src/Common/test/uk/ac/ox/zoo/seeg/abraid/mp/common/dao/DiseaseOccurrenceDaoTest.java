@@ -525,7 +525,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
 
         // Act
         List<DiseaseOccurrence> actualOccurrences =
-                diseaseOccurrenceDao.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId);
+                diseaseOccurrenceDao.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId, DiseaseOccurrenceStatus.READY);
 
         // Assert
         assertThat(actualOccurrences).hasSize(expectedSize);

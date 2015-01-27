@@ -4,6 +4,7 @@ import ch.lambdaj.function.convert.Converter;
 import org.apache.log4j.Logger;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReview;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceStatus;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
@@ -105,7 +106,8 @@ public class WeightingsCalculator {
      */
     public void updateDiseaseOccurrenceValidationWeightingAndFinalWeightings(int diseaseGroupId) {
         List<DiseaseOccurrence> occurrences =
-            diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId);
+            diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(
+                    diseaseGroupId, DiseaseOccurrenceStatus.READY);
         if (occurrences.size() == 0) {
             logger.info(NO_OCCURRENCES_FOR_MODEL_RUN);
         } else {

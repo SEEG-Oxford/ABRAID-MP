@@ -120,7 +120,8 @@ public class WeightingsCalculatorTest {
         target.updateDiseaseOccurrenceValidationWeightingAndFinalWeightings(DISEASE_GROUP_ID);
 
         // Assert
-        verify(diseaseService).getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(DISEASE_GROUP_ID);
+        verify(diseaseService).getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(
+                DISEASE_GROUP_ID, DiseaseOccurrenceStatus.READY);
     }
 
     @Test
@@ -155,7 +156,7 @@ public class WeightingsCalculatorTest {
         occurrenceWithMachineWeighting.setMachineWeighting(machineWeighting);
 
         DiseaseService mockDiseaseService = mock(DiseaseService.class);
-        when(mockDiseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(DISEASE_GROUP_ID))
+        when(mockDiseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(DISEASE_GROUP_ID, DiseaseOccurrenceStatus.READY))
             .thenReturn(Arrays.asList(occurrenceWithExpertWeighting, occurrenceWithMachineWeighting));
 
         WeightingsCalculator target =  weightingsCalculator(mockDiseaseService, mock(ExpertService.class));
@@ -423,7 +424,7 @@ public class WeightingsCalculatorTest {
 
     private WeightingsCalculator weightingsCalculatorWithMockedDiseaseService(DiseaseOccurrence occurrence) {
         DiseaseService diseaseService = mock(DiseaseService.class);
-        when(diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(DISEASE_GROUP_ID))
+        when(diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(DISEASE_GROUP_ID, DiseaseOccurrenceStatus.READY))
             .thenReturn(Arrays.asList(occurrence));
 
         return weightingsCalculator(diseaseService, mock(ExpertService.class));
