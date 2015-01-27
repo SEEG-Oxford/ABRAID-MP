@@ -54,7 +54,7 @@ import javax.persistence.Table;
                 name = "getDiseaseOccurrencesYetToHaveFinalWeightingAssigned",
                 query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
                         "where d.diseaseGroup.id=:diseaseGroupId " +
-                        "and d.status = 'READY' " +
+                        "and d.status in :statuses " +
                         "and d.finalWeighting is null "
         ),
         @NamedQuery(

@@ -120,9 +120,11 @@ public interface DiseaseService {
     /**
      * Gets disease occurrences for the specified disease group which are yet to have a final weighting assigned.
      * @param diseaseGroupId The ID of the disease group.
+     * @param statuses A set of disease occurrence statuses from which to return occurrences.
      * @return A list of disease occurrences that need their final weightings to be set.
      */
-    List<DiseaseOccurrence> getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(Integer diseaseGroupId);
+    List<DiseaseOccurrence> getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(
+            Integer diseaseGroupId, DiseaseOccurrenceStatus... statuses);
 
     /**
      * Gets disease occurrences for a request to run the model.

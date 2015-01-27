@@ -168,11 +168,15 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
     /**
      * Gets disease occurrences for the specified disease group which are yet to have a final weighting assigned.
      * @param diseaseGroupId The ID of the disease group.
+     * @param statuses A set of disease occurrence statuses from which to return occurrences.
      * @return A list of disease occurrences that need their final weightings to be set.
      */
     @Override
-    public List<DiseaseOccurrence> getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(Integer diseaseGroupId) {
-        return listNamedQuery("getDiseaseOccurrencesYetToHaveFinalWeightingAssigned", "diseaseGroupId", diseaseGroupId);
+    public List<DiseaseOccurrence> getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(
+            Integer diseaseGroupId, DiseaseOccurrenceStatus... statuses) {
+        List<DiseaseOccurrenceStatus> statusList = Arrays.asList(statuses);
+        return listNamedQuery("getDiseaseOccurrencesYetToHaveFinalWeightingAssigned",
+                "diseaseGroupId", diseaseGroupId, "statuses", statusList);
     }
 
     /**

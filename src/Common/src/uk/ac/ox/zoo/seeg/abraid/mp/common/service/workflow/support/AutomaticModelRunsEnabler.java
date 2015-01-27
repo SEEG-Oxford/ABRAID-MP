@@ -65,7 +65,8 @@ public class AutomaticModelRunsEnabler {
     }
 
     private List<DiseaseOccurrence> getOccurrencesWithoutAFinalWeighting(int diseaseGroupId) {
-        return diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId);
+        return diseaseService.getDiseaseOccurrencesYetToHaveFinalWeightingAssigned(diseaseGroupId,
+                DiseaseOccurrenceStatus.READY, DiseaseOccurrenceStatus.AWAITING_BATCHING);
     }
 
     private void addValidationParametersOrWeightings(List<DiseaseOccurrence> occurrences) {
