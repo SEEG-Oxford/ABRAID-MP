@@ -15,3 +15,4 @@ artifacts
 db/.database.properties
 fake.zip
 junit*.properties
+db/data_model.ldb

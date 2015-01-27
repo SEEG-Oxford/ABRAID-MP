@@ -12,50 +12,19 @@ import java.util.List;
  * Copyright (c) 2014 University of Oxford
  */
 public class CsvSubmodelStatistic {
-    private Double deviance; // "deviance"
-    private Double rootMeanSquareError; // "rmse"
-    private Double kappa; // "kappa"
     private Double areaUnderCurve; // "auc"
     private Double sensitivity; // "sens"
     private Double specificity; // "spec"
     private Double proportionCorrectlyClassified; // "pcc"
+    private Double kappa; // "kappa"
 
-    private Double kappaStandardDeviation; // "kappa_sd"
     private Double areaUnderCurveStandardDeviation; // "auc_sd"
     private Double sensitivityStandardDeviation; // "sens_sd"
     private Double specificityStandardDeviation; // "spec_sd"
     private Double proportionCorrectlyClassifiedStandardDeviation; // "pcc_sd"
-
-    private Double threshold; //"thresh"
+    private Double kappaStandardDeviation; // "kappa_sd"
 
     public CsvSubmodelStatistic() {
-    }
-
-    public Double getDeviance() {
-        return deviance;
-    }
-
-    @JsonProperty("deviance")
-    public void setDeviance(Double deviance) {
-        this.deviance = deviance;
-    }
-
-    public Double getRootMeanSquareError() {
-        return rootMeanSquareError;
-    }
-
-    @JsonProperty("rmse")
-    public void setRootMeanSquareError(Double rootMeanSquareError) {
-        this.rootMeanSquareError = rootMeanSquareError;
-    }
-
-    public Double getKappa() {
-        return kappa;
-    }
-
-    @JsonProperty("kappa")
-    public void setKappa(Double kappa) {
-        this.kappa = kappa;
     }
 
     public Double getAreaUnderCurve() {
@@ -94,13 +63,13 @@ public class CsvSubmodelStatistic {
         this.proportionCorrectlyClassified = proportionCorrectlyClassified;
     }
 
-    public Double getKappaStandardDeviation() {
-        return kappaStandardDeviation;
+    public Double getKappa() {
+        return kappa;
     }
 
-    @JsonProperty("kappa_sd")
-    public void setKappaStandardDeviation(Double kappaStandardDeviation) {
-        this.kappaStandardDeviation = kappaStandardDeviation;
+    @JsonProperty("kappa")
+    public void setKappa(Double kappa) {
+        this.kappa = kappa;
     }
 
     public Double getAreaUnderCurveStandardDeviation() {
@@ -140,13 +109,13 @@ public class CsvSubmodelStatistic {
         this.proportionCorrectlyClassifiedStandardDeviation = proportionCorrectlyClassifiedStandardDeviation;
     }
 
-    public Double getThreshold() {
-        return threshold;
+    public Double getKappaStandardDeviation() {
+        return kappaStandardDeviation;
     }
 
-    @JsonProperty("thresh")
-    public void setThreshold(Double threshold) {
-        this.threshold = threshold;
+    @JsonProperty("kappa_sd")
+    public void setKappaStandardDeviation(Double kappaStandardDeviation) {
+        this.kappaStandardDeviation = kappaStandardDeviation;
     }
 
     /**

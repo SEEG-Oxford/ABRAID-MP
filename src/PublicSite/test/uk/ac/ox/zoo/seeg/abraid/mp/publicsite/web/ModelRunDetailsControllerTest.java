@@ -77,8 +77,8 @@ public class ModelRunDetailsControllerTest {
         // Arrange
         String name = "modelRun4";
         ModelRun modelRun = mockCompletedModelRunWithStatistics(Arrays.asList(
-                new SubmodelStatistic(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0),
-                new SubmodelStatistic(3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0)
+                new SubmodelStatistic(4.0, 5.0, 6.0, 7.0, 8.0),
+                new SubmodelStatistic(6.0, 7.0, 8.0, 9.0, 10.0)
         ));
         ModelRunService modelRunService = mockModelRunService(name, modelRun);
         ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService);
@@ -362,10 +362,6 @@ public class ModelRunDetailsControllerTest {
 
     private void assertNullBody(ResponseEntity response) {
         JsonModelRunStatistics body = (JsonModelRunStatistics) response.getBody();
-        assertThat(body.getDeviance()).isNull();
-        assertThat(body.getDevianceSd()).isNull();
-        assertThat(body.getRmse()).isNull();
-        assertThat(body.getRmseSd()).isNull();
         assertThat(body.getKappa()).isNull();
         assertThat(body.getKappaSd()).isNull();
         assertThat(body.getAuc()).isNull();
@@ -376,29 +372,21 @@ public class ModelRunDetailsControllerTest {
         assertThat(body.getSpecSd()).isNull();
         assertThat(body.getPcc()).isNull();
         assertThat(body.getPccSd()).isNull();
-        assertThat(body.getThreshold()).isNull();
-        assertThat(body.getThresholdSd()).isNull();
     }
 
     private void assertExpectedBody(ResponseEntity response) {
         JsonModelRunStatistics body = (JsonModelRunStatistics) response.getBody();
-        assertThat(body.getDeviance()).isEqualTo(2.0);
-        assertThat(body.getRmse()).isEqualTo(3.0);
-        assertThat(body.getKappa()).isEqualTo(4.0);
-        assertThat(body.getAuc()).isEqualTo(5.0);
-        assertThat(body.getSens()).isEqualTo(6.0);
-        assertThat(body.getSpec()).isEqualTo(7.0);
-        assertThat(body.getPcc()).isEqualTo(8.0);
-        assertThat(body.getThreshold()).isEqualTo(9.0);
+        assertThat(body.getKappa()).isEqualTo(5.0);
+        assertThat(body.getAuc()).isEqualTo(6.0);
+        assertThat(body.getSens()).isEqualTo(7.0);
+        assertThat(body.getSpec()).isEqualTo(8.0);
+        assertThat(body.getPcc()).isEqualTo(9.0);
 
-        assertSd(body.getDevianceSd());
-        assertSd(body.getRmseSd());
         assertSd(body.getKappaSd());
         assertSd(body.getAucSd());
         assertSd(body.getSensSd());
         assertSd(body.getSpecSd());
         assertSd(body.getPccSd());
-        assertSd(body.getThresholdSd());
     }
 
     private void assertSd(double sd) {

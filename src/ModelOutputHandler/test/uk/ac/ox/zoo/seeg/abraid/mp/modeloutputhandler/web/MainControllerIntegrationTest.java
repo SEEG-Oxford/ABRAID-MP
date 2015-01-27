@@ -346,6 +346,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
     private void assertThatRasterPublishedToGeoserver(ModelRun run, String type) throws IOException, TemplateException {
         verify(geoserverRestService).publishGeoTIFF(Paths.get(testFolder.getRoot().getAbsolutePath(), run.getName() + "_" + type + ".tif").toFile());
     }
+
     private void assertThatNoRastersPublishedToGeoserver() throws IOException, TemplateException {
         verify(geoserverRestService, times(0)).publishGeoTIFF(any(File.class));
     }
@@ -354,8 +355,6 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
         List<SubmodelStatistic> database = run.getSubmodelStatistics();
         List<CsvSubmodelStatistic> file = CsvSubmodelStatistic.readFromCSV(FileUtils.readFileToString(new File(TEST_DATA_PATH, path)));
 
-        assertThat(extractProperty("deviance").from(database)).isEqualTo(extractProperty("deviance").from(file));
-        assertThat(extractProperty("rootMeanSquareError").from(database)).isEqualTo(extractProperty("rootMeanSquareError").from(file));
         assertThat(extractProperty("kappa").from(database)).isEqualTo(extractProperty("kappa").from(file));
         assertThat(extractProperty("areaUnderCurve").from(database)).isEqualTo(extractProperty("areaUnderCurve").from(file));
         assertThat(extractProperty("sensitivity").from(database)).isEqualTo(extractProperty("sensitivity").from(file));
@@ -366,7 +365,6 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
         assertThat(extractProperty("sensitivityStandardDeviation").from(database)).isEqualTo(extractProperty("sensitivityStandardDeviation").from(file));
         assertThat(extractProperty("specificityStandardDeviation").from(database)).isEqualTo(extractProperty("specificityStandardDeviation").from(file));
         assertThat(extractProperty("proportionCorrectlyClassifiedStandardDeviation").from(database)).isEqualTo(extractProperty("proportionCorrectlyClassifiedStandardDeviation").from(file));
-        assertThat(extractProperty("threshold").from(database)).isEqualTo(extractProperty("threshold").from(file));
     }
 
     private void assertThatRelativeInfluencesInDatabaseMatchesFile(final ModelRun run, String path) throws IOException {

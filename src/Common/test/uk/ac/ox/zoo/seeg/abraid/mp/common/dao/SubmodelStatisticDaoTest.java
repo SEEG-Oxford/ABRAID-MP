@@ -41,8 +41,6 @@ public class SubmodelStatisticDaoTest extends AbstractCommonSpringIntegrationTes
         assertThat(result.getId()).isNotNull();
         assertThat(result.getId()).isEqualTo(id);
         assertThat(result.getModelRun()).isEqualTo(modelRun);
-        assertThat(result.getDeviance()).isEqualTo(expectation.getDeviance());
-        assertThat(result.getRootMeanSquareError()).isEqualTo(expectation.getRootMeanSquareError());
         assertThat(result.getKappa()).isEqualTo(expectation.getKappa());
         assertThat(result.getAreaUnderCurve()).isEqualTo(expectation.getAreaUnderCurve());
         assertThat(result.getSensitivity()).isEqualTo(expectation.getSensitivity());
@@ -53,7 +51,6 @@ public class SubmodelStatisticDaoTest extends AbstractCommonSpringIntegrationTes
         assertThat(result.getSensitivityStandardDeviation()).isEqualTo(expectation.getSensitivityStandardDeviation());
         assertThat(result.getSpecificityStandardDeviation()).isEqualTo(expectation.getSpecificityStandardDeviation());
         assertThat(result.getProportionCorrectlyClassifiedStandardDeviation()).isEqualTo(expectation.getProportionCorrectlyClassifiedStandardDeviation());
-        assertThat(result.getThreshold()).isEqualTo(expectation.getThreshold());
     }
 
     @Test
@@ -76,8 +73,6 @@ public class SubmodelStatisticDaoTest extends AbstractCommonSpringIntegrationTes
 
     private SubmodelStatistic createSubmodelStatistic(ModelRun modelRun) {
         CsvSubmodelStatistic dto = new CsvSubmodelStatistic();
-        dto.setDeviance(1.0);
-        dto.setRootMeanSquareError(2.0);
         dto.setKappa(3.0);
         dto.setAreaUnderCurve(4.0);
         dto.setSensitivity(5.0);
@@ -88,8 +83,6 @@ public class SubmodelStatisticDaoTest extends AbstractCommonSpringIntegrationTes
         dto.setSensitivityStandardDeviation(10.0);
         dto.setSpecificityStandardDeviation(11.0);
         dto.setProportionCorrectlyClassifiedStandardDeviation(12.0);
-        dto.setThreshold(13.0);
-
         return new SubmodelStatistic(dto, modelRun);
     }
 

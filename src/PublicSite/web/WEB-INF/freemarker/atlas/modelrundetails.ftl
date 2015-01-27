@@ -53,53 +53,38 @@
                         <div data-bind="if: statistics">
                             <table class="table table-condensed" id="statistics">
                                 <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Mean</th>
-                                    <th>Standard Deviation</th>
-                                </tr>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Mean</th>
+                                        <th>Standard Deviation</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                    <td>Deviance</td>
-                                    <td data-bind="numericText: statistics().deviance"></td>
-                                    <td data-bind="numericText: statistics().devianceSd"></td>
-                                </tr>
-                                <tr>
-                                    <td><abbr title="Root Mean Squared Error">RMSE</abbr></td>
-                                    <td data-bind="numericText: statistics().rmse"></td>
-                                    <td data-bind="numericText: statistics().rmseSd"></td>
-                                </tr>
-                                <tr>
-                                    <td>Kappa</td>
-                                    <td data-bind="numericText: statistics().kappa"></td>
-                                    <td data-bind="numericText: statistics().kappaSd"></td>
-                                </tr>
-                                <tr>
-                                    <td><abbr title="Area Under Curve">AUC</abbr></td>
-                                    <td data-bind="numericText: statistics().auc"></td>
-                                    <td data-bind="numericText: statistics().aucSd"></td>
-                                </tr>
-                                <tr>
-                                    <td>Sensitivity</td>
-                                    <td data-bind="numericText: statistics().sens"></td>
-                                    <td data-bind="numericText: statistics().sensSd"></td>
-                                </tr>
-                                <tr>
-                                    <td>Specificity</td>
-                                    <td data-bind="numericText: statistics().spec"></td>
-                                    <td data-bind="numericText: statistics().specSd"></td>
-                                </tr>
-                                <tr>
-                                    <td><abbr title="Proportion Correctly Classified">PCC</abbr></td>
-                                    <td data-bind="numericText: statistics().pcc"></td>
-                                    <td data-bind="numericText: statistics().pccSd"></td>
-                                </tr>
-                                <tr>
-                                    <td>Threshold</td>
-                                    <td data-bind="numericText: statistics().threshold"></td>
-                                    <td data-bind="numericText: statistics().thresholdSd"></td>
-                                </tr>
+                                    <tr>
+                                        <td>Kappa</td>
+                                        <td data-bind="numericText: statistics().kappa"></td>
+                                        <td data-bind="numericText: statistics().kappaSd"></td>
+                                    </tr>
+                                    <tr>
+                                        <td><abbr title="Area Under Curve">AUC</abbr></td>
+                                        <td data-bind="numericText: statistics().auc"></td>
+                                        <td data-bind="numericText: statistics().aucSd"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Sensitivity</td>
+                                        <td data-bind="numericText: statistics().sens"></td>
+                                        <td data-bind="numericText: statistics().sensSd"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Specificity</td>
+                                        <td data-bind="numericText: statistics().spec"></td>
+                                        <td data-bind="numericText: statistics().specSd"></td>
+                                    </tr>
+                                    <tr>
+                                        <td><abbr title="Proportion Correctly Classified">PCC</abbr></td>
+                                        <td data-bind="numericText: statistics().pcc"></td>
+                                        <td data-bind="numericText: statistics().pccSd"></td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>

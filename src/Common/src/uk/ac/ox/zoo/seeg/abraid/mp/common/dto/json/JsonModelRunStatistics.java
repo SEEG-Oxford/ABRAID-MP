@@ -5,12 +5,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json;
  * Copyright (c) 2014 University of Oxford
  */
 public class JsonModelRunStatistics {
-    private Double deviance;
-    private Double devianceSd;
-
-    private Double rmse;
-    private Double rmseSd;
-
     private Double kappa;
     private Double kappaSd;
 
@@ -26,26 +20,7 @@ public class JsonModelRunStatistics {
     private Double pcc;
     private Double pccSd;
 
-    private Double threshold;
-    private Double thresholdSd;
-
     public JsonModelRunStatistics() {
-    }
-
-    public void setDeviance(Double deviance) {
-        this.deviance = deviance;
-    }
-
-    public void setDevianceSd(Double devianceSd) {
-        this.devianceSd = devianceSd;
-    }
-
-    public void setRmse(Double rmse) {
-        this.rmse = rmse;
-    }
-
-    public void setRmseSd(Double rmseSd) {
-        this.rmseSd = rmseSd;
     }
 
     public void setKappa(Double kappa) {
@@ -88,22 +63,6 @@ public class JsonModelRunStatistics {
         this.pccSd = pccSd;
     }
 
-    public void setThreshold(Double threshold) {
-        this.threshold = threshold;
-    }
-
-    public void setThresholdSd(Double thresholdSd) {
-        this.thresholdSd = thresholdSd;
-    }
-
-    public Double getDeviance() {
-        return deviance;
-    }
-
-    public Double getRmse() {
-        return rmse;
-    }
-
     public Double getKappa() {
         return kappa;
     }
@@ -124,18 +83,6 @@ public class JsonModelRunStatistics {
         return pcc;
     }
 
-    public Double getThreshold() {
-        return threshold;
-    }
-
-    public Double getDevianceSd() {
-        return devianceSd;
-    }
-
-    public Double getRmseSd() {
-        return rmseSd;
-    }
-
     public Double getKappaSd() {
         return kappaSd;
     }
@@ -154,9 +101,5 @@ public class JsonModelRunStatistics {
 
     public Double getPccSd() {
         return pccSd;
-    }
-
-    public Double getThresholdSd() {
-        return thresholdSd;
     }
 }

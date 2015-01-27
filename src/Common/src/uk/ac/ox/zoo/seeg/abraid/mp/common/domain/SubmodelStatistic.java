@@ -31,13 +31,6 @@ public class SubmodelStatistic {
     @JoinColumn(name = "model_run_id", nullable = false)
     private ModelRun modelRun;
 
-    // "deviance"
-    private Double deviance;
-
-    // "rmse"
-    @Column(name = "root_mean_square_error")
-    private Double rootMeanSquareError;
-
     // "kappa"
     private Double kappa;
 
@@ -75,29 +68,20 @@ public class SubmodelStatistic {
     @Column(name = "proportion_correctly_classified_sd")
     private Double proportionCorrectlyClassifiedStandardDeviation;
 
-    //"thresh"
-    private Double threshold;
-
     public SubmodelStatistic() {
     }
 
-    public SubmodelStatistic(Double deviance, Double rootMeanSquareError, Double kappa, Double areaUnderCurve,
-                             Double sensitivity, Double specificity, Double proportionCorrectlyClassified,
-                             Double threshold) {
-        setDeviance(deviance);
-        setRootMeanSquareError(rootMeanSquareError);
+    public SubmodelStatistic(Double kappa, Double areaUnderCurve,
+                             Double sensitivity, Double specificity, Double proportionCorrectlyClassified) {
         setKappa(kappa);
         setAreaUnderCurve(areaUnderCurve);
         setSensitivity(sensitivity);
         setSpecificity(specificity);
         setProportionCorrectlyClassified(proportionCorrectlyClassified);
-        setThreshold(threshold);
     }
 
     public SubmodelStatistic(CsvSubmodelStatistic dto, ModelRun parentRun) {
         setModelRun(parentRun);
-        setDeviance(dto.getDeviance());
-        setRootMeanSquareError(dto.getRootMeanSquareError());
         setKappa(dto.getKappa());
         setAreaUnderCurve(dto.getAreaUnderCurve());
         setSensitivity(dto.getSensitivity());
@@ -108,7 +92,6 @@ public class SubmodelStatistic {
         setSensitivityStandardDeviation(dto.getSensitivityStandardDeviation());
         setSpecificityStandardDeviation(dto.getSpecificityStandardDeviation());
         setProportionCorrectlyClassifiedStandardDeviation(dto.getProportionCorrectlyClassifiedStandardDeviation());
-        setThreshold(dto.getThreshold());
     }
 
     public Integer getId() {
@@ -125,22 +108,6 @@ public class SubmodelStatistic {
 
     public void setModelRun(ModelRun modelRun) {
         this.modelRun = modelRun;
-    }
-
-    public Double getDeviance() {
-        return deviance;
-    }
-
-    public void setDeviance(Double deviance) {
-        this.deviance = deviance;
-    }
-
-    public Double getRootMeanSquareError() {
-        return rootMeanSquareError;
-    }
-
-    public void setRootMeanSquareError(Double rootMeanSquareError) {
-        this.rootMeanSquareError = rootMeanSquareError;
     }
 
     public Double getKappa() {
@@ -224,14 +191,6 @@ public class SubmodelStatistic {
         this.proportionCorrectlyClassifiedStandardDeviation = proportionCorrectlyClassifiedStandardDeviation;
     }
 
-    public Double getThreshold() {
-        return threshold;
-    }
-
-    public void setThreshold(Double threshold) {
-        this.threshold = threshold;
-    }
-
     ///COVERAGE:OFF - generated code
     ///CHECKSTYLE:OFF AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     @Override
@@ -245,7 +204,6 @@ public class SubmodelStatistic {
             return false;
         if (areaUnderCurveStandardDeviation != null ? !areaUnderCurveStandardDeviation.equals(that.areaUnderCurveStandardDeviation) : that.areaUnderCurveStandardDeviation != null)
             return false;
-        if (deviance != null ? !deviance.equals(that.deviance) : that.deviance != null) return false;
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (kappa != null ? !kappa.equals(that.kappa) : that.kappa != null) return false;
         if (kappaStandardDeviation != null ? !kappaStandardDeviation.equals(that.kappaStandardDeviation) : that.kappaStandardDeviation != null)
@@ -255,15 +213,12 @@ public class SubmodelStatistic {
             return false;
         if (proportionCorrectlyClassifiedStandardDeviation != null ? !proportionCorrectlyClassifiedStandardDeviation.equals(that.proportionCorrectlyClassifiedStandardDeviation) : that.proportionCorrectlyClassifiedStandardDeviation != null)
             return false;
-        if (rootMeanSquareError != null ? !rootMeanSquareError.equals(that.rootMeanSquareError) : that.rootMeanSquareError != null)
-            return false;
         if (sensitivity != null ? !sensitivity.equals(that.sensitivity) : that.sensitivity != null) return false;
         if (sensitivityStandardDeviation != null ? !sensitivityStandardDeviation.equals(that.sensitivityStandardDeviation) : that.sensitivityStandardDeviation != null)
             return false;
         if (specificity != null ? !specificity.equals(that.specificity) : that.specificity != null) return false;
         if (specificityStandardDeviation != null ? !specificityStandardDeviation.equals(that.specificityStandardDeviation) : that.specificityStandardDeviation != null)
             return false;
-        if (threshold != null ? !threshold.equals(that.threshold) : that.threshold != null) return false;
 
         return true;
     }
@@ -272,8 +227,6 @@ public class SubmodelStatistic {
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (modelRun != null ? modelRun.hashCode() : 0);
-        result = 31 * result + (deviance != null ? deviance.hashCode() : 0);
-        result = 31 * result + (rootMeanSquareError != null ? rootMeanSquareError.hashCode() : 0);
         result = 31 * result + (kappa != null ? kappa.hashCode() : 0);
         result = 31 * result + (areaUnderCurve != null ? areaUnderCurve.hashCode() : 0);
         result = 31 * result + (sensitivity != null ? sensitivity.hashCode() : 0);
@@ -284,7 +237,6 @@ public class SubmodelStatistic {
         result = 31 * result + (sensitivityStandardDeviation != null ? sensitivityStandardDeviation.hashCode() : 0);
         result = 31 * result + (specificityStandardDeviation != null ? specificityStandardDeviation.hashCode() : 0);
         result = 31 * result + (proportionCorrectlyClassifiedStandardDeviation != null ? proportionCorrectlyClassifiedStandardDeviation.hashCode() : 0);
-        result = 31 * result + (threshold != null ? threshold.hashCode() : 0);
         return result;
     }
     ///CHECKSTYLE:ON
@@ -303,30 +255,20 @@ public class SubmodelStatistic {
                 filter(notNullValue(), submodelStatistics));
 
         if (!completeSubmodels.isEmpty()) {
-            DescriptiveStatistics devianceStats = new DescriptiveStatistics();
-            DescriptiveStatistics rmseStats = new DescriptiveStatistics();
             DescriptiveStatistics kappaStats = new DescriptiveStatistics();
             DescriptiveStatistics aucStats = new DescriptiveStatistics();
             DescriptiveStatistics sensStats = new DescriptiveStatistics();
             DescriptiveStatistics specStats = new DescriptiveStatistics();
             DescriptiveStatistics pccStats = new DescriptiveStatistics();
-            DescriptiveStatistics thresholdStats = new DescriptiveStatistics();
 
             for (SubmodelStatistic submodelStatistic : completeSubmodels) {
-                devianceStats.addValue(submodelStatistic.getDeviance());
-                rmseStats.addValue(submodelStatistic.getRootMeanSquareError());
                 kappaStats.addValue(submodelStatistic.getKappa());
                 aucStats.addValue(submodelStatistic.getAreaUnderCurve());
                 sensStats.addValue(submodelStatistic.getSensitivity());
                 specStats.addValue(submodelStatistic.getSpecificity());
                 pccStats.addValue(submodelStatistic.getProportionCorrectlyClassified());
-                thresholdStats.addValue(submodelStatistic.getThreshold());
             }
 
-            json.setDeviance(devianceStats.getMean());
-            json.setDevianceSd(devianceStats.getStandardDeviation());
-            json.setRmse(rmseStats.getMean());
-            json.setRmseSd(rmseStats.getStandardDeviation());
             json.setKappa(kappaStats.getMean());
             json.setKappaSd(kappaStats.getStandardDeviation());
             json.setAuc(aucStats.getMean());
@@ -337,8 +279,6 @@ public class SubmodelStatistic {
             json.setSpecSd(specStats.getStandardDeviation());
             json.setPcc(pccStats.getMean());
             json.setPccSd(pccStats.getStandardDeviation());
-            json.setThreshold(thresholdStats.getMean());
-            json.setThresholdSd(thresholdStats.getStandardDeviation());
         }
 
         return json;
@@ -350,13 +290,10 @@ public class SubmodelStatistic {
      */
     protected boolean containsAllRequiredPropertiesForSummarising() {
         return
-                deviance != null &&
-                rootMeanSquareError != null &&
                 kappa != null &&
                 areaUnderCurve != null &&
                 sensitivity != null &&
                 specificity != null &&
-                proportionCorrectlyClassified != null &&
-                threshold != null;
+                proportionCorrectlyClassified != null;
     }
 }
