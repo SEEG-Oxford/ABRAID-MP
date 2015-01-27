@@ -62,7 +62,7 @@ public class DataValidationController extends AbstractController {
     }
 
     /**
-     * Return the the content of the help text iframe on Data Validation help modal panel.
+     * Return the content of the help text iframe on Data Validation help modal panel.
      * @return The ftl page name.
      */
     @RequestMapping(value = DATA_VALIDATION_BASE_URL + "/help", method = RequestMethod.GET)
