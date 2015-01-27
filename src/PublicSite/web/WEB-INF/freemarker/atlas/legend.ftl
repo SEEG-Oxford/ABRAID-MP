@@ -1,7 +1,8 @@
 <div class="leaflet-bottom leaflet-left" id="legend">
     <div class="legend leaflet-bar leaflet-control" style="display: none" data-bind="visible: type() == 'mean' || type() == 'uncertainty'">
         <div id="continuousKey">
-            <div style="text-align: center">Probability of<br>infections occurring<br><br></div>
+            <div data-bind="visible: type() == 'mean'" style="text-align: center">Probability of<br>infections occurring<br><br></div>
+            <div data-bind="visible: type() == 'uncertainty'" style="text-align: center">Range of 95%<br>confidence interval<br><br></div>
             <i style="background-color:#769766;"></i>
             <i style="background-color:#769766; background-image: -webkit-gradient(linear, left, right, from(#769766), to(#b5caaa)); background-image: -webkit-linear-gradient(left, #769766, #b5caaa); background-image: -moz-linear-gradient(left, #769766, #b5caaa); background-image: -o-linear-gradient(left, #769766, #b5caaa); background-image: linear-gradient(to right, #769766, #b5caaa);"></i>
             <i style="background-color:#b5caaa; background-image: -webkit-gradient(linear, left, right, from(#b5caaa), to(#ffffbf)); background-image: -webkit-linear-gradient(left, #b5caaa, #ffffbf); background-image: -moz-linear-gradient(left, #b5caaa, #ffffbf); background-image: -o-linear-gradient(left, #b5caaa, #ffffbf); background-image: linear-gradient(to right, #b5caaa, #ffffbf);"></i>
