@@ -14,15 +14,6 @@ define(["ko"], function (ko) {
             return (typeof activeLayer() !== "undefined");
         });
 
-        var activeRun = ko.observable().subscribeTo("selected-run");
-        self.startDate =  ko.computed(function () {
-            return (typeof activeRun() !== "undefined") ? activeRun().rangeStart : "???";
-        });
-        self.endDate =  ko.computed(function () {
-            return (typeof activeRun() !== "undefined") ? activeRun().rangeEnd : "???";
-        });
-
-
         self.covariateInfluencesViewModel = covariateInfluencesViewModel;
         self.downloadLinksViewModel = downloadLinksViewModel;
         self.statisticsViewModel = statisticsViewModel;

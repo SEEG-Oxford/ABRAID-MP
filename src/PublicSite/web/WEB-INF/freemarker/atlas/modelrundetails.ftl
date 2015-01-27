@@ -1,8 +1,4 @@
 <div class="leaflet-top leaflet-right" id="modelRunDetails" style="display: none" data-bind="visible: hasActiveLayer, event: { 'dblclick' : function () { return false; } }, dblclickBubble: false">
-    <div class="leaflet-bar leaflet-control" style="background: #ffffff">
-        <p style="min-width: 200px; margin: 0; text-align: center;">Input Data Range:</p>
-       <p style="min-width: 200px; margin: 0; text-align: center; font-weight: bold" data-bind="text: startDate() + '&nbsp;&rarr;&nbsp;' + endDate()">Start:&nbsp;???</p>
-    </div>
     <!-- ko with:downloadLinksViewModel -->
     <div class="leaflet-bar leaflet-control">
         <a target="_blank" title="PNG" data-bind="attr: { href: png }">
