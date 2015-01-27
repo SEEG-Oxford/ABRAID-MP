@@ -141,8 +141,7 @@ public class WebServiceClientTest {
         // Assert
         assertThat(response).containsIgnoringCase("\"Content-Type\": \"text/xml\"");
         assertThat(response).containsIgnoringCase("\"data\": \"" + xml + "\"");
-        String expectedReportUrl = POST_URL.replace("https", "http"); // Temp httpbin bug workaround see: https://github.com/Runscope/httpbin/issues/207
-        assertThat(response).containsIgnoringCase("\"url\": \"" + expectedReportUrl + "\"");
+        assertThat(response).containsIgnoringCase("\"url\": \"" + POST_URL + "\"");
     }
 
     @Test
@@ -181,8 +180,7 @@ public class WebServiceClientTest {
         // Assert
         assertThat(response).containsIgnoringCase("\"Content-Type\": \"text/xml\"");
         assertThat(response).containsIgnoringCase("\"data\": \"" + xml + "\"");
-        String expectedReportUrl = PUT_URL.replace("https", "http"); // Temp httpbin bug workaround see: https://github.com/Runscope/httpbin/issues/207
-        assertThat(response).containsIgnoringCase("\"url\": \"" + expectedReportUrl + "\"");
+        assertThat(response).containsIgnoringCase("\"url\": \"" + PUT_URL + "\"");
     }
 
 

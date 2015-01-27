@@ -21,6 +21,9 @@ define([
                 runs: [ run1, run3 ]
             }
         ];
+        var meanType = { display: "disease risk", id: "mean" };
+        var uncertaintyType = { display: "risk uncertainty", id: "uncertainty" };
+        var extentType = { display: "disease extent", id: "extent" };
         var vm = {};
         beforeEach(function () {
             vm = new LayerSelectorViewModel(availableLayers);
@@ -32,15 +35,15 @@ define([
             });
 
             it("has an entry for mean", function () {
-                expect(vm.types).toContain({ display: "disease risk", id: "mean" });
+                expect(vm.types).toContain(meanType);
             });
 
             it("has an entry for uncertainty", function () {
-                expect(vm.types).toContain({ display: "risk uncertainty", id: "uncertainty" });
+                expect(vm.types).toContain(uncertaintyType);
             });
 
             it("has an entry for extent", function () {
-                expect(vm.types).toContain({ display: "disease extent", id: "extent" });
+                expect(vm.types).toContain(extentType);
             });
         });
 
@@ -50,7 +53,27 @@ define([
             });
 
             it("defaults to mean", function () {
-                expect(vm.selectedType().id).toBe("mean");
+                expect(vm.selectedType()).toEqual(meanType);
+            });
+
+            it("publishes changes to its state as 'active-atlas-type'", function () {
+                var expectedValue = "";
+                var eventCount = 0;
+                ko.postbox.subscribe("active-atlas-type", function (payload) {
+                    expect(payload).toEqual(expectedValue);
+                    eventCount = eventCount + 1;
+                });
+
+                expectedValue = uncertaintyType.id;
+                vm.selectedType(vm.types[1]);
+                expectedValue = extentType.id;
+                vm.selectedType(vm.types[2]);
+                expectedValue = meanType.id;
+                vm.selectedType(vm.types[0]);
+
+                expect(eventCount).toBe(3);
+
+                ko.postbox._subscriptions["active-atlas-type"] = [];  // jshint ignore:line
             });
         });
 

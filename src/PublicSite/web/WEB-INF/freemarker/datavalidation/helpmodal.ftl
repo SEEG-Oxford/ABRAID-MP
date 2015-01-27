@@ -1,7 +1,7 @@
 <div class="leaflet-top leaflet-left">
-    <div class="leaflet-bar leaflet-control">
+    <div class="leaflet-control">
         <a data-toggle="modal" data-target="#helpModal">
-            <i class="fa fa-lg fa-info-circle"></i>
+            <i style="font-size: 31px; color: rgb(51, 51, 51);" class="fa fa-info-circle"></i>
         </a>
     </div>
 </div>
@@ -17,7 +17,7 @@
                 <h4 class="modal-title" id="helpModalLabel">ABRAID-MP Data Validation</h4>
             </div>
             <div class="modal-body">
-                <iframe src="<@spring.url "/help"/>"></iframe>
+                <iframe src="<@spring.url "/datavalidation/help"/>"></iframe>
             </div>
         </div>
     </div>

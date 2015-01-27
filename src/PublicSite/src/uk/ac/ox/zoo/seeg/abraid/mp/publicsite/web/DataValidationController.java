@@ -34,8 +34,8 @@ import java.util.List;
  */
 @Controller
 public class DataValidationController extends AbstractController {
-    /** Base URL for the geowiki. */
-    public static final String GEOWIKI_BASE_URL = "/datavalidation";
+    /** Base URL for the Data Validation page. */
+    public static final String DATA_VALIDATION_BASE_URL = "/datavalidation";
     /** Display name for the default disease to display to an anonymous user, corresponding to disease in static json.*/
     private static final String DEFAULT_VALIDATOR_DISEASE_GROUP_NAME = "dengue";
     private static final String DEFAULT_DISEASE_GROUP_SHORT_NAME = "dengue";
@@ -56,9 +56,18 @@ public class DataValidationController extends AbstractController {
      * Return the data validation page, in which the iframe (containing all page content) sits.
      * @return The ftl page name.
      */
-    @RequestMapping(value = GEOWIKI_BASE_URL, method = RequestMethod.GET)
+    @RequestMapping(value = DATA_VALIDATION_BASE_URL, method = RequestMethod.GET)
     public String showTab() {
         return "datavalidation/index";
+    }
+
+    /**
+     * Return the content of the help text iframe on Data Validation help modal panel.
+     * @return The ftl page name.
+     */
+    @RequestMapping(value = DATA_VALIDATION_BASE_URL + "/help", method = RequestMethod.GET)
+    public String showHelp() {
+        return "datavalidation/help";
     }
 
     /**
@@ -66,7 +75,7 @@ public class DataValidationController extends AbstractController {
      * @param model The model map.
      * @return The ftl page name.
      */
-    @RequestMapping(value = GEOWIKI_BASE_URL + "/content", method = RequestMethod.GET)
+    @RequestMapping(value = DATA_VALIDATION_BASE_URL + "/content", method = RequestMethod.GET)
     @Transactional(rollbackFor = Exception.class)
     public String showPage(Model model) {
         PublicSiteUser user = currentUserService.getCurrentUser();
@@ -143,7 +152,7 @@ public class DataValidationController extends AbstractController {
      */
     @Secured("ROLE_USER")
     @RequestMapping(
-            value = GEOWIKI_BASE_URL + "/diseases/{validatorDiseaseGroupId}/occurrences",
+            value = DATA_VALIDATION_BASE_URL + "/diseases/{validatorDiseaseGroupId}/occurrences",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseView(DisplayJsonView.class)
@@ -171,8 +180,8 @@ public class DataValidationController extends AbstractController {
      */
     @Secured("ROLE_USER")
     @RequestMapping(
-            value = GEOWIKI_BASE_URL + "/diseases/{validatorDiseaseGroupId}/occurrences/{occurrenceId}/validate",
-            method = RequestMethod.POST)
+        value = DATA_VALIDATION_BASE_URL + "/diseases/{validatorDiseaseGroupId}/occurrences/{occurrenceId}/validate",
+        method = RequestMethod.POST)
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity submitDiseaseOccurrenceReview(@PathVariable Integer validatorDiseaseGroupId,
                                                         @PathVariable Integer occurrenceId,
@@ -214,7 +223,7 @@ public class DataValidationController extends AbstractController {
      */
     @Secured("ROLE_USER")
     @RequestMapping(
-            value = GEOWIKI_BASE_URL + "/diseases/{diseaseGroupId}/adminunits",
+            value = DATA_VALIDATION_BASE_URL + "/diseases/{diseaseGroupId}/adminunits",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseView(DisplayJsonView.class)
@@ -254,7 +263,7 @@ public class DataValidationController extends AbstractController {
      * @return A GeoJSON DTO containing the admin units.
      */
     @RequestMapping(
-            value = GEOWIKI_BASE_URL + "/defaultadminunits",
+            value = DATA_VALIDATION_BASE_URL + "/defaultadminunits",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseView(DisplayJsonView.class)
@@ -275,7 +284,7 @@ public class DataValidationController extends AbstractController {
      */
     @Secured("ROLE_USER")
     @RequestMapping(
-            value = GEOWIKI_BASE_URL + "/diseases/{diseaseGroupId}/adminunits/{gaulCode}/occurrences",
+            value = DATA_VALIDATION_BASE_URL + "/diseases/{diseaseGroupId}/adminunits/{gaulCode}/occurrences",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseView(DisplayJsonView.class)
@@ -299,7 +308,7 @@ public class DataValidationController extends AbstractController {
      * @return A GeoJSON DTO containing the admin units.
      */
     @RequestMapping(
-            value = GEOWIKI_BASE_URL + "/defaultadminunits/{gaulCode}/occurrences",
+            value = DATA_VALIDATION_BASE_URL + "/defaultadminunits/{gaulCode}/occurrences",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseView(DisplayJsonView.class)
@@ -319,7 +328,7 @@ public class DataValidationController extends AbstractController {
      */
     @Secured("ROLE_USER")
     @RequestMapping(
-            value = GEOWIKI_BASE_URL + "/diseases/{diseaseGroupId}/adminunits/{gaulCode}/validate",
+            value = DATA_VALIDATION_BASE_URL + "/diseases/{diseaseGroupId}/adminunits/{gaulCode}/validate",
             method = RequestMethod.POST)
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity submitAdminUnitReview(@PathVariable Integer diseaseGroupId, @PathVariable Integer gaulCode,

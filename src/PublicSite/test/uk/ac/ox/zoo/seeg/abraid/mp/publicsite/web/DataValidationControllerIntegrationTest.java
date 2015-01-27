@@ -79,7 +79,7 @@ public class DataValidationControllerIntegrationTest extends AbstractPublicSiteI
         when(expertService.getDiseaseOccurrencesYetToBeReviewedByExpert(eq(1), eq(true), anyInt())).thenReturn(occurrences);
 
         this.mockMvc.perform(
-                get(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/occurrences"))
+                get(DataValidationController.DATA_VALIDATION_BASE_URL + "/diseases/1/occurrences"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(content().string(AbstractDiseaseOccurrenceGeoJsonTests.getTwoDiseaseOccurrenceFeaturesAsJson(DisplayJsonView.class)));
@@ -91,37 +91,37 @@ public class DataValidationControllerIntegrationTest extends AbstractPublicSiteI
                 .thenThrow(new IllegalArgumentException());
 
         this.mockMvc.perform(
-                get(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/occurrences"))
+                get(DataValidationController.DATA_VALIDATION_BASE_URL + "/diseases/1/occurrences"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     public void occurrenceResourceRejectsInvalidNonNumericId() throws Exception {
         this.mockMvc.perform(
-                get(DataValidationController.GEOWIKI_BASE_URL + "/diseases/id/occurrences"))
+                get(DataValidationController.DATA_VALIDATION_BASE_URL + "/diseases/id/occurrences"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     public void occurrenceResourceOnlyAcceptsGET() throws Exception {
         this.mockMvc.perform(
-                get(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/occurrences"))
+                get(DataValidationController.DATA_VALIDATION_BASE_URL + "/diseases/1/occurrences"))
                 .andExpect(status().isOk());
 
         this.mockMvc.perform(
-                post(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/occurrences"))
+                post(DataValidationController.DATA_VALIDATION_BASE_URL + "/diseases/1/occurrences"))
                 .andExpect(status().isMethodNotAllowed());
 
         this.mockMvc.perform(
-                delete(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/occurrences"))
+                delete(DataValidationController.DATA_VALIDATION_BASE_URL + "/diseases/1/occurrences"))
                 .andExpect(status().isMethodNotAllowed());
 
         this.mockMvc.perform(
-                put(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/occurrences"))
+                put(DataValidationController.DATA_VALIDATION_BASE_URL + "/diseases/1/occurrences"))
                 .andExpect(status().isMethodNotAllowed());
 
         this.mockMvc.perform(
-                patch(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/occurrences"))
+                patch(DataValidationController.DATA_VALIDATION_BASE_URL + "/diseases/1/occurrences"))
                 .andExpect(status().isMethodNotAllowed());
     }
 
@@ -139,7 +139,7 @@ public class DataValidationControllerIntegrationTest extends AbstractPublicSiteI
         when(expert.isSeegMember()).thenReturn(true);
 
         this.mockMvc.perform(
-                get(DataValidationController.GEOWIKI_BASE_URL + "/diseases/2/adminunits"))
+                get(DataValidationController.DATA_VALIDATION_BASE_URL + "/diseases/2/adminunits"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"));
     }
@@ -147,7 +147,7 @@ public class DataValidationControllerIntegrationTest extends AbstractPublicSiteI
     @Test
     public void extentResourceRejectsInvalidNonNumericId() throws Exception {
         this.mockMvc.perform(
-                get(DataValidationController.GEOWIKI_BASE_URL + "/diseases/id/adminunits"))
+                get(DataValidationController.DATA_VALIDATION_BASE_URL + "/diseases/id/adminunits"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -160,7 +160,7 @@ public class DataValidationControllerIntegrationTest extends AbstractPublicSiteI
         when(expertService.getExpertById(1)).thenReturn(expert);
         when(expert.isSeegMember()).thenReturn(true);
 
-        String url = DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/adminunits";
+        String url = DataValidationController.DATA_VALIDATION_BASE_URL + "/diseases/1/adminunits";
 
         this.mockMvc.perform(
                 get(url)).andExpect(status().isOk());
@@ -181,7 +181,7 @@ public class DataValidationControllerIntegrationTest extends AbstractPublicSiteI
     @Test
     public void defaultExtentResourceOnlyAcceptsGET() throws Exception {
 
-        String url = DataValidationController.GEOWIKI_BASE_URL + "/defaultadminunits";
+        String url = DataValidationController.DATA_VALIDATION_BASE_URL + "/defaultadminunits";
 
         this.mockMvc.perform(
                 get(url))
@@ -223,7 +223,7 @@ public class DataValidationControllerIntegrationTest extends AbstractPublicSiteI
         when(expertService.doesDiseaseOccurrenceReviewExist(anyInt(), anyInt())).thenReturn(false);
 
         this.mockMvc.perform(
-                post(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/occurrences/1/validate")
+                post(DataValidationController.DATA_VALIDATION_BASE_URL + "/diseases/1/occurrences/1/validate")
                 .param("review", "YES"))
                 .andExpect(status().isNoContent());
     }
@@ -235,27 +235,27 @@ public class DataValidationControllerIntegrationTest extends AbstractPublicSiteI
         when(expertService.doesDiseaseOccurrenceReviewExist(anyInt(), anyInt())).thenReturn(false);
 
         this.mockMvc.perform(
-                post(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/occurrences/1/validate")
+                post(DataValidationController.DATA_VALIDATION_BASE_URL + "/diseases/1/occurrences/1/validate")
                 .param("review", "YES"))
                 .andExpect(status().isNoContent());
 
         this.mockMvc.perform(
-                get(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/occurrences/1/validate")
+                get(DataValidationController.DATA_VALIDATION_BASE_URL + "/diseases/1/occurrences/1/validate")
                 .param("review", "YES"))
                 .andExpect(status().isMethodNotAllowed());
 
         this.mockMvc.perform(
-                delete(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/occurrences/1/validate")
+                delete(DataValidationController.DATA_VALIDATION_BASE_URL + "/diseases/1/occurrences/1/validate")
                 .param("review", "YES"))
                 .andExpect(status().isMethodNotAllowed());
 
         this.mockMvc.perform(
-                put(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/occurrences/1/validate")
+                put(DataValidationController.DATA_VALIDATION_BASE_URL + "/diseases/1/occurrences/1/validate")
                 .param("review", "YES"))
                 .andExpect(status().isMethodNotAllowed());
 
         this.mockMvc.perform(
-                patch(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/occurrences/1/validate")
+                patch(DataValidationController.DATA_VALIDATION_BASE_URL + "/diseases/1/occurrences/1/validate")
                 .param("review", "YES"))
                 .andExpect(status().isMethodNotAllowed());
     }
@@ -263,7 +263,7 @@ public class DataValidationControllerIntegrationTest extends AbstractPublicSiteI
     @Test
     public void submitReviewRejectsInvalidReviewParameterString() throws Exception {
         this.mockMvc.perform(
-                post(DataValidationController.GEOWIKI_BASE_URL + "/diseases/1/occurrences/1/validate")
+                post(DataValidationController.DATA_VALIDATION_BASE_URL + "/diseases/1/occurrences/1/validate")
                 .param("review", "InvalidReviewParameter"))
                 .andExpect(status().isBadRequest());
     }

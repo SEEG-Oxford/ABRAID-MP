@@ -43,6 +43,18 @@ public class DataValidationControllerTest {
     }
 
     @Test
+    public void showHelpReturnsDataValidationHelpPage() {
+        // Arrange
+        DataValidationController target = createTarget();
+
+        // Act
+        String result = target.showHelp();
+
+        // Assert
+        assertThat(result).isEqualTo("datavalidation/help");
+    }
+
+    @Test
     public void showPageReturnsDataValidationContentPageWithModelData() {
         // Arrange
         Model model = mock(Model.class);

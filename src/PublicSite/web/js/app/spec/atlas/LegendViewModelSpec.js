@@ -25,28 +25,14 @@ define([
                 expect(vm.type).toBeObservable();
             });
 
-            it("defaults to 'continuous'", function () {
-                expect(vm.type()).toBe("continuous");
+            it("defaults to undefined", function () {
+                expect(vm.type()).toBe(undefined);
             });
 
-            describe("responds to active-atlas-layer", function () {
-                it("with 'continuous', when a non-extent layer is active", function () {
-                    ko.postbox.publish("active-atlas-layer", "a_model_run_name_mean");
-                    expect(vm.type()).toBe("continuous");
-                    ko.postbox.publish("active-atlas-layer", "a_model_run_name_uncertainty");
-                    expect(vm.type()).toBe("continuous");
-                });
-
-                it("with 'discrete', when an extent layer is active", function () {
-                    ko.postbox.publish("active-atlas-layer", "a_model_run_name_extent");
-                    expect(vm.type()).toBe("discrete");
-                });
-
-                it("with 'continuous', when no layer is active", function () {
-                    ko.postbox.publish("active-atlas-layer", undefined);
-                    expect(vm.type()).toBe("continuous");
-                });
-
+            it("responds to the active-atlas-type event", function () {
+                var type = "mean";
+                ko.postbox.publish("active-atlas-type", type);
+                expect(vm.type()).toBe(type);
             });
         });
     });

@@ -2,23 +2,23 @@
     <!-- ko with:downloadLinksViewModel -->
     <div class="leaflet-bar leaflet-control">
         <a target="_blank" title="PNG" data-bind="attr: { href: png }">
-            <i class="fa fa-lg fa-picture-o"></i> Download as styled PNG
+            <i class="fa fa-lg fa-picture-o"></i>Download PNG image
         </a>
     </div>
     <div class="leaflet-bar leaflet-control">
         <a target="_blank" title="GeoTIFF" data-bind="attr: { href: tif }">
-            <i class="fa fa-lg fa-download"></i>Download as raw GeoTIFF
+            <i class="fa fa-lg fa-download"></i>Download predicted data
         </a>
     </div>
     <div class="leaflet-bar leaflet-control" style="display: none" data-bind="visible: showOccurrences">
         <a target="_blank" title="Input CSV" data-bind="attr: { href: occurrences }">
-            <i class="fa fa-lg fa-file-excel-o"></i>Download input occurrences
+            <i class="fa fa-lg fa-file-excel-o"></i>Download input data
         </a>
     </div>
     <!-- /ko -->
     <div class="leaflet-bar leaflet-control">
-        <a data-toggle="collapse" href="#covariatesAndStatistics" style="font-size: 12px; width: auto; height: auto;">
-            <i class="fa fa-lg fa-bar-chart-o"></i> View Covariates and Statistics
+        <a data-toggle="collapse" href="#covariatesAndStatistics" style="width: auto; height: auto;">
+            <i class="fa fa-lg fa-bar-chart-o"></i>View covariates and statistics
         </a>
         <div></div>
         <div class="panel-collapse collapse container-sm-height" id="covariatesAndStatistics">
