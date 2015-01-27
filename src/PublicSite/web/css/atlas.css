@@ -38,14 +38,22 @@ html, body {
     min-width: 120px;
     text-align: center;
 }
-#statistics td:nth-child(2),
-#statistics th:nth-child(2) {
+#statistics td:nth-child(3),
+#statistics th:nth-child(3) {
     min-width: 80px;
     text-align: center;
 }
-#statistics td:nth-child(3) {
+#statistics td:nth-child(4),
+#statistics th:nth-child(4) {
     min-width: 120px;
     text-align: center;
+}
+#statistics .popover .close {
+     display: none;
+}
+#statistics .popover .popover-content {
+    text-align: justify;
+    font-size: 13px;
 }
 .leaflet-panel-button {
     display: inline-block !important;
