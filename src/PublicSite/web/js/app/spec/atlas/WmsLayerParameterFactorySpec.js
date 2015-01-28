@@ -28,14 +28,14 @@ define([
             it("returns the correct mean specific configuration", function () {
                 var params = vm.createLayerParametersForDisplay("the_name_of_a_model_run_mean");
                 expect(params.layers).toEqual("abraid:the_name_of_a_model_run_mean");
-                expect(params.styles).toEqual("abraid_raster");
+                expect(params.styles).toEqual("abraid_mean");
                 expect(params.cql_filter).toBeUndefined(); // jshint ignore:line
             });
 
             it("returns the correct uncertainty specific configuration", function () {
                 var params = vm.createLayerParametersForDisplay("the_name_of_a_layer_uncertainty");
                 expect(params.layers).toEqual("abraid:the_name_of_a_layer_uncertainty");
-                expect(params.styles).toEqual("abraid_raster");
+                expect(params.styles).toEqual("abraid_uncertainty");
                 expect(params.cql_filter).toBeUndefined(); // jshint ignore:line
             });
         });

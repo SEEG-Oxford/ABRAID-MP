@@ -8,8 +8,10 @@ define(["underscore"], function (_) {
         var self = this;
 
         self.createLayerParametersForDisplay = function (name) {
-            var isExtentLayer = name.indexOf("extent", name.length - "extent".length) !== -1;
-            var style = isExtentLayer ? "abraid_extent" : "abraid_raster";
+            var split = name.split("_");
+            var type = split[split.length - 1];
+            var isExtentLayer = type === "extent";
+            var style = "abraid_" + type;
             var layerName = isExtentLayer ? "atlas_extent_layer"  : name;
 
 

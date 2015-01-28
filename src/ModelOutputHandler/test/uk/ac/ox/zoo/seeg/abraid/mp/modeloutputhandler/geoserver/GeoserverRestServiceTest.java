@@ -97,10 +97,12 @@ public class GeoserverRestServiceTest {
         Configuration templateConfig = new Configuration();
         WebServiceClient webServiceClient = mock(WebServiceClient.class);
         GeoserverRestService target = new GeoserverRestService(webServiceClient, "url", templateConfig);
-        String fileName = "qwertyuiop";
+        String fileName = "qwertyuiop_uncertainty";
         File file = testFolder.newFile(fileName + ".tif");
         InputStream stream = target.getClass().getResourceAsStream("layer.xml.ftl");
         String expectation = IOUtils.toString(stream, "UTF-8");
+        expectation = expectation.replace("${basename}", fileName);
+        expectation = expectation.replace("${basename?split(\"_\")?last}", "uncertainty");
 
         // Act
         target.publishGeoTIFF(file);
@@ -113,7 +115,7 @@ public class GeoserverRestServiceTest {
         String templatedValue = argumentCaptor.getValue();
         assertThat(templatedValue).contains("<name>" + fileName + "</name>");
 
-        assertThat(templatedValue).isEqualTo(expectation.replace("${basename}", fileName));
+        assertThat(templatedValue).isEqualTo(expectation);
     }
 
     private Template createMockTemplate(final String string) throws IOException, TemplateException {
