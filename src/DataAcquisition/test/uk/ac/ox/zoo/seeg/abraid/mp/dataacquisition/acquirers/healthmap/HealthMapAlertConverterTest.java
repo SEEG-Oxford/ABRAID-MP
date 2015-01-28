@@ -275,6 +275,8 @@ public class HealthMapAlertConverterTest {
     private Alert testUrl(String url) {
         // Arrange
         int feedId = 1;
+        String feed = "ProMed Mail";
+        DateTime date = DateTime.now();
 
         HashMap<Integer, Feed> feedMap = new HashMap<>();
         feedMap.put(feedId, new Feed("Test feed", null, 0, "zh", 1));
@@ -282,6 +284,8 @@ public class HealthMapAlertConverterTest {
 
         HealthMapAlert healthMapAlert = mock(HealthMapAlert.class);
         when(healthMapAlert.getFeedId()).thenReturn(feedId);
+        when(healthMapAlert.getFeed()).thenReturn(feed);
+        when(healthMapAlert.getDate()).thenReturn(date);
         when(healthMapAlert.getOriginalUrl()).thenReturn(url);
 
         int diseaseId = 1;
