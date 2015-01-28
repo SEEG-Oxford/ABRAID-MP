@@ -153,7 +153,6 @@ public class ModelRun {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime occurrenceDataRangeEndDate;
 
-
     // List of effect curve covariate influence data points associated with this model run.
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "modelRun")
     private List<EffectCurveCovariateInfluence> effectCurveCovariateInfluences;
