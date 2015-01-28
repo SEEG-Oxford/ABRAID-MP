@@ -90,13 +90,11 @@ public class ModelRunRequester {
                                                DateTime batchStartDate, DateTime batchEndDate,
                                                List<DiseaseOccurrence> occurrencesForModelRun,
                                                Collection<AdminUnitDiseaseExtentClass> diseaseExtent) {
-        final ModelRun modelRun = new ModelRun(null, diseaseGroup.getId(), modelWrapperUrl.getHost(), requestDate);
+        final ModelRun modelRun = new ModelRun(null, diseaseGroup.getId(), modelWrapperUrl.getHost(), requestDate,
+                min(occurrencesForModelRun, on(DiseaseOccurrence.class).getOccurrenceDate()),
+                max(occurrencesForModelRun, on(DiseaseOccurrence.class).getOccurrenceDate()));
         modelRun.setBatchStartDate(batchStartDate);
         modelRun.setBatchEndDate(batchEndDate);
-        modelRun.setOccurrenceDataRangeStartDate(
-                min(occurrencesForModelRun, on(DiseaseOccurrence.class).getOccurrenceDate()));
-        modelRun.setOccurrenceDataRangeEndDate(
-                max(occurrencesForModelRun, on(DiseaseOccurrence.class).getOccurrenceDate()));
         modelRun.setInputDiseaseExtent(convert(diseaseExtent,
             new Converter<AdminUnitDiseaseExtentClass, ModelRunAdminUnitDiseaseExtentClass>() {
                 @Override

@@ -68,9 +68,12 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
         DateTime batchStartDate = DateTime.now().minusHours(6).minusDays(1);
         DateTime batchEndDate = DateTime.now().minusHours(6);
         DateTime batchingCompletionDate = DateTime.now().plusHours(2);
+        DateTime occurrenceDataRangeStartDate = DateTime.now().plusHours(9);
+        DateTime occurrenceDataRangeEndDate = DateTime.now().plusHours(8);
         int batchedOccurrenceCount = 1000;
 
-        ModelRun modelRun = new ModelRun(name, diseaseGroupId, requestServer, requestDate);
+        ModelRun modelRun = new ModelRun(name, diseaseGroupId, requestServer, requestDate,
+                occurrenceDataRangeStartDate, occurrenceDataRangeEndDate);
         modelRun.setResponseDate(responseDate);
         modelRun.setOutputText(outputText);
         modelRun.setErrorText(errorText);
@@ -97,6 +100,8 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
         assertThat(modelRun.getBatchEndDate()).isEqualTo(batchEndDate);
         assertThat(modelRun.getBatchingCompletedDate()).isEqualTo(batchingCompletionDate);
         assertThat(modelRun.getBatchOccurrenceCount()).isEqualTo(batchedOccurrenceCount);
+        assertThat(modelRun.getOccurrenceDataRangeStartDate()).isEqualTo(occurrenceDataRangeStartDate);
+        assertThat(modelRun.getOccurrenceDataRangeEndDate()).isEqualTo(occurrenceDataRangeEndDate);
     }
 
     @Test
@@ -507,12 +512,12 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
     }
 
     private ModelRun createModelRun(String name) {
-        return new ModelRun(name, 87, "host", DateTime.now());
+        return new ModelRun(name, 87, "host", DateTime.now(), DateTime.now(), DateTime.now());
     }
 
     private static ModelRun createModelRun(String name, int diseaseGroupId, ModelRunStatus status, String requestServer,
                                            String requestDate, String responseDate) {
-        ModelRun modelRun = new ModelRun(name, diseaseGroupId, requestServer, new DateTime(requestDate));
+        ModelRun modelRun = new ModelRun(name, diseaseGroupId, requestServer, new DateTime(requestDate), DateTime.now(), DateTime.now());
         modelRun.setStatus(status);
         modelRun.setResponseDate(new DateTime(responseDate));
         return modelRun;

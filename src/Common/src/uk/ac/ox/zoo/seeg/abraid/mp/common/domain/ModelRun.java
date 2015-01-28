@@ -178,12 +178,15 @@ public class ModelRun {
         this.id = id;
     }
 
-    public ModelRun(String name, int diseaseGroupId, String requestServer, DateTime requestDate) {
+    public ModelRun(String name, int diseaseGroupId, String requestServer, DateTime requestDate,
+                    DateTime occurrenceDataRangeStartDate, DateTime occurrenceDataRangeEndDate) {
         this.name = name;
         this.status = ModelRunStatus.IN_PROGRESS;
         this.requestServer = requestServer;
         this.requestDate = requestDate;
         this.diseaseGroupId = diseaseGroupId;
+        this.occurrenceDataRangeStartDate = occurrenceDataRangeStartDate;
+        this.occurrenceDataRangeEndDate = occurrenceDataRangeEndDate;
     }
 
     public Integer getId() {
