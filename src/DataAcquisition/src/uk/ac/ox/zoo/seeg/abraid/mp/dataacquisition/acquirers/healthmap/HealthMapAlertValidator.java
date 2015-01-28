@@ -19,6 +19,9 @@ public class HealthMapAlertValidator {
             "disease name(s) (alert ID %d)";
     private static final String HAS_A_PLACE_CATEGORY_TO_IGNORE = "Ignoring HealthMap alert because it has place " +
             "category \"%s\" (alert ID %d)";
+    private static final String DATE_NOT_FOUND = "Missing date in HealthMap alert (alert ID %d)";
+    private static final String FEED_NOT_FOUND = "Missing feed in HealthMap alert (alert ID %d)";
+    private static final String FEED_ID_NOT_FOUND = "Missing feed ID in HealthMap alert (alert ID %d)";
 
     private HealthMapAlert alert;
     private List<String> placeCategoriesToIgnore;
@@ -38,6 +41,9 @@ public class HealthMapAlertValidator {
         errorMessage = (errorMessage != null) ? errorMessage : validateDiseasesMissing();
         errorMessage = (errorMessage != null) ? errorMessage : validateDiseaseIdsDoNotMatchNames();
         errorMessage = (errorMessage != null) ? errorMessage : validatePlaceCategoriesAreNotToBeIgnored();
+        errorMessage = (errorMessage != null) ? errorMessage : validateDateMissing();
+        errorMessage = (errorMessage != null) ? errorMessage : validateFeedMissing();
+        errorMessage = (errorMessage != null) ? errorMessage : validateFeedIdMissing();
         return errorMessage;
     }
 
@@ -78,6 +84,27 @@ public class HealthMapAlertValidator {
                     return String.format(HAS_A_PLACE_CATEGORY_TO_IGNORE, category, alert.getAlertId());
                 }
             }
+        }
+        return null;
+    }
+
+    private String validateDateMissing() {
+        if (alert.getDate() == null) {
+            return String.format(DATE_NOT_FOUND, alert.getAlertId());
+        }
+        return null;
+    }
+
+    private String validateFeedMissing() {
+        if (!StringUtils.hasText(alert.getFeed())) {
+            return String.format(FEED_NOT_FOUND, alert.getAlertId());
+        }
+        return null;
+    }
+
+    private String validateFeedIdMissing() {
+        if (alert.getFeedId() == null) {
+            return String.format(FEED_ID_NOT_FOUND, alert.getAlertId());
         }
         return null;
     }

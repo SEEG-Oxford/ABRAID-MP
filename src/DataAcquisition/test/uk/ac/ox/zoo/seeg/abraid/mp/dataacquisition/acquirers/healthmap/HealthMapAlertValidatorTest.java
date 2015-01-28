@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap;
 
+import org.joda.time.DateTime;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.domain.HealthMapAlert;
 
@@ -71,9 +72,39 @@ public class HealthMapAlertValidatorTest {
         actAndAssertMessage(alert, null);
     }
 
+    @Test
+    public void alertWithNoDateIsInvalid() {
+        HealthMapAlert alert = createHealthMapAlert(5);
+        alert.setDiseaseId("123");
+        alert.setDisease("Test name");
+        alert.setDate(null);
+        actAndAssertMessage(alert, "Missing date in HealthMap alert (alert ID 5)");
+    }
+
+    @Test
+    public void alertWithNoFeedIsInvalid() {
+        HealthMapAlert alert = createHealthMapAlert(5);
+        alert.setDiseaseId("123");
+        alert.setDisease("Test name");
+        alert.setFeed(null);
+        actAndAssertMessage(alert, "Missing feed in HealthMap alert (alert ID 5)");
+    }
+
+    @Test
+    public void alertWithNoFeedIdIsInvalid() {
+        HealthMapAlert alert = createHealthMapAlert(5);
+        alert.setDiseaseId("123");
+        alert.setDisease("Test name");
+        alert.setFeedId(null);
+        actAndAssertMessage(alert, "Missing feed ID in HealthMap alert (alert ID 5)");
+    }
+
     private HealthMapAlert createHealthMapAlert(int alertId) {
         HealthMapAlert alert = new HealthMapAlert();
         alert.setLink("http://healthmap.org/ln.php?" + alertId);
+        alert.setDate(DateTime.now());
+        alert.setFeed("ProMed Mail");
+        alert.setFeedId("1");
         return alert;
     }
 
