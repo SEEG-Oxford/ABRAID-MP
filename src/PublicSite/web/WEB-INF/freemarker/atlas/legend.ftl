@@ -36,8 +36,8 @@
                     <span style="width: 50%; float: left">0</span><span style="width: 50%; float: right; text-align: right">1</span>
                 </td>
                 <td class="legendText">
-                    <p style="margin: 0; text-align: center; font-style: normal; font-weight: bold">Input data range for current map</p>
-                    <p style="margin: 0; text-align: center; font-style: normal; font-weight: bold" data-bind="text: startDate() + '&nbsp;&rarr;&nbsp;' + endDate()"></p>
+                    <p>Input data range for current map</p>
+                    <p data-bind="text: startDate() + '&nbsp;&rarr;&nbsp;' + endDate()"></p>
                 </td>
             </tr>
         </table>

@@ -16,7 +16,10 @@ define([
         var self = this;
 
         if (availableLayers.length === 0) {
-            availableLayers = [ { disease: "---", runs: [ { id: undefined, date: "---" } ] } ];
+            availableLayers = [ {
+                disease: "---",
+                runs: [ { id: undefined, date: "---", rangeStart: "???", rangeEnd: "???"} ]
+            } ];
         }
 
         self.types = [
