@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
@@ -118,6 +119,31 @@ public class ModelRunRequesterTest {
         verify(runService).saveModelRun(modelRunArgumentCaptor.capture());
         ModelRun value = modelRunArgumentCaptor.getValue();
         assertThat(value.getInputDiseaseExtent()).hasSize(4);
+    }
+
+    @Test
+    public void requestModelRunSavesCorrectOccurrenceRangeDates() throws Exception {
+        // Arrange
+        ModelRunService runService = mock(ModelRunService.class);
+        DiseaseService diseaseService = mock(DiseaseService.class);
+        ModelRunRequester target = createMockModelRunRequester(runService, 87, true, diseaseService);
+        DiseaseOccurrence oldest = mock(DiseaseOccurrence.class);
+        DateTime oldDate = DateTime.parse("2013-02-27T08:06:46.000Z");
+        when(oldest.getOccurrenceDate()).thenReturn(oldDate);
+        DiseaseOccurrence newest = mock(DiseaseOccurrence.class);
+        DateTime newDate = DateTime.parse("2014-02-27T08:06:46.000Z");
+        when(newest.getOccurrenceDate()).thenReturn(newDate);
+        List<DiseaseOccurrence> occurrencesForModelRun = Arrays.asList(newest, oldest);
+
+        // Act
+        target.requestModelRun(87, occurrencesForModelRun, null, null);
+
+        // Assert
+        ArgumentCaptor<ModelRun> modelRunArgumentCaptor = ArgumentCaptor.forClass(ModelRun.class);
+        verify(runService).saveModelRun(modelRunArgumentCaptor.capture());
+        ModelRun value = modelRunArgumentCaptor.getValue();
+        assertThat(value.getOccurrenceDataRangeStartDate()).isEqualTo(oldDate);
+        assertThat(value.getOccurrenceDataRangeEndDate()).isEqualTo(newDate);
     }
 
     private AdminUnitDiseaseExtentClass createMockAdminUnitDiseaseExtentClass() {

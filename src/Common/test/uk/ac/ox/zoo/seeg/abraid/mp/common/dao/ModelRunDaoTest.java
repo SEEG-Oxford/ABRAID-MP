@@ -68,8 +68,8 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
         DateTime batchStartDate = DateTime.now().minusHours(6).minusDays(1);
         DateTime batchEndDate = DateTime.now().minusHours(6);
         DateTime batchingCompletionDate = DateTime.now().plusHours(2);
-        DateTime occurrenceDataRangeStartDate = DateTime.now().plusHours(9);
-        DateTime occurrenceDataRangeEndDate = DateTime.now().plusHours(8);
+        DateTime occurrenceDataRangeStartDate = DateTime.now().minusHours(9);
+        DateTime occurrenceDataRangeEndDate = DateTime.now().minusHours(8);
         int batchedOccurrenceCount = 1000;
 
         ModelRun modelRun = new ModelRun(name, diseaseGroupId, requestServer, requestDate,
