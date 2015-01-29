@@ -58,11 +58,11 @@ public class AtlasControllerTest {
     public void showAtlasAddsAllDiseaseGroupsWithCompletedModelRunsToMapIfUserIsSeeg() throws Exception {
         String expectation = "[" +
             "{\"disease\":\"Disease Group 1\",\"runs\":[" +
-                "{\"date\":\"2014-10-13\",\"id\":\"Model Run 1\",\"automatic\":true}," +
-                "{\"date\":\"2036-12-18\",\"id\":\"Model Run 3\",\"automatic\":true}" +
+                "{\"date\":\"2014-10-13\",\"id\":\"Model Run 1\",\"rangeStart\":\"1999-10-13\",\"rangeEnd\":\"2001-10-13\",\"automatic\":true}," +
+                "{\"date\":\"2036-12-18\",\"id\":\"Model Run 3\",\"rangeStart\":\"1997-12-18\",\"rangeEnd\":\"2003-12-18\",\"automatic\":true}" +
             "]}," +
                 "{\"disease\":\"Disease Group 2\",\"runs\":[" +
-                "{\"date\":\"1995-10-09\",\"id\":\"Model Run 2\",\"automatic\":false}" +
+                "{\"date\":\"1995-10-09\",\"id\":\"Model Run 2\",\"rangeStart\":\"1998-10-09\",\"rangeEnd\":\"2002-10-09\",\"automatic\":false}" +
             "]}" +
         "]";
         showAtlasTemplatesTheCorrectData(true, expectation);
@@ -72,8 +72,8 @@ public class AtlasControllerTest {
     public void showAtlasAddsOnlyAutomaticModelRunsEnabledDiseaseGroupsWithCompletedModelRunsIfUserIsNotSeeg() throws Exception {
         String expectation = "[" +
             "{\"disease\":\"Disease Group 1\",\"runs\":[" +
-                "{\"date\":\"2014-10-13\",\"id\":\"Model Run 1\",\"automatic\":true}," +
-                "{\"date\":\"2036-12-18\",\"id\":\"Model Run 3\",\"automatic\":true}" +
+                "{\"date\":\"2014-10-13\",\"id\":\"Model Run 1\",\"rangeStart\":\"1999-10-13\",\"rangeEnd\":\"2001-10-13\",\"automatic\":true}," +
+                "{\"date\":\"2036-12-18\",\"id\":\"Model Run 3\",\"rangeStart\":\"1997-12-18\",\"rangeEnd\":\"2003-12-18\",\"automatic\":true}" +
             "]}" +
         "]";
         showAtlasTemplatesTheCorrectData(false, expectation);
@@ -125,6 +125,12 @@ public class AtlasControllerTest {
         when(modelRun1.getRequestDate()).thenReturn(new DateTime(2014, 10, 13, 12, 0));
         when(modelRun2.getRequestDate()).thenReturn(new DateTime(1995, 10, 9, 12, 0));
         when(modelRun3.getRequestDate()).thenReturn(new DateTime(2036, 12, 18, 12, 0));
+        when(modelRun1.getOccurrenceDataRangeStartDate()).thenReturn(new DateTime(1999, 10, 13, 12, 0));
+        when(modelRun2.getOccurrenceDataRangeStartDate()).thenReturn(new DateTime(1998, 10, 9, 12, 0));
+        when(modelRun3.getOccurrenceDataRangeStartDate()).thenReturn(new DateTime(1997, 12, 18, 12, 0));
+        when(modelRun1.getOccurrenceDataRangeEndDate()).thenReturn(new DateTime(2001, 10, 13, 12, 0));
+        when(modelRun2.getOccurrenceDataRangeEndDate()).thenReturn(new DateTime(2002, 10, 9, 12, 0));
+        when(modelRun3.getOccurrenceDataRangeEndDate()).thenReturn(new DateTime(2003, 12, 18, 12, 0));
         when(modelRun1.getName()).thenReturn("Model Run 1");
         when(modelRun2.getName()).thenReturn("Model Run 2");
         when(modelRun3.getName()).thenReturn("Model Run 3");

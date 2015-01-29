@@ -13,6 +13,6 @@ lib-local
 db/database.properties
 artifacts
 db/.database.properties
-fake.zip
+fake*
 junit*.properties
 db/data_model.ldb

@@ -15,8 +15,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
 import java.net.URI;
 import java.util.*;
 
-import static ch.lambdaj.Lambda.convert;
-import static ch.lambdaj.Lambda.filter;
+import static ch.lambdaj.Lambda.*;
 
 /**
  * Requests a model run for all relevant diseases.
@@ -91,7 +90,9 @@ public class ModelRunRequester {
                                                DateTime batchStartDate, DateTime batchEndDate,
                                                List<DiseaseOccurrence> occurrencesForModelRun,
                                                Collection<AdminUnitDiseaseExtentClass> diseaseExtent) {
-        final ModelRun modelRun = new ModelRun(null, diseaseGroup.getId(), modelWrapperUrl.getHost(), requestDate);
+        final ModelRun modelRun = new ModelRun(null, diseaseGroup.getId(), modelWrapperUrl.getHost(), requestDate,
+                min(occurrencesForModelRun, on(DiseaseOccurrence.class).getOccurrenceDate()),
+                max(occurrencesForModelRun, on(DiseaseOccurrence.class).getOccurrenceDate()));
         modelRun.setBatchStartDate(batchStartDate);
         modelRun.setBatchEndDate(batchEndDate);
         modelRun.setInputDiseaseExtent(convert(diseaseExtent,

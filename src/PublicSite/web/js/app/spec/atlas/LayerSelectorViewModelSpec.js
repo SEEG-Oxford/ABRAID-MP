@@ -139,9 +139,12 @@ define([
                 expect(vm.selectedRun().statistics).toBe("statistics3");
             });
 
-            it("defaults to '---' if no available layers are provided", function () {
+            it("defaults to a fake empty run if no available layers are provided", function () {
                 var localVM = new LayerSelectorViewModel([]);
+                expect(localVM.selectedRun().id).toBeUndefined();
                 expect(localVM.selectedRun().date).toBe("---");
+                expect(localVM.selectedRun().rangeStart).toBe("???");
+                expect(localVM.selectedRun().rangeEnd).toBe("???");
             });
 
             it("publishes changes to its state as 'selected-run' event", function () {

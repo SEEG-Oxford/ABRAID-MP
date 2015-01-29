@@ -107,6 +107,8 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
         assertThat(modelRun.getRequestDate()).isEqualTo(now);
         assertThat(modelRun.getBatchStartDate()).isEqualTo(batchStartDate);
         assertThat(modelRun.getBatchEndDate()).isEqualTo(batchEndDate);
+        assertThat(modelRun.getOccurrenceDataRangeStartDate().isEqual(DateTime.parse("2014-02-24T17:35:29.000Z"))).isTrue();
+        assertThat(modelRun.getOccurrenceDataRangeEndDate().isEqual(DateTime.parse("2014-02-27T08:06:46.000Z"))).isTrue();
     }
 
     private void setDiseaseGroupParametersToEnsureSelectorReturnsOccurrences(int diseaseGroupId) {
