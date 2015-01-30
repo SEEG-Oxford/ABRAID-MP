@@ -1,7 +1,7 @@
 <div class="leaflet-top leaflet-left">
     <div class="leaflet-control">
-        <a data-toggle="modal" data-target="#helpModal">
-            <i style="font-size: 31px; color: rgb(51, 51, 51);" class="fa fa-info-circle"></i>
+        <a data-toggle="modal" id="helpLink" data-target="#helpModal">
+          <i class="fa fa-info"></i>
         </a>
     </div>
 </div>
