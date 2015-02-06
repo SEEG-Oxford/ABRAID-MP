@@ -4,8 +4,8 @@
  *
  * Copyright (c) 2014 University of Oxford
  */
-/*global window:false*/
-define(["require", "ko", "jquery", "jquery.cookiecuttr", "domReady!"], function (require, ko, $) {
+/*global window:false, console:false*/
+define(["require", "ko", "jquery", "domReady!"], function (require, ko, $) {
     "use strict";
 
     // Setup temporary Google Analytics objects.
@@ -24,12 +24,22 @@ define(["require", "ko", "jquery", "jquery.cookiecuttr", "domReady!"], function 
         window.ga("send", "pageview");
 
         // Show cookie warning
-        $.cookieCuttr({
-            cookieAnalytics: true,
-            cookieAnalyticsMessage: "This site uses cookies to track usage and preferences.",
-            cookieAcceptButtonText: "OK",
-            cookieWhatAreLinkText: "?"
-        });
+        require(
+            ["jquery.cookiecuttr"],
+            function() {
+                // loaded successfully
+                $.cookieCuttr({
+                    cookieAnalytics: true,
+                    cookieAnalyticsMessage: "This site uses cookies to track usage and preferences.",
+                    cookieAcceptButtonText: "OK",
+                    cookieWhatAreLinkText: "?"
+                });
+            },
+            function() {
+                // load failed
+                console.log("Skipped cookie warning.");
+            }
+        );
     }
 
     // Asynchronously load Google Analytics, letting it take over our `window.ga`
