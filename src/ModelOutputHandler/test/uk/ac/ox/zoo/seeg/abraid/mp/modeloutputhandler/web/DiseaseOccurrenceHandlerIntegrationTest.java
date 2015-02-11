@@ -122,8 +122,9 @@ public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringInteg
         // Assert
         List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesByDiseaseGroupId(diseaseGroupId);
 
-        // As this is the second batch, the final weighting (and final weighting excluding spatial) will not have
-        // been nulled. But, the final weighting will remain null for any occurrence with isValidated is null.
+        // As this is the second batch, batching initialisation has not been performed, and therefore:
+        // - the final weightings remain not-null
+        // - the statuses remain as-is (in particular, none have been set to AWAITING_BATCHING)
         for (DiseaseOccurrence occurrence : occurrences) {
             assertThat(occurrence.getStatus()).isNotEqualTo(DiseaseOccurrenceStatus.AWAITING_BATCHING);
             // In the test data, occurrences without status READY have null weightings already, so ignore them
@@ -133,12 +134,11 @@ public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringInteg
             }
         }
 
-        // Because the final weightings are all not null, none of them will have changed status
         assertOccurrences(occurrences, DiseaseOccurrenceStatus.READY, 45, 0);
         assertOccurrences(occurrences, DiseaseOccurrenceStatus.IN_REVIEW, 0, 0);
         assertOccurrences(occurrences, DiseaseOccurrenceStatus.DISCARDED_FAILED_QC, 3, 0);
 
-        // And the model run should have been updated correctly
+        // The model run should have been updated correctly
         modelRun2 = modelRunService.getModelRunByName(modelRun2.getName());
         assertThat(modelRun2.getBatchingCompletedDate()).isEqualTo(now);
         assertThat(modelRun2.getBatchOccurrenceCount()).isEqualTo(0);
@@ -147,7 +147,8 @@ public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringInteg
     private ModelRun createAndSaveTestModelRun(int diseaseGroupId, DateTime batchStartDate, DateTime batchEndDate,
                                                DateTime batchingCompletionDate) {
         String name = Double.toString(Math.random());
-        ModelRun modelRun = new ModelRun(name, diseaseGroupId, "host", DateTime.now().minusDays(1), DateTime.now(), DateTime.now());
+        ModelRun modelRun = new ModelRun(
+                name, diseaseGroupId, "host", DateTime.now().minusDays(1), DateTime.now(), DateTime.now());
         modelRun.setStatus(ModelRunStatus.COMPLETED);
         modelRun.setResponseDate(DateTime.now());
         modelRun.setBatchStartDate(batchStartDate);

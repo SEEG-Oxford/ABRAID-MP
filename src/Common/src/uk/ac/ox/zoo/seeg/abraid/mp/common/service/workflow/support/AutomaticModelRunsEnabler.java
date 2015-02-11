@@ -72,7 +72,7 @@ public class AutomaticModelRunsEnabler {
     private void addValidationParametersOrWeightings(List<DiseaseOccurrence> occurrences) {
         // Adds validation parameters for occurrences without a final weighting, using a cutoff date of the number of
         // days between model runs. This ensures that that experts are not overwhelmed with occurrences to validate.
-        // Occurrences before the cutoff date are permanently ignored by setting their isValidated flag to null.
+        // Occurrences before the cutoff date are permanently ignored by setting their status to DISCARDED_UNUSED.
         DateTime earliestDateForValidationParameters = modelRunService.subtractDaysBetweenModelRuns(DateTime.now());
         List<DiseaseOccurrence> occurrencesForValidationParameters = new ArrayList<>();
 

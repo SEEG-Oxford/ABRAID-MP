@@ -90,7 +90,7 @@ public class DiseaseOccurrenceReviewManager {
      * status accordingly, so that it will no longer be shown on the DataValidator.
      * @param occurrence The disease occurrence.
      * @param modelRunPrepDateTime The date (incl. time) of the current model run
-     * @return The new value of the isValidated property.
+     * @return Whether the occurrence has been in review for long enough to have its status changed from IN_REVIEW.
      */
     private boolean occurrenceHasBeenInReviewForMoreThanMaximumNumberOfDays(DiseaseOccurrence occurrence,
                                                               DateTime modelRunPrepDateTime) {
