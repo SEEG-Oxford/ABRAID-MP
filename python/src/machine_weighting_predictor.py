@@ -49,7 +49,7 @@ def train(disease_group_id):
         try:
             feed_classes = _construct_feed_classes(data)
             X = _convert_training_data_to_matrix(data, feed_classes)
-            y = np.array(_pluck(EXPERT_WEIGHTING, data))
+            y = _convert_expert_weighting_to_labels(data)
         except KeyError:
             return _log_response('Invalid JSON', disease_group_id, 400)
         else:
@@ -125,6 +125,13 @@ def _convert_training_data_to_matrix(data, feed_classes):
     for i, feed_class in enumerate(feeds):
         X[i, feed_class + 2] = 1
     return X
+
+
+def _convert_expert_weighting_to_labels(data):
+    y = np.array(_pluck(EXPERT_WEIGHTING, data))
+    y[y>=0.5] = 1
+    y[y<0.5] = 0
+    return y
 
 
 def _convert_data_to_vector(data, feed_classes):

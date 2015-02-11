@@ -11,6 +11,7 @@ from src import machine_weighting_predictor as mwp
 DFE = 'distanceFromExtent'
 ES = 'environmentalSuitability'
 FEED = 'feedId'
+EW = 'expertWeighting'
 
 PICKLES_SUBFOLDER_PATH = 'pickles/'
 
@@ -37,6 +38,17 @@ class TestMachineWeightingPredictor(unittest.TestCase):
         # Assert
         self.assertItemsEqual(feed_classes.keys(), [71, 102, 6])
         self.assertItemsEqual(feed_classes.values(), range(3))
+
+    def test_convert_expert_weighting_to_labels(self):
+        """
+        Continuous expertWeightings are rounded to valid/invalid classes (1 or 0)
+        """
+        # Arrange
+        data = [{EW: 0}, {EW: 0.3}, {EW: 0.5}, {EW: 0.75}, {EW: 1}]
+        # Act
+        y = mwp._convert_expert_weighting_to_labels(data)
+        # Assert
+        self.assertItemsEqual(y, [0, 0, 1, 1, 1])
 
     def test_convert_training_data_to_matrix(self):
         """
