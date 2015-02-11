@@ -20,6 +20,9 @@ def _get_random_subset_indexes(subset_size, n):
     k = int(floor(subset_size * n))
     return list_of_indexes[:k]
 
+def _get_prediction(p, x):
+    """ Return the probability that x belongs to the valid class '1' """
+    return p.predict_proba(x)[0][np.where(p.classes_ == 1)[0][0]]
 
 def _coefficient_of_variation(args):
     mu = np.mean(args)
@@ -48,7 +51,7 @@ class Layer(object):
 
     def predict(self, x):
         """ Return the mean prediction, if the predictors are sufficiently in agreement. """
-        predictions = [p.predict(x)[0] for p in self.predictors]
+        predictions = [_get_prediction(p, x) for p in self.predictors]
         if _coefficient_of_variation(predictions) <= self.cv_threshold:
             return np.mean(predictions)
         else:
