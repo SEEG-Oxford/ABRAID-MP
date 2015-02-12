@@ -95,7 +95,7 @@ else
   cd ".."
 
   echo "[[ DB | Setting initial retrieval date ready for daily process ]]"
-  psql -wq -v "ON_ERROR_STOP=1" -U "postgres" -d "${db_props[jdbc.database.name]}" --command "UPDATE provenance SET last_retrieval_end_date = (select max(occurrence_date) from disease_occurrence) WHERE name = 'HealthMap';" > /dev/null
+  psql -wq -v "ON_ERROR_STOP=1" -U "postgres" -d "${db_props[jdbc.database.name]}" --command "UPDATE provenance SET last_retrieval_end_date = (select max(reviewed_date) from alert) WHERE name = 'HealthMap';" > /dev/null
 fi
 
 echo "[[ DB | Performing cleanup ]]"
