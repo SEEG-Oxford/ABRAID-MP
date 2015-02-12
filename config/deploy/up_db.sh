@@ -51,7 +51,6 @@ else
   : "${deploy_props[shapefile.source]:?"Variable must be set"}"
   : "${deploy_props[healthmap.source]:?"Variable must be set"}"
   : "${deploy_props[geonames.source]:?"Variable must be set"}"
-  : "${deploy_props[experts.source]:?"Variable must be set"}"
   : "${deploy_props[reviews.source]:?"Variable must be set"}"
 
   echo "[[ DB | Writing database creation properties ]]"
