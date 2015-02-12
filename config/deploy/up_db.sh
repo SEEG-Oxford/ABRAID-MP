@@ -66,7 +66,7 @@ else
     rsync -crm "$REMOTE_USER@${deploy_props[healthmap.source]}/*" "./healthmap/" --include="*.txt" --include="*.sql" --include="*/" --exclude="*"
     echo "Getting initial geonames data"
     rsync -crm "$REMOTE_USER@${deploy_props[geonames.source]}/*" "./geonames/" --include="*.txt" --include="*.sql" --include="*/" --exclude="*"
-    echo "Getting initial review data"
+    echo "Getting initial review and expert data"
     rsync -crm "$REMOTE_USER@${deploy_props[reviews.source]}/*" "./reviews/" --exclude="export_from_abraid.sql"
   cd ..
 
@@ -75,10 +75,6 @@ else
 
   echo "[[ DB | Importing initial data ]]"
   cd "external"
-    cd "experts"
-      echo "Importing experts"
-      psql -wq -v "ON_ERROR_STOP=1" -U "postgres" -d "${db_props[jdbc.database.name]}" -f "import_into_abraid.sql" > /dev/null
-    cd ".."
     cd "healthmap"
       echo "Importing historic healthmap data"
       psql -wq -v "ON_ERROR_STOP=1" -U "postgres" -d "${db_props[jdbc.database.name]}" -f "import_into_abraid.sql" > /dev/null
@@ -88,7 +84,7 @@ else
       psql -wq -v "ON_ERROR_STOP=1" -U "postgres" -d "${db_props[jdbc.database.name]}" -f "import_into_abraid.sql" > /dev/null
     cd ..
     cd "reviews"
-      echo "Importing historical reviews and experts"
+      echo "Importing review and expert data"
       psql -wq -v "ON_ERROR_STOP=1" -U "postgres" -d "${db_props[jdbc.database.name]}" -f "import_into_abraid.sql" > /dev/null
     cd ".."
   cd ".."
