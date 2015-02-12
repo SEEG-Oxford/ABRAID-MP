@@ -67,8 +67,6 @@ else
     rsync -crm "$REMOTE_USER@${deploy_props[healthmap.source]}/*" "./healthmap/" --include="*.txt" --include="*.sql" --include="*/" --exclude="*"
     echo "Getting initial geonames data"
     rsync -crm "$REMOTE_USER@${deploy_props[geonames.source]}/*" "./geonames/" --include="*.txt" --include="*.sql" --include="*/" --exclude="*"
-    echo "Getting initial user data"
-    rsync -crm "$REMOTE_USER@${deploy_props[experts.source]}/*" "./experts/"
     echo "Getting initial review data"
     rsync -crm "$REMOTE_USER@${deploy_props[reviews.source]}/*" "./reviews/" --exclude="export_from_abraid.sql"
   cd ..
@@ -91,7 +89,7 @@ else
       psql -wq -v "ON_ERROR_STOP=1" -U "postgres" -d "${db_props[jdbc.database.name]}" -f "import_into_abraid.sql" > /dev/null
     cd ..
     cd "reviews"
-      echo "Importing historical reviews"
+      echo "Importing historical reviews and experts"
       psql -wq -v "ON_ERROR_STOP=1" -U "postgres" -d "${db_props[jdbc.database.name]}" -f "import_into_abraid.sql" > /dev/null
     cd ".."
   cd ".."
