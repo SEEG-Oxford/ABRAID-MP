@@ -48,6 +48,7 @@ public class ExpertDaoImpl extends AbstractDao<Expert, Integer> implements Exper
      */
     @Override
     public Expert getByEmail(String email) {
-        return uniqueResultNamedQuery("getExpertByEmail", "email", email);
+        String lowerEmail = (email == null) ? null : email.toLowerCase();
+        return uniqueResultNamedQuery("getExpertByEmail", "email", lowerEmail);
     }
 }
