@@ -125,7 +125,8 @@ public class Expert {
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        String lowerEmail = (email == null) ? null : email.toLowerCase();
+        this.email = lowerEmail;
     }
 
     public String getPassword() {
