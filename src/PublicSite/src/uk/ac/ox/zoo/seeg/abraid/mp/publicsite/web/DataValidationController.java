@@ -238,8 +238,7 @@ public class DataValidationController extends AbstractController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        GeoJsonDiseaseExtentFeatureCollection featureCollection = new GeoJsonDiseaseExtentFeatureCollection();
-
+        GeoJsonDiseaseExtentFeatureCollection featureCollection;
         // Only SEEG members may view disease extent for disease groups still in setup phase.
         // Other users see an empty extent.
         if (diseaseGroup.isAutomaticModelRunsEnabled() || userIsSEEG) {
@@ -252,6 +251,9 @@ public class DataValidationController extends AbstractController {
             } catch (IllegalArgumentException e) {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
+        } else {
+            featureCollection = new GeoJsonDiseaseExtentFeatureCollection(
+                    new ArrayList<AdminUnitDiseaseExtentClass>(), new ArrayList<AdminUnitReview>());
         }
         return new ResponseEntity<>(featureCollection, HttpStatus.OK);
     }
