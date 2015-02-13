@@ -124,6 +124,10 @@ public class Expert {
         return email;
     }
 
+    /**
+     * Sets the email address of the user. The email address is coerced to lower case.
+     * @param email The email address of the user.
+     */
     public void setEmail(String email) {
         String lowerEmail = (email == null) ? null : email.toLowerCase();
         this.email = lowerEmail;
