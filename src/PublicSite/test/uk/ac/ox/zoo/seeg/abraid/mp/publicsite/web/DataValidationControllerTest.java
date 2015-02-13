@@ -11,6 +11,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.GeoJsonDiseaseExtentFeature;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.GeoJsonDiseaseExtentFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.GeoJsonDiseaseOccurrenceFeatureCollection;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.geojson.GeoJsonObjectType;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
@@ -419,10 +420,13 @@ public class DataValidationControllerTest {
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+        GeoJsonDiseaseExtentFeatureCollection body = result.getBody();
+        assertThat(body.getType()).isEqualTo(GeoJsonObjectType.FEATURE_COLLECTION);
+        assertThat(body.getCrs()).isNotNull();
         if (expectedDiseaseExtent != null) {
-            assertThat(result.getBody().getFeatures()).hasSameSizeAs(expectedDiseaseExtent);
+            assertThat(body.getFeatures()).hasSameSizeAs(expectedDiseaseExtent);
         } else {
-            assertThat(result.getBody().getFeatures()).isNull();
+            assertThat(body.getFeatures()).isEmpty();
         }
     }
 
