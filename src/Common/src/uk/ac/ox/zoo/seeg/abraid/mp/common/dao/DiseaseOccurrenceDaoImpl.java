@@ -44,7 +44,7 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
     private static final String MODEL_RUN_REQUEST_ORDER_BY_CLAUSE =
             "order by d.occurrenceDate desc";
 
-    private static final int WEEKS_AGO_FOR_TRAINING_DATA_CUT_OFF_DATE = 4;
+    private static final int WEEKS_AGO_FOR_TRAINING_DATA_CUT_OFF_DATE = 52;
 
     public DiseaseOccurrenceDaoImpl(SessionFactory sessionFactory) {
         super(sessionFactory);
