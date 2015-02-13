@@ -86,6 +86,7 @@ html, body {
 }
 .key {
     padding-right: 8px;
+    min-width: 149px;
 }
 .discreteKey {
     padding-right: 6px;
