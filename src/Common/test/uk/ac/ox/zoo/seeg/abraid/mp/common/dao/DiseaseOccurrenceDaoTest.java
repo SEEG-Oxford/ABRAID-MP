@@ -661,6 +661,37 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     }
 
     @Test
+    public void getDiseaseOccurrencesForTrainingPredictor() {
+        // Arrange
+        int diseaseGroupId = 87;
+        DiseaseOccurrence recentOccurrence = occurrenceForTrainingPredictor(diseaseGroupId, DateTime.now().minusWeeks(51));
+        DiseaseOccurrence oldOccurrence = occurrenceForTrainingPredictor(diseaseGroupId, DateTime.now().minusWeeks(52));
+        // Act
+        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForTrainingPredictor(diseaseGroupId);
+        // Assert
+        assertThat(occurrences).contains(recentOccurrence);
+        assertThat(occurrences).doesNotContain(oldOccurrence);
+    }
+
+    private DiseaseOccurrence occurrenceForTrainingPredictor(int diseaseGroupId, DateTime occurrenceDate) {
+        DiseaseOccurrence o = new DiseaseOccurrence();
+        o.setOccurrenceDate(occurrenceDate);
+
+        // Set properties required by named query
+        o.setDiseaseGroup(diseaseGroupDao.getById(diseaseGroupId));
+        o.setStatus(DiseaseOccurrenceStatus.READY);
+        o.setLocation(locationDao.getById(80));
+        o.setDistanceFromDiseaseExtent(100.0);
+        o.setEnvironmentalSuitability(0.2);
+        o.setExpertWeighting(0.15);
+        // Also set required not-null properties in order to save occurrence
+        o.setAlert(alertDao.getById(212855));
+
+        diseaseOccurrenceDao.save(o);
+        return o;
+    }
+
+    @Test
     public void getNumberOfOccurrencesEligibleForModelRun() {
         // Arrange
         // Set some points in our date range to IN_REVIEW and AWAITING_BATCHING (including occurrences with COUNTRY
