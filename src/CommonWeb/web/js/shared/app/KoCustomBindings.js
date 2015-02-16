@@ -139,19 +139,33 @@ define([
         }
     };
 
-    // Prevent click events from bubbling up to higher DOM elements
+    // Prevent mouse events from bubbling up to higher DOM elements (argument = include click event)
     ko.bindingHandlers.preventBubble = {
         init: function (element, valueAccessor) {
-            ko.applyBindingAccessorsToNode(element, {
+            var includeClickEvent = valueAccessor();
+            var bindings = {
                 event: function () {
-                    return {
-                        click: function () { return valueAccessor(); },
-                        dblclick: function () { return valueAccessor(); }
+                    var eventBindings = {
+                        dblclick: function () { return true; },
+                        mousedown: function () { return true; }
                     };
+
+                    if (includeClickEvent) {
+                        $.extend(eventBindings, { click: function () { return true; } });
+                    }
+
+                    return eventBindings;
                 },
-                clickBubble: function () { return false; },
-                dblclickBubble: function () { return false; }
-            });
+
+                dblclickBubble: function () { return false; },
+                mousedownBubble: function () { return false; }
+            };
+
+            if (includeClickEvent) {
+                $.extend(bindings, { clickBubble: function () { return false; } });
+            }
+
+            ko.applyBindingAccessorsToNode(element, bindings);
         }
     };
 

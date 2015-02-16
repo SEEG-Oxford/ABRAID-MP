@@ -1,4 +1,4 @@
-<div class="leaflet-bottom leaflet-left" id="legend">
+<div class="leaflet-bottom leaflet-left" id="legend" data-bind="preventBubble: true">
     <div class="legend leaflet-bar leaflet-control" style="display: none" data-bind="visible: type() == 'mean'">
         <table>
             <tr>
