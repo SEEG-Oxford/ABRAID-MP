@@ -34,7 +34,7 @@
             <#include "layerselector.ftl"/>
             <#include "helpmodal.ftl"/>
             <#include "latestoccurrencespanel.ftl"/>
-            <div id="spinner" data-bind="fadeVisible: { visible: visible() }">
+            <div id="spinner" data-bind="fadeVisible: { visible: visible() }, preventBubble: true">
                 <i class="fa fa-3x fa-spinner fa-spin"></i>
                 <div class="background"></div>
             </div>
