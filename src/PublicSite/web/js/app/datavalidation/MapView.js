@@ -380,6 +380,8 @@ define([
                 _((_(extentClassColour).pairs()).map(function (pair) {
                     return createLegendRow(pair[0], pair[1][1]);
                 })).join("");
+            div.setAttribute("data-bind", "preventBubble: true");
+            ko.applyBindings({}, div);
             return div;
         };
 

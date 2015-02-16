@@ -1,27 +1,27 @@
-<div class="leaflet-top leaflet-right" id="modelRunDetails" style="display: none" data-bind="visible: hasActiveLayer, event: { 'dblclick' : function () { return false; } }, dblclickBubble: false">
+<div class="leaflet-top leaflet-right" id="modelRunDetails" style="display: none" data-bind="visible: hasActiveLayer">
     <!-- ko with:downloadLinksViewModel -->
-    <div class="leaflet-bar leaflet-control">
+    <div class="leaflet-bar leaflet-control" data-bind="preventBubble: false">
         <a target="_blank" title="PNG" data-bind="attr: { href: png }">
             <i class="fa fa-lg fa-picture-o"></i>Download PNG image
         </a>
     </div>
-    <div class="leaflet-bar leaflet-control">
+    <div class="leaflet-bar leaflet-control" data-bind="preventBubble: true">
         <a target="_blank" title="GeoTIFF" data-bind="attr: { href: tif }">
             <i class="fa fa-lg fa-download"></i>Download predicted data
         </a>
     </div>
-    <div class="leaflet-bar leaflet-control" style="display: none" data-bind="visible: showOccurrences">
+    <div class="leaflet-bar leaflet-control" style="display: none" data-bind="visible: showOccurrences, preventBubble: true">
         <a target="_blank" title="Input CSV" data-bind="attr: { href: occurrences }">
             <i class="fa fa-lg fa-file-excel-o"></i>Download input data
         </a>
     </div>
     <!-- /ko -->
-    <div class="leaflet-bar leaflet-control">
+    <div class="leaflet-bar leaflet-control" data-bind="preventBubble: false">
         <a data-toggle="collapse" href="#covariatesAndStatistics" style="width: auto; height: auto;">
             <i class="fa fa-lg fa-bar-chart-o"></i>View covariates and statistics
         </a>
         <div></div>
-        <div class="panel-collapse collapse container-sm-height" id="covariatesAndStatistics">
+        <div class="panel-collapse collapse container-sm-height" id="covariatesAndStatistics" data-bind="preventBubble: true">
             <div class="panel-body">
                 <div class="row-sm-height">
                     <div class="col-sm-6 col-sm-height">
