@@ -100,7 +100,7 @@ import javax.persistence.Table;
                         "and d.distanceFromDiseaseExtent is not null " +
                         "and d.environmentalSuitability is not null " +
                         "and d.expertWeighting is not null " +
-                        "and d.createdDate > :cutOffDate"
+                        "and d.occurrenceDate > :cutOffDate"
         )
 })
 @Entity
