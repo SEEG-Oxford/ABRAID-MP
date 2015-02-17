@@ -22,7 +22,6 @@
             "bootstrap-datepicker": cdn + "bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.min",
             "bootstrap.extensions": cdn + "jasny-bootstrap/3.1.3/js/jasny-bootstrap.min",
             "knockout": cdn + "knockout/3.1.0/knockout-debug", // can not use min
-            "knockout.validation": cdn + "knockout-validation/2.0.1/knockout.validation.min",
             "underscore": cdn + "underscore.js/1.6.0/underscore-min",
             "moment": cdn + "moment.js/2.6.0/moment.min",
             "domReady": cdn + "require-domReady/2.0.1/domReady.min",
@@ -33,6 +32,8 @@
             "leaflet-markercluster": basePath + "lib/leaflet.markercluster",
             "leaflet-zoomslider": basePath + "lib/L.Control.Zoomslider",
             "flipclock": basePath + "lib/flipclock.min",
+            // Move to cdn path when next version is published (error template refreshing bug)
+            "knockout.validation": basePath + "lib/knockout-validation.min",
             // Move to cdn path when next version is published (AMD support)
             "knockout.bootstrap": basePath + "lib/knockout-bootstrap.min",
             "knockout-postbox": basePath + "lib/knockout-postbox",
