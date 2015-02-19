@@ -24,6 +24,7 @@ body {
     width: 100%;
     height: 30px;
     background-color: #222;
+    color: rgb(153, 153, 153);
 }
 #footer > .container {
     background-color: #222;
@@ -32,15 +33,15 @@ body {
     padding-top: 5px;
 }
 #footer .links > a, #footer p {
-    display:inline;
+    display: inline;
 }
 #footer .links > a:link, #footer .links > a:visited {
-    color:rgb(153, 153, 153);
-    text-decoration:none;
+    color: rgb(153, 153, 153);
+    text-decoration: none;
 }
 #footer .links > a:hover {
-    color:white;
-    text-decoration:none;
+    color: white;
+    text-decoration: none;
 }
 #footer .copyright {
     float: right;
@@ -98,7 +99,7 @@ form {
 .table th .up-down {
     float: right;
     height: 20px;
-    width:20px;
+    width: 20px;
 }
 .side-by-side {
     float: left;
@@ -121,14 +122,14 @@ button.btn[type=submit] {
     max-width: 200px;
 }
 .navbar-right > li > a {
-    padding:15px 5px;
+    padding: 15px 5px;
 }
 .navbar-right > li > span {
     display: block;
-    padding:15px 5px;
+    padding: 15px 5px;
 }
 .jumbotron {
-    padding:30px;
+    padding: 30px;
     text-align: center
 }
 .pagination {
@@ -212,7 +213,7 @@ button.btn[type=submit] {
 }
 @media (min-width: 768px) {
     #about {
-        display:table;
+        display: table;
     }
     #about-img {
         display: table-cell;
