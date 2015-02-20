@@ -21,11 +21,7 @@
 </#macro>
 
 <#macro minimalPage title endOfHead="">
-    <#assign publicSiteEndOfHeadContent>
-        <link rel="stylesheet" href="<@spring.url "/js/shared/lib/jquery.cookiecuttr.css" />">
-        ${endOfHead}
-    </#assign>
-    <@page title=title endOfHead=publicSiteEndOfHeadContent mainjs="/js/kickstart/minimal" includeNavBar=false includeFooter=false>
+    <@page title=title endOfHead=endOfHead mainjs="/js/kickstart/minimal" includeNavBar=false includeFooter=false>
         <#nested/>
     </@page>
 </#macro>
