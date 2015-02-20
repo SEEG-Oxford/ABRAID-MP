@@ -29,7 +29,7 @@ export ABRAID_SUPPORT_PATH='/var/lib/abraid'
 declare -r ABRAID_SUPPORT_PATH
 export WEBAPP_PATH='/var/lib/tomcat7/webapps'
 declare -r WEBAPP_PATH
-export DATA_MANAGER_CRON_SCRIPT_PATH='/etc/cron.hourly/abraid'
+export DATA_MANAGER_CRON_SCRIPT_PATH='/etc/cron.daily/abraid'
 declare -r DATA_MANAGER_CRON_SCRIPT_PATH
 export REMOTE_USER="$1"
 declare -r REMOTE_USER
