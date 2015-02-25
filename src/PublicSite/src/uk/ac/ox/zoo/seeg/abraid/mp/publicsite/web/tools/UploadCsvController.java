@@ -41,7 +41,7 @@ public class UploadCsvController extends AbstractController {
      */
     @Secured({ "ROLE_SEEG" })
     @RequestMapping(value = "/tools/uploadcsv", method = RequestMethod.GET)
-    public String showCovariatesPage() {
+    public String showCSVPage() {
         return "tools/uploadcsv";
     }
 

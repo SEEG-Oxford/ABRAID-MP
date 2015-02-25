@@ -281,8 +281,8 @@ public class DataValidationController extends AbstractController {
     /**
      * Returns the latest disease occurrences corresponding to an admin unit.
      * @param diseaseGroupId The id of the disease group for which the extent class is of interest.
-     * @param gaulCode The gaulCode of the admin unit (global or tropical, depending on disease group isGlobal flag).
-     * @return A GeoJSON DTO containing the admin units.
+     * @param gaulCode The gaulCode of the admin unit (global or tropical, depending on disease group's isGlobal flag).
+     * @return A GeoJSON DTO containing the disease occurrences.
      */
     @Secured("ROLE_USER")
     @RequestMapping(
@@ -306,8 +306,8 @@ public class DataValidationController extends AbstractController {
 
     /**
      * Returns the latest disease occurrences corresponding to an admin unit for the default disease, to anonymous user.
-     * @param gaulCode The gaulCode of the admin unit (global or tropical, depending on disease group isGlobal flag).
-     * @return A GeoJSON DTO containing the admin units.
+     * @param gaulCode The gaulCode of the admin unit (global or tropical, depending on disease group's isGlobal flag).
+     * @return A GeoJSON DTO containing the disease occurrences.
      */
     @RequestMapping(
             value = DATA_VALIDATION_BASE_URL + "/defaultadminunits/{gaulCode}/occurrences",
