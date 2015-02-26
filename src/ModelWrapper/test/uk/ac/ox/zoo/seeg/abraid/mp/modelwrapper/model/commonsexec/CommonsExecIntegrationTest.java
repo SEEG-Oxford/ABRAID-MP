@@ -179,7 +179,7 @@ public class CommonsExecIntegrationTest {
     private static File findR() {
         OSChecker osChecker = new OSCheckerImpl();
         if (osChecker.isWindows()) {
-            return new File("C:\\Program Files\\R\\R-3.0.2\\bin\\x64\\R.exe");
+            return new File(System.getenv("R_HOME") + "\\bin\\x64\\R.exe");
         } else {
             return new File("/usr/bin/R");
         }
