@@ -60,7 +60,7 @@ public class DiseaseOccurrenceDataAcquirerTest {
     }
 
     @Test
-    public void acquireSavesUsingExistingLocationIfLocationAlreadyExists() {
+    public void acquireSavesUsingExistingLocationIfLocationAlreadyExistsWithoutGeoNameOnEitherLocation() {
         // Arrange
         DiseaseOccurrence occurrence = createDefaultDiseaseOccurrence();
         Location existingLocation = new Location();
@@ -79,11 +79,98 @@ public class DiseaseOccurrenceDataAcquirerTest {
     }
 
     @Test
-    public void acquireSavesUsingExistingLocationIfLocationAlreadyExistsMultipleTimes() {
+    public void acquireSavesUsingExistingLocationIfLocationAlreadyExistsWithGeoNameOnBothLocations() {
+        // Arrange
+        DiseaseOccurrence occurrence = createDefaultDiseaseOccurrence();
+        occurrence.getLocation().setGeoNameId(123);
+        Location existingLocation = new Location();
+        existingLocation.setGeoNameId(123);
+        mockGetLocationsByPointAndPrecision(occurrence.getLocation().getGeom(), occurrence.getLocation().getPrecision(),
+                Arrays.asList(existingLocation));
+
+        // Act
+        boolean result = acquirer.acquire(occurrence);
+
+        // Assert
+        assertThat(occurrence.getLocation()).isSameAs(existingLocation);
+        assertThat(occurrence.getLocation().hasPassedQc()).isFalse();
+        verify(qcManager, never()).performQC(any(Location.class));
+        verify(postQcManager, never()).runPostQCProcesses(any(Location.class));
+        verifySuccessfulSave(occurrence, false, result);
+    }
+
+    @Test
+    public void acquireSavesUsingExistingLocationIfLocationAlreadyExistsWithGeoNameOnlyOnExistingLocation() {
+        // Arrange
+        DiseaseOccurrence occurrence = createDefaultDiseaseOccurrence();
+        Location existingLocation = new Location();
+        existingLocation.setGeoNameId(123);
+        mockGetLocationsByPointAndPrecision(occurrence.getLocation().getGeom(), occurrence.getLocation().getPrecision(),
+                Arrays.asList(existingLocation));
+
+        // Act
+        boolean result = acquirer.acquire(occurrence);
+
+        // Assert
+        assertThat(occurrence.getLocation()).isSameAs(existingLocation);
+        assertThat(occurrence.getLocation().hasPassedQc()).isFalse();
+        verify(qcManager, never()).performQC(any(Location.class));
+        verify(postQcManager, never()).runPostQCProcesses(any(Location.class));
+        verifySuccessfulSave(occurrence, false, result);
+    }
+
+
+    @Test
+    public void acquireSavesUsingExistingLocationIfLocationAlreadyExistsMultipleTimesWithoutGeoNameOnEitherLocation() {
         // Arrange
         DiseaseOccurrence occurrence = createDefaultDiseaseOccurrence();
         Location existingLocation1 = new Location();
         Location existingLocation2 = new Location();
+        mockGetLocationsByPointAndPrecision(occurrence.getLocation().getGeom(), occurrence.getLocation().getPrecision(),
+                Arrays.asList(existingLocation1, existingLocation2));
+
+        // Act
+        boolean result = acquirer.acquire(occurrence);
+
+        // Assert
+        assertThat(occurrence.getLocation()).isSameAs(existingLocation1);
+        assertThat(occurrence.getLocation().hasPassedQc()).isFalse();
+        verify(qcManager, never()).performQC(any(Location.class));
+        verify(postQcManager, never()).runPostQCProcesses(any(Location.class));
+        verifySuccessfulSave(occurrence, false, result);
+    }
+
+    @Test
+    public void acquireSavesUsingExistingLocationIfLocationAlreadyExistsMultipleTimesWithGeoNameOnlyOnOneExistingLocation() {
+        // Arrange
+        DiseaseOccurrence occurrence = createDefaultDiseaseOccurrence();
+        Location existingLocation1 = new Location();
+        Location existingLocation2 = new Location();
+        existingLocation2.setGeoNameId(123);
+        mockGetLocationsByPointAndPrecision(occurrence.getLocation().getGeom(), occurrence.getLocation().getPrecision(),
+                Arrays.asList(existingLocation1, existingLocation2));
+
+        // Act
+        boolean result = acquirer.acquire(occurrence);
+
+        // Assert
+        assertThat(occurrence.getLocation()).isSameAs(existingLocation2);
+        assertThat(occurrence.getLocation().hasPassedQc()).isFalse();
+        verify(qcManager, never()).performQC(any(Location.class));
+        verify(postQcManager, never()).runPostQCProcesses(any(Location.class));
+        verifySuccessfulSave(occurrence, false, result);
+    }
+
+    @Test
+    public void acquireSavesUsingExistingLocationIfLocationAlreadyExistsMultipleTimesWithGeoNameOnAllLocations() {
+        // Arrange
+        DiseaseOccurrence occurrence = createDefaultDiseaseOccurrence();
+        occurrence.getLocation().setGeoNameId(123);
+        Location existingLocation1 = new Location();
+        existingLocation1.setGeoNameId(123);
+        Location existingLocation2 = new Location();
+        existingLocation2.setGeoNameId(321);
+
         mockGetLocationsByPointAndPrecision(occurrence.getLocation().getGeom(), occurrence.getLocation().getPrecision(),
                 Arrays.asList(existingLocation1, existingLocation2));
 
@@ -128,6 +215,28 @@ public class DiseaseOccurrenceDataAcquirerTest {
         DiseaseOccurrence occurrence = createDefaultDiseaseOccurrence();
         mockGetLocationsByPointAndPrecision(occurrence.getLocation().getGeom(), occurrence.getLocation().getPrecision(),
                 new ArrayList<Location>());
+        mockRunQC(occurrence.getLocation(), true);
+
+        // Act
+        boolean result = acquirer.acquire(occurrence);
+
+        // Assert
+        assertThat(occurrence.getLocation().hasPassedQc()).isTrue();
+        verify(postQcManager).runPostQCProcesses(same(occurrence.getLocation()));
+        verifySuccessfulSave(occurrence, false, result);
+    }
+
+    @Test
+    public void acquireSavesIfLocationIsNewWithGeoName() {
+        // Arrange
+        DiseaseOccurrence occurrence = createDefaultDiseaseOccurrence();
+        occurrence.getLocation().setGeoNameId(123);
+        Location existingLocation1 = new Location();
+        Location existingLocation2 = new Location();
+        existingLocation2.setGeoNameId(321);
+
+        mockGetLocationsByPointAndPrecision(occurrence.getLocation().getGeom(), occurrence.getLocation().getPrecision(),
+                Arrays.asList(existingLocation1, existingLocation2));
         mockRunQC(occurrence.getLocation(), true);
 
         // Act
