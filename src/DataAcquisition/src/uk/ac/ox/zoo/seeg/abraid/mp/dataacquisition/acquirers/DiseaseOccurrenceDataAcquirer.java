@@ -132,7 +132,7 @@ public class DiseaseOccurrenceDataAcquirer {
     private List<Location> filterToLocationsWithMatchingGeoNameId(List<Location> locations, Integer geoNameId) {
         List<Location> locationsWithCorrectGeoNameId = new ArrayList<>();
         for (Location location : locations) {
-            if (geoNameId.equals(location.getGeoNameId())) {
+            if (geoNameId != null && location.getGeoNameId() != null && geoNameId.equals(location.getGeoNameId())) {
                 locationsWithCorrectGeoNameId.add(location);
             }
         }
