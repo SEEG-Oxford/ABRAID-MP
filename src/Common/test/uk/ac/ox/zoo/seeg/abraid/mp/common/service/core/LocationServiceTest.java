@@ -44,20 +44,6 @@ public class LocationServiceTest {
     }
 
     @Test
-    public void getByGeoNameId() {
-        // Arrange
-        int geoNameId = 1000;
-        Location location = new Location();
-        when(locationDao.getByGeoNameId(geoNameId)).thenReturn(location);
-
-        // Act
-        Location testLocation = locationService.getLocationByGeoNameId(geoNameId);
-
-        // Assert
-        assertThat(testLocation).isSameAs(location);
-    }
-
-    @Test
     public void getByPointAndPrecision() {
         // Arrange
         Point point = GeometryUtils.createPoint(1, 2);
