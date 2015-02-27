@@ -11,6 +11,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.DiseaseOccurrenceVali
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.qc.PostQCManager;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.qc.QCManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -91,6 +92,14 @@ public class DiseaseOccurrenceDataAcquirer {
 
         List<Location> locations = locationService.getLocationsByPointAndPrecision(point, precision);
 
+        if (location.getGeoNameId() != null) {
+            // If the location has a geoname id, the matched location must have the same geoname id
+            locations = filterToLocationsWithMatchingGeoNameId(locations, location.getGeoNameId());
+        } else {
+            // For points without a geoname id, preference should be to assign to a location with a geoname id
+            locations = filterToLocationsWithAGeoNameId(locations);
+        }
+
         if (locations.size() > 0) {
             foundLocation = locations.get(0);
             if (locations.size() > 1) {
@@ -106,6 +115,28 @@ public class DiseaseOccurrenceDataAcquirer {
         }
 
         return foundLocation;
+    }
+
+    // Filter locations to just the locations with any geoname id, or return the full set if none have geoname ids
+    private  List<Location> filterToLocationsWithAGeoNameId(List<Location> locations) {
+        List<Location> locationsWithGeoNameId = new ArrayList<>();
+        for (Location location : locations) {
+            if (location.getGeoNameId() != null) {
+                locationsWithGeoNameId.add(location);
+            }
+        }
+        return locationsWithGeoNameId.isEmpty() ? locations : locationsWithGeoNameId;
+    }
+
+    // Filter locations to just the locations with a specific geoname id
+    private List<Location> filterToLocationsWithMatchingGeoNameId(List<Location> locations, Integer geoNameId) {
+        List<Location> locationsWithCorrectGeoNameId = new ArrayList<>();
+        for (Location location : locations) {
+            if (geoNameId != null && location.getGeoNameId() != null && geoNameId.equals(location.getGeoNameId())) {
+                locationsWithCorrectGeoNameId.add(location);
+            }
+        }
+        return locationsWithCorrectGeoNameId;
     }
 
     private boolean doesDiseaseOccurrenceAlreadyExist(DiseaseOccurrence occurrence) {

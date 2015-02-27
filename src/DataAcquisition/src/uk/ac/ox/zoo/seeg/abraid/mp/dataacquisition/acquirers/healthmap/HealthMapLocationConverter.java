@@ -49,10 +49,7 @@ public class HealthMapLocationConverter {
         Location location = null;
 
         if (validate(healthMapLocation)) {
-            location = findExistingLocationByGeoNameId(healthMapLocation);
-            if (location == null) {
-                location = createLocation(healthMapLocation);
-            }
+            location = createLocation(healthMapLocation);
         }
 
         return location;
@@ -68,15 +65,6 @@ public class HealthMapLocationConverter {
         return true;
     }
 
-    private Location findExistingLocationByGeoNameId(HealthMapLocation healthMapLocation) {
-        Location location = null;
-        if (healthMapLocation.getGeoNameId() != null) {
-            // Query for an existing location at the specified GeoNames ID
-            location = locationService.getLocationByGeoNameId(healthMapLocation.getGeoNameId());
-        }
-        return location;
-    }
-
     private Location createLocation(HealthMapLocation healthMapLocation) {
         Location location = null;
 
@@ -88,6 +76,7 @@ public class HealthMapLocationConverter {
             location.setHealthMapCountryId(healthMapCountry.getId());
             location.setGeom(healthMapLocation.getLongitude(), healthMapLocation.getLatitude());
             location.setName(healthMapLocation.getPlaceName());
+            location.setGeoNameId(healthMapLocation.getGeoNameId());
             if (!addPrecision(healthMapLocation, location)) {
                 // If precision could not be added, return null (i.e. location could not be converted)
                 return null;
@@ -114,7 +103,6 @@ public class HealthMapLocationConverter {
     }
 
     private void addPrecisionUsingGeoNames(Location location, int geoNameId) {
-        location.setGeoNameId(geoNameId);
         GeoName geoName = getGeoName(geoNameId);
 
         if (geoName != null) {

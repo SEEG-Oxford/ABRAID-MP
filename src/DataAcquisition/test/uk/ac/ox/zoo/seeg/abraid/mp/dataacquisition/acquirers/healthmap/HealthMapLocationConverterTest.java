@@ -74,19 +74,28 @@ public class HealthMapLocationConverterTest {
     }
 
     @Test
-    public void convertLocationAlreadyExistsWithSameGeoNameId() {
-        // Arrange
+    public void convertNewLocationsWithKnownGeoNameId() {
         Integer geoNameId = 123;
-        HealthMapLocation healthMapLocation = createDefaultHealthMapLocation();
+        String featureCode = "PPL";
+
+        HealthMapLocation healthMapLocation = createDefaultHealthMapCountryLocation();
         healthMapLocation.setGeoNameId(geoNameId.toString());
-        Location existingLocation = new Location();
-        when(locationService.getLocationByGeoNameId(123)).thenReturn(existingLocation);
+
+        uk.ac.ox.zoo.seeg.abraid.mp.common.domain.GeoName geoName = new
+                uk.ac.ox.zoo.seeg.abraid.mp.common.domain.GeoName(geoNameId, featureCode);
+        when(locationService.getGeoNameById(geoNameId)).thenReturn(geoName);
+
 
         // Act
         Location location = converter.convert(healthMapLocation);
 
         // Assert
-        assertThat(location).isSameAs(existingLocation);
+        assertThat(location.getId()).isNull();
+        assertThat(location.getName()).isEqualTo(MAPPED_COUNTRY_NAME);
+        assertThat(location.getHealthMapCountryId()).isEqualTo(MAPPED_COUNTRY_ID);
+        assertThat(location.getGeom().getX()).isEqualTo(20);
+        assertThat(location.getGeom().getY()).isEqualTo(10);
+        assertThat(location.getPrecision()).isEqualTo(LocationPrecision.PRECISE);
     }
 
     @Test
@@ -133,7 +142,6 @@ public class HealthMapLocationConverterTest {
         healthMapLocation.setGeoNameId(geoNameId.toString());
         healthMapLocation.setCountry(unMappedHealthMapCountry.getName());
         healthMapLocation.setCountryId(unMappedHealthMapCountry.getId().toString());
-        when(locationService.getLocationByGeoNameId(123)).thenReturn(null);
 
         // Act
         Location location = converter.convert(healthMapLocation);
