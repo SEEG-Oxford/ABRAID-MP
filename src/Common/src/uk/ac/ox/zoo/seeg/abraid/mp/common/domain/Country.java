@@ -38,6 +38,10 @@ public class Country {
     @Column(name = "for_min_data_spread")
     private boolean forMinDataSpread;
 
+    // The country's area (square km).
+    @Column(nullable = false)
+    private double area;
+
     @Column
     @Type(type = "org.hibernate.spatial.GeometryType")
     private MultiPolygon geom;
@@ -78,6 +82,14 @@ public class Country {
 
     public void setForMinDataSpread(boolean forMinDataSpread) {
         this.forMinDataSpread = forMinDataSpread;
+    }
+
+    public double getArea() {
+        return area;
+    }
+
+    public void setArea(double area) {
+        this.area = area;
     }
 
     public MultiPolygon getGeom() {
