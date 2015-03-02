@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.qc;
 
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 
 /**
@@ -9,10 +10,14 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
  * Copyright (c) 2014 University of Oxford
  */
 public class PostQCManager {
-    private LocationService locationService;
+    private static final int MAX_AREA_FOR_MODEL_ELIGIBLE_COUNTRY = 115000;
 
-    public PostQCManager(LocationService locationService) {
+    private final LocationService locationService;
+    private final QCLookupData qcLookupData;
+
+    public PostQCManager(LocationService locationService, QCLookupData qcLookupData) {
         this.locationService = locationService;
+        this.qcLookupData = qcLookupData;
     }
 
     /**
@@ -25,6 +30,7 @@ public class PostQCManager {
         failQCIfNotOnLand(location);
         failQCIfAnyGaulCodesAreMissing(location);
         setResolutionWeighting(location);
+        setModelEligibility(location);
     }
 
     /**
@@ -71,6 +77,20 @@ public class PostQCManager {
     private void setResolutionWeighting(Location location) {
         double weighting = location.getPrecision().getWeighting();
         location.setResolutionWeighting(weighting);
+    }
+
+    private void setModelEligibility(Location location) {
+        if (location.hasPassedQc()) {
+            if (location.getPrecision().equals(LocationPrecision.COUNTRY)) {
+                Double area = qcLookupData.getCountryGeometryMap().get(location.getCountryGaulCode()).getArea();
+                location.setIsModelEligible(area <= MAX_AREA_FOR_MODEL_ELIGIBLE_COUNTRY);
+            } else {
+                location.setIsModelEligible(true);
+            }
+        } else {
+            location.setIsModelEligible(false);
+        }
+
     }
 
     private void validateLocation(Location location) {
