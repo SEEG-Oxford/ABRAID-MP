@@ -160,22 +160,28 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
 
     private void findAndSetMachineWeightingAndInReview(DiseaseOccurrence occurrence) {
         if ((occurrence.getEnvironmentalSuitability() == null) || (occurrence.getDistanceFromDiseaseExtent() == null)) {
-            occurrence.setStatus(DiseaseOccurrenceStatus.IN_REVIEW);
+            addOccurrenceToValidator(occurrence);
         } else {
             if (occurrence.getDiseaseGroup().useMachineLearning()) {
                 Double machineWeighting = mwPredictor.findMachineWeighting(occurrence);
                 if (machineWeighting == null) {
-                    occurrence.setStatus(DiseaseOccurrenceStatus.IN_REVIEW);
+                    addOccurrenceToValidator(occurrence);
                 } else {
                     occurrence.setMachineWeighting(machineWeighting);
                 }
             } else {
                 if (shouldSendToDataValidatorWithoutUsingMachineLearning(occurrence)) {
-                    occurrence.setStatus(DiseaseOccurrenceStatus.IN_REVIEW);
+                    addOccurrenceToValidator(occurrence);
                 } else {
                     occurrence.setMachineWeighting(1.0);
                 }
             }
+        }
+    }
+
+    private void addOccurrenceToValidator(DiseaseOccurrence occurrence) {
+        if (occurrence.getLocation().isModelEligible()) {
+            occurrence.setStatus(DiseaseOccurrenceStatus.IN_REVIEW);
         }
     }
 
