@@ -4,13 +4,22 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 
+import static java.lang.Math.log;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+
 /**
  * Manages processes that run after QC but before the location is written to the database.
  *
  * Copyright (c) 2014 University of Oxford
  */
 public class PostQCManager {
-    private static final int MAX_AREA_FOR_MODEL_ELIGIBLE_COUNTRY = 115000;
+    private static final double MAX_AREA_FOR_MODEL_ELIGIBLE_COUNTRY = 115000.0;
+    private static final double PIXEL_EQUIVALENT_AREA = 25.0;
+    // ALPHA & BETA chosen such that f(25)=1 & f(115000)=0
+    private static final double ALPHA = 1.0 / log(PIXEL_EQUIVALENT_AREA / MAX_AREA_FOR_MODEL_ELIGIBLE_COUNTRY);
+    private static final double BETA = 1.0 / MAX_AREA_FOR_MODEL_ELIGIBLE_COUNTRY;
+
 
     private final LocationService locationService;
     private final QCLookupData qcLookupData;
@@ -75,8 +84,32 @@ public class PostQCManager {
     }
 
     private void setResolutionWeighting(Location location) {
-        double weighting = location.getPrecision().getWeighting();
-        location.setResolutionWeighting(weighting);
+        if (location.hasPassedQc()) {
+            location.setResolutionWeighting(calculateResolutionWeighting(location));
+        } else {
+            location.setResolutionWeighting(null);
+        }
+    }
+
+    private Double calculateResolutionWeighting(Location location) {
+        LocationPrecision precision = location.getPrecision();
+        if (precision.equals(LocationPrecision.PRECISE)) {
+            return 1.0;
+        } else {
+            double area = extractArea(location, precision);
+            area = min(max(area, PIXEL_EQUIVALENT_AREA), MAX_AREA_FOR_MODEL_ELIGIBLE_COUNTRY);
+
+            // ALPHA & BETA chosen such that f(25)=1 & f(115000)=0
+            return ALPHA * log(BETA * area);
+        }
+    }
+
+    private double extractArea(Location location, LocationPrecision precision) {
+        if (precision.equals(LocationPrecision.COUNTRY)) {
+            return qcLookupData.getCountryMap().get(location.getCountryGaulCode()).getArea();
+        } else {
+            return qcLookupData.getAdminUnitsMap().get(location.getAdminUnitQCGaulCode()).getArea();
+        }
     }
 
     private void setModelEligibility(Location location) {

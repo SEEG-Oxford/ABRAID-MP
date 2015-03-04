@@ -21,6 +21,8 @@ import static ch.lambdaj.Lambda.*;
  */
 public class QCLookupData {
     private List<AdminUnitQC> adminUnits;
+    private Map<Integer, AdminUnitQC> adminUnitsMap;
+    private Map<Integer, Country> countryMap;
     private Map<Integer, MultiPolygon> countryGeometryMap;
     private MultiPolygon landSeaBorders;
     private Map<Integer, HealthMapCountry> healthMapCountryMap;
@@ -41,6 +43,30 @@ public class QCLookupData {
             adminUnits = locationService.getAllAdminUnitQCs();
         }
         return adminUnits;
+    }
+
+    /**
+     * Gets a list of administrative units, indexed by gaul code.
+     * @return A list of administrative units.
+     */
+    public Map<Integer, AdminUnitQC> getAdminUnitsMap() {
+        if (adminUnitsMap == null) {
+            adminUnitsMap = index(getAdminUnits(), on(AdminUnitQC.class).getGaulCode());
+        }
+        return adminUnitsMap;
+    }
+
+    /**
+     * Gets a list of countries, indexed by gaul code.
+     * @return A list of countries, indexed by gaul code.
+     */
+    public Map<Integer, Country> getCountryMap() {
+        if (countryMap == null) {
+            // This will retrieve the countries from the Hibernate cache if already obtained by CountryGeometryMap
+            List<Country> countries = locationService.getAllCountries();
+            countryMap = index(countries, on(Country.class).getGaulCode());
+        }
+        return countryMap;
     }
 
     /**
