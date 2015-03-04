@@ -11,7 +11,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
  * Copyright (c) 2014 University of Oxford
  */
 public class BatchDatesValidator {
-    private static final String TOO_FEW_OCCURRENCES_MESSAGE = "This batch contains %d non-country occurrence(s), " +
+    private static final String TOO_FEW_OCCURRENCES_MESSAGE = "This batch contains %d model eligible occurrence(s), " +
             "which is below the Minimum Data Volume (%d) and therefore will be too few for the model run after this " +
             "one. Please increase the batch size, or reduce the value of Minimum Data Volume.";
 

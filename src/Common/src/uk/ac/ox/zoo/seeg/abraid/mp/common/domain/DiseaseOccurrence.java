@@ -69,7 +69,7 @@ import javax.persistence.Table;
         @NamedQuery(
                 name = "getDiseaseOccurrenceStatistics",
                 query = "select new uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceStatistics" +
-                            "(count(*), coalesce(sum(case location.precision when 'COUNTRY' then 0 else 1 end), 0)," +
+                            "(count(*), coalesce(sum(case location.isModelEligible when true then 1 else 0 end), 0)," +
                             " min(occurrenceDate), max(occurrenceDate)) " +
                         "from DiseaseOccurrence " +
                         "where diseaseGroup.id=:diseaseGroupId " +
@@ -88,7 +88,7 @@ import javax.persistence.Table;
                         "from DiseaseOccurrence " +
                         "where diseaseGroup.id=:diseaseGroupId " +
                         "and status in ('READY', 'IN_REVIEW', 'AWAITING_BATCHING') " +
-                        "and location.precision <> 'COUNTRY' " +
+                        "and location.isModelEligible is TRUE " +
                         "and occurrenceDate between :startDate and :endDate"
         ),
         @NamedQuery(
@@ -96,7 +96,7 @@ import javax.persistence.Table;
                 query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
                         "where d.diseaseGroup.id=:diseaseGroupId " +
                         "and d.status = 'READY' " +
-                        "and d.location.precision <> 'COUNTRY' " +
+                        "and d.location.isModelEligible is TRUE " +
                         "and d.distanceFromDiseaseExtent is not null " +
                         "and d.environmentalSuitability is not null " +
                         "and d.expertWeighting is not null " +
