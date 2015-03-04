@@ -6,15 +6,17 @@ package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run;
  */
 public class AdminUnitRunConfiguration {
     private final boolean useGlobalRasterFile;
+    private final String admin0RasterFile;
     private final String admin1RasterFile;
     private final String admin2RasterFile;
     private final String tropicalRasterFile;
     private final String globalRasterFile;
 
     public AdminUnitRunConfiguration(boolean useGlobalRasterFile,
-                                     String admin1RasterFile, String admin2RasterFile,
+                                     String admin0RasterFile, String admin1RasterFile, String admin2RasterFile,
                                      String tropicalRasterFile, String globalRasterFile) {
         this.useGlobalRasterFile = useGlobalRasterFile;
+        this.admin0RasterFile = admin0RasterFile;
         this.admin1RasterFile = admin1RasterFile;
         this.admin2RasterFile = admin2RasterFile;
         this.tropicalRasterFile = tropicalRasterFile;
@@ -23,6 +25,10 @@ public class AdminUnitRunConfiguration {
 
     public boolean getUseGlobalRasterFile() {
         return useGlobalRasterFile;
+    }
+
+    public String getAdmin0RasterFile() {
+        return admin0RasterFile;
     }
 
     public String getAdmin1RasterFile() {

@@ -97,6 +97,12 @@ public interface ConfigurationService {
     String getTropicalRasterFile();
 
     /**
+     * Gets the path to the current admin 0 raster file.
+     * @return The path to the admin 0 raster file.
+     */
+    String getAdmin0RasterFile();
+
+    /**
      * Gets the path to the current admin 1 raster file.
      * @return The path to the admin 1 raster file.
      */
