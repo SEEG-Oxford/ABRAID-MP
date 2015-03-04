@@ -3,7 +3,10 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow;
 import ch.lambdaj.function.matcher.LambdaJMatcher;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceStatus;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ProvenanceNames;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.DistanceFromDiseaseExtentHelper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.EnvironmentalSuitabilityHelper;
@@ -150,15 +153,9 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
     }
 
     private void addValidationParameters(DiseaseOccurrence occurrence, GridCoverage2D raster) {
-        if (!isCountryPoint(occurrence)) {
-            occurrence.setEnvironmentalSuitability(esHelper.findEnvironmentalSuitability(occurrence, raster));
-            occurrence.setDistanceFromDiseaseExtent(dfdeHelper.findDistanceFromDiseaseExtent(occurrence));
-            findAndSetMachineWeightingAndInReview(occurrence);
-        }
-    }
-
-    private boolean isCountryPoint(DiseaseOccurrence occurrence) {
-        return occurrence.getLocation().getPrecision() == LocationPrecision.COUNTRY;
+        occurrence.setEnvironmentalSuitability(esHelper.findEnvironmentalSuitability(occurrence, raster));
+        occurrence.setDistanceFromDiseaseExtent(dfdeHelper.findDistanceFromDiseaseExtent(occurrence));
+        findAndSetMachineWeightingAndInReview(occurrence);
     }
 
     private void findAndSetMachineWeightingAndInReview(DiseaseOccurrence occurrence) {
