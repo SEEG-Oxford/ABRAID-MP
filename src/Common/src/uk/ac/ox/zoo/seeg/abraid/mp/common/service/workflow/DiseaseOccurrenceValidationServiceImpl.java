@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow;
 
+import ch.lambdaj.function.matcher.LambdaJMatcher;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
@@ -10,6 +11,8 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.MachineWeight
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.RasterUtils;
 
 import java.util.List;
+
+import static ch.lambdaj.Lambda.filter;
 
 /**
  * Adds validation parameters to a disease occurrence. Marks it for manual validation (via the Data Validator GUI)
@@ -63,13 +66,20 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
     @Override
     public void addValidationParameters(List<DiseaseOccurrence> occurrences) {
         DiseaseGroup diseaseGroup = validateAndGetDiseaseGroup(occurrences);
+        List<DiseaseOccurrence> nonGoldStandardOccurrences = filter(new LambdaJMatcher<DiseaseOccurrence>() {
+            @Override
+            public boolean matches(Object occurrence) {
+                return !isGoldStandard((DiseaseOccurrence) occurrence);
+            }
+        }, occurrences);
+
         if (diseaseGroup != null) {
             // Get the latest mean prediction raster for the disease group, and then use it to add validation parameters
             // to all occurrences
             GridCoverage2D raster = null;
             try {
                 raster = esHelper.getLatestMeanPredictionRaster(diseaseGroup);
-                for (DiseaseOccurrence occurrence : occurrences) {
+                for (DiseaseOccurrence occurrence : nonGoldStandardOccurrences) {
                     clearAndSetToReady(occurrence);
                     addValidationParameters(occurrence, raster);
                 }
