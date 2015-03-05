@@ -5,8 +5,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 
 import static java.lang.Math.log;
-import static java.lang.Math.max;
-import static java.lang.Math.min;
 
 /**
  * Manages processes that run after QC but before the location is written to the database.
@@ -96,16 +94,21 @@ public class PostQCManager {
         if (precision.equals(LocationPrecision.PRECISE)) {
             return 1.0;
         } else {
-            double area = extractArea(location, precision);
-            area = min(max(area, PIXEL_EQUIVALENT_AREA), MAX_AREA_FOR_MODEL_ELIGIBLE_COUNTRY);
-
-            // ALPHA & BETA chosen such that f(25)=1 & f(115000)=0
-            return ALPHA * log(BETA * area);
+            double area = extractArea(location);
+            if (area <= PIXEL_EQUIVALENT_AREA) {
+                return 1.0;
+            } else if (area >= MAX_AREA_FOR_MODEL_ELIGIBLE_COUNTRY) {
+                return 0.0;
+            } else {
+                // ALPHA & BETA chosen such that f(25)=1 & f(115000)=0
+                // http://fooplot.com/plot/daijmnjedc
+                return ALPHA * log(BETA * area);
+            }
         }
     }
 
-    private double extractArea(Location location, LocationPrecision precision) {
-        if (precision.equals(LocationPrecision.COUNTRY)) {
+    private double extractArea(Location location) {
+        if (location.getPrecision().equals(LocationPrecision.COUNTRY)) {
             return qcLookupData.getCountryMap().get(location.getCountryGaulCode()).getArea();
         } else {
             return qcLookupData.getAdminUnitsMap().get(location.getAdminUnitQCGaulCode()).getArea();
@@ -115,7 +118,7 @@ public class PostQCManager {
     private void setModelEligibility(Location location) {
         if (location.hasPassedQc()) {
             if (location.getPrecision().equals(LocationPrecision.COUNTRY)) {
-                Double area = qcLookupData.getCountryGeometryMap().get(location.getCountryGaulCode()).getArea();
+                Double area = extractArea(location);
                 location.setIsModelEligible(area <= MAX_AREA_FOR_MODEL_ELIGIBLE_COUNTRY);
             } else {
                 location.setIsModelEligible(true);
