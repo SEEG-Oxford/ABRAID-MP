@@ -96,6 +96,7 @@ public class RunConfigurationFactoryTest {
     private void setupExpectedAdminUnitConfiguration(ConfigurationService configurationService) {
         when(configurationService.getGlobalRasterFile()).thenReturn("globalRaster");
         when(configurationService.getTropicalRasterFile()).thenReturn("tropicalRaster");
+        when(configurationService.getAdmin0RasterFile()).thenReturn("admin0Raster");
         when(configurationService.getAdmin1RasterFile()).thenReturn("admin1Raster");
         when(configurationService.getAdmin2RasterFile()).thenReturn("admin2Raster");
     }
@@ -104,6 +105,7 @@ public class RunConfigurationFactoryTest {
         assertThat(result.getUseGlobalRasterFile()).isEqualTo(true);
         assertThat(result.getGlobalRasterFile()).isEqualTo("globalRaster");
         assertThat(result.getTropicalRasterFile()).isEqualTo("tropicalRaster");
+        assertThat(result.getAdmin0RasterFile()).isEqualTo("admin0Raster");
         assertThat(result.getAdmin1RasterFile()).isEqualTo("admin1Raster");
         assertThat(result.getAdmin2RasterFile()).isEqualTo("admin2Raster");
     }

@@ -19,6 +19,9 @@ public class PostQCManagerIntegrationTest extends AbstractDataAcquisitionSpringI
     @Autowired
     private PostQCManager postQCManager;
 
+    @Autowired
+    private QCLookupData qcLookupData;
+
     @Test
     public void throwsExceptionIfLocationHasNoGeometry() {
         // Arrange
@@ -55,6 +58,127 @@ public class PostQCManagerIntegrationTest extends AbstractDataAcquisitionSpringI
         assertThat(location.getCountryGaulCode()).isEqualTo(179);
         assertThat(location.hasPassedQc()).isTrue();
     }
+
+    @Test
+    public void setsCorrectResolutionWeightingOnFailedQC() {
+        Location location = new Location(176, -39, LocationPrecision.PRECISE);
+        location.setHasPassedQc(false);
+        location.setAdminUnitQCGaulCode(61186);
+        postQCManager.runPostQCProcesses(location);
+        assertThat(location.getResolutionWeighting()).isNull();
+    }
+
+    @Test
+    public void setsCorrectResolutionWeightingOnPrecise() {
+        Location location = new Location(176, -39, LocationPrecision.PRECISE);
+        location.setHasPassedQc(true);
+        location.setAdminUnitQCGaulCode(61186);
+        postQCManager.runPostQCProcesses(location);
+        assertThat(location.getResolutionWeighting()).isEqualTo(1);
+    }
+
+    @Test
+    public void setsCorrectResolutionWeightingOnAdmin2() {
+        Location location = new Location(176, -39, LocationPrecision.ADMIN2);
+        location.setHasPassedQc(true);
+        location.setAdminUnitQCGaulCode(16707);
+        postQCManager.runPostQCProcesses(location);
+        assertThat(location.getResolutionWeighting()).isEqualTo(0.5195439219762943);
+    }
+
+    @Test
+    public void setsCorrectResolutionWeightingOnAdmin1() {
+        Location location = new Location(176, -39, LocationPrecision.ADMIN1);
+        location.setHasPassedQc(true);
+        location.setAdminUnitQCGaulCode(1340);
+        postQCManager.runPostQCProcesses(location);
+        assertThat(location.getResolutionWeighting()).isEqualTo(0.463076531714097);
+    }
+
+    @Test
+    public void setsCorrectResolutionWeightingOnCountry() {
+        qcLookupData.getCountryMap().get(179).setArea(100000);
+        Location location = new Location(176, -39, LocationPrecision.COUNTRY);
+        location.setHasPassedQc(true);
+        location.setAdminUnitQCGaulCode(61186);
+        postQCManager.runPostQCProcesses(location);
+        assertThat(location.getResolutionWeighting()).isEqualTo(0.016571622570456777);
+    }
+
+    @Test
+    public void setsCorrectResolutionWeightingOnSmallArea() {
+        Location location = new Location(176, -39, LocationPrecision.ADMIN2);
+        location.setHasPassedQc(true);
+        location.setAdminUnitQCGaulCode(61186);
+        postQCManager.runPostQCProcesses(location);
+        assertThat(location.getResolutionWeighting()).isEqualTo(1);
+    }
+
+    @Test
+    public void setsCorrectResolutionWeightingOnLargeArea() {
+        Location location = new Location(176, -39, LocationPrecision.ADMIN1);
+        location.setHasPassedQc(true);
+        location.setAdminUnitQCGaulCode(16728);
+        postQCManager.runPostQCProcesses(location);
+        assertThat(location.getResolutionWeighting()).isEqualTo(0);
+    }
+
+    @Test
+    public void setsCorrectModelEligibilityOnFailedQC() {
+        Location location = new Location(176, -39, LocationPrecision.PRECISE);
+        location.setHasPassedQc(false);
+        location.setAdminUnitQCGaulCode(61186);
+        postQCManager.runPostQCProcesses(location);
+        assertThat(location.isModelEligible()).isFalse();
+    }
+
+    @Test
+    public void setsCorrectModelEligibilityOnPrecise() {
+        Location location = new Location(176, -39, LocationPrecision.PRECISE);
+        location.setHasPassedQc(true);
+        location.setAdminUnitQCGaulCode(61186);
+        postQCManager.runPostQCProcesses(location);
+        assertThat(location.isModelEligible()).isTrue();
+    }
+
+    @Test
+    public void setsCorrectModelEligibilityOnAdmin2() {
+        Location location = new Location(176, -39, LocationPrecision.ADMIN2);
+        location.setHasPassedQc(true);
+        location.setAdminUnitQCGaulCode(16707);
+        postQCManager.runPostQCProcesses(location);
+        assertThat(location.isModelEligible()).isTrue();
+    }
+
+    @Test
+    public void setsCorrectModelEligibilityOnAdmin1() {
+        Location location = new Location(176, -39, LocationPrecision.ADMIN1);
+        location.setHasPassedQc(true);
+        location.setAdminUnitQCGaulCode(1340);
+        postQCManager.runPostQCProcesses(location);
+        assertThat(location.isModelEligible()).isTrue();
+    }
+
+    @Test
+    public void setsCorrectModelEligibilityOnSmallCountry() {
+        qcLookupData.getCountryMap().get(179).setArea(114000);
+        Location location = new Location(176, -39, LocationPrecision.COUNTRY);
+        location.setHasPassedQc(true);
+        location.setAdminUnitQCGaulCode(61186);
+        postQCManager.runPostQCProcesses(location);
+        assertThat(location.isModelEligible()).isTrue();
+    }
+
+    @Test
+    public void setsCorrectModelEligibilityOnLargeCountry() {
+        qcLookupData.getCountryMap().get(179).setArea(1156000);
+        Location location = new Location(176, -39, LocationPrecision.COUNTRY);
+        location.setHasPassedQc(true);
+        location.setAdminUnitQCGaulCode(61186);
+        postQCManager.runPostQCProcesses(location);
+        assertThat(location.isModelEligible()).isFalse();
+    }
+
 
     @Test
     public void findsAdminUnitsIfWithinGeometry() {
