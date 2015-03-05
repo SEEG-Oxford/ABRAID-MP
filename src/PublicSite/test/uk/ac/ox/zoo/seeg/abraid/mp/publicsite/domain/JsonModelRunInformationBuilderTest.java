@@ -149,7 +149,7 @@ public class JsonModelRunInformationBuilderTest {
         JsonModelRunInformation information = builder.populateDiseaseOccurrencesText(statistics).get();
 
         // Assert
-        assertThat(information.getDiseaseOccurrencesText()).isEqualTo("total 3 (of which 1 is a non-country occurrence), occurring on 1 Jul 2014");
+        assertThat(information.getDiseaseOccurrencesText()).isEqualTo("total 3 (of which 1 is a model eligible occurrence), occurring on 1 Jul 2014");
     }
 
     @Test
@@ -165,7 +165,7 @@ public class JsonModelRunInformationBuilderTest {
 
         // Assert
         assertThat(information.getDiseaseOccurrencesText()).isEqualTo(
-                "total 3 (of which 2 are non-country occurrences), occurring between 5 Feb 2013 and 1 Jun 2014");
+                "total 3 (of which 2 are model eligible occurrences), occurring between 5 Feb 2013 and 1 Jun 2014");
     }
 
     @Test

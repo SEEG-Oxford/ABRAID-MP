@@ -145,14 +145,13 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
 
     private void assertThatDiseaseOccurrenceValidationParametersAreCorrect() {
         // Assert that we have created two disease occurrences and they are the correct ones
-        // Only occurrences with non-country locations have validation parameters assigned.
         List<DiseaseOccurrence> occurrences = getLastTwoDiseaseOccurrences();
 
         DiseaseOccurrence validatedOccurrence = occurrences.get(0);
         assertThatDiseaseOccurrenceValidationParametersAreCorrect(validatedOccurrence, 0.46, 8814.186615);
 
-        DiseaseOccurrence countryOccurrence = occurrences.get(1);
-        assertThatDiseaseOccurrenceValidationParametersAreDefault(countryOccurrence);
+        DiseaseOccurrence validatedOccurrence2 = occurrences.get(1);
+        assertThatDiseaseOccurrenceValidationParametersAreCorrect(validatedOccurrence2, 0.62, 12524.775729);
     }
 
     private void assertThatDiseaseOccurrenceValidationParametersAreCorrect(DiseaseOccurrence occurrence,

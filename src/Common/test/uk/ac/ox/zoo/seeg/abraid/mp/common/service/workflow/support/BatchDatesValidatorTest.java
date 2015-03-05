@@ -110,7 +110,7 @@ public class BatchDatesValidatorTest {
 
         // Assert
         assertThat(caughtException()).isInstanceOf(ModelRunWorkflowException.class);
-        assertThat(caughtException()).hasMessage("This batch contains 399 non-country occurrence(s), which is below " +
+        assertThat(caughtException()).hasMessage("This batch contains 399 model eligible occurrence(s), which is below " +
                 "the Minimum Data Volume (400) and therefore will be too few for the model run after this one. " +
                 "Please increase the batch size, or reduce the value of Minimum Data Volume.");
     }

@@ -48,6 +48,7 @@ public class PostQCManagerIntegrationTest extends AbstractDataAcquisitionSpringI
     public void findsAdminUnitsIfExactlyOnGeometry() {
         Location location = new Location(176, -39, LocationPrecision.ADMIN1);
         location.setHasPassedQc(true);
+        location.setAdminUnitQCGaulCode(61186);
         postQCManager.runPostQCProcesses(location);
         assertThat(location.getAdminUnitGlobalGaulCode()).isEqualTo(179);
         assertThat(location.getAdminUnitTropicalGaulCode()).isEqualTo(179);
@@ -70,6 +71,7 @@ public class PostQCManagerIntegrationTest extends AbstractDataAcquisitionSpringI
     public void findsAdminUnitsIfWithinGeometryWithDifferentGaulCodesForGlobalAndTropical() {
         Location britishColumbiaCanadaCentroid = new Location(-124.76033, 54.75946, LocationPrecision.ADMIN1);
         britishColumbiaCanadaCentroid.setHasPassedQc(true);
+        britishColumbiaCanadaCentroid.setAdminUnitQCGaulCode(826);
         postQCManager.runPostQCProcesses(britishColumbiaCanadaCentroid);
         assertThat(britishColumbiaCanadaCentroid.getAdminUnitGlobalGaulCode()).isEqualTo(826);
         assertThat(britishColumbiaCanadaCentroid.getAdminUnitTropicalGaulCode()).isEqualTo(825);

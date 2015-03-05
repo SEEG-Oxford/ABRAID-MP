@@ -90,11 +90,11 @@ public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringInteg
         }
 
         // 29 occurrences were batched: 16 of them were sent to the Data Validator i.e. they have status IN_REVIEW
-        // and a non-null environmental suitability, but 13 of them were country points so are READY without an
+        // and a non-null environmental suitability, but 4 of them were ineligible points so are READY with an
         // environmental suitability. The remaining occurrences are 16 that are AWAITING_BATCHING as a result of
         // the batching initialisation, and 3 that were already DISCARDED_FAILED_QC.
-        assertOccurrences(occurrences, DiseaseOccurrenceStatus.IN_REVIEW, 16, 16);
-        assertOccurrences(occurrences, DiseaseOccurrenceStatus.READY, 13, 0);
+        assertOccurrences(occurrences, DiseaseOccurrenceStatus.IN_REVIEW, 16 + 9, 16 + 9);
+        assertOccurrences(occurrences, DiseaseOccurrenceStatus.READY, 4, 4);
         assertOccurrences(occurrences, DiseaseOccurrenceStatus.AWAITING_BATCHING, 16, 0);
         assertOccurrences(occurrences, DiseaseOccurrenceStatus.DISCARDED_FAILED_QC, 3, 0);
 
