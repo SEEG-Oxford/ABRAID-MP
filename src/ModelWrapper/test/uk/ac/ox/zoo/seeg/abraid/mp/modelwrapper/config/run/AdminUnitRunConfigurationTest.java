@@ -13,16 +13,18 @@ public class AdminUnitRunConfigurationTest {
     public void constructorBindsParametersCorrectly() {
         // Arrange
         boolean expectedUseGlobal = true;
+        String expectedAdmin0File = "who";
         String expectedAdmin1File = "foo";
         String expectedAdmin2File = "bar";
         String expectedGlobalFile = "fooooo";
         String expectedTropicalFile = "barrrr";
 
         // Act
-        AdminUnitRunConfiguration result = new AdminUnitRunConfiguration(expectedUseGlobal, expectedAdmin1File, expectedAdmin2File, expectedTropicalFile, expectedGlobalFile);
+        AdminUnitRunConfiguration result = new AdminUnitRunConfiguration(expectedUseGlobal, expectedAdmin0File, expectedAdmin1File, expectedAdmin2File, expectedTropicalFile, expectedGlobalFile);
 
         // Assert
         assertThat(result.getUseGlobalRasterFile()).isEqualTo(expectedUseGlobal);
+        assertThat(result.getAdmin0RasterFile()).isEqualTo(expectedAdmin0File);
         assertThat(result.getAdmin1RasterFile()).isEqualTo(expectedAdmin1File);
         assertThat(result.getAdmin2RasterFile()).isEqualTo(expectedAdmin2File);
         assertThat(result.getGlobalRasterFile()).isEqualTo(expectedGlobalFile);
