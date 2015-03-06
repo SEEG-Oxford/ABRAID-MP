@@ -27,7 +27,7 @@ public class QCManager {
     private static final String STAGE_2_GEOMETRY_DESCRIPTION = "land";
     private static final String STAGE_3_GEOMETRY_DESCRIPTION = "country";
 
-    private QCLookupData qcLookupData;
+    private final QCLookupData qcLookupData;
 
     public QCManager(QCLookupData qcLookupData) {
         this.qcLookupData = qcLookupData;

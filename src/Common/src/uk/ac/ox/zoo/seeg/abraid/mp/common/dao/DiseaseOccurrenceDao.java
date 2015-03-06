@@ -161,7 +161,7 @@ public interface DiseaseOccurrenceDao {
      * @param startDate The start date.
      * @param endDate The end date.
      * @return The number of occurrences that are eligible for being sent to the model. This is all occurrences
-     * except those that have been discarded, or points with COUNTRY precision.
+     * except those that have been discarded, or at locations marked as ineligible.
      */
     long getNumberOfOccurrencesEligibleForModelRun(int diseaseGroupId, DateTime startDate, DateTime endDate);
 }

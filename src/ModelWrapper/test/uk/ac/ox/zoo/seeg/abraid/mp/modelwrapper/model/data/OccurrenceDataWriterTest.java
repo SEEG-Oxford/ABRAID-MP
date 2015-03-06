@@ -72,6 +72,24 @@ public class OccurrenceDataWriterTest {
         assertThat(result).isEqualTo("Longitude,Latitude,Weight,Admin,GAUL" + "\n" + "-1.0,1.0,0.5,2,102" + "\n");
     }
 
+    @Test
+    public void writeCreatesCorrectCsvForCountry() throws Exception {
+        // Arrange
+        DiseaseOccurrence occurrence = defaultDiseaseOccurrence();
+        when(occurrence.getLocation().getPrecision()).thenReturn(LocationPrecision.COUNTRY);
+
+        GeoJsonDiseaseOccurrenceFeatureCollection data = new GeoJsonDiseaseOccurrenceFeatureCollection(
+                Arrays.asList(occurrence));
+        OccurrenceDataWriter target = new OccurrenceDataWriterImpl();
+        File targetFile = Paths.get(testFolder.newFolder().toString(), "outbreak.csv").toFile();
+
+        // Act
+        String result = arrangeAndActWriteDataTest(occurrence);
+
+        // Assert
+        assertThat(result).isEqualTo("Longitude,Latitude,Weight,Admin,GAUL" + "\n" + "-1.0,1.0,0.5,0,102" + "\n");
+    }
+
     private String arrangeAndActWriteDataTest(DiseaseOccurrence occurrence) throws Exception {
         // Arrange
         GeoJsonDiseaseOccurrenceFeatureCollection data = new GeoJsonDiseaseOccurrenceFeatureCollection(
@@ -119,24 +137,6 @@ public class OccurrenceDataWriterTest {
 
         // Assert
         assertThat(caughtException()).isInstanceOf(IllegalArgumentException.class).hasMessage("Precise location occurrences with GAUL codes are not supported.");
-    }
-
-    @Test
-    public void writeRejectsCountryPoint() throws Exception {
-        // Arrange
-        DiseaseOccurrence occurrence = defaultDiseaseOccurrence();
-        when(occurrence.getLocation().getPrecision()).thenReturn(LocationPrecision.COUNTRY);
-
-        GeoJsonDiseaseOccurrenceFeatureCollection data = new GeoJsonDiseaseOccurrenceFeatureCollection(
-                Arrays.asList(occurrence));
-        OccurrenceDataWriter target = new OccurrenceDataWriterImpl();
-        File targetFile = Paths.get(testFolder.newFolder().toString(), "outbreak.csv").toFile();
-
-        // Act
-        catchException(target).write(data, targetFile);
-
-        // Assert
-        assertThat(caughtException()).isInstanceOf(IllegalArgumentException.class).hasMessage("Country location occurrences are not supported.");
     }
 
     @Test

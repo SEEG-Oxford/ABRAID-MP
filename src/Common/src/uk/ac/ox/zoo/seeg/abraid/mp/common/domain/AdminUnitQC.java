@@ -38,7 +38,7 @@ public class AdminUnitQC {
     @Column(name = "centr_lat")
     private double centroidLatitude;
 
-    // The admin unit's area.
+    // The admin unit's area (square km).
     @Column
     private double area;
 

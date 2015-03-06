@@ -86,6 +86,10 @@ public class Location {
     @Column(name = "qc_message")
     private String qcMessage;
 
+    // True if this location passed QC checks, and is a suitably precise location (i.e. not a "large" country).
+    @Column(name = "model_eligible", nullable = false)
+    private boolean isModelEligible;
+
     public Location() {
     }
 
@@ -238,6 +242,14 @@ public class Location {
 
     public void setQcMessage(String qcMessage) {
         this.qcMessage = qcMessage;
+    }
+
+    public boolean isModelEligible() {
+        return isModelEligible;
+    }
+
+    public void setIsModelEligible(boolean isModelEligible) {
+        this.isModelEligible = isModelEligible;
     }
 
     ///COVERAGE:OFF - generated code

@@ -622,8 +622,17 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         DiseaseOccurrenceStatistics statistics = diseaseOccurrenceDao.getDiseaseOccurrenceStatistics(diseaseGroupId);
 
         // Assert
+        // Equivalent to:
+        // select count(*) from disease_occurrence join location on location.id=location_id
+        // where disease_group_id=87
+        // and status in ('READY', 'IN_REVIEW', 'AWAITING_BATCHING')
         assertThat(statistics.getOccurrenceCount()).isEqualTo(45);
-        assertThat(statistics.getOccurrenceCountExcludingCountries()).isEqualTo(27);
+        // Equivalent to:
+        // select count(*) from disease_occurrence join location on location.id=location_id
+        // where disease_group_id=87
+        // and status in ('READY', 'IN_REVIEW', 'AWAITING_BATCHING')
+        // and model_eligible=TRUE
+        assertThat(statistics.getModelEligibleOccurrenceCount()).isEqualTo(38);
         assertThat(statistics.getMinimumOccurrenceDate()).isEqualTo(new DateTime("2014-02-24T17:35:29"));
         assertThat(statistics.getMaximumOccurrenceDate()).isEqualTo(new DateTime("2014-02-27T08:06:46"));
     }
@@ -638,7 +647,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
 
         // Assert
         assertThat(statistics.getOccurrenceCount()).isEqualTo(0);
-        assertThat(statistics.getOccurrenceCountExcludingCountries()).isEqualTo(0);
+        assertThat(statistics.getModelEligibleOccurrenceCount()).isEqualTo(0);
         assertThat(statistics.getMinimumOccurrenceDate()).isNull();
         assertThat(statistics.getMaximumOccurrenceDate()).isNull();
     }
@@ -706,7 +715,13 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         long count = diseaseOccurrenceDao.getNumberOfOccurrencesEligibleForModelRun(diseaseGroupId, startDate,
                 endDate);
 
-        assertThat(count).isEqualTo(19);
+        // Equivalent to:
+        // select count(*) from disease_occurrence join location on location.id=location_id
+        // where disease_group_id=87
+        // and status in ('READY', 'IN_REVIEW', 'AWAITING_BATCHING')
+        // and model_eligible=TRUE
+        // and occurrence_date >= '2014-02-25T00:00:00Z' and occurrence_date <= '2014-02-26T15:35:21Z'
+        assertThat(count).isEqualTo(28);
     }
 
     private void getDiseaseOccurrencesForDiseaseExtent(int diseaseGroupId, Double minimumValidationWeight,

@@ -66,6 +66,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     private static final String DEFAULT_LINUX_R_PATH = "/usr/bin/R";
     private static final String DEFAULT_WINDOWS_R_PATH = System.getenv("R_HOME") + "\\bin\\x64\\R.exe";
     private static final String DEFAULT_RASTER_SUBDIR = "rasters";
+    private static final String DEFAULT_ADMIN0_RASTER_NAME = "admin0qc.tif";
     private static final String DEFAULT_ADMIN1_RASTER_NAME = "admin1qc.tif";
     private static final String DEFAULT_ADMIN2_RASTER_NAME = "admin2qc.tif";
     private static final String DEFAULT_TROPICAL_RASTER_NAME = "admin_tropical.tif";
@@ -83,6 +84,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     private static final String R_MAX_DURATION_KEY = "r.max.duration";
     private static final String GLOBAL_RASTER_KEY = "raster.file.global";
     private static final String TROPICAL_RASTER_KEY = "raster.file.tropical";
+    private static final String ADMIN0_RASTER_KEY = "raster.file.admin0";
     private static final String ADMIN1_RASTER_KEY = "raster.file.admin1";
     private static final String ADMIN2_RASTER_KEY = "raster.file.admin2";
     private static final String COVARIATE_DIRECTORY_KEY = "covariate.dir";
@@ -243,6 +245,15 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     @Override
     public String getTropicalRasterFile() {
         return getRasterFile(TROPICAL_RASTER_KEY, DEFAULT_TROPICAL_RASTER_NAME);
+    }
+
+    /**
+     * Gets the path to the current admin 0 raster file.
+     * @return The path to the admin 0 raster file.
+     */
+    @Override
+    public String getAdmin0RasterFile() {
+        return getRasterFile(ADMIN0_RASTER_KEY, DEFAULT_ADMIN0_RASTER_NAME);
     }
 
     /**

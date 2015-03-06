@@ -55,19 +55,19 @@ public class JsonModelRunInformationBuilder {
         if (statistics.getOccurrenceCount() > 0) {
             String dateText = getDiseaseOccurrencesDateText(
                     statistics.getMinimumOccurrenceDate(), statistics.getMaximumOccurrenceDate());
-            String nonCountryText = getNonCountryText(statistics.getOccurrenceCountExcludingCountries());
+            String modelEligibleOccurrenceCount = getModelEligibilityText(statistics.getModelEligibleOccurrenceCount());
             text = String.format("total %d (of which %s), occurring %s",
-                    statistics.getOccurrenceCount(), nonCountryText, dateText);
+                    statistics.getOccurrenceCount(), modelEligibleOccurrenceCount, dateText);
         }
         information.setDiseaseOccurrencesText(text);
         return this;
     }
 
-    private String getNonCountryText(long occurrenceCountExcludingCountries) {
-        if (occurrenceCountExcludingCountries == 1) {
-            return "1 is a non-country occurrence";
+    private String getModelEligibilityText(long modelEligibleOccurrenceCount) {
+        if (modelEligibleOccurrenceCount == 1) {
+            return "1 is a model eligible occurrence";
         } else {
-            return String.format("%d are non-country occurrences", occurrenceCountExcludingCountries);
+            return String.format("%d are model eligible occurrences", modelEligibleOccurrenceCount);
         }
     }
 

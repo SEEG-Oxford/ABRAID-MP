@@ -1,8 +1,12 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow;
 
+import ch.lambdaj.function.matcher.LambdaJMatcher;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceStatus;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ProvenanceNames;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.DistanceFromDiseaseExtentHelper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.EnvironmentalSuitabilityHelper;
@@ -10,6 +14,8 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.MachineWeight
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.RasterUtils;
 
 import java.util.List;
+
+import static ch.lambdaj.Lambda.filter;
 
 /**
  * Adds validation parameters to a disease occurrence. Marks it for manual validation (via the Data Validator GUI)
@@ -63,13 +69,20 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
     @Override
     public void addValidationParameters(List<DiseaseOccurrence> occurrences) {
         DiseaseGroup diseaseGroup = validateAndGetDiseaseGroup(occurrences);
+        List<DiseaseOccurrence> nonGoldStandardOccurrences = filter(new LambdaJMatcher<DiseaseOccurrence>() {
+            @Override
+            public boolean matches(Object occurrence) {
+                return !isGoldStandard((DiseaseOccurrence) occurrence);
+            }
+        }, occurrences);
+
         if (diseaseGroup != null) {
             // Get the latest mean prediction raster for the disease group, and then use it to add validation parameters
             // to all occurrences
             GridCoverage2D raster = null;
             try {
                 raster = esHelper.getLatestMeanPredictionRaster(diseaseGroup);
-                for (DiseaseOccurrence occurrence : occurrences) {
+                for (DiseaseOccurrence occurrence : nonGoldStandardOccurrences) {
                     clearAndSetToReady(occurrence);
                     addValidationParameters(occurrence, raster);
                 }
@@ -140,35 +153,35 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
     }
 
     private void addValidationParameters(DiseaseOccurrence occurrence, GridCoverage2D raster) {
-        if (!isCountryPoint(occurrence)) {
-            occurrence.setEnvironmentalSuitability(esHelper.findEnvironmentalSuitability(occurrence, raster));
-            occurrence.setDistanceFromDiseaseExtent(dfdeHelper.findDistanceFromDiseaseExtent(occurrence));
-            findAndSetMachineWeightingAndInReview(occurrence);
-        }
-    }
-
-    private boolean isCountryPoint(DiseaseOccurrence occurrence) {
-        return occurrence.getLocation().getPrecision() == LocationPrecision.COUNTRY;
+        occurrence.setEnvironmentalSuitability(esHelper.findEnvironmentalSuitability(occurrence, raster));
+        occurrence.setDistanceFromDiseaseExtent(dfdeHelper.findDistanceFromDiseaseExtent(occurrence));
+        findAndSetMachineWeightingAndInReview(occurrence);
     }
 
     private void findAndSetMachineWeightingAndInReview(DiseaseOccurrence occurrence) {
         if ((occurrence.getEnvironmentalSuitability() == null) || (occurrence.getDistanceFromDiseaseExtent() == null)) {
-            occurrence.setStatus(DiseaseOccurrenceStatus.IN_REVIEW);
+            addOccurrenceToValidator(occurrence);
         } else {
             if (occurrence.getDiseaseGroup().useMachineLearning()) {
                 Double machineWeighting = mwPredictor.findMachineWeighting(occurrence);
                 if (machineWeighting == null) {
-                    occurrence.setStatus(DiseaseOccurrenceStatus.IN_REVIEW);
+                    addOccurrenceToValidator(occurrence);
                 } else {
                     occurrence.setMachineWeighting(machineWeighting);
                 }
             } else {
                 if (shouldSendToDataValidatorWithoutUsingMachineLearning(occurrence)) {
-                    occurrence.setStatus(DiseaseOccurrenceStatus.IN_REVIEW);
+                    addOccurrenceToValidator(occurrence);
                 } else {
                     occurrence.setMachineWeighting(1.0);
                 }
             }
+        }
+    }
+
+    private void addOccurrenceToValidator(DiseaseOccurrence occurrence) {
+        if (occurrence.getLocation().isModelEligible()) {
+            occurrence.setStatus(DiseaseOccurrenceStatus.IN_REVIEW);
         }
     }
 
