@@ -24,8 +24,6 @@ import static uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractDiseaseOccurrenceGeo
  * Copyright (c) 2014 University of Oxford
  */
 public class OccurrenceDataWriterTest {
-    private static final int HEADER_SIZE = 1;
-
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder(); ///CHECKSTYLE:SUPPRESS VisibilityModifier
 
