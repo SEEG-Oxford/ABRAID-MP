@@ -87,7 +87,7 @@ public class OccurrenceDataWriterTest {
         String result = arrangeAndActWriteDataTest(occurrence);
 
         // Assert
-        assertThat(result).isEqualTo("Longitude,Latitude,Weight,Admin,GAUL" + "\n" + "-1.0,1.0,0.5,0,102" + "\n");
+        assertThat(result).isEqualTo("Longitude,Latitude,Weight,Admin,GAUL" + "\n" + "-1.0,1.0,0.5,0,201" + "\n");
     }
 
     private String arrangeAndActWriteDataTest(DiseaseOccurrence occurrence) throws Exception {
