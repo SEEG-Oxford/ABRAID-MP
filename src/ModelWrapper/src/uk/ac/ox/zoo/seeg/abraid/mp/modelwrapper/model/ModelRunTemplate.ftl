@@ -50,6 +50,7 @@ attempt_model_run <- function() {
 
     # Define admin unit rasters to use.
     # If you would like to use these admin unit rasters (or related shape files) please contact abraid@zoo.ox.ac.uk, as we cannot release them in all circumstances.
+    admin0_path <- "${admin0_file}"
     admin1_path <- "${admin1_file}"
     admin2_path <- "${admin2_file}"
 
@@ -170,6 +171,7 @@ attempt_model_run <- function() {
         innerResult <- runABRAID(
             occurrence_path,
             extent_path,
+            admin0_path,
             admin1_path,
             admin2_path,
             covariate_paths,

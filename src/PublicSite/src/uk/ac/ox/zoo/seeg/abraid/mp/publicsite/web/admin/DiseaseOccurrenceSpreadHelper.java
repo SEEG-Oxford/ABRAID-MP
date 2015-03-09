@@ -4,7 +4,6 @@ import org.apache.commons.lang.builder.CompareToBuilder;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Country;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceStatus;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.DiseaseOccurrenceSpreadTable;
@@ -13,7 +12,6 @@ import java.util.*;
 
 import static ch.lambdaj.Lambda.*;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.hamcrest.core.IsNot.not;
 
 /**
  * Helper class for generating a disease occurrence spread table for a particular disease group.
@@ -64,7 +62,7 @@ public class DiseaseOccurrenceSpreadHelper {
                 DiseaseOccurrenceStatus.AWAITING_BATCHING
         );
         return filter(
-            having(on(DiseaseOccurrence.class).getLocation().getPrecision(), not(equalTo(LocationPrecision.COUNTRY))),
+            having(on(DiseaseOccurrence.class).getLocation().isModelEligible(), equalTo(true)),
             occurrences
         );
     }

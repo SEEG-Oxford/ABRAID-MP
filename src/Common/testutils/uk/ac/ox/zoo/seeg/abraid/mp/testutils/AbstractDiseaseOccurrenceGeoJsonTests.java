@@ -32,7 +32,7 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
         return mockAlert("title", "summary", "feedName", "feedLanguage", "url");
     }
 
-    public static Location mockLocation(double longitude, double latitude, String locationName, LocationPrecision locationPrecision, int adminUnitQCGaulCode) {
+    public static Location mockLocation(double longitude, double latitude, String locationName, LocationPrecision locationPrecision, int adminUnitQCGaulCode, int countryGaulCode) {
         Location location = mock(Location.class);
         Point geom = mock(Point.class);
         when(location.getGeom()).thenReturn(geom);
@@ -41,11 +41,12 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
         when(location.getName()).thenReturn(locationName);
         when(location.getPrecision()).thenReturn(locationPrecision);
         when(location.getAdminUnitQCGaulCode()).thenReturn(adminUnitQCGaulCode);
+        when(location.getCountryGaulCode()).thenReturn(countryGaulCode);
         return location;
     }
 
     public static Location defaultLocation() {
-        return mockLocation(1.0, -1.0, "locationName", LocationPrecision.ADMIN1, 102);
+        return mockLocation(1.0, -1.0, "locationName", LocationPrecision.ADMIN1, 102, 201);
     }
 
     public static DiseaseOccurrence mockDiseaseOccurrence(int id, DiseaseGroup diseaseGroup, Location location, DateTime occurrenceDate, Alert alert, double weighting) {

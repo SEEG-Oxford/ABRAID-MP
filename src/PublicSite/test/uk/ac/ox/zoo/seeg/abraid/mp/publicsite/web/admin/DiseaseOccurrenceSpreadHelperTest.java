@@ -63,10 +63,10 @@ public class DiseaseOccurrenceSpreadHelperTest {
     }
 
     @Test
-    public void getDiseaseOccurrenceSpreadTableReturnsCorrectTableFor1NonCountryOccurrence() {
+    public void getDiseaseOccurrenceSpreadTableReturnsCorrectTableFor1EligibleOccurrence() {
         // Arrange
         int diseaseGroupId = 87;
-        DiseaseOccurrence occurrence = createDiseaseOccurrence(1, "2013-07-04T00:00:00Z", 23, LocationPrecision.PRECISE);
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(1, "2013-07-04T00:00:00Z", 23, LocationPrecision.PRECISE, true);
         mockGetDiseaseGroupAndOccurrences(diseaseGroupId, Arrays.asList(occurrence));
 
         // Act
@@ -93,14 +93,14 @@ public class DiseaseOccurrenceSpreadHelperTest {
         // Arrange
         int diseaseGroupId = 87;
         List<DiseaseOccurrence> occurrences = Arrays.asList(
-                createDiseaseOccurrence(1, "2012-01-01T12:00:54Z", 6, LocationPrecision.PRECISE),
-                createDiseaseOccurrence(2, "2012-10-08T05:23:02Z", 23, LocationPrecision.COUNTRY), // Excluded from count
-                createDiseaseOccurrence(3, "2014-07-31T15:27:00Z", 269, LocationPrecision.PRECISE),
-                createDiseaseOccurrence(4, "2011-01-01T00:00:35Z", 248, LocationPrecision.ADMIN1),
-                createDiseaseOccurrence(5, "2011-02-05T17:01:01Z", 248, LocationPrecision.ADMIN2),
-                createDiseaseOccurrence(6, "2012-04-02T08:24:00Z", 23, LocationPrecision.PRECISE),
-                createDiseaseOccurrence(7, "2012-03-31T09:00:00Z", 269, LocationPrecision.PRECISE),
-                createDiseaseOccurrence(8, "2011-07-04T00:00:00Z", 248, LocationPrecision.COUNTRY));  // Excluded from count
+                createDiseaseOccurrence(1, "2012-01-01T12:00:54Z", 6, LocationPrecision.PRECISE, true),
+                createDiseaseOccurrence(2, "2012-10-08T05:23:02Z", 23, LocationPrecision.COUNTRY, false), // Excluded from count
+                createDiseaseOccurrence(3, "2014-07-31T15:27:00Z", 269, LocationPrecision.PRECISE, true),
+                createDiseaseOccurrence(4, "2011-01-01T00:00:35Z", 248, LocationPrecision.ADMIN1, true),
+                createDiseaseOccurrence(5, "2011-02-05T17:01:01Z", 248, LocationPrecision.ADMIN2, true),
+                createDiseaseOccurrence(6, "2012-04-02T08:24:00Z", 23, LocationPrecision.PRECISE, true),
+                createDiseaseOccurrence(7, "2012-03-31T09:00:00Z", 269, LocationPrecision.PRECISE, true),
+                createDiseaseOccurrence(8, "2011-07-04T00:00:00Z", 248, LocationPrecision.COUNTRY, true));  // included in count
         mockGetDiseaseGroupAndOccurrences(diseaseGroupId, occurrences);
 
         // Act
@@ -110,12 +110,12 @@ public class DiseaseOccurrenceSpreadHelperTest {
         assertThat(table.getErrorMessage()).isNull();
         assertSetIsEqual(table.getHeadingYears(), 2011, 2012, 2014);
 
-        assertThat(table.getTotalRow()).containsExactly(2, 3, 1);
+        assertThat(table.getTotalRow()).containsExactly(3, 3, 1);
 
         List<DiseaseOccurrenceSpreadTableRow> rows = table.getRows();
         assertThat(rows).hasSize(5);
         assertRowIsEqual(rows.get(0), "Sudan", true, 0, 1, 0);
-        assertRowIsEqual(rows.get(1), "Tunisia", true, 2, 0, 0);
+        assertRowIsEqual(rows.get(1), "Tunisia", true, 3, 0, 0);
         assertRowIsEqual(rows.get(2), "Bangladesh", false, 0, 1, 0);
         assertRowIsEqual(rows.get(3), "Nicaragua", false, 0, 0, 0);
         assertRowIsEqual(rows.get(4), "Yemen", false, 0, 1, 1);
@@ -141,12 +141,13 @@ public class DiseaseOccurrenceSpreadHelperTest {
     }
 
     private DiseaseOccurrence createDiseaseOccurrence(int id, String occurrenceDate, Integer countryGaulCode,
-                                                      LocationPrecision precision) {
+                                                      LocationPrecision precision, boolean modelEligible) {
         DiseaseOccurrence occurrence = new DiseaseOccurrence(id);
         occurrence.setOccurrenceDate(new DateTime(occurrenceDate));
         Location location = new Location();
         location.setCountryGaulCode(countryGaulCode);
         location.setPrecision(precision);
+        location.setIsModelEligible(modelEligible);
         occurrence.setLocation(location);
         return occurrence;
     }

@@ -69,7 +69,7 @@ import javax.persistence.Table;
         @NamedQuery(
                 name = "getDiseaseOccurrenceStatistics",
                 query = "select new uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceStatistics" +
-                            "(count(*), coalesce(sum(case location.precision when 'COUNTRY' then 0 else 1 end), 0)," +
+                            "(count(*), coalesce(sum(case location.isModelEligible when true then 1 else 0 end), 0)," +
                             " min(occurrenceDate), max(occurrenceDate)) " +
                         "from DiseaseOccurrence " +
                         "where diseaseGroup.id=:diseaseGroupId " +
@@ -80,7 +80,15 @@ import javax.persistence.Table;
                 query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
                         "where d.diseaseGroup.id=:diseaseGroupId " +
                         "and d.status = 'AWAITING_BATCHING' " +
-                        "and d.occurrenceDate between :batchStartDate and :batchEndDate "
+                        "and d.occurrenceDate between :batchStartDate and :batchEndDate " +
+                        "and " + DiseaseOccurrence.NOT_GOLD_STANDARD
+        ),
+        @NamedQuery(
+                name = "getDiseaseOccurrencesForBatchingInitialisation",
+                query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
+                        "where d.diseaseGroup.id=:diseaseGroupId " +
+                        "and d.status = 'READY' " +
+                        "and " + DiseaseOccurrence.NOT_GOLD_STANDARD
         ),
         @NamedQuery(
                 name = "getNumberOfDiseaseOccurrencesEligibleForModelRun",
@@ -88,7 +96,7 @@ import javax.persistence.Table;
                         "from DiseaseOccurrence " +
                         "where diseaseGroup.id=:diseaseGroupId " +
                         "and status in ('READY', 'IN_REVIEW', 'AWAITING_BATCHING') " +
-                        "and location.precision <> 'COUNTRY' " +
+                        "and location.isModelEligible is TRUE " +
                         "and occurrenceDate between :startDate and :endDate"
         ),
         @NamedQuery(
@@ -96,7 +104,7 @@ import javax.persistence.Table;
                 query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
                         "where d.diseaseGroup.id=:diseaseGroupId " +
                         "and d.status = 'READY' " +
-                        "and d.location.precision <> 'COUNTRY' " +
+                        "and d.location.isModelEligible is TRUE " +
                         "and d.distanceFromDiseaseExtent is not null " +
                         "and d.environmentalSuitability is not null " +
                         "and d.expertWeighting is not null " +
@@ -117,6 +125,12 @@ public class DiseaseOccurrence {
             "inner join fetch d.alert.feed " +
             "inner join fetch d.alert.feed.provenance " +
             "inner join fetch d.diseaseGroup ";
+
+    /**
+     * An HQL fragment used to exclude gold standard occurrences from queries.
+     */
+    public static final String NOT_GOLD_STANDARD =
+            "d.alert.feed.provenance.name <> '" + ProvenanceNames.MANUAL_GOLD_STANDARD + "'";
 
     /**
      * The final weighting assigned to a "gold standard" disease occurrence.

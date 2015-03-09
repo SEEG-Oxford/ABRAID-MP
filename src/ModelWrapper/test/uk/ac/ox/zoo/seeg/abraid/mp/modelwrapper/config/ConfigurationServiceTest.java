@@ -426,6 +426,38 @@ public class ConfigurationServiceTest {
     }
 
     @Test
+    public void getAdmin0RasterFileReturnsCorrectDefault() throws Exception {
+        // Arrange
+        File testFile = testFolder.newFile();
+        writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, mock(OSChecker.class));
+
+        // Act
+        String result = target.getAdmin0RasterFile();
+
+        // Assert
+        String expectedPath = Paths.get(target.getCacheDirectory(), "rasters", "admin0qc.tif").toString();
+        assertThat(result).isEqualTo(expectedPath);
+    }
+
+    @Test
+    public void getAdmin0RasterFileReturnsCorrectValue() throws Exception {
+        // Arrange
+        File testFile = testFolder.newFile();
+        String expectedValue = "Foo";
+        writeStandardSimplePropertiesWithExtra(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4",
+                "raster.file.admin0", "" + expectedValue);
+        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, mock(OSChecker.class));
+
+        // Act
+        String result = target.getAdmin0RasterFile();
+
+        // Assert
+        assertThat(result).isEqualTo(expectedValue);
+    }
+
+
+    @Test
     public void getAdmin1RasterFileReturnsCorrectDefault() throws Exception {
         // Arrange
         File testFile = testFolder.newFile();

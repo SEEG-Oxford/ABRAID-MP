@@ -3,6 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractDiseaseOccurrenceGeoJsonTests;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,13 +34,30 @@ public class GeoJsonDiseaseOccurrenceFeaturePropertiesTest extends AbstractDisea
     }
 
     @Test
-    public void extractAdminUnitQCGaulCodeReturnsExpectedGaulCode() throws Exception {
+    public void extractAdminUnitQCGaulCodeReturnsExpectedGaulCodeForNonCountry() throws Exception {
         // Arrange
         DiseaseOccurrence occurrence = defaultDiseaseOccurrence();
         Integer gaulCode = 1;
 
         when(occurrence.getDiseaseGroup().isGlobal()).thenReturn(true);
         when(occurrence.getLocation().getAdminUnitQCGaulCode()).thenReturn(gaulCode);
+
+        // Act
+        GeoJsonDiseaseOccurrenceFeatureProperties result = new GeoJsonDiseaseOccurrenceFeatureProperties(occurrence);
+
+        // Assert
+        assertThat(result.getGaulCode()).isEqualTo(gaulCode);
+    }
+
+    @Test
+    public void extractAdminUnitQCGaulCodeReturnsExpectedGaulCodeForCountry() throws Exception {
+        // Arrange
+        DiseaseOccurrence occurrence = defaultDiseaseOccurrence();
+        when(occurrence.getLocation().getPrecision()).thenReturn(LocationPrecision.COUNTRY);
+        Integer gaulCode = 987;
+
+        when(occurrence.getDiseaseGroup().isGlobal()).thenReturn(true);
+        when(occurrence.getLocation().getCountryGaulCode()).thenReturn(gaulCode);
 
         // Act
         GeoJsonDiseaseOccurrenceFeatureProperties result = new GeoJsonDiseaseOccurrenceFeatureProperties(occurrence);

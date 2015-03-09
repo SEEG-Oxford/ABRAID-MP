@@ -97,6 +97,7 @@ public class RunConfigurationFactoryImpl implements RunConfigurationFactory {
     private AdminUnitRunConfiguration buildAdminUnitConfig(boolean diseaseGlobal) {
         return new AdminUnitRunConfiguration(
                 diseaseGlobal,
+                configurationService.getAdmin0RasterFile(),
                 configurationService.getAdmin1RasterFile(),
                 configurationService.getAdmin2RasterFile(),
                 configurationService.getTropicalRasterFile(),

@@ -8,14 +8,14 @@ import org.joda.time.DateTime;
  */
 public class DiseaseOccurrenceStatistics {
     private long occurrenceCount;
-    private long occurrenceCountExcludingCountries;
+    private long modelEligibleOccurrenceCount;
     private DateTime minimumOccurrenceDate;
     private DateTime maximumOccurrenceDate;
 
-    public DiseaseOccurrenceStatistics(long occurrenceCount, long occurrenceCountExcludingCountries,
+    public DiseaseOccurrenceStatistics(long occurrenceCount, long modelEligibleOccurrenceCount,
                                        DateTime minimumOccurrenceDate, DateTime maximumOccurrenceDate) {
         this.occurrenceCount = occurrenceCount;
-        this.occurrenceCountExcludingCountries = occurrenceCountExcludingCountries;
+        this.modelEligibleOccurrenceCount = modelEligibleOccurrenceCount;
         this.minimumOccurrenceDate = minimumOccurrenceDate;
         this.maximumOccurrenceDate = maximumOccurrenceDate;
     }
@@ -24,8 +24,8 @@ public class DiseaseOccurrenceStatistics {
         return occurrenceCount;
     }
 
-    public long getOccurrenceCountExcludingCountries() {
-        return occurrenceCountExcludingCountries;
+    public long getModelEligibleOccurrenceCount() {
+        return modelEligibleOccurrenceCount;
     }
 
     public DateTime getMinimumOccurrenceDate() {

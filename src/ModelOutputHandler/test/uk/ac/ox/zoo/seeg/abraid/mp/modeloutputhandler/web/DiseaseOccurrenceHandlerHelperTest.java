@@ -107,8 +107,7 @@ public class DiseaseOccurrenceHandlerHelperTest {
         when(modelRunService.getModelRunByName(modelRun.getName())).thenReturn(modelRun);
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
         when(modelRunService.hasBatchingEverCompleted(diseaseGroupId)).thenReturn(false);
-        when(diseaseService.getDiseaseOccurrencesByDiseaseGroupIdAndStatuses(diseaseGroupId,
-                DiseaseOccurrenceStatus.READY)).thenReturn(occurrences);
+        when(diseaseService.getDiseaseOccurrencesForBatchingInitialisation(diseaseGroupId)).thenReturn(occurrences);
 
         // Act
         DateTime batchingInitialisationDate = helper.handle(modelRun);
@@ -255,8 +254,7 @@ public class DiseaseOccurrenceHandlerHelperTest {
         List<DiseaseOccurrence> occurrences = Arrays.asList(occurrence1, occurrence2, occurrence3);
 
         // Act
-        when(diseaseService.getDiseaseOccurrencesByDiseaseGroupIdAndStatuses(diseaseGroupId,
-                DiseaseOccurrenceStatus.READY)).thenReturn(occurrences);
+        when(diseaseService.getDiseaseOccurrencesForBatchingInitialisation(diseaseGroupId)).thenReturn(occurrences);
         helper.continueBatchingInitialisation(diseaseGroupId, DateTime.now());
 
         // Assert

@@ -1,7 +1,10 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.qc;
 
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
+
+import static java.lang.Math.log;
 
 /**
  * Manages processes that run after QC but before the location is written to the database.
@@ -9,10 +12,19 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
  * Copyright (c) 2014 University of Oxford
  */
 public class PostQCManager {
-    private LocationService locationService;
+    private static final double MAX_AREA_FOR_MODEL_ELIGIBLE_COUNTRY = 115000.0;
+    private static final double PIXEL_EQUIVALENT_AREA = 25.0;
+    // ALPHA & BETA chosen such that f(25)=1 & f(115000)=0
+    private static final double ALPHA = 1.0 / log(PIXEL_EQUIVALENT_AREA / MAX_AREA_FOR_MODEL_ELIGIBLE_COUNTRY);
+    private static final double BETA = 1.0 / MAX_AREA_FOR_MODEL_ELIGIBLE_COUNTRY;
 
-    public PostQCManager(LocationService locationService) {
+
+    private final LocationService locationService;
+    private final QCLookupData qcLookupData;
+
+    public PostQCManager(LocationService locationService, QCLookupData qcLookupData) {
         this.locationService = locationService;
+        this.qcLookupData = qcLookupData;
     }
 
     /**
@@ -25,6 +37,7 @@ public class PostQCManager {
         failQCIfNotOnLand(location);
         failQCIfAnyGaulCodesAreMissing(location);
         setResolutionWeighting(location);
+        setModelEligibility(location);
     }
 
     /**
@@ -69,8 +82,51 @@ public class PostQCManager {
     }
 
     private void setResolutionWeighting(Location location) {
-        double weighting = location.getPrecision().getWeighting();
-        location.setResolutionWeighting(weighting);
+        if (location.hasPassedQc()) {
+            location.setResolutionWeighting(calculateResolutionWeighting(location));
+        } else {
+            location.setResolutionWeighting(null);
+        }
+    }
+
+    private Double calculateResolutionWeighting(Location location) {
+        LocationPrecision precision = location.getPrecision();
+        if (precision.equals(LocationPrecision.PRECISE)) {
+            return 1.0;
+        } else {
+            double area = extractArea(location);
+            if (area <= PIXEL_EQUIVALENT_AREA) {
+                return 1.0;
+            } else if (area >= MAX_AREA_FOR_MODEL_ELIGIBLE_COUNTRY) {
+                return 0.0;
+            } else {
+                // ALPHA & BETA chosen such that f(25)=1 & f(115000)=0
+                // http://fooplot.com/plot/daijmnjedc
+                return ALPHA * log(BETA * area);
+            }
+        }
+    }
+
+    private double extractArea(Location location) {
+        if (location.getPrecision().equals(LocationPrecision.COUNTRY)) {
+            return qcLookupData.getCountryMap().get(location.getCountryGaulCode()).getArea();
+        } else {
+            return qcLookupData.getAdminUnitsMap().get(location.getAdminUnitQCGaulCode()).getArea();
+        }
+    }
+
+    private void setModelEligibility(Location location) {
+        if (location.hasPassedQc()) {
+            if (location.getPrecision().equals(LocationPrecision.COUNTRY)) {
+                Double area = extractArea(location);
+                location.setIsModelEligible(area <= MAX_AREA_FOR_MODEL_ELIGIBLE_COUNTRY);
+            } else {
+                location.setIsModelEligible(true);
+            }
+        } else {
+            location.setIsModelEligible(false);
+        }
+
     }
 
     private void validateLocation(Location location) {

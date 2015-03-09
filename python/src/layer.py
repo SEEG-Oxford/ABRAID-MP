@@ -37,7 +37,7 @@ class Layer(object):
 
     num_predictors_in_layer = 6
     subset_size = 0.4
-    cv_threshold = 0.01
+    cv_threshold = 0.05
 
     def __init__(self, X, y):
         self.predictors = [linear_model.LogisticRegression(C=1e5) for i in range(self.num_predictors_in_layer)]

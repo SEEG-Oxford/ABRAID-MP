@@ -44,7 +44,11 @@ public class GeoJsonDiseaseOccurrenceFeatureProperties {
         setAlert(new GeoJsonAlert(occurrence.getAlert()));
         setLocationPrecision(occurrence.getLocation().getPrecision());
         setWeighting(occurrence.getFinalWeighting());
-        setGaulCode(occurrence.getLocation().getAdminUnitQCGaulCode());
+        if (occurrence.getLocation().getPrecision().equals(LocationPrecision.COUNTRY)) {
+            setGaulCode(occurrence.getLocation().getCountryGaulCode());
+        } else {
+            setGaulCode(occurrence.getLocation().getAdminUnitQCGaulCode());
+        }
     }
 
     public String getDiseaseGroupPublicName() {

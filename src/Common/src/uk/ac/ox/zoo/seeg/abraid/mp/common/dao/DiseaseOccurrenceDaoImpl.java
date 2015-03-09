@@ -36,7 +36,7 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
     private static final String MODEL_RUN_REQUEST_QUERY = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
             "where d.diseaseGroup.id = :diseaseGroupId " +
             "and d.status = 'READY' " +
-            "and d.location.precision <> 'COUNTRY' ";
+            "and d.location.isModelEligible is TRUE ";
 
     private static final String MODEL_RUN_REQUEST_FINAL_WEIGHTING_ABOVE_ZERO_CLAUSE =
             "and d.finalWeighting > 0 ";
@@ -232,6 +232,17 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
     }
 
     /**
+     * Gets a list of disease occurrences for batching initialisation, for the specified disease group.
+     * @param diseaseGroupId The disease group ID.
+     * @return A list of disease occurrences.
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<DiseaseOccurrence> getDiseaseOccurrencesForBatchingInitialisation(int diseaseGroupId) {
+        return listNamedQuery("getDiseaseOccurrencesForBatchingInitialisation", "diseaseGroupId", diseaseGroupId);
+    }
+
+    /**
      * Gets a list of disease occurrences for validation batching, for the specified disease group.
      * @param diseaseGroupId The disease group ID.
      * @param batchStartDate The start date of the batch.
@@ -264,7 +275,7 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
      * @param startDate The start date.
      * @param endDate The end date.
      * @return The number of occurrences that are eligible for being sent to the model. This is all occurrences
-     * except those that have been discarded, or points with COUNTRY precision.
+     * except those that have been discarded, or points marked as ineligible.
      */
     @Override
     public long getNumberOfOccurrencesEligibleForModelRun(int diseaseGroupId, DateTime startDate, DateTime endDate) {

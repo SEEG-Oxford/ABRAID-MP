@@ -359,7 +359,7 @@
       <jvmarg value="${jacoco.coverage.agent}" />
       <jvmarg value="-Xms128M"/>
       <jvmarg value="-Xmn64M"/>
-      <jvmarg value="-Xmx512M"/>
+      <jvmarg value="-Xmx1G"/>
       <jvmarg value="-Dlog4j.configuration=file:log4j-test.properties"/>
       <jvmarg value="-Djava.util.logging.config.file=file:java-util-logging-test.properties"/>
       <jvmarg value="-Dfile.encoding=UTF-8"/>
@@ -386,7 +386,7 @@
       <jvmarg value="${jacoco.coverage.agent}" />
       <jvmarg value="-Xms128M"/>
       <jvmarg value="-Xmn64M"/>
-      <jvmarg value="-Xmx512M"/>
+      <jvmarg value="-Xmx1G"/>
       <jvmarg value="-Dlog4j.configuration=file:log4j-test.properties"/>
       <jvmarg value="-Djava.util.logging.config.file=file:java-util-logging-test.properties"/>
       <jvmarg value="-Dfile.encoding=UTF-8"/>

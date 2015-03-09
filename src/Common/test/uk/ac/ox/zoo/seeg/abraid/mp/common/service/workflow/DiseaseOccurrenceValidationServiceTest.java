@@ -61,7 +61,7 @@ public class DiseaseOccurrenceValidationServiceTest {
     @Test
     public void addValidationParametersWithChecksDiscardsOccurrenceIfOccurrenceLocationHasNotPassedQCWhenAutomaticModelRunsAreEnabled() {
         // Arrange
-        DiseaseOccurrence occurrence = createDiseaseOccurrence(1, true);
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(1, true, false);
         occurrence.getLocation().setHasPassedQc(false);
         setIsGoldStandardProvenance(occurrence, false);
 
@@ -76,7 +76,7 @@ public class DiseaseOccurrenceValidationServiceTest {
     @Test
     public void addValidationParametersWithChecksDiscardsOccurrenceIfOccurrenceLocationHasNotPassedQCWhenAutomaticModelRunsAreDisabled() {
         // Arrange
-        DiseaseOccurrence occurrence = createDiseaseOccurrence(1, false);
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(1, false, false);
         occurrence.getLocation().setHasPassedQc(false);
         setIsGoldStandardProvenance(occurrence, false);
 
@@ -95,7 +95,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         double environmentalSuitability = 0.42;
         double distanceFromDiseaseExtent = 500;
 
-        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, true);
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, true, false);
         setIsGoldStandardProvenance(occurrence, false);
 
         when(esHelper.findEnvironmentalSuitability(occurrence, null)).thenReturn(environmentalSuitability);
@@ -120,7 +120,7 @@ public class DiseaseOccurrenceValidationServiceTest {
     public void addValidationParametersWithChecksSetsStatusToReadyWhenAutomaticModelRunsAreDisabledAndNoBatching() {
         // Arrange
         int diseaseGroupId = 30;
-        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, false);
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, false, false);
         setIsGoldStandardProvenance(occurrence, false);
         when(modelRunService.hasBatchingEverCompleted(diseaseGroupId)).thenReturn(false);
 
@@ -135,7 +135,7 @@ public class DiseaseOccurrenceValidationServiceTest {
     public void addValidationParametersWithChecksSetsStatusToAwaitingBatchingWhenAutomaticModelRunsAreDisabledAndBatching() {
         // Arrange
         int diseaseGroupId = 30;
-        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, false);
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, false, false);
         setIsGoldStandardProvenance(occurrence, false);
         when(modelRunService.hasBatchingEverCompleted(diseaseGroupId)).thenReturn(true);
 
@@ -156,18 +156,25 @@ public class DiseaseOccurrenceValidationServiceTest {
     }
 
     @Test
-    public void addValidationParametersWithChecksSetsStatusToReadyForCountryPointWhenAutomaticModelRunsAreEnabled() {
+    public void addValidationParametersWithChecksSetsStatusToReadyForLargeCountryPointWhenAutomaticModelRunsAreEnabled() {
         // Arrange
         int diseaseGroupId = 30;
-        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, true);
+        double environmentalSuitability = 0.42;
+        double distanceFromDiseaseExtent = 500;
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, true, false);
         setIsGoldStandardProvenance(occurrence, false);
         occurrence.getLocation().setPrecision(LocationPrecision.COUNTRY);
+        occurrence.getLocation().setIsModelEligible(false);
+
+        when(esHelper.findEnvironmentalSuitability(occurrence, null)).thenReturn(environmentalSuitability);
+        when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence)).thenReturn(distanceFromDiseaseExtent);
+        when(mwPredictor.findMachineWeighting(occurrence)).thenReturn(null);
 
         // Act
         service.addValidationParametersWithChecks(occurrence);
 
         // Assert
-        assertDefaultParameters(occurrence, DiseaseOccurrenceStatus.READY);
+        assertParameterValues(occurrence, environmentalSuitability, distanceFromDiseaseExtent, DiseaseOccurrenceStatus.READY);
         verify(modelRunService, never()).hasBatchingEverCompleted(anyInt());
     }
 
@@ -176,7 +183,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         // Arrange
         int diseaseGroupId = 30;
 
-        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, true);
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, true, false);
         occurrence.getLocation().setHasPassedQc(true);
         setIsGoldStandardProvenance(occurrence, false);
 
@@ -196,7 +203,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         // Arrange
         int diseaseGroupId = 30;
 
-        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, true);
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, true, false);
         occurrence.getLocation().setHasPassedQc(true);
         setIsGoldStandardProvenance(occurrence, false);
 
@@ -221,7 +228,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         // Arrange
         int diseaseGroupId = 30;
 
-        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, true);
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, true, false);
         occurrence.getLocation().setHasPassedQc(true);
         setIsGoldStandardProvenance(occurrence, false);
 
@@ -248,7 +255,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         double environmentalSuitability = 0.42;
         double distanceFromDiseaseExtent = 500;
 
-        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, true);
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, true, false);
         occurrence.getLocation().setHasPassedQc(true);
         setIsGoldStandardProvenance(occurrence, false);
 
@@ -273,7 +280,7 @@ public class DiseaseOccurrenceValidationServiceTest {
     @Test
     public void addValidationParametersWithChecksSetsGoldStandardParametersWhenAutomaticModelRunsAreDisabled() {
         // Arrange
-        DiseaseOccurrence occurrence = createDiseaseOccurrence(1, false);
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(1, false, false);
         occurrence.getLocation().setHasPassedQc(true);
         setIsGoldStandardProvenance(occurrence, true);
 
@@ -293,7 +300,7 @@ public class DiseaseOccurrenceValidationServiceTest {
     @Test
     public void addValidationParametersWithChecksSetsGoldStandardParametersWhenAutomaticModelRunsAreEnabled() {
         // Arrange
-        DiseaseOccurrence occurrence = createDiseaseOccurrence(1, true);
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(1, true, false);
         occurrence.getLocation().setHasPassedQc(true);
         setIsGoldStandardProvenance(occurrence, true);
 
@@ -467,17 +474,20 @@ public class DiseaseOccurrenceValidationServiceTest {
     }
 
     @Test
-    public void addValidationParametersSetsAllValidationParametersUsingRasterRegardlessOfOccurrenceValidity() {
+    public void addValidationParametersSetsAllValidationParametersOnUsingRasterRegardlessOfOccurrenceValidityExceptGoldStandard() {
         // Arrange
         int diseaseGroupId = 30;
         double environmentalSuitability1 = 0.42;
         double environmentalSuitability2 = 0.52;
+        double environmentalSuitability3 = 0.62;
         double distanceFromDiseaseExtent1 = 500;
         double distanceFromDiseaseExtent2 = 800;
+        double distanceFromDiseaseExtent3 = 900;
         GridCoverage2D raster = mock(GridCoverage2D.class);
 
-        DiseaseOccurrence occurrence1 = createDiseaseOccurrence(diseaseGroupId, false);
-        DiseaseOccurrence occurrence2 = createDiseaseOccurrence(diseaseGroupId, true);
+        DiseaseOccurrence occurrence1 = createDiseaseOccurrence(diseaseGroupId, false, false);
+        DiseaseOccurrence occurrence2 = createDiseaseOccurrence(diseaseGroupId, true, false);
+        DiseaseOccurrence occurrence3 = createDiseaseOccurrence(diseaseGroupId, true, true);
         DiseaseGroup diseaseGroup = occurrence1.getDiseaseGroup();
         occurrence2.setDiseaseGroup(diseaseGroup);
         occurrence1.getLocation().setHasPassedQc(false);
@@ -486,31 +496,35 @@ public class DiseaseOccurrenceValidationServiceTest {
         when(esHelper.getLatestMeanPredictionRaster(diseaseGroup)).thenReturn(raster);
         when(esHelper.findEnvironmentalSuitability(same(occurrence1), same(raster))).thenReturn(environmentalSuitability1);
         when(esHelper.findEnvironmentalSuitability(same(occurrence2), same(raster))).thenReturn(environmentalSuitability2);
+        when(esHelper.findEnvironmentalSuitability(same(occurrence3), same(raster))).thenReturn(environmentalSuitability3);
         when(dfdeHelper.findDistanceFromDiseaseExtent(same(occurrence1))).thenReturn(distanceFromDiseaseExtent1);
         when(dfdeHelper.findDistanceFromDiseaseExtent(same(occurrence2))).thenReturn(distanceFromDiseaseExtent2);
+        when(dfdeHelper.findDistanceFromDiseaseExtent(same(occurrence3))).thenReturn(distanceFromDiseaseExtent3);
         when(mwPredictor.findMachineWeighting(same(occurrence1))).thenReturn(null);
         when(mwPredictor.findMachineWeighting(same(occurrence2))).thenReturn(null);
+        when(mwPredictor.findMachineWeighting(same(occurrence3))).thenReturn(null);
 
         // Act
         service.addValidationParameters(occurrences);
 
         // Assert
-        assertParameterValues(occurrence1, environmentalSuitability1, distanceFromDiseaseExtent1);
-        assertParameterValues(occurrence2, environmentalSuitability2, distanceFromDiseaseExtent2);
+        assertParameterValues(occurrence1, environmentalSuitability1, distanceFromDiseaseExtent1, DiseaseOccurrenceStatus.IN_REVIEW);
+        assertParameterValues(occurrence2, environmentalSuitability2, distanceFromDiseaseExtent2, DiseaseOccurrenceStatus.IN_REVIEW);
+        assertDefaultParameters(occurrence3, DiseaseOccurrenceStatus.READY);
     }
 
-    private void assertParameterValues(DiseaseOccurrence occurrence, double environmentalSuitability, double distanceFromDiseaseExtent) {
+    private void assertParameterValues(DiseaseOccurrence occurrence, double environmentalSuitability, double distanceFromDiseaseExtent, DiseaseOccurrenceStatus status) {
         assertThat(occurrence.getEnvironmentalSuitability()).isEqualTo(environmentalSuitability);
         assertThat(occurrence.getDistanceFromDiseaseExtent()).isEqualTo(distanceFromDiseaseExtent);
         assertThat(occurrence.getFinalWeighting()).isNull();
         assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNull();
         // At present mwPredictor is only set up to return a null weighting, which means occurrence must go to validator
         assertThat(occurrence.getMachineWeighting()).isNull();
-        assertThat(occurrence.getStatus()).isEqualTo(DiseaseOccurrenceStatus.IN_REVIEW);
+        assertThat(occurrence.getStatus()).isEqualTo(status);
     }
 
     @Test
-    public void addValidationParametersOnlyAddsParametersOccurrencesWithNonCountryLocations() {
+    public void addValidationParametersOnlyAddsModelEligibleOccurrencesToValidator() {
         // Arrange
         double environmentalSuitability = 0.42;
         double distanceFromDiseaseExtent = 500;
@@ -518,28 +532,36 @@ public class DiseaseOccurrenceValidationServiceTest {
 
         DiseaseGroup diseaseGroup = createDiseaseGroup();
         DiseaseOccurrence admin1Occurrence = createAdmin1Occurrence(1, diseaseGroup);
-        DiseaseOccurrence countryOccurrence = createCountryOccurrence(2, diseaseGroup);
-        List<DiseaseOccurrence> occurrences = Arrays.asList(admin1Occurrence, countryOccurrence);
+        DiseaseOccurrence countryOccurrence = createCountryOccurrence(2, diseaseGroup, true);
+        DiseaseOccurrence largeCountryOccurrence = createCountryOccurrence(3, diseaseGroup, false);
+        List<DiseaseOccurrence> occurrences = Arrays.asList(admin1Occurrence, countryOccurrence, largeCountryOccurrence);
 
         when(esHelper.getLatestMeanPredictionRaster(diseaseGroup)).thenReturn(raster);
         when(esHelper.findEnvironmentalSuitability(same(admin1Occurrence), same(raster))).thenReturn(environmentalSuitability);
+        when(esHelper.findEnvironmentalSuitability(same(countryOccurrence), same(raster))).thenReturn(environmentalSuitability);
+        when(esHelper.findEnvironmentalSuitability(same(largeCountryOccurrence), same(raster))).thenReturn(environmentalSuitability);
         when(dfdeHelper.findDistanceFromDiseaseExtent(same(admin1Occurrence))).thenReturn(distanceFromDiseaseExtent);
+        when(dfdeHelper.findDistanceFromDiseaseExtent(same(countryOccurrence))).thenReturn(distanceFromDiseaseExtent);
+        when(dfdeHelper.findDistanceFromDiseaseExtent(same(largeCountryOccurrence))).thenReturn(distanceFromDiseaseExtent);
         when(mwPredictor.findMachineWeighting(same(admin1Occurrence))).thenReturn(null);
+        when(mwPredictor.findMachineWeighting(same(countryOccurrence))).thenReturn(null);
+        when(mwPredictor.findMachineWeighting(same(largeCountryOccurrence))).thenReturn(null);
 
         // Act
         service.addValidationParameters(occurrences);
 
         // Assert
-        assertParameterValues(admin1Occurrence, environmentalSuitability, distanceFromDiseaseExtent);
-        assertDefaultParameters(countryOccurrence, DiseaseOccurrenceStatus.READY);
+        assertParameterValues(admin1Occurrence, environmentalSuitability, distanceFromDiseaseExtent, DiseaseOccurrenceStatus.IN_REVIEW);
+        assertParameterValues(countryOccurrence, environmentalSuitability, distanceFromDiseaseExtent, DiseaseOccurrenceStatus.IN_REVIEW);
+        assertParameterValues(largeCountryOccurrence, environmentalSuitability, distanceFromDiseaseExtent, DiseaseOccurrenceStatus.READY);
     }
 
     @Test
     public void addValidationParametersThrowsExceptionIfOccurrencesHaveDifferentDiseaseGroups() {
         // Arrange
-        DiseaseOccurrence occurrence1 = createDiseaseOccurrence(1, true);
-        DiseaseOccurrence occurrence2 = createDiseaseOccurrence(1, true);
-        DiseaseOccurrence occurrence3 = createDiseaseOccurrence(2, true);
+        DiseaseOccurrence occurrence1 = createDiseaseOccurrence(1, true, false);
+        DiseaseOccurrence occurrence2 = createDiseaseOccurrence(1, true, false);
+        DiseaseOccurrence occurrence3 = createDiseaseOccurrence(2, true, false);
         List<DiseaseOccurrence> occurrences = Arrays.asList(occurrence1, occurrence2, occurrence3);
 
         // Act
@@ -561,17 +583,23 @@ public class DiseaseOccurrenceValidationServiceTest {
         Location location = new Location();
         location.setHasPassedQc(true);
         location.setPrecision(LocationPrecision.ADMIN1);
-        return new DiseaseOccurrence(id, diseaseGroup, location, new Alert(), null, null, null);
+        location.setIsModelEligible(true);
+        DiseaseOccurrence diseaseOccurrence = new DiseaseOccurrence(id, diseaseGroup, location, new Alert(), null, null, null);
+        setIsGoldStandardProvenance(diseaseOccurrence, false);
+        return diseaseOccurrence;
     }
 
-    private DiseaseOccurrence createCountryOccurrence(int id, DiseaseGroup diseaseGroup) {
+    private DiseaseOccurrence createCountryOccurrence(int id, DiseaseGroup diseaseGroup, boolean modelEligible) {
         Location location = new Location();
         location.setHasPassedQc(true);
         location.setPrecision(LocationPrecision.COUNTRY);
-        return new DiseaseOccurrence(id, diseaseGroup, location, new Alert(), null, null, null);
+        location.setIsModelEligible(modelEligible);
+        DiseaseOccurrence diseaseOccurrence = new DiseaseOccurrence(id, diseaseGroup, location, new Alert(), null, null, null);
+        setIsGoldStandardProvenance(diseaseOccurrence, false);
+        return diseaseOccurrence;
     }
 
-    private DiseaseOccurrence createDiseaseOccurrence(int diseaseGroupId, boolean isAutomaticModelRunsEnabled) {
+    private DiseaseOccurrence createDiseaseOccurrence(int diseaseGroupId, boolean isAutomaticModelRunsEnabled, boolean isGoldStandard) {
         DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
         DateTime automaticModelRunsStartDate = isAutomaticModelRunsEnabled ? DateTime.now() : null;
         diseaseGroup.setAutomaticModelRunsStartDate(automaticModelRunsStartDate);
@@ -579,11 +607,16 @@ public class DiseaseOccurrenceValidationServiceTest {
         diseaseGroup.setUseMachineLearning(true);
         Location location = new Location();
         location.setHasPassedQc(true);
-        return new DiseaseOccurrence(1, diseaseGroup, location, new Alert(), null, null, null);
+        location.setIsModelEligible(true);
+
+        DiseaseOccurrence diseaseOccurrence = new DiseaseOccurrence(1, diseaseGroup, location, new Alert(), null, null, null);
+        setIsGoldStandardProvenance(diseaseOccurrence, isGoldStandard);
+        diseaseOccurrence.setStatus(DiseaseOccurrenceStatus.READY);
+        return diseaseOccurrence;
     }
 
     private DiseaseOccurrence createDiseaseOccurrenceWithoutMachineLearning() {
-        DiseaseOccurrence occurrence = createDiseaseOccurrence(1, true);
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(1, true, false);
         occurrence.getLocation().setHasPassedQc(true);
         occurrence.getDiseaseGroup().setUseMachineLearning(false);
         occurrence.getDiseaseGroup().setMaxEnvironmentalSuitabilityWithoutML(0.4);

@@ -65,10 +65,6 @@ public class OccurrenceDataWriterImpl implements OccurrenceDataWriter {
             throw new IllegalArgumentException("Feature level CRS are not supported.");
         }
 
-        if (occurrence.getProperties().getLocationPrecision() == LocationPrecision.COUNTRY) {
-            throw new IllegalArgumentException("Country location occurrences are not supported.");
-        }
-
         if (occurrence.getProperties().getLocationPrecision() == LocationPrecision.PRECISE &&
                 occurrence.getProperties().getGaulCode() != null) {
             throw new IllegalArgumentException("Precise location occurrences with GAUL codes are not supported.");

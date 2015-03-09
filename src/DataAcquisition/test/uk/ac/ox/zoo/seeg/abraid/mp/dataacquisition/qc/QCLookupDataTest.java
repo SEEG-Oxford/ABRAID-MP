@@ -42,17 +42,63 @@ public class QCLookupDataTest {
     }
 
     @Test
-    public void getCountryGeometryMap() {
+    public void getAdminUnitsMap() {
         // Arrange
-        List<AdminUnitQC> expectedAdminUnits = new ArrayList<>();
+        List<AdminUnitQC> expectedAdminUnits = Arrays.asList(
+                new AdminUnitQC(1, '1', "a", 0, 0, 0),
+                new AdminUnitQC(3, '1', "b", 0, 0, 0),
+                new AdminUnitQC(10, '1', "c", 0, 0, 0)
+        );
         when(locationService.getAllAdminUnitQCs()).thenReturn(expectedAdminUnits);
 
         // Act
         QCLookupData lookupData = new QCLookupData(locationService);
-        List<AdminUnitQC> actualAdminUnits = lookupData.getAdminUnits();
+        Map<Integer, AdminUnitQC> actualAdminUnits = lookupData.getAdminUnitsMap();
 
         // Assert
-        assertThat(actualAdminUnits).isEqualTo(expectedAdminUnits);
+        assertThat(actualAdminUnits.get(1).getName()).isEqualTo("a");
+        assertThat(actualAdminUnits.get(3).getName()).isEqualTo("b");
+        assertThat(actualAdminUnits.get(10).getName()).isEqualTo("c");
+    }
+
+    @Test
+    public void getCountryGeometryMap() {
+        // Arrange
+        List<Country> expectedCountries = new ArrayList<>(getCountries());
+        when(locationService.getAllCountries()).thenReturn(expectedCountries);
+
+        // Act
+        QCLookupData lookupData = new QCLookupData(locationService);
+        Map<Integer, MultiPolygon> actualCountries = lookupData.getCountryGeometryMap();
+
+        // Assert
+        assertThat(actualCountries).hasSize(3);
+        assertThat(actualCountries.get(1)).isNotNull();
+        assertThat(actualCountries.get(2)).isNotNull();
+        assertThat(actualCountries.get(3)).isNotNull();
+        assertThat(actualCountries.get(4)).isNull();
+        assertThat(actualCountries.get(1).equals(GeometryUtils.createMultiPolygon(getTriangle()))).isTrue();
+        assertThat(actualCountries.get(3).equals(GeometryUtils.createMultiPolygon(getFivePointedPolygon()))).isTrue();
+    }
+
+    @Test
+    public void getCountryMap() {
+        // Arrange
+        List<Country> expectedCountries = new ArrayList<>(getCountries());
+        when(locationService.getAllCountries()).thenReturn(expectedCountries);
+
+        // Act
+        QCLookupData lookupData = new QCLookupData(locationService);
+        Map<Integer, Country> actualCountries = lookupData.getCountryMap();
+
+        // Assert
+        assertThat(actualCountries).hasSize(3);
+        assertThat(actualCountries.get(1)).isNotNull();
+        assertThat(actualCountries.get(2)).isNotNull();
+        assertThat(actualCountries.get(3)).isNotNull();
+        assertThat(actualCountries.get(4)).isNull();
+        assertThat(actualCountries.get(1).getGeom().equals(GeometryUtils.createMultiPolygon(getTriangle()))).isTrue();
+        assertThat(actualCountries.get(3).getGeom().equals(GeometryUtils.createMultiPolygon(getFivePointedPolygon()))).isTrue();
     }
 
     @Test
@@ -97,6 +143,13 @@ public class QCLookupDataTest {
                 new HealthMapCountry(1, "HealthMap country 1", country1),
                 new HealthMapCountry(2, "HealthMap country 2"),
                 new HealthMapCountry(3, "HealthMap country 3", country2, country3));
+    }
+
+    private List<Country> getCountries() {
+        Country country1 = new Country(1, "Triangle", GeometryUtils.createMultiPolygon(getTriangle()));
+        Country country2 = new Country(2, "Square", GeometryUtils.createMultiPolygon(getSquare()));
+        Country country3 = new Country(3, "Five-pointed", GeometryUtils.createMultiPolygon(getFivePointedPolygon()));
+        return Arrays.asList(country1, country2, country3);
     }
 
     private List<LandSeaBorder> getLandSeaBorderList() {

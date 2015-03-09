@@ -2,7 +2,10 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow;
 
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceStatus;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ProvenanceNames;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.DistanceFromDiseaseExtentHelper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.EnvironmentalSuitabilityHelper;
@@ -63,6 +66,7 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
     @Override
     public void addValidationParameters(List<DiseaseOccurrence> occurrences) {
         DiseaseGroup diseaseGroup = validateAndGetDiseaseGroup(occurrences);
+
         if (diseaseGroup != null) {
             // Get the latest mean prediction raster for the disease group, and then use it to add validation parameters
             // to all occurrences
@@ -140,35 +144,35 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
     }
 
     private void addValidationParameters(DiseaseOccurrence occurrence, GridCoverage2D raster) {
-        if (!isCountryPoint(occurrence)) {
-            occurrence.setEnvironmentalSuitability(esHelper.findEnvironmentalSuitability(occurrence, raster));
-            occurrence.setDistanceFromDiseaseExtent(dfdeHelper.findDistanceFromDiseaseExtent(occurrence));
-            findAndSetMachineWeightingAndInReview(occurrence);
-        }
-    }
-
-    private boolean isCountryPoint(DiseaseOccurrence occurrence) {
-        return occurrence.getLocation().getPrecision() == LocationPrecision.COUNTRY;
+        occurrence.setEnvironmentalSuitability(esHelper.findEnvironmentalSuitability(occurrence, raster));
+        occurrence.setDistanceFromDiseaseExtent(dfdeHelper.findDistanceFromDiseaseExtent(occurrence));
+        findAndSetMachineWeightingAndInReview(occurrence);
     }
 
     private void findAndSetMachineWeightingAndInReview(DiseaseOccurrence occurrence) {
         if ((occurrence.getEnvironmentalSuitability() == null) || (occurrence.getDistanceFromDiseaseExtent() == null)) {
-            occurrence.setStatus(DiseaseOccurrenceStatus.IN_REVIEW);
+            addOccurrenceToValidator(occurrence);
         } else {
             if (occurrence.getDiseaseGroup().useMachineLearning()) {
                 Double machineWeighting = mwPredictor.findMachineWeighting(occurrence);
                 if (machineWeighting == null) {
-                    occurrence.setStatus(DiseaseOccurrenceStatus.IN_REVIEW);
+                    addOccurrenceToValidator(occurrence);
                 } else {
                     occurrence.setMachineWeighting(machineWeighting);
                 }
             } else {
                 if (shouldSendToDataValidatorWithoutUsingMachineLearning(occurrence)) {
-                    occurrence.setStatus(DiseaseOccurrenceStatus.IN_REVIEW);
+                    addOccurrenceToValidator(occurrence);
                 } else {
                     occurrence.setMachineWeighting(1.0);
                 }
             }
+        }
+    }
+
+    private void addOccurrenceToValidator(DiseaseOccurrence occurrence) {
+        if (occurrence.getLocation().isModelEligible()) {
+            occurrence.setStatus(DiseaseOccurrenceStatus.IN_REVIEW);
         }
     }
 

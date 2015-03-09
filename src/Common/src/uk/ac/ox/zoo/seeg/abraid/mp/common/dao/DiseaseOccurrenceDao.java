@@ -138,6 +138,13 @@ public interface DiseaseOccurrenceDao {
     DiseaseOccurrenceStatistics getDiseaseOccurrenceStatistics(int diseaseGroupId);
 
     /**
+     * Gets a list of disease occurrences for batching initialisation, for the specified disease group.
+     * @param diseaseGroupId The disease group ID.
+     * @return A list of disease occurrences.
+     */
+    List<DiseaseOccurrence> getDiseaseOccurrencesForBatchingInitialisation(int diseaseGroupId);
+
+    /**
      * Gets a list of disease occurrences for validation batching, for the specified disease group.
      * @param diseaseGroupId The disease group ID.
      * @param batchStartDate The start date of the batch.
@@ -161,7 +168,7 @@ public interface DiseaseOccurrenceDao {
      * @param startDate The start date.
      * @param endDate The end date.
      * @return The number of occurrences that are eligible for being sent to the model. This is all occurrences
-     * except those that have been discarded, or points with COUNTRY precision.
+     * except those that have been discarded, or at locations marked as ineligible.
      */
     long getNumberOfOccurrencesEligibleForModelRun(int diseaseGroupId, DateTime startDate, DateTime endDate);
 }
