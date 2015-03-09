@@ -80,7 +80,15 @@ import javax.persistence.Table;
                 query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
                         "where d.diseaseGroup.id=:diseaseGroupId " +
                         "and d.status = 'AWAITING_BATCHING' " +
-                        "and d.occurrenceDate between :batchStartDate and :batchEndDate "
+                        "and d.occurrenceDate between :batchStartDate and :batchEndDate " +
+                        "and " + DiseaseOccurrence.NOT_GOLD_STANDARD
+        ),
+        @NamedQuery(
+                name = "getDiseaseOccurrencesForBatchingInitialisation",
+                query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
+                        "where d.diseaseGroup.id=:diseaseGroupId " +
+                        "and d.status = 'READY' " +
+                        "and " + DiseaseOccurrence.NOT_GOLD_STANDARD
         ),
         @NamedQuery(
                 name = "getNumberOfDiseaseOccurrencesEligibleForModelRun",
@@ -117,6 +125,12 @@ public class DiseaseOccurrence {
             "inner join fetch d.alert.feed " +
             "inner join fetch d.alert.feed.provenance " +
             "inner join fetch d.diseaseGroup ";
+
+    /**
+     * An HQL fragment used to exclude gold standard occurrences from queries.
+     */
+    public static final String NOT_GOLD_STANDARD =
+            "d.alert.feed.provenance.name <> '" + ProvenanceNames.MANUAL_GOLD_STANDARD + "'";
 
     /**
      * The final weighting assigned to a "gold standard" disease occurrence.

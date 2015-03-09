@@ -130,8 +130,7 @@ public class DiseaseOccurrenceHandlerHelper {
     }
 
     private List<DiseaseOccurrence> getDiseaseOccurrencesForBatchingInitialisation(int diseaseGroupId) {
-        return diseaseService.getDiseaseOccurrencesByDiseaseGroupIdAndStatuses(diseaseGroupId,
-                DiseaseOccurrenceStatus.READY);
+        return diseaseService.getDiseaseOccurrencesForBatchingInitialisation(diseaseGroupId);
     }
 
     private DateTime getBatchStartDateWithMinimumTime(DateTime batchStartDate) {

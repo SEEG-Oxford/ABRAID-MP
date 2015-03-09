@@ -546,7 +546,21 @@ public class DiseaseServiceTest {
     }
 
     @Test
-    public void getDiseaseOccurrenceIDsForBatching() {
+    public void getDiseaseOccurrencesForBatchingInitialisation() {
+        // Arrange
+        int diseaseGroupId = 1;
+        List<DiseaseOccurrence> expectedOccurrences = new ArrayList<>();
+        when(diseaseOccurrenceDao.getDiseaseOccurrencesForBatchingInitialisation(diseaseGroupId)).thenReturn(expectedOccurrences);
+
+        // Act
+        List<DiseaseOccurrence> actualOccurrences = diseaseService.getDiseaseOccurrencesForBatchingInitialisation(diseaseGroupId);
+
+        // Assert
+        assertThat(actualOccurrences).isSameAs(expectedOccurrences);
+    }
+
+    @Test
+    public void getDiseaseOccurrencesForBatching() {
         // Arrange
         int diseaseGroupId = 1;
         DateTime batchStartDate = DateTime.now();
@@ -560,7 +574,6 @@ public class DiseaseServiceTest {
         // Assert
         assertThat(actualOccurrences).isSameAs(expectedOccurrences);
     }
-
 
     @Test
     public void getDiseaseOccurrencesForModelRunRequest() {

@@ -456,6 +456,16 @@ public class DiseaseServiceImpl implements DiseaseService {
     }
 
     /**
+     * Gets a list of disease occurrences for batching initialisation, for the specified disease group.
+     * @param diseaseGroupId The disease group ID.
+     * @return A list of disease occurrences.
+     */
+    @Override
+    public List<DiseaseOccurrence> getDiseaseOccurrencesForBatchingInitialisation(int diseaseGroupId) {
+        return diseaseOccurrenceDao.getDiseaseOccurrencesForBatchingInitialisation(diseaseGroupId);
+    }
+
+    /**
      * Gets a list of disease occurrences for validation batching, for the specified disease group.
      * @param diseaseGroupId The disease group ID.
      * @param batchStartDate The start date of the batch.

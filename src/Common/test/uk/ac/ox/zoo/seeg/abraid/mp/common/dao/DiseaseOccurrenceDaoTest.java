@@ -653,10 +653,28 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     }
 
     @Test
-    public void getOccurrencesForBatching() {
+    public void getOccurrencesForBatchingInitialisation() {
+        // There are 45 occurrences, but 5 are gold standard
+        setOccurrencesToGoldStandard(274656, 273401, 275758, 275107, 274779);
+
+        int diseaseGroupId = 87;
+
+        // Act
+        List<DiseaseOccurrence> occurrences =
+                diseaseOccurrenceDao.getDiseaseOccurrencesForBatchingInitialisation(diseaseGroupId);
+
+        // Assert
+        assertThat(occurrences).hasSize(40);
+    }
+
+    @Test
+         public void getOccurrencesForBatching() {
         // Arrange - the first 3 of these occurrences are before or on the batch end date, the others are after.
         // There is also an occurrence (275714) with status DISCARDED_FAILED_QC which is before the batch end date.
+        // One of the 3 occurrences is gold standard.
         setOccurrencesToStatus(DiseaseOccurrenceStatus.AWAITING_BATCHING, 274656, 273401, 275758, 275107, 274779);
+        setOccurrencesToGoldStandard(274656);
+
         int diseaseGroupId = 87;
         DateTime batchStartDate = new DateTime("2014-02-24T02:45:35");
         DateTime batchEndDate = new DateTime("2014-02-25T02:45:35");
@@ -666,7 +684,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
                 diseaseOccurrenceDao.getDiseaseOccurrencesForBatching(diseaseGroupId, batchStartDate, batchEndDate);
 
         // Assert
-        assertThat(occurrences).hasSize(3);
+        assertThat(occurrences).hasSize(2);
     }
 
     @Test
@@ -761,6 +779,21 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     private void setOccurrencesToStatus(DiseaseOccurrenceStatus status, Integer... ids) {
         for (DiseaseOccurrence occurrence : diseaseOccurrenceDao.getByIds(Arrays.asList(ids))) {
             occurrence.setStatus(status);
+            diseaseOccurrenceDao.save(occurrence);
+        }
+    }
+
+    private void setOccurrencesToGoldStandard(Integer... ids) {
+        Provenance provenance = provenanceDao.getByName(ProvenanceNames.MANUAL_GOLD_STANDARD);
+        Feed feed = new Feed();
+        feed.setProvenance(provenance);
+        feed.setName("foo");
+        feedDao.save(feed);
+        Alert alert = new Alert();
+        alert.setFeed(feed);
+        alertDao.save(alert);
+        for (DiseaseOccurrence occurrence : diseaseOccurrenceDao.getByIds(Arrays.asList(ids))) {
+            occurrence.setAlert(alert);
             diseaseOccurrenceDao.save(occurrence);
         }
     }
