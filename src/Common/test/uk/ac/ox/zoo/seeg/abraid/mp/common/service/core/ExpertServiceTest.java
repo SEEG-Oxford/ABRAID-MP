@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -372,6 +373,70 @@ public class ExpertServiceTest {
         // Assert
         verify(adminUnitReviewDao).getCountByExpertId(expertId);
         assertThat(count).isEqualTo(expectedLong);
+    }
+
+    @Test
+    public void getLastReviewDateReturnsCorrectReviewDateWhenAdminUnitReviewIsNewest() {
+        // Arrange
+        DateTime expectation = DateTime.now();
+        when(adminUnitReviewDao.getLastReviewDateByExpertId(1)).thenReturn(expectation);
+        when(diseaseOccurrenceReviewDao.getLastReviewDateByExpertId(1)).thenReturn(expectation.minusDays(1));
+
+        // Act
+        DateTime actual = expertService.getLastReviewDate(1);
+
+        // Assert
+        assertThat(actual).isEqualTo(expectation);
+    }
+
+    @Test
+    public void getLastReviewDateReturnsCorrectReviewDateWhenDiseaseOccurrenceReviewIsNewest() {
+        // Arrange
+        DateTime expectation = DateTime.now();
+        when(adminUnitReviewDao.getLastReviewDateByExpertId(1)).thenReturn(expectation.minusDays(1));
+        when(diseaseOccurrenceReviewDao.getLastReviewDateByExpertId(1)).thenReturn(expectation);
+
+        // Act
+        DateTime actual = expertService.getLastReviewDate(1);
+
+        // Assert
+        assertThat(actual).isEqualTo(expectation);
+    }
+
+    @Test
+    public void getLastReviewDateReturnsCorrectReviewDateWhenNoAdminUnitReviews() {
+        // Arrange
+        DateTime expectation = DateTime.now();
+        when(diseaseOccurrenceReviewDao.getLastReviewDateByExpertId(1)).thenReturn(expectation);
+
+        // Act
+        DateTime actual = expertService.getLastReviewDate(1);
+
+        // Assert
+        assertThat(actual).isEqualTo(expectation);
+    }
+
+    @Test
+    public void getLastReviewDateReturnsCorrectReviewDateWhenNoDiseaseOccurrenceReviews() {
+        // Arrange
+        DateTime expectation = DateTime.now();
+        when(adminUnitReviewDao.getLastReviewDateByExpertId(1)).thenReturn(expectation);
+
+        // Act
+        DateTime actual = expertService.getLastReviewDate(1);
+
+        // Assert
+        assertThat(actual).isEqualTo(expectation);
+    }
+
+    @Test
+    public void getLastReviewDateReturnsCorrectReviewDateWhenNoReviews() {
+        // Arrange
+        // Act
+        DateTime actual = expertService.getLastReviewDate(1);
+
+        // Assert
+        assertThat(actual).isNull();
     }
 
     @Test

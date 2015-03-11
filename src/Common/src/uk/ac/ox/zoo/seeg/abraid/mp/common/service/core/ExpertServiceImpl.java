@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 
+import org.joda.time.DateTime;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.*;
@@ -231,6 +232,26 @@ public class ExpertServiceImpl implements ExpertService {
     @Override
     public long getCountOfPubliclyVisibleExperts() {
         return expertDao.getCountOfPubliclyVisible();
+    }
+
+    /**
+     * Gets the date of the last review submitted by a specific expert.
+     * @param expertId The expert's Id.
+     * @return The date of the last review.
+     */
+    @Override
+    public DateTime getLastReviewDate(Integer expertId) {
+        final DateTime lastAdminUnitReviewDate = adminUnitReviewDao.getLastReviewDateByExpertId(expertId);
+        final DateTime lastOccurrenceReviewDate = diseaseOccurrenceReviewDao.getLastReviewDateByExpertId(expertId);
+        if (lastAdminUnitReviewDate == null) {
+            return lastOccurrenceReviewDate;
+        } else if (lastOccurrenceReviewDate == null) {
+            return lastAdminUnitReviewDate;
+        } else if (lastAdminUnitReviewDate.isAfter(lastOccurrenceReviewDate)) {
+            return lastAdminUnitReviewDate;
+        } else {
+            return lastOccurrenceReviewDate;
+        }
     }
 
     /**
