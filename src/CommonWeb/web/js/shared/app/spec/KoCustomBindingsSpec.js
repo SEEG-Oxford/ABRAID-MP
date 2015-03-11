@@ -217,6 +217,23 @@ define([
                     done();
                 });
             });
+
+            it("allows a fallback string to be specified", function (done) {
+                // Arrange
+                injectorWithJQuerySpy.require(["ko"], function (ko) {
+                    // Act
+                    var expectedDate = null;
+                    var expectedFormat = "expectedFormat";
+                    var expectedFallback = "fallback";
+                    var accessor = { date: expectedDate, format: expectedFormat, fallback: expectedFallback };
+                    ko.bindingHandlers.date.update(expectedElement, accessor);
+                    // Assert
+                    expect(momentSpy).not.toHaveBeenCalled();
+                    expect(formatSpy).not.toHaveBeenCalled()
+                    expect(textSpy).toHaveBeenCalledWith(expectedFallback);
+                    done();
+                });
+            });
         });
 
         describe("the 'highlight' binding, which", function () {
