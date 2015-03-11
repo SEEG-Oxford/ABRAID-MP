@@ -42,6 +42,34 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractCommonSpringIntegrat
     private LocationDao locationDao;
 
     @Test
+    public void getLastReviewDateByExpertIdReturnsCorrectDate() {
+        // Arrange - no reviews in the database
+        DiseaseOccurrenceReview firstReview = new DiseaseOccurrenceReview(expertDao.getById(1), diseaseOccurrenceDao.getById(272407), DiseaseOccurrenceReviewResponse.NO);
+        diseaseOccurrenceReviewDao.save(firstReview);
+        flushAndClear();
+        DiseaseOccurrenceReview secondReview = new DiseaseOccurrenceReview(expertDao.getById(1), diseaseOccurrenceDao.getById(272829), DiseaseOccurrenceReviewResponse.NO);
+        diseaseOccurrenceReviewDao.save(secondReview);
+        flushAndClear();
+
+        // Act
+        DateTime actual = diseaseOccurrenceReviewDao.getLastReviewDateByExpertId(1);
+
+        // Assert
+        assertThat(actual).isEqualTo(secondReview.getCreatedDate());
+    }
+
+    @Test
+    public void getLastReviewDateByExpertIdReturnsNullWhenNoReviews() {
+        // Arrange - no reviews in the database
+
+        // Act
+        DateTime actual = diseaseOccurrenceReviewDao.getLastReviewDateByExpertId(1);
+
+        // Assert
+        assertThat(actual).isNull();
+    }
+
+    @Test
     public void getCountByExpertId() {
         // Arrange - no reviews in the database
 

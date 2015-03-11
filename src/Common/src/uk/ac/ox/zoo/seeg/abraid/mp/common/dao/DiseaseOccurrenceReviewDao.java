@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
+import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReview;
 
 import java.util.List;
@@ -39,6 +40,13 @@ public interface DiseaseOccurrenceReviewDao {
      * @return The count of the expert's reviews.
      */
     Long getCountByExpertId(Integer expertId);
+
+    /**
+     * Gets the date of the last disease occurrence review submitted by a specific expert.
+     * @param expertId The expert's Id.
+     * @return The date of the last admin unit review.
+     */
+    DateTime getLastReviewDateByExpertId(Integer expertId);
 
     /**
      * Saves the specified review.
