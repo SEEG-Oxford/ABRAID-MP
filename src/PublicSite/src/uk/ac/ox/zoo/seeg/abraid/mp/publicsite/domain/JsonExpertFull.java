@@ -23,15 +23,16 @@ public class JsonExpertFull extends JsonExpertDetails {
     private Boolean isAdministrator;
     private Boolean isSEEGMember;
     private DateTime lastReviewDate;
-    private long occurrenceReviews;
-    private long extentReviews;
+    private long diseaseOccurrenceReviewCount;
+    private long adminUnitReviewCount;
     private List<String> diseaseInterestNames;
 
     public JsonExpertFull() {
         super();
     }
 
-    public JsonExpertFull(Expert expert, long occurrenceReviews, long extentReviews, DateTime lastReviewDate) {
+    public JsonExpertFull(
+            Expert expert, long diseaseOccurrenceReviewCount, long adminUnitReviewCount, DateTime lastReviewDate) {
         super(expert);
         setId(expert.getId());
         setEmail(expert.getEmail());
@@ -42,8 +43,8 @@ public class JsonExpertFull extends JsonExpertDetails {
         setAdministrator(expert.isAdministrator());
         setSEEGMember(expert.isSeegMember());
         setLastReviewDate(lastReviewDate);
-        setOccurrenceReviews(occurrenceReviews);
-        setExtentReviews(extentReviews);
+        setDiseaseOccurrenceReviewCount(diseaseOccurrenceReviewCount);
+        setAdminUnitReviewCount(adminUnitReviewCount);
         setDiseaseInterestNames(extract(expert.getValidatorDiseaseGroups(), on(ValidatorDiseaseGroup.class).getName()));
 
         setDiseaseInterests(null); // Don't serialize
@@ -121,20 +122,20 @@ public class JsonExpertFull extends JsonExpertDetails {
         this.lastReviewDate = lastReviewDate;
     }
 
-    public long getOccurrenceReviews() {
-        return occurrenceReviews;
+    public long getDiseaseOccurrenceReviewCount() {
+        return diseaseOccurrenceReviewCount;
     }
 
-    public void setOccurrenceReviews(long occurrenceReviews) {
-        this.occurrenceReviews = occurrenceReviews;
+    public void setDiseaseOccurrenceReviewCount(long diseaseOccurrenceReviewCount) {
+        this.diseaseOccurrenceReviewCount = diseaseOccurrenceReviewCount;
     }
 
-    public long getExtentReviews() {
-        return extentReviews;
+    public long getAdminUnitReviewCount() {
+        return adminUnitReviewCount;
     }
 
-    public void setExtentReviews(long extentReviews) {
-        this.extentReviews = extentReviews;
+    public void setAdminUnitReviewCount(long adminUnitReviewCount) {
+        this.adminUnitReviewCount = adminUnitReviewCount;
     }
 
     public List<String> getDiseaseInterestNames() {

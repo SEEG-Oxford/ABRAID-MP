@@ -229,7 +229,7 @@ define([
                     ko.bindingHandlers.date.update(expectedElement, accessor);
                     // Assert
                     expect(momentSpy).not.toHaveBeenCalled();
-                    expect(formatSpy).not.toHaveBeenCalled()
+                    expect(formatSpy).not.toHaveBeenCalled();
                     expect(textSpy).toHaveBeenCalledWith(expectedFallback);
                     done();
                 });

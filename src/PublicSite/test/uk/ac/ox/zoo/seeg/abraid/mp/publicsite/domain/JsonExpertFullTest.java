@@ -48,8 +48,8 @@ public class JsonExpertFullTest {
         assertThat(result.isSEEGMember()).isEqualTo(mockExpert.isSeegMember());
         assertThat(result.getCreatedDate()).isEqualTo(mockExpert.getCreatedDate());
         assertThat(result.getUpdatedDate()).isEqualTo(mockExpert.getUpdatedDate());
-        assertThat(result.getOccurrenceReviews()).isEqualTo(expectedOccurrenceReviews);
-        assertThat(result.getExtentReviews()).isEqualTo(expectedExtentReviews);
+        assertThat(result.getDiseaseOccurrenceReviewCount()).isEqualTo(expectedOccurrenceReviews);
+        assertThat(result.getAdminUnitReviewCount()).isEqualTo(expectedExtentReviews);
         assertThat(result.getLastReviewDate()).isEqualTo(expectedLastReviewDate);
         assertThat(result.getDiseaseInterestNames()).isEqualTo(Arrays.asList("foo", "bar"));
     }

@@ -103,11 +103,11 @@ define([
             });
 
             describe("it contains entries where", function () {
-                it("the id, name, email, jobTitle, institution, visibilityRequested, extentReviews, occurrenceReviews and diseaseInterestNames fields are copied from the experts", function () {  // jshint ignore:line
+                it("the id, name, email, jobTitle, institution, visibilityRequested, adminUnitReviewCount, diseaseOccurrenceReviewCount and diseaseInterestNames fields are copied from the experts", function () {  // jshint ignore:line
                     expect(vm.entries()[0]).toEqual(
                         jasmine.objectContaining(
                             _(experts[0]).pick("id", "name", "email", "jobTitle", "institution", "visibilityRequested",
-                                               "extentReviews", "occurrenceReviews", "diseaseInterestNames")
+                                "adminUnitReviewCount", "diseaseOccurrenceReviewCount", "diseaseInterestNames")
                         )
                     );
                 });
@@ -142,11 +142,12 @@ define([
                     expect(row.lastReviewDate).toEqual(new Date(expected.lastReviewDate));
                 });
 
-                it("the totalReviews fields is determined from the expert's fields", function () {
+                it("the totalReviewCount fields is determined from the expert's fields", function () {
                     var row = vm.entries()[0];
                     var expected = experts[0];
 
-                    expect(row.totalReviews).toEqual(expected.extentReviews + expected.occurrenceReviews);
+                    expect(row.totalReviewCount).toEqual(
+                            expected.adminUnitReviewCount + expected.diseaseOccurrenceReviewCount);
                 });
 
                 it("the visibilitySort field is a calculated observable based on the view models other fields", function () { // jshint ignore:line

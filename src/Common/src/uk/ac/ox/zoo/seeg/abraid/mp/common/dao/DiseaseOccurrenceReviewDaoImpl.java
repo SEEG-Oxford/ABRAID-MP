@@ -60,7 +60,7 @@ public class DiseaseOccurrenceReviewDaoImpl extends AbstractDao<DiseaseOccurrenc
     /**
      * Gets the date of the last disease occurrence review submitted by a specific expert.
      * @param expertId The expert's Id.
-     * @return The date of the last admin unit review.
+     * @return The date of the last disease occurrence review.
      */
     @Override
     public DateTime getLastReviewDateByExpertId(Integer expertId) {

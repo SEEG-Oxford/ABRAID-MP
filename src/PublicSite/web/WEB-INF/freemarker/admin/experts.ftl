@@ -54,15 +54,15 @@
         <td data-bind="date: { date: createdDate, format: 'YYYY-MM-DD&nbsp;HH:mm' }"></td>
         <td data-bind="date: { date: updatedDate, format: 'YYYY-MM-DD&nbsp;HH:mm' }"></td>
         <td data-bind="date: { date: lastReviewDate, format: 'YYYY-MM-DD&nbsp;HH:mm', fallback: 'Never' }"></td>
-        <td data-bind="text: totalReviews"></td>
+        <td data-bind="text: totalReviewCount"></td>
     </tr>
 </@t.tableTemplates>
 <script type="text/html" id="details-template">
     <p><strong>Email:</strong>&nbsp;<span data-bind="text: email"></span></p>
     <p><strong>Job&nbsp;title:</strong>&nbsp;<span data-bind="text: jobTitle"></span></p>
     <p><strong>Institution:</strong>&nbsp;<span data-bind="text: institution"></span></p>
-    <p><strong>Occurrence reviews:</strong>&nbsp;<span data-bind="text: occurrenceReviews"></span></p>
-    <p><strong>Extent reviews:</strong>&nbsp;<span data-bind="text: extentReviews"></span></p>
+    <p><strong>Occurrence reviews:</strong>&nbsp;<span data-bind="text: diseaseOccurrenceReviewCount"></span></p>
+    <p><strong>Admin unit reviews:</strong>&nbsp;<span data-bind="text: adminUnitReviewCount"></span></p>
     <strong>Interests:</strong>
     <ul data-bind="foreach: diseaseInterestNames">
         <li><span data-bind="text: $data"></span></li>
@@ -92,7 +92,7 @@
                     { name: 'createdDate', display: 'Created' },
                     { name: 'updatedDate', display: 'Updated' },
                     { name: 'lastReviewDate', display: 'Last review' },
-                    { name: 'totalReviews', display: 'Reviews' },
+                    { name: 'totalReviewCount', display: 'Reviews' },
                 ]
                 </@t.tableBody>
                 <p class="form-group">

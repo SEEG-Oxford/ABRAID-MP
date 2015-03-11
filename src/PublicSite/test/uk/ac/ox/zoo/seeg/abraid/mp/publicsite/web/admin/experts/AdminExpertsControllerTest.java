@@ -83,8 +83,8 @@ public class AdminExpertsControllerTest {
         assertThat(objects[0]).contains("\"administrator\":false");
         assertThat(objects[0]).contains("\"seegmember\":false");
         assertThat(objects[0]).contains("\"diseaseInterestNames\":[]");
-        assertThat(objects[0]).contains("\"occurrenceReviews\":666");
-        assertThat(objects[0]).contains("\"extentReviews\":987");
+        assertThat(objects[0]).contains("\"diseaseOccurrenceReviewCount\":666");
+        assertThat(objects[0]).contains("\"adminUnitReviewCount\":987");
         assertThat(objects[0]).contains("\"lastReviewDate\":\"2015-03-11T16:44:25.426Z\"");
 
         assertThat(objects[1]).contains("\"id\":543");
@@ -94,8 +94,8 @@ public class AdminExpertsControllerTest {
         assertThat(objects[1]).contains("\"administrator\":false");
         assertThat(objects[1]).contains("\"seegmember\":false");
         assertThat(objects[1]).contains("\"diseaseInterestNames\":[]");
-        assertThat(objects[1]).contains("\"occurrenceReviews\":111");
-        assertThat(objects[1]).contains("\"extentReviews\":222");
+        assertThat(objects[1]).contains("\"diseaseOccurrenceReviewCount\":111");
+        assertThat(objects[1]).contains("\"adminUnitReviewCount\":222");
         assertThat(objects[1]).contains("\"lastReviewDate\":\"2015-03-11T17:44:25.426Z\"");
     }
 

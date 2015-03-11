@@ -44,7 +44,7 @@ public interface DiseaseOccurrenceReviewDao {
     /**
      * Gets the date of the last disease occurrence review submitted by a specific expert.
      * @param expertId The expert's Id.
-     * @return The date of the last admin unit review.
+     * @return The date of the last disease occurrence review.
      */
     DateTime getLastReviewDateByExpertId(Integer expertId);
 

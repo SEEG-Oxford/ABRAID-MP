@@ -111,7 +111,7 @@ public class AdminUnitReviewDaoTest extends AbstractCommonSpringIntegrationTests
 
     @Test
     public void getLastReviewDateByExpertIdReturnsCorrectDate() {
-        // Arrange - no reviews in the database
+        // Arrange
         AdminUnitReview firstReview = new AdminUnitReview(expertDao.getById(1), 24, null, diseaseGroupDao.getById(87), diseaseExtentClassDao.getByName(DiseaseExtentClass.POSSIBLE_ABSENCE));
         adminUnitReviewDao.save(firstReview);
         flushAndClear();

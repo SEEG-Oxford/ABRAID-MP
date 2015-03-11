@@ -43,7 +43,7 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractCommonSpringIntegrat
 
     @Test
     public void getLastReviewDateByExpertIdReturnsCorrectDate() {
-        // Arrange - no reviews in the database
+        // Arrange
         DiseaseOccurrenceReview firstReview = new DiseaseOccurrenceReview(expertDao.getById(1), diseaseOccurrenceDao.getById(272407), DiseaseOccurrenceReviewResponse.NO);
         diseaseOccurrenceReviewDao.save(firstReview);
         flushAndClear();
