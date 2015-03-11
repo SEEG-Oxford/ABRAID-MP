@@ -25,7 +25,11 @@ define([
                 "createdDate": "2014-07-30T12:44:35.184Z",
                 "updatedDate": "2014-07-30T12:44:35.184Z",
                 "seegmember": true,
-                "administrator": true
+                "administrator": true,
+                "diseaseInterestNames": ["abc", "def", "ghi"],
+                "occurrenceReviews": 666,
+                "extentReviews": 987,
+                "lastReviewDate": "2015-03-11T16:44:25.426Z"
             },
             {
                 "name": "Ed Wiles",
@@ -39,7 +43,11 @@ define([
                 "createdDate": "2014-07-30T12:44:35.184Z",
                 "updatedDate": "2014-07-30T12:44:35.184Z",
                 "seegmember": false,
-                "administrator": false
+                "administrator": false,
+                "diseaseInterestNames": ["abc", "ghi", "jkl", "mno"],
+                "occurrenceReviews": 111,
+                "extentReviews": 222,
+                "lastReviewDate": "2015-03-11T17:44:25.426Z"
             }
         ];
 
@@ -95,10 +103,11 @@ define([
             });
 
             describe("it contains entries where", function () {
-                it("the id, name, email, jobTitle, institution and visibilityRequested fields are copied from the experts", function () {  // jshint ignore:line
+                it("the id, name, email, jobTitle, institution, visibilityRequested, extentReviews, occurrenceReviews and diseaseInterestNames fields are copied from the experts", function () {  // jshint ignore:line
                     expect(vm.entries()[0]).toEqual(
                         jasmine.objectContaining(
-                            _(experts[0]).pick("id", "name", "email", "jobTitle", "institution", "visibilityRequested")
+                            _(experts[0]).pick("id", "name", "email", "jobTitle", "institution", "visibilityRequested",
+                                               "extentReviews", "occurrenceReviews", "diseaseInterestNames")
                         )
                     );
                 });
@@ -124,12 +133,36 @@ define([
                     expect(row.weighting()).toBe(expected.weighting.toString());
                 });
 
-                it("the createdDate and updatedDate fields are parsed from the experts", function () {
+                it("the createdDate, updatedDate and lastReviewDate fields are parsed from the experts", function () {
                     var row = vm.entries()[0];
                     var expected = experts[0];
 
                     expect(row.createdDate).toEqual(new Date(expected.createdDate));
                     expect(row.updatedDate).toEqual(new Date(expected.updatedDate));
+                    expect(row.lastReviewDate).toEqual(new Date(expected.lastReviewDate));
+                });
+
+                it("the totalReviews fields is determined from the expert's fields", function () {
+                    var row = vm.entries()[0];
+                    var expected = experts[0];
+
+                    expect(row.totalReviews).toEqual(expected.extentReviews + expected.occurrenceReviews);
+                });
+
+                it("the visibilitySort field is a calculated observable based on the view models other fields", function () { // jshint ignore:line
+                    var row = vm.entries()[0];
+
+                    expect(row.visibilitySort()).toEqual(1);
+                    row.visibilityApproved(false);
+                    expect(row.visibilitySort()).toEqual(2);
+                    row.visibilityRequested = false;
+                    row.visibilityApproved.valueHasMutated();
+                    expect(row.visibilitySort()).toEqual(3);
+
+                    //Reset
+                    row.visibilityApproved(true);
+                    row.visibilityRequested = true;
+                    row.changed = false;
                 });
 
                 it("the weighting field has suitable validation", function () {
