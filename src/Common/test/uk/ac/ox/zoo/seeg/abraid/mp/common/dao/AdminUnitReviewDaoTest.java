@@ -1,12 +1,10 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitReview;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseExtentClass;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.List;
 
@@ -109,6 +107,34 @@ public class AdminUnitReviewDaoTest extends AbstractCommonSpringIntegrationTests
 
         // Assert
         assertReviewSaved(review);
+    }
+
+    @Test
+    public void getLastReviewDateByExpertIdReturnsCorrectDate() {
+        // Arrange - no reviews in the database
+        AdminUnitReview firstReview = new AdminUnitReview(expertDao.getById(1), 24, null, diseaseGroupDao.getById(87), diseaseExtentClassDao.getByName(DiseaseExtentClass.POSSIBLE_ABSENCE));
+        adminUnitReviewDao.save(firstReview);
+        flushAndClear();
+        AdminUnitReview secondReview = new AdminUnitReview(expertDao.getById(1), 24, null, diseaseGroupDao.getById(87), diseaseExtentClassDao.getByName(DiseaseExtentClass.POSSIBLE_ABSENCE));
+        adminUnitReviewDao.save(secondReview);
+        flushAndClear();
+
+        // Act
+        DateTime actual = adminUnitReviewDao.getLastReviewDateByExpertId(1);
+
+        // Assert
+        assertThat(actual).isEqualTo(secondReview.getCreatedDate());
+    }
+
+    @Test
+    public void getLastReviewDateByExpertIdReturnsNullWhenNoReviews() {
+        // Arrange - no reviews in the database
+
+        // Act
+        DateTime actual = adminUnitReviewDao.getLastReviewDateByExpertId(1);
+
+        // Assert
+        assertThat(actual).isNull();
     }
 
     @Test
