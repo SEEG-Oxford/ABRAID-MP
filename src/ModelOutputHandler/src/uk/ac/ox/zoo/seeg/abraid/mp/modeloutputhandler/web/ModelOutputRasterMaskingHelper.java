@@ -60,14 +60,19 @@ public class ModelOutputRasterMaskingHelper {
                 if (rasterValue != RasterUtils.NO_DATA_VALUE) {
                     int waterBodiesValue = waterBodiesMaskRaster.getSample(i, j, 0);
                     if (waterBodiesValue != RasterUtils.NO_DATA_VALUE) {
+                        // Make sure water bodies aren't predicted
                         raster.setSample(i, j, 0, RasterUtils.NO_DATA_VALUE);
                     } else {
                         int extentValue = extentRaster.getSample(i, j, 0);
                         if (extentValue == extentAbsenceValue) {
+                            // Make sure absence regions aren't predicted
                             raster.setSample(i, j, 0, extentMaskValue);
+                        } else if (extentValue == RasterUtils.NO_DATA_VALUE) {
+                            // Make sure that areas that we consider to be sea are treated as sea.
+                            // This accounts for the mis-match in extent/admin rasters grids vs the covariates.
+                            raster.setSample(i, j, 0, RasterUtils.NO_DATA_VALUE);
                         }
                     }
-
                 }
             }
         }
