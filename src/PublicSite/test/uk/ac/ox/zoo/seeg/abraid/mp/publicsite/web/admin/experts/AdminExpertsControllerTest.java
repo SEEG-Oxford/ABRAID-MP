@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.experts;
 
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.http.HttpStatus;
@@ -44,8 +45,18 @@ public class AdminExpertsControllerTest {
     public void showPageAddsAllExpertsToTheFreemarkerModelAsJson() throws Exception {
         // Arrange
         ExpertService expertService = mock(ExpertService.class);
-        List<Expert> experts = Arrays.asList(mock(Expert.class), mock(Expert.class));
+        Expert expert1 = mock(Expert.class);
+        when(expert1.getId()).thenReturn(123);
+        Expert expert2 = mock(Expert.class);
+        when(expert2.getId()).thenReturn(543);
+        List<Expert> experts = Arrays.asList(expert1, expert2);
         when(expertService.getAllExperts()).thenReturn(experts);
+        when(expertService.getAdminUnitReviewCount(123)).thenReturn(987L);
+        when(expertService.getDiseaseOccurrenceReviewCount(123)).thenReturn(666L);
+        when(expertService.getLastReviewDate(123)).thenReturn(new DateTime("2015-03-11T16:44:25.426Z"));
+        when(expertService.getAdminUnitReviewCount(543)).thenReturn(222L);
+        when(expertService.getDiseaseOccurrenceReviewCount(543)).thenReturn(111L);
+        when(expertService.getLastReviewDate(543)).thenReturn(new DateTime("2015-03-11T17:44:25.426Z"));
         AbraidJsonObjectMapper objectMapper = new AbraidJsonObjectMapper();
 
         AdminExpertsController target = new AdminExpertsController(expertService, objectMapper, null, null);
@@ -65,19 +76,27 @@ public class AdminExpertsControllerTest {
 
         assertThat(objects).hasSize(2);
 
-        assertThat(objects[0]).contains("\"id\":0");
+        assertThat(objects[0]).contains("\"id\":123");
         assertThat(objects[0]).contains("\"weighting\":0.0");
         assertThat(objects[0]).contains("\"visibilityRequested\":false");
         assertThat(objects[0]).contains("\"visibilityApproved\":false");
         assertThat(objects[0]).contains("\"administrator\":false");
         assertThat(objects[0]).contains("\"seegmember\":false");
+        assertThat(objects[0]).contains("\"diseaseInterestNames\":[]");
+        assertThat(objects[0]).contains("\"occurrenceReviews\":666");
+        assertThat(objects[0]).contains("\"extentReviews\":987");
+        assertThat(objects[0]).contains("\"lastReviewDate\":\"2015-03-11T16:44:25.426Z\"");
 
-        assertThat(objects[1]).contains("\"id\":0");
+        assertThat(objects[1]).contains("\"id\":543");
         assertThat(objects[1]).contains("\"weighting\":0.0");
         assertThat(objects[1]).contains("\"visibilityRequested\":false");
         assertThat(objects[1]).contains("\"visibilityApproved\":false");
         assertThat(objects[1]).contains("\"administrator\":false");
         assertThat(objects[1]).contains("\"seegmember\":false");
+        assertThat(objects[1]).contains("\"diseaseInterestNames\":[]");
+        assertThat(objects[1]).contains("\"occurrenceReviews\":111");
+        assertThat(objects[1]).contains("\"extentReviews\":222");
+        assertThat(objects[1]).contains("\"lastReviewDate\":\"2015-03-11T17:44:25.426Z\"");
     }
 
     @Test

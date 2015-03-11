@@ -3,6 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.experts;
 import ch.lambdaj.function.convert.Converter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -67,7 +68,10 @@ public class AdminExpertsController extends AbstractController {
         List<JsonExpertFull> allExpertsDto = convert(allExperts, new Converter<Expert, JsonExpertFull>() {
             @Override
             public JsonExpertFull convert(Expert expert) {
-                return new JsonExpertFull(expert);
+                final long adminUnitReviewCount = expertService.getAdminUnitReviewCount(expert.getId());
+                final long occurrenceReviewCount = expertService.getDiseaseOccurrenceReviewCount(expert.getId());
+                final DateTime lastReviewDate = expertService.getLastReviewDate(expert.getId());
+                return new JsonExpertFull(expert, occurrenceReviewCount, adminUnitReviewCount, lastReviewDate);
             }
         });
 

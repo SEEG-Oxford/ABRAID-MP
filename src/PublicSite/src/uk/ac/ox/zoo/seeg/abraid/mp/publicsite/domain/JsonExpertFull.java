@@ -2,6 +2,12 @@ package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain;
 
 import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
+
+import java.util.List;
+
+import static ch.lambdaj.Lambda.on;
+import static ch.lambdaj.Lambda.extract;
 
 /**
  * JSON DTO for Experts (used in administering experts).
@@ -16,12 +22,16 @@ public class JsonExpertFull extends JsonExpertDetails {
     private DateTime updatedDate;
     private Boolean isAdministrator;
     private Boolean isSEEGMember;
+    private DateTime lastReviewDate;
+    private long occurrenceReviews;
+    private long extentReviews;
+    private List<String> diseaseInterestNames;
 
     public JsonExpertFull() {
         super();
     }
 
-    public JsonExpertFull(Expert expert) {
+    public JsonExpertFull(Expert expert, long occurrenceReviews, long extentReviews, DateTime lastReviewDate) {
         super(expert);
         setId(expert.getId());
         setEmail(expert.getEmail());
@@ -31,6 +41,10 @@ public class JsonExpertFull extends JsonExpertDetails {
         setUpdatedDate(expert.getUpdatedDate());
         setAdministrator(expert.isAdministrator());
         setSEEGMember(expert.isSeegMember());
+        setLastReviewDate(lastReviewDate);
+        setOccurrenceReviews(occurrenceReviews);
+        setExtentReviews(extentReviews);
+        setDiseaseInterestNames(extract(expert.getValidatorDiseaseGroups(), on(ValidatorDiseaseGroup.class).getName()));
 
         setDiseaseInterests(null); // Don't serialize
     }
@@ -97,5 +111,37 @@ public class JsonExpertFull extends JsonExpertDetails {
 
     public void setUpdatedDate(DateTime updatedDate) {
         this.updatedDate = updatedDate;
+    }
+
+    public DateTime getLastReviewDate() {
+        return lastReviewDate;
+    }
+
+    public void setLastReviewDate(DateTime lastReviewDate) {
+        this.lastReviewDate = lastReviewDate;
+    }
+
+    public long getOccurrenceReviews() {
+        return occurrenceReviews;
+    }
+
+    public void setOccurrenceReviews(long occurrenceReviews) {
+        this.occurrenceReviews = occurrenceReviews;
+    }
+
+    public long getExtentReviews() {
+        return extentReviews;
+    }
+
+    public void setExtentReviews(long extentReviews) {
+        this.extentReviews = extentReviews;
+    }
+
+    public List<String> getDiseaseInterestNames() {
+        return diseaseInterestNames;
+    }
+
+    public void setDiseaseInterestNames(List<String> diseaseInterestNames) {
+        this.diseaseInterestNames = diseaseInterestNames;
     }
 }

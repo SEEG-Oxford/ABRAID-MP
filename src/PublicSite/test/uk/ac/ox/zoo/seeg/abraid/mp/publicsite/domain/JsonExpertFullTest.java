@@ -28,9 +28,16 @@ public class JsonExpertFullTest {
         when(mockExpert.isSeegMember()).thenReturn(true);
         when(mockExpert.getCreatedDate()).thenReturn(new DateTime(0));
         when(mockExpert.getUpdatedDate()).thenReturn(new DateTime(1));
+        when(mockExpert.getValidatorDiseaseGroups()).thenReturn(Arrays.asList(
+                new ValidatorDiseaseGroup("foo"),
+                new ValidatorDiseaseGroup("bar")
+        ));
+        int expectedOccurrenceReviews = 0;
+        int expectedExtentReviews = 0;
+        DateTime expectedLastReviewDate = DateTime.now();
 
         // Act
-        JsonExpertFull result = new JsonExpertFull(mockExpert);
+        JsonExpertFull result = new JsonExpertFull(mockExpert, expectedOccurrenceReviews, expectedExtentReviews, expectedLastReviewDate);
 
         // Assert
         assertThat(result.getId()).isEqualTo(mockExpert.getId());
@@ -41,6 +48,10 @@ public class JsonExpertFullTest {
         assertThat(result.isSEEGMember()).isEqualTo(mockExpert.isSeegMember());
         assertThat(result.getCreatedDate()).isEqualTo(mockExpert.getCreatedDate());
         assertThat(result.getUpdatedDate()).isEqualTo(mockExpert.getUpdatedDate());
+        assertThat(result.getOccurrenceReviews()).isEqualTo(expectedOccurrenceReviews);
+        assertThat(result.getExtentReviews()).isEqualTo(expectedExtentReviews);
+        assertThat(result.getLastReviewDate()).isEqualTo(expectedLastReviewDate);
+        assertThat(result.getDiseaseInterestNames()).isEqualTo(Arrays.asList("foo", "bar"));
     }
 
     @Test
@@ -57,7 +68,7 @@ public class JsonExpertFullTest {
         ));
 
         // Act
-        JsonExpertFull result = new JsonExpertFull(mockExpert);
+        JsonExpertFull result = new JsonExpertFull(mockExpert, 0, 0, null);
 
         // Assert
         assertThat(result.getName()).isEqualTo(mockExpert.getName());
