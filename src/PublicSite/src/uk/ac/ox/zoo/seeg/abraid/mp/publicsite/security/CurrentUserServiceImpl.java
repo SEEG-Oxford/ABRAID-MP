@@ -9,12 +9,12 @@ import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
  */
 public class CurrentUserServiceImpl implements CurrentUserService {
     /**
-     * Obtains the currently logged in user.
-     * @return The currently logged in user or null if user is not logged in
+     * Obtains the id of the currently logged in user.
+     * @return The the id of the currently logged in user or null if user is not logged in
      */
     @Override
-    public PublicSiteUser getCurrentUser() {
+    public Integer getCurrentUserId() {
         Object user = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return (user instanceof PublicSiteUser) ? (PublicSiteUser) user : null;
+        return (user instanceof PublicSiteUser) ? ((PublicSiteUser) user).getId() : null;
     }
 }
