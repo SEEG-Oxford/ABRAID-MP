@@ -13,34 +13,34 @@ define([
 
         describe("has an 'old password' field, which ", function () {
             it("is an observable", function () {
-                var vm = new PasswordChangeFormViewModel("");
+                var vm = new PasswordChangeFormViewModel(baseUrl);
                 expect(vm.oldPassword).toBeObservable();
             });
 
-            it("is starts empty", function () {
-                var vm = new PasswordChangeFormViewModel("");
+            it("starts empty", function () {
+                var vm = new PasswordChangeFormViewModel(baseUrl);
                 expect(vm.oldPassword()).toBe("");
             });
 
             it("is validated appropriately", function () {
-                var vm = new PasswordChangeFormViewModel("");
+                var vm = new PasswordChangeFormViewModel(baseUrl);
                 expect(vm.oldPassword).toHaveValidationRule({ name: "required", params: true });
             });
         });
 
         describe("has an 'new password' field, which ", function () {
             it("is an observable", function () {
-                var vm = new PasswordChangeFormViewModel("");
+                var vm = new PasswordChangeFormViewModel(baseUrl);
                 expect(vm.newPassword).toBeObservable();
             });
 
-            it("is starts empty", function () {
-                var vm = new PasswordChangeFormViewModel("");
+            it("starts empty", function () {
+                var vm = new PasswordChangeFormViewModel(baseUrl);
                 expect(vm.newPassword()).toBe("");
             });
 
             it("is validated appropriately", function () {
-                var vm = new PasswordChangeFormViewModel("");
+                var vm = new PasswordChangeFormViewModel(baseUrl);
                 expect(vm.newPassword).toHaveValidationRule({ name: "required", params: true });
                 expect(vm.newPassword).toHaveValidationRule({ name: "passwordComplexity", params: true });
             });
@@ -48,24 +48,24 @@ define([
 
         describe("has an 'confirm password' field, which ", function () {
             it("is an observable", function () {
-                var vm = new PasswordChangeFormViewModel("");
+                var vm = new PasswordChangeFormViewModel(baseUrl);
                 expect(vm.confirmPassword).toBeObservable();
             });
 
-            it("is starts empty", function () {
-                var vm = new PasswordChangeFormViewModel("");
+            it("starts empty", function () {
+                var vm = new PasswordChangeFormViewModel(baseUrl);
                 expect(vm.confirmPassword()).toBe("");
             });
 
             it("is validated appropriately", function () {
-                var vm = new PasswordChangeFormViewModel("");
+                var vm = new PasswordChangeFormViewModel(baseUrl);
                 expect(vm.confirmPassword).toHaveValidationRule({ name: "required", params: true });
                 expect(vm.confirmPassword).toHaveValidationRule({ name: "passwordComplexity", params: true });
                 expect(vm.confirmPassword).toHaveValidationRule({ name: "areSame", params: vm.newPassword });
             });
         });
 
-        describe("has the behavior of BaseFormViewModel", function () {
+        describe("has the behaviour of BaseFormViewModel", function () {
             var vm;
             var baseSpy;
             beforeEach(function (done) {
@@ -128,7 +128,7 @@ define([
                 expect(args[6]).toBe(true);
             });
 
-            it("it overrides the 'buildSubmissionData' function to generates the correct data object", function () {
+            it("it overrides the 'buildSubmissionData' function to generate the correct data object", function () {
                 vm.oldPassword("oldPassword");
                 vm.newPassword("newPassword");
                 vm.confirmPassword("confirmPassword");

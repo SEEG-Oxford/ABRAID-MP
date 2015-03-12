@@ -118,6 +118,7 @@ public class AccountController extends AbstractController {
 
     /**
      * Loads the email change page.
+     * @param modelMap The templating model.
      * @return the template for the email page.
      */
     @Secured("ROLE_USER")

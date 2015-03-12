@@ -13,42 +13,42 @@ define([
 
         describe("has an 'email' field, which ", function () {
             it("is an observable", function () {
-                var vm = new EmailChangeFormViewModel("", "");
+                var vm = new EmailChangeFormViewModel(baseUrl, "");
                 expect(vm.email).toBeObservable();
             });
 
-            it("is starts with the value of a constructor argument", function () {
-                var vm = new EmailChangeFormViewModel("", "abc");
+            it("starts with the value of a constructor argument", function () {
+                var vm = new EmailChangeFormViewModel(baseUrl, "abc");
                 expect(vm.email()).toBe("abc");
             });
 
             it("is validated appropriately", function () {
-                var vm = new EmailChangeFormViewModel("", "expectedEmailChanged");
+                var vm = new EmailChangeFormViewModel(baseUrl, "initialEmail");
                 expect(vm.email).toHaveValidationRule({ name: "required", params: true });
                 expect(vm.email).toHaveValidationRule({ name: "email", params: true });
                 expect(vm.email).toHaveValidationRule({ name: "maxLength", params: 320 });
-                expect(vm.email).toHaveValidationRule({ name: "emailChanged", params: "expectedEmailChanged" });
+                expect(vm.email).toHaveValidationRule({ name: "emailChanged", params: "initialEmail" });
             });
         });
 
         describe("has a 'password' field, which ", function () {
             it("is an observable", function () {
-                var vm = new EmailChangeFormViewModel("", "");
+                var vm = new EmailChangeFormViewModel(baseUrl, "");
                 expect(vm.password).toBeObservable();
             });
 
-            it("is starts empty", function () {
-                var vm = new EmailChangeFormViewModel("", "");
+            it("starts empty", function () {
+                var vm = new EmailChangeFormViewModel(baseUrl, "");
                 expect(vm.password()).toBe("");
             });
 
             it("is validated appropriately", function () {
-                var vm = new EmailChangeFormViewModel("", "");
+                var vm = new EmailChangeFormViewModel(baseUrl, "");
                 expect(vm.password).toHaveValidationRule({ name: "required", params: true });
             });
         });
 
-        describe("has the behavior of BaseFormViewModel", function () {
+        describe("has the behaviour of BaseFormViewModel", function () {
             var vm;
             var baseSpy;
             beforeEach(function (done) {
@@ -111,7 +111,7 @@ define([
                 expect(args[6]).toBe(true);
             });
 
-            it("it overrides the 'buildSubmissionData' function to generates the correct data object", function () {
+            it("it overrides the 'buildSubmissionData' function to generate the correct data object", function () {
                 vm.email("email");
                 vm.password("password");
 
