@@ -11,7 +11,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonExpertDetails;
-import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator.ValidationException;
 
@@ -38,10 +37,8 @@ public class AccountControllerTest {
                                                   CurrentUserService currentUserService) {
         CurrentUserService userService;
         if (currentUserService == null) {
-            userService = mock(CurrentUserService.class);
-            PublicSiteUser user = mock(PublicSiteUser.class);
-            when(userService.getCurrentUser()).thenReturn(user);
-            when(user.getId()).thenReturn(userId);
+            userService = getCurrentUserService();
+            when(userService.getCurrentUserId()).thenReturn(userId);
         } else {
             userService = currentUserService;
         }
@@ -275,7 +272,7 @@ public class AccountControllerTest {
     @Test
     public void getPasswordResetRequestPageReturnsCorrectTemplate() throws Exception {
         // Arrange
-        AccountController target = createTarget(1, null, null, null, null, mock(CurrentUserService.class));
+        AccountController target = createTarget(1, null, null, null, null, getCurrentUserService());
 
         // Act
         String result = target.getPasswordResetRequestPage();
@@ -287,8 +284,8 @@ public class AccountControllerTest {
     @Test
     public void getPasswordResetRequestPageRedirectsLoggedInUsers() throws Exception {
         // Arrange
-        CurrentUserService userService = mock(CurrentUserService.class);
-        when(userService.getCurrentUser()).thenReturn(mock(PublicSiteUser.class));
+        CurrentUserService userService = getCurrentUserService();
+        when(userService.getCurrentUserId()).thenReturn(1);
         AccountController target = createTarget(1, null, null, null, null, userService);
 
         // Act
@@ -351,7 +348,7 @@ public class AccountControllerTest {
     public void getPasswordResetProcessingPageReturnsCorrectTemplateForValidParameters() throws Exception {
         // Arrange
         AccountControllerValidator adminControllerValidator = mock(AccountControllerValidator.class);
-        AccountController target = createTarget(1, null, null, adminControllerValidator, null, mock(CurrentUserService.class));
+        AccountController target = createTarget(1, null, null, adminControllerValidator, null, getCurrentUserService());
         when(adminControllerValidator.validatePasswordResetRequest(7, "key")).thenReturn(new ArrayList<String>());
         Model model = mock(Model.class);
 
@@ -368,7 +365,7 @@ public class AccountControllerTest {
     public void getPasswordResetProcessingPageReturnsCorrectTemplateForInvalidParameters() throws Exception {
         // Arrange
         AccountControllerValidator adminControllerValidator = mock(AccountControllerValidator.class);
-        AccountController target = createTarget(1, null, null, adminControllerValidator, null, mock(CurrentUserService.class));
+        AccountController target = createTarget(1, null, null, adminControllerValidator, null, getCurrentUserService());
         List<String> failures = Arrays.asList("Failure");
         when(adminControllerValidator.validatePasswordResetRequest(7, "key")).thenReturn(failures);
         Model model = mock(Model.class);
@@ -383,8 +380,8 @@ public class AccountControllerTest {
 
     @Test public void getPasswordResetProcessingPageRedirectsLoggedInUsers() throws Exception {
         // Arrange
-        CurrentUserService userService = mock(CurrentUserService.class);
-        when(userService.getCurrentUser()).thenReturn(mock(PublicSiteUser.class));
+        CurrentUserService userService = getCurrentUserService();
+        when(userService.getCurrentUserId()).thenReturn(1);
         AccountController target = createTarget(1, null, null, null, null, userService);
 
         // Act
@@ -470,5 +467,11 @@ public class AccountControllerTest {
         }
         when(httpServletRequest.getContextPath()).thenReturn(context);
         return httpServletRequest;
+    }
+
+    private static CurrentUserService getCurrentUserService() {
+        CurrentUserService mock = mock(CurrentUserService.class);
+        when(mock.getCurrentUserId()).thenReturn(null);
+        return mock;
     }
 }

@@ -15,7 +15,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.geojson.GeoJsonObjectType;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
-import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractDiseaseOccurrenceGeoJsonTests;
 
@@ -72,7 +71,7 @@ public class DataValidationControllerTest {
     public void showPageReturnsDataModelForAnonymousUser() {
         // Arrange
         CurrentUserService currentUserService = createCurrentUserService();
-        when(currentUserService.getCurrentUser()).thenReturn(null);
+        when(currentUserService.getCurrentUserId()).thenReturn(null);
 
         Model model = mock(Model.class);
         DataValidationController target = createTarget(currentUserService, null, null);
@@ -520,7 +519,7 @@ public class DataValidationControllerTest {
         when(diseaseService.getDiseaseExtentClass("PRESENCE")).thenReturn(diseaseExtentClass);
 
         CurrentUserService currentUserService = createCurrentUserService();
-        when(currentUserService.getCurrentUser().getId()).thenReturn(1);
+        when(currentUserService.getCurrentUserId()).thenReturn(1);
 
         ExpertService expertService = createExpertService();
 
@@ -619,9 +618,7 @@ public class DataValidationControllerTest {
 
     private CurrentUserService createCurrentUserService() {
         CurrentUserService currentUserService = mock(CurrentUserService.class);
-        PublicSiteUser returnedUser = mock(PublicSiteUser.class);
-        when(returnedUser.getId()).thenReturn(1);
-        when(currentUserService.getCurrentUser()).thenReturn(returnedUser);
+        when(currentUserService.getCurrentUserId()).thenReturn(1);
         return currentUserService;
     }
 
