@@ -26,6 +26,7 @@ import static org.mockito.Mockito.*;
  */
 public class UploadCsvControllerTest {
     private CurrentUserService currentUserService;
+    private ExpertService expertService;
     private UploadCsvControllerHelperAsyncWrapper uploadCsvControllerHelperAsyncWrapper;
     private UploadCsvController controller;
 
@@ -34,8 +35,9 @@ public class UploadCsvControllerTest {
     @Before
     public void setUp() {
         currentUserService = mock(CurrentUserService.class);
+        expertService = mock(ExpertService.class);
         uploadCsvControllerHelperAsyncWrapper = mock(UploadCsvControllerHelperAsyncWrapper.class);
-        controller = new UploadCsvController(currentUserService, uploadCsvControllerHelperAsyncWrapper);
+        controller = new UploadCsvController(currentUserService, expertService, uploadCsvControllerHelperAsyncWrapper);
 
         setUpCurrentUserService();
     }
