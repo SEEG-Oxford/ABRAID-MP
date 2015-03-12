@@ -41,8 +41,10 @@ public class AccountController extends AbstractController {
     private static final Logger LOGGER = Logger.getLogger(AccountController.class);
     private static final String LOG_USER_UPDATED = "User updated (%s)";
     private static final String LOG_PASSWORD_CHANGED = "Password updated (%s)";
+    private static final String LOG_EMAIL_CHANGED = "Email updated (%s)";
 
     private static final String DISEASES_ATTRIBUTE_KEY = "diseases";
+    private static final String EMAIL_ATTRIBUTE_KEY = "email";
     private static final String JSON_EXPERT_ATTRIBUTE_KEY = "jsonExpert";
 
     private final CurrentUserService currentUserService;
@@ -106,6 +108,51 @@ public class AccountController extends AbstractController {
         try {
             helper.processExpertProfileUpdateAsTransaction(expertId, expert);
             LOGGER.info(String.format(LOG_USER_UPDATED, expertId));
+        } catch (ValidationException e) {
+            return new ResponseEntity<>(e.getValidationMessages(), HttpStatus.BAD_REQUEST);
+        }
+
+        // Return successfully
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT); // Could add success page
+    }
+
+    /**
+     * Loads the email change page.
+     * @return the template for the email page.
+     */
+    @Secured("ROLE_USER")
+    @RequestMapping(value = "/account/email", method = RequestMethod.GET)
+    public String getChangeEmailPage(ModelMap modelMap) {
+        final String email = expertService.getExpertById(currentUserService.getCurrentUser().getId()).getEmail();
+        modelMap.addAttribute(EMAIL_ATTRIBUTE_KEY, email);
+        return "account/email";
+    }
+
+    /**
+     * Receives the user input from the email change page and responds accordingly.
+     * @param email The user input for the  new email.
+     * @param password The user input for their current password.
+     * @return A failure status with an array of response messages or a success status.
+     */
+    @Secured("ROLE_USER")
+    @RequestMapping(value = "/account/email",
+            method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Collection<String>> submitChangeEmailPage(
+            String email, String password) {
+        int expertId = currentUserService.getCurrentUser().getId();
+
+        // Validate inputs
+        Collection<String> validationFailures =
+                validator.validateEmailChange(email, password, expertId);
+
+        if (!validationFailures.isEmpty()) {
+            return new ResponseEntity<>(validationFailures, HttpStatus.BAD_REQUEST);
+        }
+
+        // Update & save expert
+        try {
+            helper.processExpertEmailChangeAsTransaction(expertId, email);
+            LOGGER.info(String.format(LOG_EMAIL_CHANGED, expertId));
         } catch (ValidationException e) {
             return new ResponseEntity<>(e.getValidationMessages(), HttpStatus.BAD_REQUEST);
         }

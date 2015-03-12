@@ -97,6 +97,26 @@ public class AccountControllerHelper {
     }
 
     /**
+     * Updates the database entry for an expert's email.
+     * @param id The expert to update.
+     * @param email The new email address.
+     * @throws ValidationException Thrown if an id matching expert cannot be found.
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void processExpertEmailChangeAsTransaction(int id, String email) throws ValidationException {
+        // Start of transaction
+        Expert expert = expertService.getExpertById(id);
+        if (expert == null) {
+            // Roll back
+            throw new ValidationException(Arrays.asList(String.format(FAIL_NO_EXPERT_MATCH, id)));
+        } else {
+            expert.setEmail(email);
+            expertService.saveExpert(expert);
+        }
+        // End of transaction
+    }
+
+    /**
      * Updates the database entry for an expert's password.
      * @param id The expert to update.
      * @param password The new password.

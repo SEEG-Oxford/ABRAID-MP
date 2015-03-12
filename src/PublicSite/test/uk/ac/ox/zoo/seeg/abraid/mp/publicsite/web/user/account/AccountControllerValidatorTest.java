@@ -92,6 +92,38 @@ public class AccountControllerValidatorTest {
     }
 
     @Test
+    public void validateEmailChangeChecksEmailAddress() throws Exception {
+        // Arrange
+        String email = "email";
+        String password = "password";
+        Integer expertId = 1;
+        ExpertValidationRulesChecker checker = mock(ExpertValidationRulesChecker.class);
+        AccountControllerValidator target = new AccountControllerValidator(checker);
+
+        // Act
+        List<String> result = target.validateEmailChange(email, password, expertId);
+
+        // Assert
+        verify(checker).checkEmail(email, result);
+    }
+
+    @Test
+    public void validateEmailChangeChecksCurrentPassword() throws Exception {
+        // Arrange
+        String email = "email";
+        String password = "password";
+        Integer expertId = 1;
+        ExpertValidationRulesChecker checker = mock(ExpertValidationRulesChecker.class);
+        AccountControllerValidator target = new AccountControllerValidator(checker);
+
+        // Act
+        List<String> result = target.validateEmailChange(email, password, expertId);
+
+        // Assert
+        verify(checker).checkCurrentPassword(password, expertId, result);
+    }
+
+    @Test
     public void validateNewPasswordResetRequestChecksExpertExists() throws Exception {
         // Arrange
         String email = "email";
