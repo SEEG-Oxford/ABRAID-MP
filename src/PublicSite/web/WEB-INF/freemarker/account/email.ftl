@@ -1,5 +1,5 @@
 <#--
-    User password change page.
+    User email change page.
     Copyright (c) 2014 University of Oxford
 -->
 <#import "../layout/common.ftl" as c/>
@@ -16,10 +16,10 @@
     var currentEmail = "${email}";
 </script>
 </#assign>
-<@c.page title="ABRAID MP - Change Password" mainjs="/js/kickstart/account/email" bootstrapData=bootstrapData>
+<@c.page title="ABRAID MP - Change Email" mainjs="/js/kickstart/account/email" bootstrapData=bootstrapData>
     <div class="container">
         <@p.panel "email-body" "Email">
-            <p>Complete the fields below to change your email.</p>
+            <p>Complete the fields below to change your email address.</p>
             <@f.form "email-form">
                 <@f.formGroupBasic "email" "New Email Address" "email" "fa fa-lg fa-user" />
                 <@f.formGroupBasic "password" "Current Password" "password" "fa fa-lg fa-lock" "password" />
