@@ -2,6 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Repository;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReview;
 
@@ -54,6 +55,17 @@ public class DiseaseOccurrenceReviewDaoImpl extends AbstractDao<DiseaseOccurrenc
     public Long getCountByExpertId(Integer expertId) {
         Query query = getParameterisedNamedQuery("getDiseaseOccurrenceReviewCountByExpertId", "expertId", expertId);
         return (Long) query.uniqueResult();
+    }
+
+    /**
+     * Gets the date of the last disease occurrence review submitted by a specific expert.
+     * @param expertId The expert's Id.
+     * @return The date of the last disease occurrence review.
+     */
+    @Override
+    public DateTime getLastReviewDateByExpertId(Integer expertId) {
+        Query query = getParameterisedNamedQuery("getLastDiseaseOccurrenceReviewDateByExpertId", "expertId", expertId);
+        return (DateTime) query.uniqueResult();
     }
 
     /**

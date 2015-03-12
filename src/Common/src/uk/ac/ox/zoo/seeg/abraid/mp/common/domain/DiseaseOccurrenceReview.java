@@ -30,6 +30,10 @@ import javax.persistence.*;
         name = "getDiseaseOccurrenceReviewsForUpdatingWeightings",
         query = DiseaseOccurrenceReview.QUERY +
                 "and expert.weighting >= :expertWeightingThreshold"
+    ),
+    @NamedQuery(
+            name = "getLastDiseaseOccurrenceReviewDateByExpertId",
+            query = "select max(createdDate) from DiseaseOccurrenceReview where expert.id=:expertId"
     )
 })
 @Entity

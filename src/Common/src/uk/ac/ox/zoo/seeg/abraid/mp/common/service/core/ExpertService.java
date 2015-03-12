@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 
+import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.List;
@@ -139,6 +140,13 @@ public interface ExpertService {
      * @return The count.
      */
     long getCountOfPubliclyVisibleExperts();
+
+    /**
+     * Gets the date of the last review submitted by a specific expert.
+     * @param expertId The expert's Id.
+     * @return The date of the last review.
+     */
+    DateTime getLastReviewDate(Integer expertId);
 
     /**
      * Saves the disease occurrence review.
