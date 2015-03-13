@@ -156,12 +156,12 @@ public class DataValidationController extends AbstractController {
     @ResponseBody
     public ResponseEntity<GeoJsonDiseaseOccurrenceFeatureCollection> getDiseaseOccurrencesForReviewByCurrentUser(
             @PathVariable Integer validatorDiseaseGroupId) {
-        Integer userId = currentUserService.getCurrentUserId();
-        boolean userIsSeeg = userIsSeegMember(userId);
+        Integer expertId = currentUserService.getCurrentUserId();
+        boolean userIsSeeg = userIsSeegMember(expertId);
 
         try {
             List<DiseaseOccurrence> occurrences = expertService.getDiseaseOccurrencesYetToBeReviewedByExpert(
-                userId, userIsSeeg, validatorDiseaseGroupId);
+                    expertId, userIsSeeg, validatorDiseaseGroupId);
             return new ResponseEntity<>(new GeoJsonDiseaseOccurrenceFeatureCollection(occurrences), HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -358,17 +358,17 @@ public class DataValidationController extends AbstractController {
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
-    private boolean userIsSeegMember(Integer userId) {
-        if (userId == null) {
+    private boolean userIsSeegMember(Integer expertId) {
+        if (expertId == null) {
             return false;
         } else {
-            Expert expert = getExpert(userId);
+            Expert expert = getExpert(expertId);
             return expert.isSeegMember();
         }
     }
 
-    private Expert getExpert(int userId) {
-        Expert expert = expertService.getExpertById(userId);
+    private Expert getExpert(int expertId) {
+        Expert expert = expertService.getExpertById(expertId);
         if (expert == null) {
             throw new IllegalArgumentException("Logged in user does not have an associated expert.");
         } else {
