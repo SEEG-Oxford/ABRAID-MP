@@ -22,7 +22,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonExpertBasic;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonExpertDetails;
-import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 
 import javax.servlet.ServletRequest;
@@ -58,7 +57,7 @@ public class RegistrationControllerTest {
     @Before
     public void setup() {
         currentUserService = mock(CurrentUserService.class);
-        when(currentUserService.getCurrentUser()).thenReturn(null);
+        when(currentUserService.getCurrentUserId()).thenReturn(null);
         expertService = mock(ExpertService.class);
         diseaseService = mock(DiseaseService.class);
         emailService = mock(EmailService.class);
@@ -76,7 +75,7 @@ public class RegistrationControllerTest {
     @Test
     public void getAccountPageRedirectsLoggedInUsers() throws Exception {
         // Arrange
-        when(currentUserService.getCurrentUser()).thenReturn(mock(PublicSiteUser.class));
+        when(currentUserService.getCurrentUserId()).thenReturn(1);
         SessionStatus sessionStatus = mock(SessionStatus.class);
 
         // Act
@@ -188,7 +187,7 @@ public class RegistrationControllerTest {
     @Test
     public void getDetailsPageRedirectsLoggedInUsers() throws Exception {
         // Arrange
-        when(currentUserService.getCurrentUser()).thenReturn(mock(PublicSiteUser.class));
+        when(currentUserService.getCurrentUserId()).thenReturn(1);
         SessionStatus sessionStatus = mock(SessionStatus.class);
 
         // Act
@@ -257,7 +256,7 @@ public class RegistrationControllerTest {
     @Test
     public void submitAccountPageRejectsLoggedInUsers() throws Exception {
         // Arrange
-        when(currentUserService.getCurrentUser()).thenReturn(mock(PublicSiteUser.class));
+        when(currentUserService.getCurrentUserId()).thenReturn(1);
         SessionStatus sessionStatus = mock(SessionStatus.class);
 
         // Act
@@ -354,7 +353,7 @@ public class RegistrationControllerTest {
     @Test
     public void submitDetailsPageRejectsLoggedInUsers() throws Exception {
         // Arrange
-        when(currentUserService.getCurrentUser()).thenReturn(mock(PublicSiteUser.class));
+        when(currentUserService.getCurrentUserId()).thenReturn(1);
         SessionStatus sessionStatus = mock(SessionStatus.class);
 
         // Act

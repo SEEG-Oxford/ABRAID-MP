@@ -290,7 +290,7 @@ public class RegistrationController extends AbstractController {
     }
 
     private boolean checkIfUserLoggedIn() {
-        return currentUserService.getCurrentUser() != null;
+        return currentUserService.getCurrentUserId() != null;
     }
 
     private void updateExpert(Expert expert, JsonExpertDetails expertDetails) {

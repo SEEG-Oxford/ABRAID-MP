@@ -8,14 +8,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonDiseaseModelRunLayerSet;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelRunLayer;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
-import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 
 import java.util.*;
@@ -92,11 +91,11 @@ public class AtlasController extends AbstractController {
     }
 
     private boolean userIsSeegMember() {
-        PublicSiteUser user = currentUserService.getCurrentUser();
-        if (user == null) {
+        Integer expertId = currentUserService.getCurrentUserId();
+        if (expertId == null) {
             return false;
         } else {
-            Expert expert = expertService.getExpertById(user.getId());
+            Expert expert = expertService.getExpertById(expertId);
             if (expert == null) {
                 throw new IllegalArgumentException("Logged in user does not have an associated expert.");
             } else {

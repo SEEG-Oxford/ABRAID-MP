@@ -6,6 +6,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Tests the CurrentUserServiceImpl class.
@@ -15,12 +16,14 @@ public class CurrentUserServiceTest extends AbstractAuthenticatingTests {
     @Test
     public void getCurrentUserReturnsCorrectAuthorizedUser() throws Exception {
         // Arrange
-        PublicSiteUser expectation = mock(PublicSiteUser.class);
-        setupCurrentUser(expectation);
+        int expectation = 123;
+        PublicSiteUser user = mock(PublicSiteUser.class);
+        when(user.getId()).thenReturn(expectation);
+        setupCurrentUser(user);
         CurrentUserService target = new CurrentUserServiceImpl();
 
         // Act
-        PublicSiteUser result = target.getCurrentUser();
+        Integer result = target.getCurrentUserId();
 
         // Assert
         assertThat(result).isSameAs(expectation);
@@ -32,7 +35,7 @@ public class CurrentUserServiceTest extends AbstractAuthenticatingTests {
         CurrentUserService target = new CurrentUserServiceImpl();
 
         // Act
-        PublicSiteUser result = target.getCurrentUser();
+        Integer result = target.getCurrentUserId();
 
         // Assert
         assertThat(result).isNull();

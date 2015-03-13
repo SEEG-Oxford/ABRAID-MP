@@ -96,7 +96,7 @@ public class AccountController extends AbstractController {
     @RequestMapping(value = "/account/edit", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Collection<String>> submitAccountEditPage(@RequestBody JsonExpertDetails expert) {
-        int expertId = currentUserService.getCurrentUser().getId();
+        int expertId = currentUserService.getCurrentUserId();
 
         // Validate dto
         Collection<String> validationFailures = validator.validate(expert);
@@ -124,7 +124,7 @@ public class AccountController extends AbstractController {
     @Secured("ROLE_USER")
     @RequestMapping(value = "/account/email", method = RequestMethod.GET)
     public String getChangeEmailPage(ModelMap modelMap) {
-        final String email = expertService.getExpertById(currentUserService.getCurrentUser().getId()).getEmail();
+        final String email = expertService.getExpertById(currentUserService.getCurrentUserId()).getEmail();
         modelMap.addAttribute(EMAIL_ATTRIBUTE_KEY, email);
         return "account/email";
     }
@@ -140,7 +140,7 @@ public class AccountController extends AbstractController {
             method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Collection<String>> submitChangeEmailPage(
             String email, String password) {
-        int expertId = currentUserService.getCurrentUser().getId();
+        int expertId = currentUserService.getCurrentUserId();
 
         // Validate inputs
         Collection<String> validationFailures =
@@ -184,7 +184,7 @@ public class AccountController extends AbstractController {
             method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Collection<String>> submitChangePasswordPage(
             String oldPassword, String newPassword, String confirmPassword) {
-        int expertId = currentUserService.getCurrentUser().getId();
+        int expertId = currentUserService.getCurrentUserId();
 
         // Validate inputs
         Collection<String> validationFailures =
@@ -212,7 +212,7 @@ public class AccountController extends AbstractController {
      */
     @RequestMapping(value = "/account/reset/request", method = RequestMethod.GET)
     public String getPasswordResetRequestPage() {
-        if (currentUserService.getCurrentUser() != null) {
+        if (currentUserService.getCurrentUserId() != null) {
             // Prevent logged in users from performing a password reset (without returning a 403 error page)
             return "redirect:/";
         }
@@ -256,7 +256,7 @@ public class AccountController extends AbstractController {
      */
     @RequestMapping(value = "/account/reset/process", method = RequestMethod.GET)
     public String getPasswordResetProcessingPage(Integer id, String key, Model model) {
-        if (currentUserService.getCurrentUser() != null) {
+        if (currentUserService.getCurrentUserId() != null) {
             // Prevent logged in users from performing a password reset (without returning a 403 error page)
             return "redirect:/";
         }
@@ -308,7 +308,7 @@ public class AccountController extends AbstractController {
     }
 
     private Expert loadExpert() {
-        return expertService.getExpertById(currentUserService.getCurrentUser().getId());
+        return expertService.getExpertById(currentUserService.getCurrentUserId());
     }
 
     private List<JsonValidatorDiseaseGroup> loadValidatorDiseaseGroups() {

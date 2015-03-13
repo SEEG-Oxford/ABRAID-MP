@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -15,12 +14,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.AbstractPublicSiteIntegrationTests;
-import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.SpringockitoWebContextLoader;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.fileUpload;
@@ -60,9 +57,7 @@ public class UploadCsvControllerIntegrationTest extends AbstractPublicSiteIntegr
     }
 
     private void setUpCurrentUserService() {
-        PublicSiteUser user = new PublicSiteUser(1, "test@email.com", "Test User", "Hashed password",
-                new ArrayList<GrantedAuthority>());
-        when(currentUserService.getCurrentUser()).thenReturn(user);
+        when(currentUserService.getCurrentUserId()).thenReturn(1);
     }
 
     @Test

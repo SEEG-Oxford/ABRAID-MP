@@ -73,7 +73,7 @@ public class UploadCsvController extends AbstractController {
         byte[] csvFile = file.getBytes();
         String filePath = file.getOriginalFilename();
 
-        String userEmailAddress = expertService.getExpertById(currentUserService.getCurrentUser().getId()).getEmail();
+        String userEmailAddress = expertService.getExpertById(currentUserService.getCurrentUserId()).getEmail();
         uploadCsvControllerHelperAsyncWrapper.acquireCsvData(csvFile, isGoldStandard, userEmailAddress, filePath);
     }
 }

@@ -6,15 +6,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.multipart.MultipartFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonFileUploadResponse;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
-import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
-
-import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -43,12 +39,10 @@ public class UploadCsvControllerTest {
     }
 
     private void setUpCurrentUserService() {
-        PublicSiteUser user = new PublicSiteUser(1, USER_EMAIL_ADDRESS, "Test User", "Hashed password",
-                new ArrayList<GrantedAuthority>());
+        when(currentUserService.getCurrentUserId()).thenReturn(1);
         Expert expert = mock(Expert.class);
-        when(expert.getEmail()).thenReturn(USER_EMAIL_ADDRESS);
-        when(currentUserService.getCurrentUser()).thenReturn(user);
         when(expertService.getExpertById(1)).thenReturn(expert);
+        when(expert.getEmail()).thenReturn(USER_EMAIL_ADDRESS);
     }
 
     @Test
@@ -81,7 +75,7 @@ public class UploadCsvControllerTest {
 
     @Test
     public void uploadGoldStandardCsvFileReturnsOKIfSuccessful() throws Exception {
-        uploadCsvFileSuccessful(false);
+        uploadCsvFileSuccessful(true);
     }
 
     private void uploadCsvFileSuccessful(boolean isGoldStandard) throws Exception {
