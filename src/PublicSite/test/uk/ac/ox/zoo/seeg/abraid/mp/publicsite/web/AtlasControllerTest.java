@@ -101,6 +101,7 @@ public class AtlasControllerTest {
         verify(model).addAttribute(eq("layers"), argumentCaptor.capture());
         String value = argumentCaptor.getValue();
         assertThat(value).contains(expectation);
+        verify(model).addAttribute("seegMember", isSeegMember);
     }
 
     private void mockSeegExpert(CurrentUserService currentUserService, ExpertService expertService, boolean isSeegMember) {
