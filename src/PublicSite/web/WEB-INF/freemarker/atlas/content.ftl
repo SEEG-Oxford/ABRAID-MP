@@ -42,7 +42,8 @@
     <script>
         var data = {
             wmsUrl: "${baseWmsUrl}",
-            layers: ${layers}
+            layers: ${layers},
+            seegMember: ${seegMember?c}
         };
     </script>
 

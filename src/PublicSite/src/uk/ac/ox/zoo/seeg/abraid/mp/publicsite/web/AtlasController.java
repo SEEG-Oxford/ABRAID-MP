@@ -59,12 +59,14 @@ public class AtlasController extends AbstractController {
      */
     @RequestMapping(value = "/atlas/content", method = RequestMethod.GET)
     public String showAtlas(Model model) throws JsonProcessingException {
-        List<JsonDiseaseModelRunLayerSet> layers = prepareJsonDiseaseModelRunSets();
+        boolean seegMember = userIsSeegMember();
+        List<JsonDiseaseModelRunLayerSet> layers = prepareJsonDiseaseModelRunSets(seegMember);
         model.addAttribute("layers", objectMapper.writeValueAsString(layers));
+        model.addAttribute("seegMember", seegMember);
         return "atlas/content";
     }
 
-    private List<JsonDiseaseModelRunLayerSet> prepareJsonDiseaseModelRunSets() {
+    private List<JsonDiseaseModelRunLayerSet> prepareJsonDiseaseModelRunSets(boolean seegMember) {
         final List<Integer> diseaseGroupsInAutomaticModelRuns =
                 diseaseService.getDiseaseGroupIdsForAutomaticModelRuns();
         final Collection<ModelRun> modelRuns = modelRunService.getCompletedModelRunsForDisplay();
@@ -73,7 +75,7 @@ public class AtlasController extends AbstractController {
         for (ModelRun modelRun : modelRuns) {
             int diseaseGroupId = modelRun.getDiseaseGroupId();
             boolean automaticRun = diseaseGroupsInAutomaticModelRuns.contains(diseaseGroupId);
-            if (userIsSeegMember() || automaticRun) {
+            if (seegMember || automaticRun) {
                 if (!layersByDiseaseId.containsKey(diseaseGroupId)) {
                     layersByDiseaseId.put(diseaseGroupId, new ArrayList<JsonModelRunLayer>());
                 }
