@@ -66,6 +66,7 @@
                 <ul class="dropdown-menu" role="menu">
                     <li class="centered-nav expand-only"><a href="#">Signed in as: <br /><strong><@security.authentication property="principal.fullName"/></strong></a></li>
                     <li><a title="Edit profile" href="<@spring.url "/account/edit"/>">Edit profile</a></li>
+                    <li><a title="Change password" href="<@spring.url "/account/email"/>">Change email</a></li>
                     <li><a title="Change password" href="<@spring.url "/account/password"/>">Change password</a></li>
                 </ul>
             </li>

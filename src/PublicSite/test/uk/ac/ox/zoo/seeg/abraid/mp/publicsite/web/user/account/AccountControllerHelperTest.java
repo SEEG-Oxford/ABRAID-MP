@@ -171,6 +171,40 @@ public class AccountControllerHelperTest {
     }
 
     @Test
+    public void processExpertEmailChangeAsTransactionUpdatesAndSavesPasswordCorrectly() throws Exception {
+        // Arrange
+        ExpertService expertService = mock(ExpertService.class);
+        DiseaseService diseaseService = mock(DiseaseService.class);
+        AccountControllerHelper target = new AccountControllerHelper(expertService, diseaseService, mock(EmailService.class), mock(PasswordEncoder.class));
+        Expert expert = mockExpertDomain();
+
+        when(expertService.getExpertById(321)).thenReturn(expert); // Gets the correct expert
+
+        // Act
+        target.processExpertEmailChangeAsTransaction(321, "newEmail");
+
+        // Assert
+        verify(expert).setEmail("newEmail");
+        verify(expertService).saveExpert(expert);
+    }
+
+    @Test
+    public void processExpertEmailChangeAsTransactionThrowsValidationExceptionIfNoMatchingExpert() throws Exception {
+        // Arrange
+        ExpertService expertService = mock(ExpertService.class);
+        DiseaseService diseaseService = mock(DiseaseService.class);
+        AccountControllerHelper target = new AccountControllerHelper(expertService, diseaseService, mock(EmailService.class), mock(PasswordEncoder.class));
+
+        when(expertService.getExpertById(anyInt())).thenReturn(null);
+
+        // Act
+        catchException(target).processExpertEmailChangeAsTransaction(-1, "newEmail");
+
+        // Assert
+        assertThat(caughtException()).isInstanceOf(ValidationException.class);
+    }
+
+    @Test
     public void processExpertPasswordChangeAsTransactionUpdatesAndSavesPasswordCorrectly() throws Exception {
         // Arrange
         ExpertService expertService = mock(ExpertService.class);

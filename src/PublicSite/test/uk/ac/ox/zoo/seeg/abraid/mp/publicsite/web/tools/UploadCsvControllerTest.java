@@ -8,7 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.multipart.MultipartFile;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonFileUploadResponse;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 
@@ -24,6 +26,7 @@ import static org.mockito.Mockito.*;
  */
 public class UploadCsvControllerTest {
     private CurrentUserService currentUserService;
+    private ExpertService expertService;
     private UploadCsvControllerHelperAsyncWrapper uploadCsvControllerHelperAsyncWrapper;
     private UploadCsvController controller;
 
@@ -32,8 +35,9 @@ public class UploadCsvControllerTest {
     @Before
     public void setUp() {
         currentUserService = mock(CurrentUserService.class);
+        expertService = mock(ExpertService.class);
         uploadCsvControllerHelperAsyncWrapper = mock(UploadCsvControllerHelperAsyncWrapper.class);
-        controller = new UploadCsvController(currentUserService, uploadCsvControllerHelperAsyncWrapper);
+        controller = new UploadCsvController(currentUserService, expertService, uploadCsvControllerHelperAsyncWrapper);
 
         setUpCurrentUserService();
     }
@@ -41,7 +45,10 @@ public class UploadCsvControllerTest {
     private void setUpCurrentUserService() {
         PublicSiteUser user = new PublicSiteUser(1, USER_EMAIL_ADDRESS, "Test User", "Hashed password",
                 new ArrayList<GrantedAuthority>());
+        Expert expert = mock(Expert.class);
+        when(expert.getEmail()).thenReturn(USER_EMAIL_ADDRESS);
         when(currentUserService.getCurrentUser()).thenReturn(user);
+        when(expertService.getExpertById(1)).thenReturn(expert);
     }
 
     @Test

@@ -30,6 +30,7 @@ import static org.mockito.Mockito.*;
  * Copyright (c) 2014 University of Oxford
  */
 public class AccountControllerTest {
+
     private static AccountController createTarget(int userId, ExpertService expertServiceIn,
                                                   DiseaseService diseaseService,
                                                   AccountControllerValidator adminControllerValidator,
@@ -143,6 +144,71 @@ public class AccountControllerTest {
 
         // Assert
         verify(helper).processExpertProfileUpdateAsTransaction(userId, expert);
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    }
+
+    @Test
+    public void getChangeEmailPageReturnsCorrectTemplate() throws Exception {
+        // Arrange
+        ExpertService expertService = mock(ExpertService.class);
+        when(expertService.getExpertById(1)).thenReturn(mock(Expert.class));
+        when(expertService.getExpertById(1).getEmail()).thenReturn("expectedEmail");
+        AccountController target = createTarget(1, expertService, null, null, null, null);
+        ModelMap model = mock(ModelMap.class);
+
+        // Act
+        String result = target.getChangeEmailPage(model);
+
+        // Assert
+        verify(model).addAttribute("email", "expectedEmail");
+        assertThat(result).isEqualTo("account/email");
+    }
+
+    @Test
+    public void submitChangeEmailPageReturnsBadRequestIfValidationFails() throws Exception {
+        // Arrange
+        AccountControllerValidator validator = mock(AccountControllerValidator.class);
+        AccountControllerHelper helper = mock(AccountControllerHelper.class);
+        AccountController target = createTarget(1, null, null, validator, helper, null);
+        when(validator.validateEmailChange(anyString(), anyString(), anyInt())).thenReturn(Arrays.asList("FAIL1", "FAIL2"));
+
+        // Act
+        ResponseEntity<Collection<String>> result = target.submitChangeEmailPage("email", "password");
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(result.getBody()).containsOnly("FAIL1", "FAIL2");
+    }
+
+    @Test
+    public void submitChangeEmailPageReturnsBadRequestIfSaveFails() throws Exception {
+        // Arrange
+        AccountControllerValidator validator = mock(AccountControllerValidator.class);
+        AccountControllerHelper helper = mock(AccountControllerHelper.class);
+        AccountController target = createTarget(1, null, null, validator, helper, null);
+        doThrow(new ValidationException(Arrays.asList("FAIL3")))
+                .when(helper).processExpertEmailChangeAsTransaction(anyInt(), anyString());
+
+        // Act
+        ResponseEntity<Collection<String>> result = target.submitChangeEmailPage("email", "password");
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(result.getBody()).containsOnly("FAIL3");
+    }
+
+    @Test
+    public void submitChangeEmailPageSavesPasswordAndReturnsNoContentForValidRequest() throws Exception {
+        AccountControllerValidator validator = mock(AccountControllerValidator.class);
+        AccountControllerHelper helper = mock(AccountControllerHelper.class);
+        int userId = 99;
+        AccountController target = createTarget(userId, null, null, validator, helper, null);
+
+        // Act
+        ResponseEntity<Collection<String>> result = target.submitChangeEmailPage("email", "password");
+
+        // Assert
+        verify(helper).processExpertEmailChangeAsTransaction(userId, "email");
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 
