@@ -223,7 +223,7 @@ public class ModelRunWorkflowServiceTest {
         DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
         diseaseGroup.setAutomaticModelRunsStartDate(DateTime.now());
         DateTime minimumOccurrenceDate = DateTime.now();
-        List<DiseaseOccurrence> occurrences = createListWithDate(minimumOccurrenceDate);
+        List<DiseaseOccurrence> occurrences = createListWithMultipleDates(minimumOccurrenceDate.plus(1), minimumOccurrenceDate, minimumOccurrenceDate.plusWeeks(1));
         doReturn(occurrences).when(modelRunWorkflowService).selectOccurrencesForModelRun(diseaseGroupId, false);
 
         // Act
@@ -251,5 +251,15 @@ public class ModelRunWorkflowServiceTest {
         DiseaseOccurrence occurrence = new DiseaseOccurrence();
         occurrence.setOccurrenceDate(minimumOccurrenceDate);
         return Arrays.asList(occurrence);
+    }
+
+    private List<DiseaseOccurrence> createListWithMultipleDates(DateTime...  dates) {
+        List<DiseaseOccurrence> diseaseOccurrences = new ArrayList<>();
+        for (DateTime date : dates) {
+            DiseaseOccurrence occurrence = new DiseaseOccurrence();
+            occurrence.setOccurrenceDate(date);
+            diseaseOccurrences.add(occurrence);
+        }
+        return diseaseOccurrences;
     }
 }

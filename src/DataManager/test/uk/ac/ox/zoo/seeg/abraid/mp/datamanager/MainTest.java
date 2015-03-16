@@ -8,6 +8,7 @@ import org.mockito.ArgumentMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.PlatformTransactionManager;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.CountryDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseGroupDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.GeoNameDao;
@@ -54,6 +55,9 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
     private DiseaseGroupDao diseaseGroupDao;
 
     @Autowired
+    private CountryDao countryDao;
+
+    @Autowired
     private GeoNameDao geoNameDao;
 
     @Autowired
@@ -73,6 +77,7 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
         createAndSaveTestModelRun(diseaseGroupId);
         insertTestDiseaseExtent(diseaseGroupId, GeometryUtils.createMultiPolygon(getFivePointedPolygon()));
         setDiseaseGroupParametersToEnsureHelperReturnsOccurrences(diseaseGroupId);
+        setFixedCountryAreas();
 
         // Act
         runMain(new String[]{});
@@ -92,6 +97,12 @@ public class MainTest extends AbstractWebServiceClientIntegrationTests {
         diseaseGroup.setMinDistinctCountries(null);
         diseaseGroup.setAutomaticModelRunsStartDate(DateTime.now());
         diseaseGroupDao.save(diseaseGroup);
+    }
+
+    private void setFixedCountryAreas() {
+        // When running test with shape files loaded the occurrence for new zealand is in too large of a country
+       countryDao.getByName("New Zealand").setArea(1000.0);
+       countryDao.getByName("Malaysia").setArea(1000.0);
     }
 
     @Test
