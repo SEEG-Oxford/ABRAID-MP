@@ -2,16 +2,22 @@
 --
 -- Copyright (c) 2014 University of Oxford
 UPDATE disease_group SET validator_disease_group_id=NULL WHERE validator_disease_group_id=(SELECT id FROM validator_disease_group WHERE name='ascariasis');
+DELETE FROM expert_validator_disease_group WHERE validator_disease_group_id=(SELECT id FROM validator_disease_group WHERE name='ascariasis');
 DELETE FROM validator_disease_group WHERE name='ascariasis';
 UPDATE disease_group SET validator_disease_group_id=NULL WHERE validator_disease_group_id=(SELECT id FROM validator_disease_group WHERE name='HIV');
+DELETE FROM expert_validator_disease_group WHERE validator_disease_group_id=(SELECT id FROM validator_disease_group WHERE name='HIV');
 DELETE FROM validator_disease_group WHERE name='HIV';
 UPDATE disease_group SET validator_disease_group_id=NULL WHERE validator_disease_group_id=(SELECT id FROM validator_disease_group WHERE name='hookworm');
+DELETE FROM expert_validator_disease_group WHERE validator_disease_group_id=(SELECT id FROM validator_disease_group WHERE name='hookworm');
 DELETE FROM validator_disease_group WHERE name='hookworm';
 UPDATE disease_group SET validator_disease_group_id=NULL WHERE validator_disease_group_id=(SELECT id FROM validator_disease_group WHERE name='lymphatic filariasis');
+DELETE FROM expert_validator_disease_group WHERE validator_disease_group_id=(SELECT id FROM validator_disease_group WHERE name='lymphatic filariasis');
 DELETE FROM validator_disease_group WHERE name='lymphatic filariasis';
 UPDATE disease_group SET validator_disease_group_id=NULL WHERE validator_disease_group_id=(SELECT id FROM validator_disease_group WHERE name='schistosomiasis');
+DELETE FROM expert_validator_disease_group WHERE validator_disease_group_id=(SELECT id FROM validator_disease_group WHERE name='schistosomiasis');
 DELETE FROM validator_disease_group WHERE name='schistosomiasis';
 UPDATE disease_group SET validator_disease_group_id=NULL WHERE validator_disease_group_id=(SELECT id FROM validator_disease_group WHERE name='trichuriasis');
+DELETE FROM expert_validator_disease_group WHERE validator_disease_group_id=(SELECT id FROM validator_disease_group WHERE name='trichuriasis');
 DELETE FROM validator_disease_group WHERE name='trichuriasis';
 
 INSERT INTO validator_disease_group (name) VALUES ('chikungunya');
