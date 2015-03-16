@@ -11,6 +11,10 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.*;
 
 import java.util.List;
 
+import static ch.lambdaj.Lambda.extract;
+import static ch.lambdaj.Lambda.min;
+import static ch.lambdaj.Lambda.on;
+
 /**
  * Service class to support the workflow surrounding a model run request.
  * Copyright (c) 2014 University of Oxford
@@ -218,7 +222,8 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
         if (occurrencesForModelRun != null && occurrencesForModelRun.size() > 0) {
             // The minimum occurrence date for the disease extent is the same as the minimum occurrence date of all
             // the occurrences that can be sent to the model
-            minimumOccurrenceDate = occurrencesForModelRun.get(0).getOccurrenceDate();
+            minimumOccurrenceDate =
+                    min(extract(occurrencesForModelRun, on(DiseaseOccurrence.class).getOccurrenceDate()));
         }
         return minimumOccurrenceDate;
     }
