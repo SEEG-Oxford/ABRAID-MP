@@ -18,6 +18,6 @@
     </ul>
 </div>
 <div class="copyright">
-    <p>&copy; 2014 University of Oxford</p>
+    <p>&copy; ${.now?string["yyyy"]} University of Oxford</p>
 </div>
 </div>
