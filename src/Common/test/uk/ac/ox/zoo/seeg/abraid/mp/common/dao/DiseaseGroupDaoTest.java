@@ -34,7 +34,7 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         String diseaseClusterPublicName = "Test disease cluster public name";
         String diseaseClusterShortName = "Short name";
         String diseaseClusterAbbreviation = "tdc";
-        int validatorDiseaseGroupId = 1;
+        int validatorDiseaseGroupId = 2;
         ValidatorDiseaseGroup validatorDiseaseGroup = validatorDiseaseGroupDao.getById(validatorDiseaseGroupId);
         DateTime lastModelRunPrepDate = DateTime.now().minusHours(2);
         int minNewLocations = 100;
@@ -164,7 +164,7 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
     @Test
     public void getAllDiseaseGroups() {
         List<DiseaseGroup> diseaseGroups = diseaseGroupDao.getAll();
-        assertThat(diseaseGroups).hasSize(388);
+        assertThat(diseaseGroups).hasSize(391);
     }
 
     @Test
