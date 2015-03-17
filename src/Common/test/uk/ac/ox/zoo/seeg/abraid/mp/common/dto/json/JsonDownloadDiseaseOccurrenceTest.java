@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vividsolutions.jts.geom.Point;
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -23,7 +24,7 @@ public class JsonDownloadDiseaseOccurrenceTest {
         double weight = 9;
         int admin = 10;
         String gaul = "gaul";
-        DateTime date = DateTime.now();
+        String date = "date";
         String provenance = "provenance";
         String feed = "feed";
         String url = "url";
@@ -50,10 +51,10 @@ public class JsonDownloadDiseaseOccurrenceTest {
         double latitude = 8;
         double weight = 9;
         int admin = 10;
-        DateTime date = DateTime.now();
+        String date = "date";
         String provenance = "provenance";
         String feed = "feed";
-        String url = "url";
+        String url = null;
 
         // Act
         JsonDownloadDiseaseOccurrence result = new JsonDownloadDiseaseOccurrence(longitude, latitude, weight, admin, null, date, provenance, feed, url);
@@ -67,7 +68,7 @@ public class JsonDownloadDiseaseOccurrenceTest {
         assertThat(result.getDate()).isEqualTo(date);
         assertThat(result.getProvenance()).isEqualTo(provenance);
         assertThat(result.getFeed()).isEqualTo(feed);
-        assertThat(result.getUrl()).isEqualTo(url);
+        assertThat(result.getUrl()).isEqualTo("-");
     }
 
     @Test
@@ -77,7 +78,7 @@ public class JsonDownloadDiseaseOccurrenceTest {
         double weight = 9;
         int admin = LocationPrecision.ADMIN1.getModelValue();
         String gaul = "1234";
-        DateTime date = DateTime.now();
+        DateTime date = new DateTime("2015-03-07T01:02:03.004Z");
         String provenance = "provenance";
         String feed = "feed";
         String url = "url";
@@ -107,7 +108,7 @@ public class JsonDownloadDiseaseOccurrenceTest {
         assertThat(result.getWeight()).isEqualTo(weight);
         assertThat(result.getAdmin()).isEqualTo(admin);
         assertThat(result.getGaul()).isEqualTo(gaul);
-        assertThat(result.getDate()).isEqualTo(date);
+        assertThat(result.getDate()).isEqualTo("2015-03-07");
         assertThat(result.getProvenance()).isEqualTo(provenance);
         assertThat(result.getFeed()).isEqualTo(feed);
         assertThat(result.getUrl()).isEqualTo(url);
@@ -119,7 +120,7 @@ public class JsonDownloadDiseaseOccurrenceTest {
         double latitude = 8;
         double weight = 9;
         int admin = LocationPrecision.ADMIN1.getModelValue();
-        DateTime date = DateTime.now();
+        DateTime date = new DateTime("2015-03-07T01:02:03.004Z");
         String provenance = "provenance";
         String feed = "feed";
         String url = "url";
@@ -149,7 +150,7 @@ public class JsonDownloadDiseaseOccurrenceTest {
         assertThat(result.getWeight()).isEqualTo(weight);
         assertThat(result.getAdmin()).isEqualTo(admin);
         assertThat(result.getGaul()).isEqualTo("NA");
-        assertThat(result.getDate()).isEqualTo(date);
+        assertThat(result.getDate()).isEqualTo("2015-03-07");
         assertThat(result.getProvenance()).isEqualTo(provenance);
         assertThat(result.getFeed()).isEqualTo(feed);
         assertThat(result.getUrl()).isEqualTo(url);
@@ -158,24 +159,24 @@ public class JsonDownloadDiseaseOccurrenceTest {
     @Test
     public void serializesCorrectly() throws JsonProcessingException {
         // Arrange
-        JsonDownloadDiseaseOccurrence target = new JsonDownloadDiseaseOccurrence(7, 6, 5, 4, "3", new DateTime("2015-03-07T00:00:00.000Z"), "2", "1", "0");
+        JsonDownloadDiseaseOccurrence target = new JsonDownloadDiseaseOccurrence(7, 6, 5, 4, "3", "2015-03-07", "2", "1", "0");
 
         // Act
-        String result = new AbraidJsonObjectMapper().writeValueAsString(target);
+        String result = new ObjectMapper().writeValueAsString(target);
 
         // Assert
-        assertThat(result).isEqualTo("{\"Longitude\":7.0,\"Latitude\":6.0,\"Weight\":5.0,\"Admin\":4,\"GAUL\":\"3\",\"Date\":\"2015-03-07T00:00:00.000Z\",\"Provenance\":\"2\",\"Feed\":\"1\",\"Url\":\"0\"}");
+        assertThat(result).isEqualTo("{\"Longitude\":7.0,\"Latitude\":6.0,\"Weight\":5.0,\"Admin\":4,\"GAUL\":\"3\",\"Date\":\"2015-03-07\",\"Provenance\":\"2\",\"Feed\":\"1\",\"Url\":\"0\"}");
     }
 
     @Test
     public void serializesCorrectlyWithNull() throws JsonProcessingException {
         // Arrange
-        JsonDownloadDiseaseOccurrence target = new JsonDownloadDiseaseOccurrence(7, 6, 5, 4, null, new DateTime("2015-03-07T00:00:00.000Z"), "2", "1", "0");
+        JsonDownloadDiseaseOccurrence target = new JsonDownloadDiseaseOccurrence(7, 6, 5, 4, null, "2015-03-07", "2", "1", null);
 
         // Act
-        String result = new AbraidJsonObjectMapper().writeValueAsString(target);
+        String result = new ObjectMapper().writeValueAsString(target);
 
         // Assert
-        assertThat(result).isEqualTo("{\"Longitude\":7.0,\"Latitude\":6.0,\"Weight\":5.0,\"Admin\":4,\"GAUL\":\"NA\",\"Date\":\"2015-03-07T00:00:00.000Z\",\"Provenance\":\"2\",\"Feed\":\"1\",\"Url\":\"0\"}");
+        assertThat(result).isEqualTo("{\"Longitude\":7.0,\"Latitude\":6.0,\"Weight\":5.0,\"Admin\":4,\"GAUL\":\"NA\",\"Date\":\"2015-03-07\",\"Provenance\":\"2\",\"Feed\":\"1\",\"Url\":\"-\"}");
     }
 }
