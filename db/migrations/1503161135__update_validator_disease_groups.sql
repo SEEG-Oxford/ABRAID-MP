@@ -26,7 +26,7 @@ INSERT INTO validator_disease_group (name) VALUES ('hantavirus');
 UPDATE disease_group SET validator_disease_group_id=(SELECT id FROM validator_disease_group WHERE name='hantavirus') WHERE id=49; -- originally named 'Bunyaviridae' this is now 'Hantavirus'
 INSERT INTO validator_disease_group (name) VALUES ('West Nile virus');
 UPDATE disease_group SET validator_disease_group_id=(SELECT id FROM validator_disease_group WHERE name='West Nile virus') WHERE id=386; -- name='West Nile fever'
-INSERT INTO validator_disease_group (name) VALUES ('dracunculiasis');
-UPDATE disease_group SET validator_disease_group_id=(SELECT id FROM validator_disease_group WHERE name='dracunculiasis') WHERE id=96; --name='Dracunculiasis (Guinea worm)'
 INSERT INTO validator_disease_group (name) VALUES ('leprosy');
 UPDATE disease_group SET validator_disease_group_id=(SELECT id FROM validator_disease_group WHERE name='leprosy') WHERE id=192; -- name='Leprosy'
+
+UPDATE validator_disease_group SET name='dracunculiasis' WHERE name='Guinea worm'; 
