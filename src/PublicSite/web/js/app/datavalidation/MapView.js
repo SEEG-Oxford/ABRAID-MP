@@ -22,7 +22,7 @@ define([
 ], function (L, $, ko, _) {
     "use strict";
 
-    return function (baseUrl, wmsUrl, loggedIn, alert) {
+    return function (baseUrl, wmsUrl, loggedIn, alert, setTimeout) { // jshint ignore:line
 
         /** MAP AND BASE LAYER */
 
