@@ -54,6 +54,11 @@ define([
             tiled: true // Enable GeoWebCaching reuse of tiles between all users/page views
         });
 
+        // Track when zooming is happening
+        map.isZooming = false;
+        map.on("zoomstart", function () { map.isZooming = true; });
+        map.on("zoomend", function () { map.isZooming = false; });
+
         // Global colour variables
         var defaultColour = "#c478a9";      // Lighter pink/red
         var highlightColour = "#9e1e71";    // The chosen pink/red compatible with colourblindness
