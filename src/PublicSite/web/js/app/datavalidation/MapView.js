@@ -223,15 +223,72 @@ define([
             addDiseaseOccurrenceData(diseaseId);
         }
 
+        function findClosestOccurrenceMarkerToCoordinates(coords) {
+            return _.chain(layerMap).values().sortBy(function (marker) {
+                var markerCoords = marker.feature.geometry.coordinates;
+                return Math.sqrt(Math.pow(coords[0] - markerCoords[0], 2) + Math.pow(coords[1] - markerCoords[1], 2));
+            }).first().value();
+        }
+
+        function clickAndPanToOccurrenceMarker(marker) {
+            var latlong = marker.getLatLng();
+            if (!marker._spiderLeg) { /* jshint ignore:line */
+                map.panTo(latlong);
+            }
+            marker.fireEvent("click", {
+                latlng: latlong,
+                layerPoint: map.latLngToLayerPoint(latlong),
+                containerPoint: map.latLngToContainerPoint(latlong)
+            });
+        }
+
+        function selectOccurrenceMarker(target) {
+            var recursivelySelectOccurrenceMarker = function () {
+                if (!map.isZooming) {
+                    if (target._map) { /* jshint ignore:line */
+                        // The point is on the map, so click it
+                        clickAndPanToOccurrenceMarker(target);
+                    } else {
+                        var parent = clusterLayer.getVisibleParent(target);
+                        if (!parent) {
+                            // The closest point isn't on the map, and doesn't have a parent on the map.
+                            // We must be far from the location, so pan there and try again
+                            map.panTo(target.getLatLng());
+                            setTimeout(recursivelySelectOccurrenceMarker, 50);
+                        } else {
+                            // The closest point isn't on the map, but is inside a cluster on the map,
+                            // so click the cluster to open it. Then try again, so the spider leg gets clicked
+                            clickAndPanToOccurrenceMarker(parent);
+                            recursivelySelectOccurrenceMarker();
+                        }
+
+                    }
+                } else {
+                    // If we are in the middle of an animation, wait for it to complete before continuing
+                    setTimeout(recursivelySelectOccurrenceMarker, 50);
+                }
+            };
+            recursivelySelectOccurrenceMarker();
+        }
+
+        function selectClosestOccurrenceMarkerToCoordinates(coords) {
+            var closest = findClosestOccurrenceMarkerToCoordinates(coords);
+            selectOccurrenceMarker(closest);
+        }
+
         // Remove the feature's marker layer from the disease occurrence layer, and delete record of the feature.
         function removeMarkerFromDiseaseOccurrenceLayer(id) {
+            var coords = layerMap[id].feature.geometry.coordinates;
+
             clusterLayer.clearLayers();
             diseaseOccurrenceLayer.removeLayer(layerMap[id]);
             delete layerMap[id];
+
             if (_(layerMap).isEmpty()) {
                 ko.postbox.publish("no-features-to-review", true);
             } else {
                 clusterLayer.addLayer(diseaseOccurrenceLayer);
+                selectClosestOccurrenceMarkerToCoordinates(coords);
             }
         }
 
