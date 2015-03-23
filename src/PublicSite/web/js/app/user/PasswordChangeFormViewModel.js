@@ -10,7 +10,7 @@ define([
     return function (baseUrl) {
         var self = this;
 
-        BaseFormViewModel.call(self, false, true, baseUrl, "account/password");
+        BaseFormViewModel.call(self, false, true, baseUrl, "account/password", undefined, undefined, true);
 
         self.oldPassword = ko.observable("").extend({ required: true });
         self.newPassword = ko.observable("")

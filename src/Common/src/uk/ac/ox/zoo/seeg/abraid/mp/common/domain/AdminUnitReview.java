@@ -24,6 +24,10 @@ import javax.persistence.*;
         @NamedQuery(
                 name = "getAdminUnitReviewsByExpertIdAndDiseaseGroupId",
                 query = "from AdminUnitReview where expert.id=:expertId and diseaseGroup.id=:diseaseGroupId"
+        ),
+        @NamedQuery(
+                name = "getLastAdminUnitReviewDateByExpertId",
+                query = "select max(createdDate) from AdminUnitReview where expert.id=:expertId"
         )
 })
 @Entity

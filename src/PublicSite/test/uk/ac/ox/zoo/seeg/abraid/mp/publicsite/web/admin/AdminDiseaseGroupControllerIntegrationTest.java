@@ -247,7 +247,7 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
         // Arrange
         int diseaseGroupId = 87;
         int parentId = 1;
-        int validatorId = 1;
+        int validatorId = 2;
         String groupType = "MICROCLUSTER";
         String settings = "{ \"name\": \"Name\", " +
                 "\"publicName\": \"Public name\", " +
@@ -324,7 +324,7 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
         // Arrange
         int diseaseGroupId = 2;
         int parentId = 1;
-        int validatorId = 1;
+        int validatorId = 2;
         String groupType = "MICROCLUSTER";
         String settings = "{ \"name\": \"Name\", " +
                 "\"publicName\": \"Public name\", " +
@@ -431,7 +431,7 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
     public void addDiseaseGroupAddsNewDiseaseGroupToDatabase() throws Exception {
         // Arrange
         int parentId = 1;
-        int validatorId = 1;
+        int validatorId = 2;
         String settings = "{ \"name\": \"Name\", " +
                 "\"publicName\": \"Public name\", " +
                 "\"shortName\": \"Short name\", " +
@@ -456,7 +456,7 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
     public void addDiseaseGroupAddsNewDiseaseExtentWithSameDiseaseGroupId() throws Exception {
         // Arrange
         int parentId = 1;
-        int validatorId = 1;
+        int validatorId = 2;
         String settings = "{ \"name\": \"Name\", " +
                 "\"publicName\": \"Public name\", " +
                 "\"shortName\": \"Short name\", " +

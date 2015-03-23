@@ -1,67 +1,50 @@
-/* A suite of tests for the PasswordChangeFormViewModel.
- * Copyright (c) 2014 University of Oxford
+/* A suite of tests for the EmailChangeFormViewModel.
+ * Copyright (c) 2015 University of Oxford
  */
 define([
-    "app/user/PasswordChangeFormViewModel",
+    "app/user/EmailChangeFormViewModel",
     "shared/app/BaseFormViewModel",
     "squire"
-], function (PasswordChangeFormViewModel, BaseFormViewModel, Squire) {
+], function (EmailChangeFormViewModel, BaseFormViewModel, Squire) {
     "use strict";
 
-    describe("The 'password change' form view model", function () {
+    describe("The 'email change' form view model", function () {
         var baseUrl = "baseUrl/";
 
-        describe("has an 'old password' field, which ", function () {
+        describe("has an 'email' field, which ", function () {
             it("is an observable", function () {
-                var vm = new PasswordChangeFormViewModel(baseUrl);
-                expect(vm.oldPassword).toBeObservable();
+                var vm = new EmailChangeFormViewModel(baseUrl, "");
+                expect(vm.email).toBeObservable();
             });
 
-            it("starts empty", function () {
-                var vm = new PasswordChangeFormViewModel(baseUrl);
-                expect(vm.oldPassword()).toBe("");
+            it("starts with the value of a constructor argument", function () {
+                var vm = new EmailChangeFormViewModel(baseUrl, "abc");
+                expect(vm.email()).toBe("abc");
             });
 
             it("is validated appropriately", function () {
-                var vm = new PasswordChangeFormViewModel(baseUrl);
-                expect(vm.oldPassword).toHaveValidationRule({ name: "required", params: true });
+                var vm = new EmailChangeFormViewModel(baseUrl, "initialEmail");
+                expect(vm.email).toHaveValidationRule({ name: "required", params: true });
+                expect(vm.email).toHaveValidationRule({ name: "email", params: true });
+                expect(vm.email).toHaveValidationRule({ name: "maxLength", params: 320 });
+                expect(vm.email).toHaveValidationRule({ name: "emailChanged", params: "initialEmail" });
             });
         });
 
-        describe("has an 'new password' field, which ", function () {
+        describe("has a 'password' field, which ", function () {
             it("is an observable", function () {
-                var vm = new PasswordChangeFormViewModel(baseUrl);
-                expect(vm.newPassword).toBeObservable();
+                var vm = new EmailChangeFormViewModel(baseUrl, "");
+                expect(vm.password).toBeObservable();
             });
 
             it("starts empty", function () {
-                var vm = new PasswordChangeFormViewModel(baseUrl);
-                expect(vm.newPassword()).toBe("");
+                var vm = new EmailChangeFormViewModel(baseUrl, "");
+                expect(vm.password()).toBe("");
             });
 
             it("is validated appropriately", function () {
-                var vm = new PasswordChangeFormViewModel(baseUrl);
-                expect(vm.newPassword).toHaveValidationRule({ name: "required", params: true });
-                expect(vm.newPassword).toHaveValidationRule({ name: "passwordComplexity", params: true });
-            });
-        });
-
-        describe("has an 'confirm password' field, which ", function () {
-            it("is an observable", function () {
-                var vm = new PasswordChangeFormViewModel(baseUrl);
-                expect(vm.confirmPassword).toBeObservable();
-            });
-
-            it("starts empty", function () {
-                var vm = new PasswordChangeFormViewModel(baseUrl);
-                expect(vm.confirmPassword()).toBe("");
-            });
-
-            it("is validated appropriately", function () {
-                var vm = new PasswordChangeFormViewModel(baseUrl);
-                expect(vm.confirmPassword).toHaveValidationRule({ name: "required", params: true });
-                expect(vm.confirmPassword).toHaveValidationRule({ name: "passwordComplexity", params: true });
-                expect(vm.confirmPassword).toHaveValidationRule({ name: "areSame", params: vm.newPassword });
+                var vm = new EmailChangeFormViewModel(baseUrl, "");
+                expect(vm.password).toHaveValidationRule({ name: "required", params: true });
             });
         });
 
@@ -77,9 +60,9 @@ define([
                     baseSpy = jasmine.createSpy("baseSpy").and.callFake(BaseFormViewModel);
                     injector.mock("shared/app/BaseFormViewModel", baseSpy);
 
-                    injector.require(["app/user/PasswordChangeFormViewModel"],
-                        function (PasswordChangeFormViewModel) {
-                            vm = new PasswordChangeFormViewModel(baseUrl);
+                    injector.require(["app/user/EmailChangeFormViewModel"],
+                        function (EmailChangeFormViewModel) {
+                            vm = new EmailChangeFormViewModel(baseUrl, "email");
                             jasmine.Ajax.install();
                             done();
                         }
@@ -100,7 +83,7 @@ define([
 
             it("it specifies the correct form url", function () {
                 var args = baseSpy.calls.argsFor(0);
-                expect(args[3]).toBe("account/password");
+                expect(args[3]).toBe("account/email");
             });
 
             it("it specifies to not send JSON", function () {
@@ -129,15 +112,13 @@ define([
             });
 
             it("it overrides the 'buildSubmissionData' function to generate the correct data object", function () {
-                vm.oldPassword("oldPassword");
-                vm.newPassword("newPassword");
-                vm.confirmPassword("confirmPassword");
+                vm.email("email");
+                vm.password("password");
 
                 var data = vm.buildSubmissionData();
                 expect(data).toEqual({
-                    oldPassword: "oldPassword",
-                    newPassword: "newPassword",
-                    confirmPassword: "confirmPassword"
+                    email: "email",
+                    password: "password"
                 });
             });
         });

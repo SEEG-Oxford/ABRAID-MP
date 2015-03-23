@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
+import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitReview;
 
 import java.util.List;
@@ -38,6 +39,13 @@ public interface AdminUnitReviewDao {
      * @return A list of the expert's reviews for the disease group.
      */
     List<AdminUnitReview> getByExpertIdAndDiseaseGroupId(Integer expertId, Integer diseaseGroupId);
+
+    /**
+     * Gets the date of the last admin unit review submitted by a specific expert.
+     * @param expertId The expert's Id.
+     * @return The date of the last admin unit review.
+     */
+    DateTime getLastReviewDateByExpertId(Integer expertId);
 
     /**
      * Saves the specified review.

@@ -10,7 +10,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
-import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 
 import java.util.ArrayList;
@@ -102,14 +101,15 @@ public class AtlasControllerTest {
         verify(model).addAttribute(eq("layers"), argumentCaptor.capture());
         String value = argumentCaptor.getValue();
         assertThat(value).contains(expectation);
+        verify(model).addAttribute("seegMember", isSeegMember);
     }
 
     private void mockSeegExpert(CurrentUserService currentUserService, ExpertService expertService, boolean isSeegMember) {
         Expert expert = mock(Expert.class);
         when(expert.isSeegMember()).thenReturn(isSeegMember);
 
-        when(currentUserService.getCurrentUser()).thenReturn(mock(PublicSiteUser.class));
-        when(expertService.getExpertById(anyInt())).thenReturn(expert);
+        when(currentUserService.getCurrentUserId()).thenReturn(1);
+        when(expertService.getExpertById(1)).thenReturn(expert);
     }
 
     private void stubLayerRelatedServices(ModelRunService modelRunService, DiseaseService diseaseService) {

@@ -41,15 +41,15 @@ public class ValidatorDiseaseGroupDaoTest extends AbstractCommonSpringIntegratio
     @Test
     public void getAllValidatorDiseaseGroups() {
         // Arrange
-        int id = 1;
-        String name = "ascariasis";
+        int id = 2;
+        String name = "CCHF";
 
         // Act
         List<ValidatorDiseaseGroup> validatorDiseaseGroups = validatorDiseaseGroupDao.getAll();
         ValidatorDiseaseGroup validatorDiseaseGroup = findById(validatorDiseaseGroups, id);
 
         // Assert
-        assertThat(validatorDiseaseGroups).hasSize(20);
+        assertThat(validatorDiseaseGroups).hasSize(18);
         assertThat(validatorDiseaseGroup).isNotNull();
         assertThat(validatorDiseaseGroup.getName()).isEqualTo(name);
     }

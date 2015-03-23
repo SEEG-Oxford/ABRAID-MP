@@ -67,6 +67,14 @@ define([
         message: "Password fields must match"
     };
 
+    // Must be different when converted to lower case.
+    ko.validation.rules.emailChanged = {
+        validator: function (val, otherField) {
+            return ko.utils.recursiveUnwrap(val).toLowerCase() !== ko.utils.recursiveUnwrap(otherField).toLowerCase();
+        },
+        message: "New email address must be different from your current email address."
+    };
+
     // Adapted from:
     // https://github.com/Knockout-Contrib/Knockout-Validation/wiki/User-Contributed-Rules#password-complexity
     ko.validation.rules.passwordComplexity = {

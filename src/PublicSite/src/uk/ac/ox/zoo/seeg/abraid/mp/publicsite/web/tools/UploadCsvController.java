@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonFileUploadResponse;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 
@@ -26,12 +27,14 @@ public class UploadCsvController extends AbstractController {
     private static final String FILE_EMPTY_MESSAGE = "CSV file not supplied.";
 
     private CurrentUserService currentUserService;
+    private ExpertService expertService;
     private UploadCsvControllerHelperAsyncWrapper uploadCsvControllerHelperAsyncWrapper;
 
     @Autowired
-    public UploadCsvController(CurrentUserService currentUserService,
+    public UploadCsvController(CurrentUserService currentUserService, ExpertService expertService,
                                UploadCsvControllerHelperAsyncWrapper uploadCsvControllerHelperAsyncWrapper) {
         this.currentUserService = currentUserService;
+        this.expertService = expertService;
         this.uploadCsvControllerHelperAsyncWrapper = uploadCsvControllerHelperAsyncWrapper;
     }
 
@@ -69,7 +72,8 @@ public class UploadCsvController extends AbstractController {
     private void acquireCsvData(MultipartFile file, boolean isGoldStandard) throws IOException {
         byte[] csvFile = file.getBytes();
         String filePath = file.getOriginalFilename();
-        String userEmailAddress = currentUserService.getCurrentUser().getUsername();
+
+        String userEmailAddress = expertService.getExpertById(currentUserService.getCurrentUserId()).getEmail();
         uploadCsvControllerHelperAsyncWrapper.acquireCsvData(csvFile, isGoldStandard, userEmailAddress, filePath);
     }
 }

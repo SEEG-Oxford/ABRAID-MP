@@ -26,11 +26,16 @@ define([
         var extentType = { display: "disease extent", id: "extent" };
         var vm = {};
         beforeEach(function () {
-            vm = new LayerSelectorViewModel(availableLayers);
+            vm = new LayerSelectorViewModel(availableLayers, true);
         });
 
         describe("holds a field for the available layer types which", function () {
-            it("has three entries", function () {
+            it("has two entries for non-seeg members", function () {
+                vm = new LayerSelectorViewModel(availableLayers, false);
+                expect(vm.types.length).toBe(2);
+            });
+
+            it("has three entries for seeg members", function () {
                 expect(vm.types.length).toBe(3);
             });
 
@@ -38,7 +43,12 @@ define([
                 expect(vm.types).toContain(meanType);
             });
 
-            it("has an entry for uncertainty", function () {
+            it("does not have an entry for uncertainty for non-seeg members", function () {
+                vm = new LayerSelectorViewModel(availableLayers, false);
+                expect(vm.types).not.toContain(uncertaintyType);
+            });
+
+            it("has an entry for uncertainty for seeg members", function () {
                 expect(vm.types).toContain(uncertaintyType);
             });
 
@@ -100,7 +110,7 @@ define([
             });
 
             it("defaults to '---' if no available layers are provided", function () {
-                var localVM = new LayerSelectorViewModel([]);
+                var localVM = new LayerSelectorViewModel([], true);
                 expect(localVM.selectedDisease().disease).toBe("---");
             });
         });
@@ -140,7 +150,7 @@ define([
             });
 
             it("defaults to a fake empty run if no available layers are provided", function () {
-                var localVM = new LayerSelectorViewModel([]);
+                var localVM = new LayerSelectorViewModel([], true);
                 expect(localVM.selectedRun().id).toBeUndefined();
                 expect(localVM.selectedRun().date).toBe("---");
                 expect(localVM.selectedRun().rangeStart).toBe("???");
@@ -209,7 +219,7 @@ define([
                 });
 
                 expectedValue = "Model Run 3" + "_" + "mean";
-                new LayerSelectorViewModel(availableLayers); // jshint ignore:line
+                new LayerSelectorViewModel(availableLayers, true); // jshint ignore:line
 
                 expect(eventCount).toBe(1);
 
@@ -223,7 +233,7 @@ define([
                     eventCount = eventCount + 1;
                 });
 
-                new LayerSelectorViewModel([]); // jshint ignore:line
+                new LayerSelectorViewModel([], true); // jshint ignore:line
 
                 expect(eventCount).toBe(1);
 

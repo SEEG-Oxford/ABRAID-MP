@@ -37,6 +37,22 @@ public class AccountControllerValidator {
     }
 
     /**
+     * Validates an expert's email change request.
+     * @param email The new email address to be used.
+     * @param password The expert's password.
+     * @param expertId The id of the expert.
+     * @return A list of validation failures.
+     */
+    public List<String> validateEmailChange(String email, String password, int expertId) {
+        List<String> validationFailures = new ArrayList<>();
+
+        rules.checkEmail(email, validationFailures);
+        rules.checkCurrentPassword(password, expertId, validationFailures);
+
+        return validationFailures;
+    }
+
+    /**
      * Validates an expert's password change request.
      * @param oldPassword The current password.
      * @param newPassword The new password.

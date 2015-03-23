@@ -8,14 +8,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonDiseaseModelRunLayerSet;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelRunLayer;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
-import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 
 import java.util.*;
@@ -60,12 +59,14 @@ public class AtlasController extends AbstractController {
      */
     @RequestMapping(value = "/atlas/content", method = RequestMethod.GET)
     public String showAtlas(Model model) throws JsonProcessingException {
-        List<JsonDiseaseModelRunLayerSet> layers = prepareJsonDiseaseModelRunSets();
+        boolean seegMember = userIsSeegMember();
+        List<JsonDiseaseModelRunLayerSet> layers = prepareJsonDiseaseModelRunSets(seegMember);
         model.addAttribute("layers", objectMapper.writeValueAsString(layers));
+        model.addAttribute("seegMember", seegMember);
         return "atlas/content";
     }
 
-    private List<JsonDiseaseModelRunLayerSet> prepareJsonDiseaseModelRunSets() {
+    private List<JsonDiseaseModelRunLayerSet> prepareJsonDiseaseModelRunSets(boolean seegMember) {
         final List<Integer> diseaseGroupsInAutomaticModelRuns =
                 diseaseService.getDiseaseGroupIdsForAutomaticModelRuns();
         final Collection<ModelRun> modelRuns = modelRunService.getCompletedModelRunsForDisplay();
@@ -74,7 +75,7 @@ public class AtlasController extends AbstractController {
         for (ModelRun modelRun : modelRuns) {
             int diseaseGroupId = modelRun.getDiseaseGroupId();
             boolean automaticRun = diseaseGroupsInAutomaticModelRuns.contains(diseaseGroupId);
-            if (userIsSeegMember() || automaticRun) {
+            if (seegMember || automaticRun) {
                 if (!layersByDiseaseId.containsKey(diseaseGroupId)) {
                     layersByDiseaseId.put(diseaseGroupId, new ArrayList<JsonModelRunLayer>());
                 }
@@ -92,11 +93,11 @@ public class AtlasController extends AbstractController {
     }
 
     private boolean userIsSeegMember() {
-        PublicSiteUser user = currentUserService.getCurrentUser();
-        if (user == null) {
+        Integer expertId = currentUserService.getCurrentUserId();
+        if (expertId == null) {
             return false;
         } else {
-            Expert expert = expertService.getExpertById(user.getId());
+            Expert expert = expertService.getExpertById(expertId);
             if (expert == null) {
                 throw new IllegalArgumentException("Logged in user does not have an associated expert.");
             } else {

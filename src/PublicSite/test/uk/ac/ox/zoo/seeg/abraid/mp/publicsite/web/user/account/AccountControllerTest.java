@@ -11,7 +11,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.JsonExpertDetails;
-import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.validator.ValidationException;
 
@@ -30,6 +29,7 @@ import static org.mockito.Mockito.*;
  * Copyright (c) 2014 University of Oxford
  */
 public class AccountControllerTest {
+
     private static AccountController createTarget(int userId, ExpertService expertServiceIn,
                                                   DiseaseService diseaseService,
                                                   AccountControllerValidator adminControllerValidator,
@@ -37,10 +37,8 @@ public class AccountControllerTest {
                                                   CurrentUserService currentUserService) {
         CurrentUserService userService;
         if (currentUserService == null) {
-            userService = mock(CurrentUserService.class);
-            PublicSiteUser user = mock(PublicSiteUser.class);
-            when(userService.getCurrentUser()).thenReturn(user);
-            when(user.getId()).thenReturn(userId);
+            userService = getCurrentUserService();
+            when(userService.getCurrentUserId()).thenReturn(userId);
         } else {
             userService = currentUserService;
         }
@@ -147,6 +145,71 @@ public class AccountControllerTest {
     }
 
     @Test
+    public void getChangeEmailPageReturnsCorrectTemplate() throws Exception {
+        // Arrange
+        ExpertService expertService = mock(ExpertService.class);
+        when(expertService.getExpertById(1)).thenReturn(mock(Expert.class));
+        when(expertService.getExpertById(1).getEmail()).thenReturn("expectedEmail");
+        AccountController target = createTarget(1, expertService, null, null, null, null);
+        ModelMap model = mock(ModelMap.class);
+
+        // Act
+        String result = target.getChangeEmailPage(model);
+
+        // Assert
+        verify(model).addAttribute("email", "expectedEmail");
+        assertThat(result).isEqualTo("account/email");
+    }
+
+    @Test
+    public void submitChangeEmailPageReturnsBadRequestIfValidationFails() throws Exception {
+        // Arrange
+        AccountControllerValidator validator = mock(AccountControllerValidator.class);
+        AccountControllerHelper helper = mock(AccountControllerHelper.class);
+        AccountController target = createTarget(1, null, null, validator, helper, null);
+        when(validator.validateEmailChange(anyString(), anyString(), anyInt())).thenReturn(Arrays.asList("FAIL1", "FAIL2"));
+
+        // Act
+        ResponseEntity<Collection<String>> result = target.submitChangeEmailPage("email", "password");
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(result.getBody()).containsOnly("FAIL1", "FAIL2");
+    }
+
+    @Test
+    public void submitChangeEmailPageReturnsBadRequestIfSaveFails() throws Exception {
+        // Arrange
+        AccountControllerValidator validator = mock(AccountControllerValidator.class);
+        AccountControllerHelper helper = mock(AccountControllerHelper.class);
+        AccountController target = createTarget(1, null, null, validator, helper, null);
+        doThrow(new ValidationException(Arrays.asList("FAIL3")))
+                .when(helper).processExpertEmailChangeAsTransaction(anyInt(), anyString());
+
+        // Act
+        ResponseEntity<Collection<String>> result = target.submitChangeEmailPage("email", "password");
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(result.getBody()).containsOnly("FAIL3");
+    }
+
+    @Test
+    public void submitChangeEmailPageSavesPasswordAndReturnsNoContentForValidRequest() throws Exception {
+        AccountControllerValidator validator = mock(AccountControllerValidator.class);
+        AccountControllerHelper helper = mock(AccountControllerHelper.class);
+        int userId = 99;
+        AccountController target = createTarget(userId, null, null, validator, helper, null);
+
+        // Act
+        ResponseEntity<Collection<String>> result = target.submitChangeEmailPage("email", "password");
+
+        // Assert
+        verify(helper).processExpertEmailChangeAsTransaction(userId, "email");
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    }
+
+    @Test
     public void getChangePasswordPageReturnsCorrectTemplate() throws Exception {
         // Arrange
         AccountController target = createTarget(1, null, null, null, null, null);
@@ -209,7 +272,7 @@ public class AccountControllerTest {
     @Test
     public void getPasswordResetRequestPageReturnsCorrectTemplate() throws Exception {
         // Arrange
-        AccountController target = createTarget(1, null, null, null, null, mock(CurrentUserService.class));
+        AccountController target = createTarget(1, null, null, null, null, getCurrentUserService());
 
         // Act
         String result = target.getPasswordResetRequestPage();
@@ -221,8 +284,8 @@ public class AccountControllerTest {
     @Test
     public void getPasswordResetRequestPageRedirectsLoggedInUsers() throws Exception {
         // Arrange
-        CurrentUserService userService = mock(CurrentUserService.class);
-        when(userService.getCurrentUser()).thenReturn(mock(PublicSiteUser.class));
+        CurrentUserService userService = getCurrentUserService();
+        when(userService.getCurrentUserId()).thenReturn(1);
         AccountController target = createTarget(1, null, null, null, null, userService);
 
         // Act
@@ -285,7 +348,7 @@ public class AccountControllerTest {
     public void getPasswordResetProcessingPageReturnsCorrectTemplateForValidParameters() throws Exception {
         // Arrange
         AccountControllerValidator adminControllerValidator = mock(AccountControllerValidator.class);
-        AccountController target = createTarget(1, null, null, adminControllerValidator, null, mock(CurrentUserService.class));
+        AccountController target = createTarget(1, null, null, adminControllerValidator, null, getCurrentUserService());
         when(adminControllerValidator.validatePasswordResetRequest(7, "key")).thenReturn(new ArrayList<String>());
         Model model = mock(Model.class);
 
@@ -302,7 +365,7 @@ public class AccountControllerTest {
     public void getPasswordResetProcessingPageReturnsCorrectTemplateForInvalidParameters() throws Exception {
         // Arrange
         AccountControllerValidator adminControllerValidator = mock(AccountControllerValidator.class);
-        AccountController target = createTarget(1, null, null, adminControllerValidator, null, mock(CurrentUserService.class));
+        AccountController target = createTarget(1, null, null, adminControllerValidator, null, getCurrentUserService());
         List<String> failures = Arrays.asList("Failure");
         when(adminControllerValidator.validatePasswordResetRequest(7, "key")).thenReturn(failures);
         Model model = mock(Model.class);
@@ -317,8 +380,8 @@ public class AccountControllerTest {
 
     @Test public void getPasswordResetProcessingPageRedirectsLoggedInUsers() throws Exception {
         // Arrange
-        CurrentUserService userService = mock(CurrentUserService.class);
-        when(userService.getCurrentUser()).thenReturn(mock(PublicSiteUser.class));
+        CurrentUserService userService = getCurrentUserService();
+        when(userService.getCurrentUserId()).thenReturn(1);
         AccountController target = createTarget(1, null, null, null, null, userService);
 
         // Act
@@ -404,5 +467,11 @@ public class AccountControllerTest {
         }
         when(httpServletRequest.getContextPath()).thenReturn(context);
         return httpServletRequest;
+    }
+
+    private static CurrentUserService getCurrentUserService() {
+        CurrentUserService mock = mock(CurrentUserService.class);
+        when(mock.getCurrentUserId()).thenReturn(null);
+        return mock;
     }
 }

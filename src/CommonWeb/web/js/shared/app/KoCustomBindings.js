@@ -38,10 +38,20 @@ define([
         update: function (element, valueAccessor) {
             var arg = ko.utils.recursiveUnwrap(valueAccessor);
 
-            var date = ko.utils.recursiveUnwrap(arg.date) || arg;
-            var format = ko.utils.recursiveUnwrap(arg.format) || "LL";
+            var date = ko.utils.recursiveUnwrap(arg.date);
+            if (typeof date === "undefined") {
+                // distinguish null from undefined
+                date = arg;
+            }
 
-            $(element).text(moment(date).lang("en-gb").format(format));
+            var format = ko.utils.recursiveUnwrap(arg.format) || "LL";
+            var fallback = ko.utils.recursiveUnwrap(arg.fallback) || "Invalid Date";
+
+            if (date !== null) {
+                $(element).text(moment(date).lang("en-gb").format(format));
+            } else {
+                $(element).text(fallback);
+            }
         }
     };
 

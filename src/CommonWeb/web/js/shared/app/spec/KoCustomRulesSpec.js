@@ -102,6 +102,25 @@ define([
             });
         });
 
+        describe("the 'emailChanged' rule which", function () {
+            it("checks the second value does not match the first, in lower case", function () {
+                expect(ko.validation.rules.emailChanged.validator("Abc", "bbc")).toBe(true);
+                expect(ko.validation.rules.emailChanged.validator("Abc", "Abc")).toBe(false);
+                expect(ko.validation.rules.emailChanged.validator("abc", "Abc")).toBe(false);
+            });
+
+            it("can validate wrapped values", function () {
+                expect(ko.validation.rules.emailChanged.validator(wrap("Abc"), wrap("bbc"))).toBe(true);
+                expect(ko.validation.rules.emailChanged.validator(wrap("Abc"), wrap("Abc"))).toBe(false);
+                expect(ko.validation.rules.emailChanged.validator(wrap("abc"), wrap("Abc"))).toBe(false);
+            });
+
+            it("has a suitable failure message", function () {
+                expect(ko.validation.rules.emailChanged.message).toBe(
+                    "New email address must be different from your current email address.");
+            });
+        });
+
         describe("the 'customMin' rule which", function () {
             it("checks the second value is strictly less than the first", function () {
                 expect(ko.validation.rules.customMin.validator(1, 0)).toBe(true);

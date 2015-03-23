@@ -220,7 +220,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     @Test
     public void getDiseaseOccurrencesYetToBeReviewedByExpertMustReturnCorrectOccurrencesForSeegUser() {
         // Arrange
-        int validatorDiseaseGroupId = 1;
+        int validatorDiseaseGroupId = 2;
         ValidatorDiseaseGroup validatorDiseaseGroup = validatorDiseaseGroupDao.getById(validatorDiseaseGroupId);
 
         Expert expert = expertDao.getByEmail("helena.patching@zoo.ox.ac.uk");
@@ -239,7 +239,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     @Test
     public void getDiseaseOccurrencesYetToBeReviewedByExpertMustReturnCorrectOccurrencesForNonSeegUser() {
         // Arrange
-        int validatorDiseaseGroupId = 1;
+        int validatorDiseaseGroupId = 2;
         ValidatorDiseaseGroup validatorDiseaseGroup = validatorDiseaseGroupDao.getById(validatorDiseaseGroupId);
 
         Expert expert = expertDao.getByEmail("edward.wiles@zoo.ox.ac.uk");

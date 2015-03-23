@@ -2,6 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
+import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitReview;
 
 import java.util.List;
@@ -46,5 +47,16 @@ public class AdminUnitReviewDaoImpl extends AbstractDao<AdminUnitReview, Integer
     public List<AdminUnitReview> getByExpertIdAndDiseaseGroupId(Integer expertId, Integer diseaseGroupId) {
         return listNamedQuery("getAdminUnitReviewsByExpertIdAndDiseaseGroupId", "expertId", expertId, "diseaseGroupId",
                 diseaseGroupId);
+    }
+
+    /**
+     * Gets the date of the last admin unit review submitted by a specific expert.
+     * @param expertId The expert's Id.
+     * @return The date of the last admin unit review.
+     */
+    @Override
+    public DateTime getLastReviewDateByExpertId(Integer expertId) {
+        Query query = getParameterisedNamedQuery("getLastAdminUnitReviewDateByExpertId", "expertId", expertId);
+        return (DateTime) query.uniqueResult();
     }
 }

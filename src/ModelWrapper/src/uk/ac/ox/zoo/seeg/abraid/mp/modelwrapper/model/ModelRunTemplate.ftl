@@ -150,8 +150,8 @@ attempt_model_run <- function() {
         create_dry_run_raster("mean", "results/mean_prediction.tif")
         create_dry_run_raster("uncertainty", "results/prediction_uncertainty.tif")
         create_dry_run_csv("statistics", "results/statistics.csv", c(
-            '"deviance","rmse","kappa","auc","sens","spec","pcc","kappa_sd","auc_sd","sens_sd","spec_sd","pcc_sd","thresh"',
-            '1,2,3,4,5,6,7,8,9,10,11,12,13'))
+            '"auc","sens","spec","pcc","kappa","auc_sd","sens_sd","spec_sd","pcc_sd","kappa_sd"',
+            '1,2,3,4,5,6,7,8,9,10'))
         create_dry_run_csv("influence", "results/relative_influence.csv", c(
             '"","file_path","covariate","mean","2.5%","97.5%"',
             '"X","path/upr_u.tif","GRUMP urban surface","1","2","3"'))

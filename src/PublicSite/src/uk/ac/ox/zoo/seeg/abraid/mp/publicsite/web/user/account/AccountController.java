@@ -41,8 +41,10 @@ public class AccountController extends AbstractController {
     private static final Logger LOGGER = Logger.getLogger(AccountController.class);
     private static final String LOG_USER_UPDATED = "User updated (%s)";
     private static final String LOG_PASSWORD_CHANGED = "Password updated (%s)";
+    private static final String LOG_EMAIL_CHANGED = "Email updated (%s)";
 
     private static final String DISEASES_ATTRIBUTE_KEY = "diseases";
+    private static final String EMAIL_ATTRIBUTE_KEY = "email";
     private static final String JSON_EXPERT_ATTRIBUTE_KEY = "jsonExpert";
 
     private final CurrentUserService currentUserService;
@@ -94,7 +96,7 @@ public class AccountController extends AbstractController {
     @RequestMapping(value = "/account/edit", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Collection<String>> submitAccountEditPage(@RequestBody JsonExpertDetails expert) {
-        int expertId = currentUserService.getCurrentUser().getId();
+        int expertId = currentUserService.getCurrentUserId();
 
         // Validate dto
         Collection<String> validationFailures = validator.validate(expert);
@@ -106,6 +108,52 @@ public class AccountController extends AbstractController {
         try {
             helper.processExpertProfileUpdateAsTransaction(expertId, expert);
             LOGGER.info(String.format(LOG_USER_UPDATED, expertId));
+        } catch (ValidationException e) {
+            return new ResponseEntity<>(e.getValidationMessages(), HttpStatus.BAD_REQUEST);
+        }
+
+        // Return successfully
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT); // Could add success page
+    }
+
+    /**
+     * Loads the email change page.
+     * @param modelMap The templating model.
+     * @return the template for the email page.
+     */
+    @Secured("ROLE_USER")
+    @RequestMapping(value = "/account/email", method = RequestMethod.GET)
+    public String getChangeEmailPage(ModelMap modelMap) {
+        final String email = expertService.getExpertById(currentUserService.getCurrentUserId()).getEmail();
+        modelMap.addAttribute(EMAIL_ATTRIBUTE_KEY, email);
+        return "account/email";
+    }
+
+    /**
+     * Receives the user input from the email change page and responds accordingly.
+     * @param email The user input for the  new email.
+     * @param password The user input for their current password.
+     * @return A failure status with an array of response messages or a success status.
+     */
+    @Secured("ROLE_USER")
+    @RequestMapping(value = "/account/email",
+            method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Collection<String>> submitChangeEmailPage(
+            String email, String password) {
+        int expertId = currentUserService.getCurrentUserId();
+
+        // Validate inputs
+        Collection<String> validationFailures =
+                validator.validateEmailChange(email, password, expertId);
+
+        if (!validationFailures.isEmpty()) {
+            return new ResponseEntity<>(validationFailures, HttpStatus.BAD_REQUEST);
+        }
+
+        // Update & save expert
+        try {
+            helper.processExpertEmailChangeAsTransaction(expertId, email);
+            LOGGER.info(String.format(LOG_EMAIL_CHANGED, expertId));
         } catch (ValidationException e) {
             return new ResponseEntity<>(e.getValidationMessages(), HttpStatus.BAD_REQUEST);
         }
@@ -136,7 +184,7 @@ public class AccountController extends AbstractController {
             method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Collection<String>> submitChangePasswordPage(
             String oldPassword, String newPassword, String confirmPassword) {
-        int expertId = currentUserService.getCurrentUser().getId();
+        int expertId = currentUserService.getCurrentUserId();
 
         // Validate inputs
         Collection<String> validationFailures =
@@ -164,7 +212,7 @@ public class AccountController extends AbstractController {
      */
     @RequestMapping(value = "/account/reset/request", method = RequestMethod.GET)
     public String getPasswordResetRequestPage() {
-        if (currentUserService.getCurrentUser() != null) {
+        if (currentUserService.getCurrentUserId() != null) {
             // Prevent logged in users from performing a password reset (without returning a 403 error page)
             return "redirect:/";
         }
@@ -208,7 +256,7 @@ public class AccountController extends AbstractController {
      */
     @RequestMapping(value = "/account/reset/process", method = RequestMethod.GET)
     public String getPasswordResetProcessingPage(Integer id, String key, Model model) {
-        if (currentUserService.getCurrentUser() != null) {
+        if (currentUserService.getCurrentUserId() != null) {
             // Prevent logged in users from performing a password reset (without returning a 403 error page)
             return "redirect:/";
         }
@@ -260,7 +308,7 @@ public class AccountController extends AbstractController {
     }
 
     private Expert loadExpert() {
-        return expertService.getExpertById(currentUserService.getCurrentUser().getId());
+        return expertService.getExpertById(currentUserService.getCurrentUserId());
     }
 
     private List<JsonValidatorDiseaseGroup> loadValidatorDiseaseGroups() {

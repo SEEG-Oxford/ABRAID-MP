@@ -38,7 +38,7 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
 
         // NB. ViewModels subscribing to events published by LayerSelector must be defined first.
         ko.applyBindings(
-            new LayerSelectorViewModel(data.layers),
+            new LayerSelectorViewModel(data.layers, data.seegMember),
             doc.getElementById("layerSelector")
         );
     });

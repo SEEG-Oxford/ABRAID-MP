@@ -14,7 +14,8 @@ define([
 
         var converter = {
             incomingJsonToRowViewModel: function (expert) {
-                var row = _(expert).pick("id", "name", "email", "jobTitle", "institution", "visibilityRequested");
+                var row = _(expert).pick("id", "name", "email", "jobTitle", "institution", "visibilityRequested",
+                    "adminUnitReviewCount", "diseaseOccurrenceReviewCount", "diseaseInterestNames");
                 row.seegmember = ko.observable(expert.seegmember);                   // editable
                 row.administrator = ko.observable(expert.administrator);             // editable
                 row.visibilityApproved = ko.observable(expert.visibilityApproved);   // editable
@@ -22,6 +23,13 @@ define([
                     .extend({ number: true, required: true, min: 0, max: 1 });       // with validation
                 row.createdDate = new Date(expert.createdDate);                      // convert from text
                 row.updatedDate = new Date(expert.updatedDate);                      // convert from text
+                row.lastReviewDate = expert.lastReviewDate ? new Date(expert.lastReviewDate) : null;// convert from text
+
+                // Calculated fields
+                row.visibilitySort = ko.computed(function () {
+                    return row.visibilityApproved() ? 1 : (row.visibilityRequested ? 2 : 3);
+                }, row);
+                row.totalReviewCount = expert.diseaseOccurrenceReviewCount + expert.adminUnitReviewCount;
 
                 // Track changes
                 row.changed = false;
