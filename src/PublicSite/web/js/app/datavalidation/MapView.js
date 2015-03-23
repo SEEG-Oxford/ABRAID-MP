@@ -230,7 +230,7 @@ define([
             }).first().value();
         }
 
-        function clickAndPanToOccurrenceMarker(marker) {
+        function panToAndClickOccurrenceMarker(marker) {
             var latlong = marker.getLatLng();
             if (!marker._spiderLeg) { /* jshint ignore:line */
                 map.panTo(latlong);
@@ -247,21 +247,19 @@ define([
                 if (!map.isZooming) {
                     if (target._map) { /* jshint ignore:line */
                         // The point is on the map, so click it
-                        clickAndPanToOccurrenceMarker(target);
+                        panToAndClickOccurrenceMarker(target);
                     } else {
                         var parent = clusterLayer.getVisibleParent(target);
                         if (!parent) {
                             // The closest point isn't on the map, and doesn't have a parent on the map.
                             // We must be far from the location, so pan there and try again
                             map.panTo(target.getLatLng());
-                            setTimeout(recursivelySelectOccurrenceMarker, 50);
                         } else {
                             // The closest point isn't on the map, but is inside a cluster on the map,
                             // so click the cluster to open it. Then try again, so the spider leg gets clicked
-                            clickAndPanToOccurrenceMarker(parent);
-                            recursivelySelectOccurrenceMarker();
+                            panToAndClickOccurrenceMarker(parent);
                         }
-
+                        setTimeout(recursivelySelectOccurrenceMarker, 50);
                     }
                 } else {
                     // If we are in the middle of an animation, wait for it to complete before continuing
@@ -277,7 +275,8 @@ define([
         }
 
         // Remove the feature's marker layer from the disease occurrence layer, and delete record of the feature.
-        function removeMarkerFromDiseaseOccurrenceLayer(id) {
+        // Then select the next feature for review.
+        function removeMarkerFromDiseaseOccurrenceLayerAndSelectNext(id) {
             var coords = layerMap[id].feature.geometry.coordinates;
 
             clusterLayer.clearLayers();
@@ -512,7 +511,7 @@ define([
         });
 
         ko.postbox.subscribe("occurrence-reviewed", function (id) {
-            removeMarkerFromDiseaseOccurrenceLayer(id);
+            removeMarkerFromDiseaseOccurrenceLayerAndSelectNext(id);
         });
 
         ko.postbox.subscribe("admin-unit-reviewed", function (id) {
