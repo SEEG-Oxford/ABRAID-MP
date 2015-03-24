@@ -272,7 +272,7 @@ define([
                 }
 
                 // If we are in the middle of an animation, wait for it to complete before continuing
-                // If we just clicks something that isn't the target occurrence, continue to try and click the target
+                // If we just clicked something that isn't the target occurrence, continue to try and click the target
                 setTimeout(recursivelySelectOccurrenceMarker, 50);
             };
             recursivelySelectOccurrenceMarker();
