@@ -56,8 +56,11 @@ define([
 
         // Track when zooming is happening
         map.isZooming = false;
+        map.isPanning = false;
         map.on("zoomstart", function () { map.isZooming = true; });
         map.on("zoomend", function () { map.isZooming = false; });
+        map.on("movestart", function () { map.isPanning = true; });
+        map.on("moveend", function () { map.isPanning = false; });
 
         // Global colour variables
         var defaultColour = "#c478a9";      // Lighter pink/red
@@ -225,16 +228,12 @@ define([
 
         function findClosestOccurrenceMarkerToCoordinates(coords) {
             return _.chain(layerMap).values().sortBy(function (marker) {
-                var markerCoords = marker.feature.geometry.coordinates;
-                return Math.sqrt(Math.pow(coords[0] - markerCoords[0], 2) + Math.pow(coords[1] - markerCoords[1], 2));
+                return coords.distanceTo(extractLatLng(marker));
             }).first().value();
         }
 
-        function panToAndClickOccurrenceMarker(marker) {
+        function clickOccurrenceMarker(marker) {
             var latlong = marker.getLatLng();
-            if (!marker._spiderLeg) { /* jshint ignore:line */
-                map.panTo(latlong);
-            }
             marker.fireEvent("click", {
                 latlng: latlong,
                 layerPoint: map.latLngToLayerPoint(latlong),
@@ -242,29 +241,39 @@ define([
             });
         }
 
+        function extractLatLng(marker) {
+            return new L.LatLng(marker.feature.geometry.coordinates[1], marker.feature.geometry.coordinates[0]);
+        }
+
         function selectOccurrenceMarker(target) {
+            var targetLatLng = extractLatLng(target);
+            if (!map.getCenter().equals(targetLatLng)) {
+                // Center the target in the view
+                map.panTo(targetLatLng);
+            }
+
             var recursivelySelectOccurrenceMarker = function () {
-                if (!map.isZooming) {
+                if (!map.isZooming && !map.isPanning) {
+                    var parent = clusterLayer.getVisibleParent(target);
+
                     if (target._map) { /* jshint ignore:line */
                         // The point is on the map, so click it
-                        panToAndClickOccurrenceMarker(target);
+                        clickOccurrenceMarker(target);
+                        // Complete
+                        return;
+                    } else if (parent) {
+                        // The closest point isn't on the map, but is inside a cluster on the map,
+                        // so click the cluster to open it. Then try again, so the spider leg gets clicked
+                        clickOccurrenceMarker(parent);
                     } else {
-                        var parent = clusterLayer.getVisibleParent(target);
-                        if (!parent) {
-                            // The closest point isn't on the map, and doesn't have a parent on the map.
-                            // We must be far from the location, so pan there and try again
-                            map.panTo(target.getLatLng());
-                        } else {
-                            // The closest point isn't on the map, but is inside a cluster on the map,
-                            // so click the cluster to open it. Then try again, so the spider leg gets clicked
-                            panToAndClickOccurrenceMarker(parent);
-                        }
-                        setTimeout(recursivelySelectOccurrenceMarker, 50);
+                        // Give up
+                        return;
                     }
-                } else {
-                    // If we are in the middle of an animation, wait for it to complete before continuing
-                    setTimeout(recursivelySelectOccurrenceMarker, 50);
                 }
+
+                // If we are in the middle of an animation, wait for it to complete before continuing
+                // If we just clicks something that isn't the target occurrence, continue to try and click the target
+                setTimeout(recursivelySelectOccurrenceMarker, 50);
             };
             recursivelySelectOccurrenceMarker();
         }
@@ -277,7 +286,7 @@ define([
         // Remove the feature's marker layer from the disease occurrence layer, and delete record of the feature.
         // Then select the next feature for review.
         function removeMarkerFromDiseaseOccurrenceLayerAndSelectNext(id) {
-            var coords = layerMap[id].feature.geometry.coordinates;
+            var coords = extractLatLng(layerMap[id]);
 
             clusterLayer.clearLayers();
             diseaseOccurrenceLayer.removeLayer(layerMap[id]);
