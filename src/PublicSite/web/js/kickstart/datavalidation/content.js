@@ -1,7 +1,7 @@
 /* Apply KO bindings for the data validation page.
  * Copyright (c) 2014 University of Oxford
  */
-/*global require:false, baseUrl:false, data:false, alert:false*/
+/*global require:false, baseUrl:false, data:false, alert:false, setTimeout:false*/
 require([baseUrl + "js/shared/require.conf.js"], function () {
     "use strict";
 
@@ -21,7 +21,7 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
         "analytics"
     ], function (ko, $, CounterViewModel, LatestOccurrencesViewModel, setupMap, ModalView, SelectedPointViewModel,
                  SelectedLayerViewModel, SelectedAdminUnitViewModel, SidePanelViewModel, SpinnerViewModel, doc) {
-            setupMap(baseUrl, data.wmsUrl, data.loggedIn, alert);
+            setupMap(baseUrl, data.wmsUrl, data.loggedIn, alert, setTimeout);
 
             var modal = new ModalView(doc.getElementById("helpModal"), data.showHelpText);  // jshint ignore:line
 
