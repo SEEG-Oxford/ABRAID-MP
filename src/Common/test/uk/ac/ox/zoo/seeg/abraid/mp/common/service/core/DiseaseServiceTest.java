@@ -25,8 +25,6 @@ public class DiseaseServiceTest {
     private HealthMapSubDiseaseDao healthMapSubDiseaseDao;
     private ValidatorDiseaseGroupDao validatorDiseaseGroupDao;
     private AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao;
-    private AdminUnitGlobalDao adminUnitGlobalDao;
-    private AdminUnitTropicalDao adminUnitTropicalDao;
     private DiseaseExtentClassDao diseaseExtentClassDao;
     private NativeSQL nativeSQL;
 
@@ -39,13 +37,11 @@ public class DiseaseServiceTest {
         healthMapSubDiseaseDao = mock(HealthMapSubDiseaseDao.class);
         validatorDiseaseGroupDao = mock(ValidatorDiseaseGroupDao.class);
         adminUnitDiseaseExtentClassDao = mock(AdminUnitDiseaseExtentClassDao.class);
-        adminUnitGlobalDao = mock(AdminUnitGlobalDao.class);
-        adminUnitTropicalDao = mock(AdminUnitTropicalDao.class);
         diseaseExtentClassDao = mock(DiseaseExtentClassDao.class);
         nativeSQL = mock(NativeSQL.class);
         diseaseService = new DiseaseServiceImpl(diseaseOccurrenceDao, diseaseOccurrenceReviewDao, diseaseGroupDao,
                 healthMapDiseaseDao, healthMapSubDiseaseDao, validatorDiseaseGroupDao, adminUnitDiseaseExtentClassDao,
-                adminUnitGlobalDao, adminUnitTropicalDao, diseaseExtentClassDao, nativeSQL);
+                diseaseExtentClassDao, nativeSQL);
     }
 
     @Test
@@ -438,46 +434,6 @@ public class DiseaseServiceTest {
 
         // Assert
         assertThat(actualDiseaseExtent).isSameAs(expectedDiseaseExtent);
-    }
-
-    @Test
-    public void getAllAdminUnitGlobalsOrTropicalsForDiseaseGroupIdReturnsGlobalsForGlobalDisease() {
-        // Arrange
-        int diseaseGroupId = 10;
-        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
-        diseaseGroup.setGlobal(true);
-        List<AdminUnitGlobal> expectedAdminUnits = new ArrayList<>();
-
-        when(diseaseGroupDao.getById(diseaseGroupId)).thenReturn(diseaseGroup);
-        when(adminUnitGlobalDao.getAll()).thenReturn(expectedAdminUnits);
-
-        // Act
-        List actualAdminUnits =
-                diseaseService.getAllAdminUnitGlobalsOrTropicalsForDiseaseGroupId(diseaseGroupId);
-
-        // Assert
-        //noinspection unchecked
-        assertThat(actualAdminUnits).isSameAs(expectedAdminUnits);
-    }
-
-    @Test
-    public void getAllAdminUnitGlobalsOrTropicalsForDiseaseGroupIdReturnsTropicalsForTropicalDisease() {
-        // Arrange
-        int diseaseGroupId = 10;
-        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
-        diseaseGroup.setGlobal(false);
-        List<AdminUnitTropical> expectedAdminUnits = new ArrayList<>();
-
-        when(diseaseGroupDao.getById(diseaseGroupId)).thenReturn(diseaseGroup);
-        when(adminUnitTropicalDao.getAll()).thenReturn(expectedAdminUnits);
-
-        // Act
-        List actualAdminUnits =
-                diseaseService.getAllAdminUnitGlobalsOrTropicalsForDiseaseGroupId(diseaseGroupId);
-
-        // Assert
-        //noinspection unchecked
-        assertThat(actualAdminUnits).isSameAs(expectedAdminUnits);
     }
 
     @Test

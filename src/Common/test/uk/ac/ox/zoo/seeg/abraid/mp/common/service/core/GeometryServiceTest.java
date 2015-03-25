@@ -21,6 +21,8 @@ public class GeometryServiceTest {
     private AdminUnitQCDao adminUnitQCDao;
     private NativeSQL nativeSQL;
     private LandSeaBorderDao landSeaBorderDao;
+    private AdminUnitGlobalDao adminUnitGlobalDao;
+    private AdminUnitTropicalDao adminUnitTropicalDao;
 
     @Before
     public void setUp() {
@@ -29,7 +31,11 @@ public class GeometryServiceTest {
         adminUnitQCDao = mock(AdminUnitQCDao.class);
         nativeSQL = mock(NativeSQL.class);
         landSeaBorderDao = mock(LandSeaBorderDao.class);
-        geometryService = new GeometryServiceImpl(countryDao, healthMapCountryDao, adminUnitQCDao, nativeSQL, landSeaBorderDao);
+        landSeaBorderDao = mock(LandSeaBorderDao.class);
+        adminUnitGlobalDao = mock(AdminUnitGlobalDao.class);
+        adminUnitTropicalDao = mock(AdminUnitTropicalDao.class);
+        geometryService = new GeometryServiceImpl(countryDao, healthMapCountryDao, adminUnitQCDao, nativeSQL,
+                landSeaBorderDao, adminUnitGlobalDao, adminUnitTropicalDao);
     }
 
     @Test
@@ -69,6 +75,43 @@ public class GeometryServiceTest {
 
         // Assert
         assertThat(testAdminUnits).isSameAs(adminUnits);
+    }
+
+
+    @Test
+    public void getAllAdminUnitGlobalsOrTropicalsForDiseaseGroupReturnsGlobalsForGlobalDisease() {
+        // Arrange
+        DiseaseGroup diseaseGroup = new DiseaseGroup();
+        diseaseGroup.setGlobal(true);
+        List<AdminUnitGlobal> expectedAdminUnits = new ArrayList<>();
+
+        when(adminUnitGlobalDao.getAll()).thenReturn(expectedAdminUnits);
+
+        // Act
+        List actualAdminUnits =
+                geometryService.getAllAdminUnitGlobalsOrTropicalsForDiseaseGroup(diseaseGroup);
+
+        // Assert
+        //noinspection unchecked
+        assertThat(actualAdminUnits).isSameAs(expectedAdminUnits);
+    }
+
+    @Test
+    public void getAllAdminUnitGlobalsOrTropicalsForDiseaseGroupReturnsTropicalsForTropicalDisease() {
+        // Arrange
+        DiseaseGroup diseaseGroup = new DiseaseGroup();
+        diseaseGroup.setGlobal(false);
+        List<AdminUnitTropical> expectedAdminUnits = new ArrayList<>();
+
+        when(adminUnitTropicalDao.getAll()).thenReturn(expectedAdminUnits);
+
+        // Act
+        List actualAdminUnits =
+                geometryService.getAllAdminUnitGlobalsOrTropicalsForDiseaseGroup(diseaseGroup);
+
+        // Assert
+        //noinspection unchecked
+        assertThat(actualAdminUnits).isSameAs(expectedAdminUnits);
     }
 
     @Test

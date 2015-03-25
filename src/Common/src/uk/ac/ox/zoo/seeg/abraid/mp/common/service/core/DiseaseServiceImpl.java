@@ -23,8 +23,7 @@ public class DiseaseServiceImpl implements DiseaseService {
     private HealthMapSubDiseaseDao healthMapSubDiseaseDao;
     private ValidatorDiseaseGroupDao validatorDiseaseGroupDao;
     private AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao;
-    private AdminUnitGlobalDao adminUnitGlobalDao;
-    private AdminUnitTropicalDao adminUnitTropicalDao;
+
     private DiseaseExtentClassDao diseaseExtentClassDao;
     private NativeSQL nativeSQL;
 
@@ -35,8 +34,6 @@ public class DiseaseServiceImpl implements DiseaseService {
                               HealthMapSubDiseaseDao healthMapSubDiseaseDao,
                               ValidatorDiseaseGroupDao validatorDiseaseGroupDao,
                               AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao,
-                              AdminUnitGlobalDao adminUnitGlobalDao,
-                              AdminUnitTropicalDao adminUnitTropicalDao,
                               DiseaseExtentClassDao diseaseExtentClassDao,
                               NativeSQL nativeSQL) {
         this.diseaseOccurrenceDao = diseaseOccurrenceDao;
@@ -46,8 +43,6 @@ public class DiseaseServiceImpl implements DiseaseService {
         this.healthMapSubDiseaseDao = healthMapSubDiseaseDao;
         this.validatorDiseaseGroupDao = validatorDiseaseGroupDao;
         this.adminUnitDiseaseExtentClassDao = adminUnitDiseaseExtentClassDao;
-        this.adminUnitGlobalDao = adminUnitGlobalDao;
-        this.adminUnitTropicalDao = adminUnitTropicalDao;
         this.diseaseExtentClassDao = diseaseExtentClassDao;
         this.nativeSQL = nativeSQL;
     }
@@ -143,22 +138,6 @@ public class DiseaseServiceImpl implements DiseaseService {
                 return o1.getShortNameForDisplay().toLowerCase().compareTo(o2.getShortNameForDisplay().toLowerCase());
             }
         });
-    }
-
-    /**
-     * Gets a list of admin units for global or tropical diseases, depending on whether the specified disease group
-     * is a global or a tropical disease.
-     * @param diseaseGroupId The ID of the disease group.
-     * @return The disease extent.
-     */
-    @Override
-    public List<? extends AdminUnitGlobalOrTropical> getAllAdminUnitGlobalsOrTropicalsForDiseaseGroupId(
-            Integer diseaseGroupId) {
-        if (isDiseaseGroupGlobal(diseaseGroupId)) {
-            return adminUnitGlobalDao.getAll();
-        } else {
-            return adminUnitTropicalDao.getAll();
-        }
     }
 
     /**

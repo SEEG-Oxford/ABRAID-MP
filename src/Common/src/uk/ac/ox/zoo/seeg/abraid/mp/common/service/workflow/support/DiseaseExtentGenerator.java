@@ -5,6 +5,7 @@ import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.GeometryService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 
 import java.util.List;
@@ -26,12 +27,14 @@ public class DiseaseExtentGenerator {
     private DiseaseService diseaseService;
     private ExpertService expertService;
     private ModelRunService modelRunService;
+    private GeometryService geometryService;
 
     public DiseaseExtentGenerator(DiseaseService diseaseService, ExpertService expertService,
-                                  ModelRunService modelRunService) {
+                                  ModelRunService modelRunService, GeometryService geometryService) {
         this.diseaseService = diseaseService;
         this.expertService = expertService;
         this.modelRunService = modelRunService;
+        this.geometryService = geometryService;
     }
 
     /**
@@ -68,7 +71,7 @@ public class DiseaseExtentGenerator {
         // Find all admin units, for either global or tropical diseases depending on the disease group
         // This query is necessary so that admin units with no occurrences appear in the disease extent
         List<? extends AdminUnitGlobalOrTropical> adminUnits =
-                diseaseService.getAllAdminUnitGlobalsOrTropicalsForDiseaseGroupId(diseaseGroupId);
+                geometryService.getAllAdminUnitGlobalsOrTropicalsForDiseaseGroup(diseaseGroup);
 
         // Retrieve a lookup table of disease extent classes
         List<DiseaseExtentClass> diseaseExtentClasses = diseaseService.getAllDiseaseExtentClasses();

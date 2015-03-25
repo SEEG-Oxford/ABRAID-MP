@@ -1,10 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 
 import com.vividsolutions.jts.geom.Point;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitQC;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Country;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapCountry;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LandSeaBorder;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.List;
 
@@ -13,7 +10,6 @@ import java.util.List;
  * Copyright (c) 2014 University of Oxford
  */
 public interface GeometryService {
-
     /**
      * Gets all countries.
      * @return All countries.
@@ -25,6 +21,15 @@ public interface GeometryService {
      * @return All HealthMap countries.
      */
     List<HealthMapCountry> getAllHealthMapCountries();
+
+    /**
+     * Gets a list of admin units for global or tropical diseases, depending on whether the specified disease group
+     * is a global or a tropical disease.
+     * @param diseaseGroup The disease group.
+     * @return The disease extent.
+     */
+    List<? extends AdminUnitGlobalOrTropical> getAllAdminUnitGlobalsOrTropicalsForDiseaseGroup(
+            DiseaseGroup diseaseGroup);
 
     /**
      * Gets the list of African countries that should be considered when calculating

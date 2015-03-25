@@ -3,10 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 import com.vividsolutions.jts.geom.Point;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.*;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitQC;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Country;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapCountry;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LandSeaBorder;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.List;
 
@@ -21,15 +18,20 @@ public class GeometryServiceImpl implements GeometryService {
     private AdminUnitQCDao adminUnitQCDao;
     private NativeSQL nativeSQL;
     private LandSeaBorderDao landSeaBorderDao;
+    private AdminUnitGlobalDao adminUnitGlobalDao;
+    private AdminUnitTropicalDao adminUnitTropicalDao;
 
     public GeometryServiceImpl(CountryDao countryDao, HealthMapCountryDao healthMapCountryDao,
-                               AdminUnitQCDao adminUnitQCDao, NativeSQL nativeSQL, LandSeaBorderDao landSeaBorderDao) {
+                               AdminUnitQCDao adminUnitQCDao, NativeSQL nativeSQL, LandSeaBorderDao landSeaBorderDao,
+                               AdminUnitGlobalDao adminUnitGlobalDao, AdminUnitTropicalDao adminUnitTropicalDao) {
 
         this.countryDao = countryDao;
         this.healthMapCountryDao = healthMapCountryDao;
         this.adminUnitQCDao = adminUnitQCDao;
         this.nativeSQL = nativeSQL;
         this.landSeaBorderDao = landSeaBorderDao;
+        this.adminUnitGlobalDao = adminUnitGlobalDao;
+        this.adminUnitTropicalDao = adminUnitTropicalDao;
     }
 
     /**
@@ -48,6 +50,22 @@ public class GeometryServiceImpl implements GeometryService {
     @Override
     public List<HealthMapCountry> getAllHealthMapCountries() {
         return healthMapCountryDao.getAll();
+    }
+
+    /**
+     * Gets a list of admin units for global or tropical diseases, depending on whether the specified disease group
+     * is a global or a tropical disease.
+     * @param diseaseGroup The disease group.
+     * @return The disease extent.
+     */
+    @Override
+    public List<? extends AdminUnitGlobalOrTropical> getAllAdminUnitGlobalsOrTropicalsForDiseaseGroup(
+            DiseaseGroup diseaseGroup) {
+        if (diseaseGroup.isGlobal() != null && diseaseGroup.isGlobal()) {
+            return adminUnitGlobalDao.getAll();
+        } else {
+            return adminUnitTropicalDao.getAll();
+        }
     }
 
     /**
