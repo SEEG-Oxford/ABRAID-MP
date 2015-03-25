@@ -7,6 +7,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Feed;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ProvenanceNames;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.AlertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.GeometryService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 
 import java.util.ArrayList;
@@ -27,16 +28,16 @@ public class CsvLookupData {
     private static final String SAVED_NEW_FEED = "Saved new feed \"%s\" under provenance \"%s\"";
 
     private AlertService alertService;
-    private LocationService locationService;
+    private GeometryService geometryService;
     private DiseaseService diseaseService;
 
     private Map<String, Country> countryMap;
     private Map<String, DiseaseGroup> diseaseGroupMap;
     private Map<String, List<Feed>> provenanceFeedsMap;
 
-    public CsvLookupData(AlertService alertService, LocationService locationService, DiseaseService diseaseService) {
+    public CsvLookupData(AlertService alertService, GeometryService geometryService, DiseaseService diseaseService) {
         this.alertService = alertService;
-        this.locationService = locationService;
+        this.geometryService = geometryService;
         this.diseaseService = diseaseService;
     }
 
@@ -48,7 +49,7 @@ public class CsvLookupData {
         if (countryMap == null) {
             // We need the keys to be lowercase for case-insensitive comparisons (so Lambda.index cannot be used here)
             countryMap = new HashMap<>();
-            for (Country country : locationService.getAllCountries()) {
+            for (Country country : geometryService.getAllCountries()) {
                 countryMap.put(country.getName().toLowerCase(), country);
             }
 

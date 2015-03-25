@@ -6,6 +6,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.GeometryService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.*;
 
@@ -25,7 +26,7 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
     private ModelRunRequester modelRunRequester;
     private DiseaseOccurrenceReviewManager reviewManager;
     private DiseaseService diseaseService;
-    private LocationService locationService;
+    private GeometryService geometryService;
     private DiseaseExtentGenerator diseaseExtentGenerator;
     private AutomaticModelRunsEnabler automaticModelRunsEnabler;
     private MachineWeightingPredictor machineWeightingPredictor;
@@ -36,7 +37,7 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
                                        ModelRunRequester modelRunRequester,
                                        DiseaseOccurrenceReviewManager reviewManager,
                                        DiseaseService diseaseService,
-                                       LocationService locationService,
+                                       GeometryService geometryService,
                                        DiseaseExtentGenerator diseaseExtentGenerator,
                                        AutomaticModelRunsEnabler automaticModelRunsEnabler,
                                        MachineWeightingPredictor machineWeightingPredictor,
@@ -46,7 +47,7 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
         this.modelRunRequester = modelRunRequester;
         this.reviewManager = reviewManager;
         this.diseaseService = diseaseService;
-        this.locationService = locationService;
+        this.geometryService = geometryService;
         this.diseaseExtentGenerator = diseaseExtentGenerator;
         this.automaticModelRunsEnabler = automaticModelRunsEnabler;
         this.machineWeightingPredictor = machineWeightingPredictor;
@@ -212,7 +213,7 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
      */
     public List<DiseaseOccurrence> selectOccurrencesForModelRun(int diseaseGroupId,
                                                                 boolean onlyUseGoldStandardOccurrences) {
-        ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
+        ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, geometryService,
                 emailService, diseaseGroupId, onlyUseGoldStandardOccurrences);
         return selector.selectModelRunDiseaseOccurrences();
     }

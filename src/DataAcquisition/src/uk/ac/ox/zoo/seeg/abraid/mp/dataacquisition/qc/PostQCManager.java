@@ -2,6 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.qc;
 
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.GeometryService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 
 import static java.lang.Math.log;
@@ -19,11 +20,11 @@ public class PostQCManager {
     private static final double BETA = 1.0 / MAX_AREA_FOR_MODEL_ELIGIBLE_COUNTRY;
 
 
-    private final LocationService locationService;
+    private final GeometryService geometryService;
     private final QCLookupData qcLookupData;
 
-    public PostQCManager(LocationService locationService, QCLookupData qcLookupData) {
-        this.locationService = locationService;
+    public PostQCManager(GeometryService geometryService, QCLookupData qcLookupData) {
+        this.geometryService = geometryService;
         this.qcLookupData = qcLookupData;
     }
 
@@ -49,11 +50,11 @@ public class PostQCManager {
 
         // Find and assign the disease extent admin units that contain the location's point
         Integer adminUnitGlobalGaulCode =
-                locationService.findAdminUnitGlobalThatContainsPoint(location.getGeom());
+                geometryService.findAdminUnitGlobalThatContainsPoint(location.getGeom());
         location.setAdminUnitGlobalGaulCode(adminUnitGlobalGaulCode);
 
         Integer adminUnitTropicalGaulCode =
-                locationService.findAdminUnitTropicalThatContainsPoint(location.getGeom());
+                geometryService.findAdminUnitTropicalThatContainsPoint(location.getGeom());
         location.setAdminUnitTropicalGaulCode(adminUnitTropicalGaulCode);
     }
 
@@ -62,13 +63,13 @@ public class PostQCManager {
      * @param location The location.
      */
     private void assignCountry(Location location) {
-        Integer countryGaulCode = locationService.findCountryThatContainsPoint(location.getGeom());
+        Integer countryGaulCode = geometryService.findCountryThatContainsPoint(location.getGeom());
         location.setCountryGaulCode(countryGaulCode);
     }
 
     private void failQCIfNotOnLand(Location location) {
         // A sanity check - this should only happen if, after QC stage 2, the point is adjusted to be off land
-        if (!locationService.doesLandSeaBorderContainPoint(location.getGeom())) {
+        if (!geometryService.doesLandSeaBorderContainPoint(location.getGeom())) {
             location.setHasPassedQc(false);
         }
     }

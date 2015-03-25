@@ -5,6 +5,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Country;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceStatus;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.GeometryService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.DiseaseOccurrenceSpreadTable;
 
@@ -20,14 +21,14 @@ import static org.hamcrest.core.IsEqual.equalTo;
  */
 public class DiseaseOccurrenceSpreadHelper {
     private DiseaseService diseaseService;
-    private LocationService locationService;
+    private GeometryService geometryService;
 
     private static final String DISEASE_GROUP_DOES_NOT_EXIST_MESSAGE = "This disease group does not exist.";
     private static final String NO_OCCURRENCES_MESSAGE = "This disease group has no relevant occurrences.";
 
-    public DiseaseOccurrenceSpreadHelper(DiseaseService diseaseService, LocationService locationService) {
+    public DiseaseOccurrenceSpreadHelper(DiseaseService diseaseService, GeometryService geometryService) {
         this.diseaseService = diseaseService;
-        this.locationService = locationService;
+        this.geometryService = geometryService;
     }
 
     /**
@@ -68,7 +69,7 @@ public class DiseaseOccurrenceSpreadHelper {
     }
 
     private List<Country> getCountries() {
-        List<Country> countries = locationService.getAllCountries();
+        List<Country> countries = geometryService.getAllCountries();
         Collections.sort(countries, new Comparator<Country>() {
             @Override
             public int compare(Country o1, Country o2) {

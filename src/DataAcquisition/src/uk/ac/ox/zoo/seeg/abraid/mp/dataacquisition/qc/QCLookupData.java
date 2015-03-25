@@ -5,6 +5,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitQC;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Country;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapCountry;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LandSeaBorder;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.GeometryService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 
@@ -28,10 +29,10 @@ public class QCLookupData {
     private Map<Integer, HealthMapCountry> healthMapCountryMap;
     private Map<Integer, MultiPolygon> healthMapCountryGeometryMap;
 
-    private LocationService locationService;
+    private GeometryService geometryService;
 
-    public QCLookupData(LocationService locationService) {
-        this.locationService = locationService;
+    public QCLookupData(GeometryService geometryService) {
+        this.geometryService = geometryService;
     }
 
     /**
@@ -40,7 +41,7 @@ public class QCLookupData {
      */
     public List<AdminUnitQC> getAdminUnits() {
         if (adminUnits == null) {
-            adminUnits = locationService.getAllAdminUnitQCs();
+            adminUnits = geometryService.getAllAdminUnitQCs();
         }
         return adminUnits;
     }
@@ -63,7 +64,7 @@ public class QCLookupData {
     public Map<Integer, Country> getCountryMap() {
         if (countryMap == null) {
             // This will retrieve the countries from the Hibernate cache if already obtained by CountryGeometryMap
-            List<Country> countries = locationService.getAllCountries();
+            List<Country> countries = geometryService.getAllCountries();
             countryMap = index(countries, on(Country.class).getGaulCode());
         }
         return countryMap;
@@ -76,7 +77,7 @@ public class QCLookupData {
     public Map<Integer, MultiPolygon> getCountryGeometryMap() {
         if (countryGeometryMap == null) {
             // This will retrieve the countries from the Hibernate cache if already obtained by CsvLookupData
-            List<Country> countries = locationService.getAllCountries();
+            List<Country> countries = geometryService.getAllCountries();
             countryGeometryMap = new HashMap<>();
             for (Country country : countries) {
                 countryGeometryMap.put(country.getGaulCode(), country.getGeom());
@@ -92,7 +93,7 @@ public class QCLookupData {
      */
     public MultiPolygon getLandSeaBorders() {
         if (landSeaBorders == null) {
-            List<LandSeaBorder> landSeaBorderList = locationService.getAllLandSeaBorders();
+            List<LandSeaBorder> landSeaBorderList = geometryService.getAllLandSeaBorders();
             List<MultiPolygon> multiPolygons = extract(landSeaBorderList, on(LandSeaBorder.class).getGeom());
             landSeaBorders = GeometryUtils.concatenate(multiPolygons);
         }
@@ -106,7 +107,7 @@ public class QCLookupData {
     public Map<Integer, HealthMapCountry> getHealthMapCountryMap() {
         if (healthMapCountryMap == null) {
             // This will retrieve the countries from the Hibernate cache if already obtained by HealthMapLookupData
-            List<HealthMapCountry> countries = locationService.getAllHealthMapCountries();
+            List<HealthMapCountry> countries = geometryService.getAllHealthMapCountries();
             healthMapCountryMap = index(countries, on(HealthMapCountry.class).getId());
         }
         return healthMapCountryMap;
@@ -120,7 +121,7 @@ public class QCLookupData {
     public Map<Integer, MultiPolygon> getHealthMapCountryGeometryMap() {
         if (healthMapCountryGeometryMap == null) {
             // This will retrieve the countries from the Hibernate cache if already obtained by HealthMapLookupData
-            List<HealthMapCountry> countries = locationService.getAllHealthMapCountries();
+            List<HealthMapCountry> countries = geometryService.getAllHealthMapCountries();
             healthMapCountryGeometryMap = new HashMap<>();
 
             for (HealthMapCountry country : countries) {

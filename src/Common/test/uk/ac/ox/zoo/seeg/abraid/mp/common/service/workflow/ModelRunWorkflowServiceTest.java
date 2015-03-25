@@ -8,6 +8,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.GeometryService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.*;
 
@@ -40,14 +41,14 @@ public class ModelRunWorkflowServiceTest {
         modelRunRequester = mock(ModelRunRequester.class);
         reviewManager = mock(DiseaseOccurrenceReviewManager.class);
         diseaseService = mock(DiseaseService.class);
-        LocationService locationService = mock(LocationService.class);
+        GeometryService geometryService = mock(GeometryService.class);
         diseaseExtentGenerator = mock(DiseaseExtentGenerator.class);
         automaticModelRunsEnabler = mock(AutomaticModelRunsEnabler.class);
         machineWeightingPredictor = mock(MachineWeightingPredictor.class);
         emailService = mock(EmailService.class);
         batchDatesValidator = mock(BatchDatesValidator.class);
         modelRunWorkflowService = spy(new ModelRunWorkflowServiceImpl(weightingsCalculator, modelRunRequester,
-                reviewManager, diseaseService, locationService, diseaseExtentGenerator, automaticModelRunsEnabler,
+                reviewManager, diseaseService, geometryService, diseaseExtentGenerator, automaticModelRunsEnabler,
                 machineWeightingPredictor, emailService, batchDatesValidator));
     }
 

@@ -12,6 +12,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.GeometryService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 
 import java.util.HashSet;
@@ -34,7 +35,7 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
     private DiseaseService diseaseService;
 
     @Autowired
-    private LocationService locationService;
+    private GeometryService geometryService;
 
     @Autowired
     private AlertDao alertDao;
@@ -63,7 +64,7 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         // Arrange
         int diseaseGroupId = 87;
 
-        ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
+        ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, geometryService,
                 emailService, diseaseGroupId, false);
 
         // Act
@@ -81,7 +82,7 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         // Arrange - NB. Automatic model runs are disabled by default
         int diseaseGroupId = 87;
 
-        ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
+        ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, geometryService,
                 emailService, diseaseGroupId, false);
 
         // Act
@@ -100,7 +101,7 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         int diseaseGroupId = 87;
         addManuallyUploadedGoldStandardOccurrences();
 
-        ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
+        ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, geometryService,
                 emailService, diseaseGroupId, true);
 
         // Act
@@ -125,7 +126,7 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         diseaseGroup.setOccursInAfrica(null);
         diseaseService.saveDiseaseGroup(diseaseGroup);
 
-        ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
+        ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, geometryService,
                 emailService, diseaseGroupId, false);
 
         // Act
@@ -146,7 +147,7 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         diseaseGroup.setMinDataVolume(minDataVolume);       // Ensure MDVSatisfied check will pass
         diseaseService.saveDiseaseGroup(diseaseGroup);
 
-        ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
+        ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, geometryService,
                 emailService, diseaseGroupId, false);
 
         // Act
@@ -169,7 +170,7 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         diseaseGroup.setHighFrequencyThreshold(null);
         diseaseService.saveDiseaseGroup(diseaseGroup);
 
-        ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
+        ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, geometryService,
                 emailService, diseaseGroupId, false);
 
         // Act
@@ -192,7 +193,7 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         diseaseGroup.setMinDistinctCountries(null);
         diseaseService.saveDiseaseGroup(diseaseGroup);
 
-        ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
+        ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, geometryService,
                 emailService, diseaseGroupId, false);
 
         // Act
@@ -212,7 +213,7 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         diseaseGroup.setOccursInAfrica(true);
         diseaseService.saveDiseaseGroup(diseaseGroup);
 
-        ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
+        ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, geometryService,
                 emailService, diseaseGroupId, false);
 
         // Act
@@ -233,7 +234,7 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         diseaseGroup.setOccursInAfrica(false);
         diseaseService.saveDiseaseGroup(diseaseGroup);
 
-        ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
+        ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, geometryService,
                 emailService, diseaseGroupId, false);
 
         // Act
@@ -258,7 +259,7 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         diseaseGroup.setMinHighFrequencyCountries(1);
         diseaseService.saveDiseaseGroup(diseaseGroup);
 
-        ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
+        ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, geometryService,
                 emailService, diseaseGroupId, false);
 
         // Act
@@ -299,7 +300,7 @@ public class ModelRunOccurrencesSelectorIntegrationTest extends AbstractCommonSp
         diseaseGroup.setMinDistinctCountries(minDistinctCountries);
         diseaseService.saveDiseaseGroup(diseaseGroup);
 
-        ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, locationService,
+        ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, geometryService,
                 emailService, diseaseGroupId, false);
 
         // Act
