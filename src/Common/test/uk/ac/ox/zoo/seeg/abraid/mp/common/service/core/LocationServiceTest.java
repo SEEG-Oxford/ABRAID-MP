@@ -11,6 +11,7 @@ import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -69,5 +70,30 @@ public class LocationServiceTest {
 
         // Assert
         assertThat(testPrecisionMap).isEqualTo(precisionMap);
+    }
+
+    @Test
+    public void getGeoNameById() {
+        // Arrange
+        GeoName expectation = mock(GeoName.class);
+        when(geoNameDao.getById(123)).thenReturn(expectation);
+
+        // Act
+        GeoName actual = locationService.getGeoNameById(123);
+
+        // Assert
+        assertThat(actual).isEqualTo(expectation);
+    }
+
+    @Test
+    public void saveGeoName() {
+        // Arrange
+        GeoName expectation = mock(GeoName.class);
+
+        // Act
+        locationService.saveGeoName(expectation);
+
+        // Assert
+        verify(geoNameDao).save(expectation);
     }
 }
