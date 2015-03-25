@@ -187,7 +187,7 @@ public class DataValidationController extends AbstractController {
 
         // Only SEEG members may submit disease occurrence reviews for disease groups still in setup phase.
         DiseaseOccurrence occurrence = diseaseService.getDiseaseOccurrenceById(occurrenceId);
-        if (!userIsSeegMember(expertId) && !occurrence.getDiseaseGroup().isAutomaticModelRunsEnabled()) {
+        if (!diseaseGroupIsAccessibleToExpert(expertId, occurrence.getDiseaseGroup())) {
             return new ResponseEntity(HttpStatus.FORBIDDEN);
         }
 
@@ -227,7 +227,6 @@ public class DataValidationController extends AbstractController {
     public ResponseEntity<GeoJsonDiseaseExtentFeatureCollection> getDiseaseExtentForDiseaseGroup(
             @PathVariable Integer diseaseGroupId) {
         Integer expertId = currentUserService.getCurrentUserId();
-        boolean userIsSEEG = userIsSeegMember(expertId);
 
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         if (diseaseGroup == null) {
@@ -237,7 +236,7 @@ public class DataValidationController extends AbstractController {
         GeoJsonDiseaseExtentFeatureCollection featureCollection;
         // Only SEEG members may view disease extent for disease groups still in setup phase.
         // Other users see an empty extent.
-        if (diseaseGroup.isAutomaticModelRunsEnabled() || userIsSEEG) {
+        if (diseaseGroupIsAccessibleToExpert(expertId, diseaseGroup)) {
             try {
                 List<AdminUnitDiseaseExtentClass> diseaseExtent =
                         diseaseService.getDiseaseExtentByDiseaseGroupId(diseaseGroupId);
@@ -332,7 +331,6 @@ public class DataValidationController extends AbstractController {
     public ResponseEntity submitAdminUnitReview(@PathVariable Integer diseaseGroupId, @PathVariable Integer gaulCode,
                                                 String review) {
         Integer expertId = currentUserService.getCurrentUserId();
-        boolean userIsSEEG = userIsSeegMember(expertId);
 
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         if (diseaseGroup == null) {
@@ -340,7 +338,7 @@ public class DataValidationController extends AbstractController {
         }
 
         // Only SEEG members may submit disease extent reviews for disease groups still in setup phase.
-        if (!userIsSEEG && !diseaseGroup.isAutomaticModelRunsEnabled()) {
+        if (!diseaseGroupIsAccessibleToExpert(expertId, diseaseGroup)) {
             return new ResponseEntity(HttpStatus.FORBIDDEN);
         }
 
@@ -374,5 +372,9 @@ public class DataValidationController extends AbstractController {
         } else {
             return expert;
         }
+    }
+
+    private boolean diseaseGroupIsAccessibleToExpert(Integer expertId, DiseaseGroup diseaseGroup) {
+        return userIsSeegMember(expertId) || diseaseGroup.getLastModelRunPrepDate() != null;
     }
 }
