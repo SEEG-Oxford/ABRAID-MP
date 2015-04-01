@@ -3,7 +3,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.qc;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.GeometryService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 
 import static java.lang.Math.log;
 

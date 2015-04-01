@@ -10,6 +10,7 @@ import org.mockito.stubbing.Answer;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.GeometryService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ public class DiseaseExtentGeneratorTest {
     private DiseaseService diseaseService;
     private ExpertService expertService;
     private ModelRunService modelRunService;
+    private GeometryService geometeryService;
 
     private DiseaseExtentClass presenceDiseaseExtentClass = new DiseaseExtentClass(DiseaseExtentClass.PRESENCE, 100);
     private DiseaseExtentClass possiblePresenceDiseaseExtentClass = new DiseaseExtentClass(DiseaseExtentClass.POSSIBLE_PRESENCE, 50);
@@ -51,9 +53,10 @@ public class DiseaseExtentGeneratorTest {
         diseaseService = mock(DiseaseService.class);
         expertService = mock(ExpertService.class);
         modelRunService = mock(ModelRunService.class);
+        geometeryService = mock(GeometryService.class);
         adminUnits = getAdminUnits();
 
-        diseaseExtentGenerator = new DiseaseExtentGenerator(diseaseService, expertService, modelRunService);
+        diseaseExtentGenerator = new DiseaseExtentGenerator(diseaseService, expertService, modelRunService, geometeryService);
         mockGetDiseaseExtentClass(presenceDiseaseExtentClass);
         mockGetDiseaseExtentClass(possiblePresenceDiseaseExtentClass);
         mockGetDiseaseExtentClass(uncertainDiseaseExtentClass);
@@ -313,7 +316,7 @@ public class DiseaseExtentGeneratorTest {
     }
 
     private void standardMocks() {
-        mockGetAllAdminUnitGlobalsOrTropicalsForDiseaseGroupId();
+        mockGetAllAdminUnitGlobalsOrTropicalsForDiseaseGroup();
         mockGetDiseaseGroupById();
         mockGetAllDiseaseExtentClasses();
     }
@@ -349,8 +352,8 @@ public class DiseaseExtentGeneratorTest {
                 eq(false))).thenReturn(occurrences);
     }
 
-    private void mockGetAllAdminUnitGlobalsOrTropicalsForDiseaseGroupId() {
-        when(diseaseService.getAllAdminUnitGlobalsOrTropicalsForDiseaseGroupId(diseaseGroupId))
+    private void mockGetAllAdminUnitGlobalsOrTropicalsForDiseaseGroup() {
+        when(geometeryService.getAllAdminUnitGlobalsOrTropicalsForDiseaseGroup(diseaseGroup))
                 .thenAnswer(convertToAnswer(adminUnits));
     }
 

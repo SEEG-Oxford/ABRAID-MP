@@ -3,17 +3,17 @@ package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 import org.joda.time.DateTime;
+import org.junit.After;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.GeoJsonDiseaseExtentFeature;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.GeoJsonDiseaseExtentFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.GeoJsonDiseaseOccurrenceFeatureCollection;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.geojson.GeoJsonObjectType;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.GeometryService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractDiseaseOccurrenceGeoJsonTests;
@@ -23,12 +23,35 @@ import java.util.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
 
 /**
  * Tests for the DataValidationController.
  * Copyright (c) 2014 University of Oxford
  */
 public class DataValidationControllerTest {
+    private ValidatorDiseaseGroup validatorDiseaseGroup = null;
+    private DiseaseOccurrence diseaseOccurrence = null;
+    private DiseaseGroup diseaseGroup = null;
+    private DiseaseService diseaseService = null;
+    private ExpertService expertService = null;
+    private CurrentUserService currentUserService = null;
+    private Expert expert = null;
+    private GeometryService geometryService = null;
+    private DiseaseExtentClass diseaseExtentClass = null;
+
+    @After
+    public void cleanup() {
+        validatorDiseaseGroup = null;
+        diseaseOccurrence = null;
+        diseaseGroup = null;
+        diseaseService = null;
+        expertService = null;
+        currentUserService = null;
+        expert = null;
+        geometryService = null;
+        diseaseExtentClass = null;
+    }
 
     @Test
     public void showTabReturnsDataValidationPage() {
@@ -57,6 +80,8 @@ public class DataValidationControllerTest {
     @Test
     public void showPageReturnsDataValidationContentPageWithModelData() {
         // Arrange
+        wireupAnonmousUser();
+        wireupValidatorDiseaseGroups();
         Model model = mock(Model.class);
         DataValidationController target = createTarget();
 
@@ -70,11 +95,10 @@ public class DataValidationControllerTest {
     @Test
     public void showPageReturnsDataModelForAnonymousUser() {
         // Arrange
-        CurrentUserService currentUserService = createCurrentUserService();
-        when(currentUserService.getCurrentUserId()).thenReturn(null);
+        wireupAnonmousUser();
 
         Model model = mock(Model.class);
-        DataValidationController target = createTarget(currentUserService, null, null);
+        DataValidationController target = createTarget();
 
         // Act
         target.showPage(model);
@@ -95,8 +119,11 @@ public class DataValidationControllerTest {
     }
 
     @Test
-    public void showPageReturnsDataModelForLoggedInUser() {
+    public void showPageReturnsDataModelForLoggedInNonSeegUser() {
         // Arrange
+        boolean isSeeg = false;
+        wireupExpert(1, isSeeg, true);
+        wireupValidatorDiseaseGroups();
         Model model = mock(Model.class);
         DataValidationController target = createTarget();
 
@@ -105,7 +132,7 @@ public class DataValidationControllerTest {
 
         // Assert
         verify(model).addAttribute("userLoggedIn", true);
-        verify(model).addAttribute("userSeeg", false);
+        verify(model).addAttribute("userSeeg", isSeeg);
         verify(model).addAttribute("showHelpText", false);
         verify(model).addAttribute("diseaseOccurrenceReviewCount", 0);
         verify(model).addAttribute("adminUnitReviewCount", 0);
@@ -121,17 +148,18 @@ public class DataValidationControllerTest {
     @Test
     public void showPageReturnsDataModelForLoggedInSeegUser() {
         // Arrange
+        boolean isSeeg = true;
+        wireupExpert(1, isSeeg, true);
+        wireupValidatorDiseaseGroups();
         Model model = mock(Model.class);
-        ExpertService expertService = createExpertService();
-        when(expertService.getExpertById(1).isSeegMember()).thenReturn(true);
-        DataValidationController target = createTarget(null, null, expertService);
+        DataValidationController target = createTarget();
 
         // Act
         target.showPage(model);
 
         // Assert
         verify(model).addAttribute("userLoggedIn", true);
-        verify(model).addAttribute("userSeeg", true);
+        verify(model).addAttribute("userSeeg", isSeeg);
         verify(model).addAttribute("showHelpText", false);
         verify(model).addAttribute("diseaseOccurrenceReviewCount", 0);
         verify(model).addAttribute("adminUnitReviewCount", 0);
@@ -144,13 +172,11 @@ public class DataValidationControllerTest {
     @Test
     public void showPageIndicatesToShowHelpTextToLoggedInUserOnce() {
         // Arrange
+        boolean seenHelp = false;
+        wireupExpert(1, false, seenHelp);
+        wireupValidatorDiseaseGroups();
         Model model = mock(Model.class);
-        ExpertService expertService = mock(ExpertService.class);
-        Expert expert = mock(Expert.class);
-        when(expert.hasSeenHelpText()).thenReturn(false);
-        when(expertService.getExpertById(1)).thenReturn(expert);
-
-        DataValidationController target = createTarget(null, null, expertService);
+        DataValidationController target = createTarget();
 
         // Act
         target.showPage(model);
@@ -164,10 +190,11 @@ public class DataValidationControllerTest {
     @Test
     public void showPageIndicatesNotToShowHelpTextToLoggedInUserWhenUserHasAlreadySeenHelpText() {
         // Arrange
+        boolean seenHelp = true;
+        wireupExpert(1, false, seenHelp);
+        wireupValidatorDiseaseGroups();
         Model model = mock(Model.class);
-        ExpertService expertService = createExpertService();
-        when(expertService.getExpertById(1).hasSeenHelpText()).thenReturn(true);
-        DataValidationController target = createTarget(null, null, expertService);
+        DataValidationController target = createTarget();
 
         // Act
         target.showPage(model);
@@ -187,299 +214,486 @@ public class DataValidationControllerTest {
         ValidatorDiseaseGroup d = new ValidatorDiseaseGroup("D");
         ValidatorDiseaseGroup e = new ValidatorDiseaseGroup("E");
 
-        List<ValidatorDiseaseGroup> diseaseInterests = createList(d, b);
-        List<ValidatorDiseaseGroup> validatorDiseaseGroups = createList(c, b, a, e, d);
+        List<ValidatorDiseaseGroup> diseaseInterests = Arrays.asList(d, b);
+        List<ValidatorDiseaseGroup> validatorDiseaseGroups = new ArrayList<>();
+        validatorDiseaseGroups.addAll(Arrays.asList(c, b, a, e, d));
 
-        DiseaseService diseaseService = mock(DiseaseService.class);
+        wireupExpert(1, false, true);
+        when(expertService.getDiseaseInterests(1)).thenReturn(diseaseInterests);
+        diseaseService = mockIfNull(diseaseService, DiseaseService.class);
         when(diseaseService.getAllValidatorDiseaseGroups()).thenReturn(validatorDiseaseGroups);
 
-        ExpertService expertService = mock(ExpertService.class);
-        when(expertService.getExpertById(anyInt())).thenReturn(new Expert());
-        when(expertService.getDiseaseInterests(anyInt())).thenReturn(diseaseInterests);
-
         // Act
-        createTarget(null, diseaseService, expertService).showPage(model);
+        createTarget().showPage(model);
 
         // Assert
         verify(model).addAttribute("diseaseInterests", Arrays.asList(b, d));
         verify(model).addAttribute("allOtherDiseases", Arrays.asList(a, c, e));
     }
 
-    private List<ValidatorDiseaseGroup> createList(ValidatorDiseaseGroup... groups) {
-        List<ValidatorDiseaseGroup> list = new ArrayList<>();
-        Collections.addAll(list, groups);
-        return list;
-    }
-
     @Test
     public void showPageReturnsValidatorDiseaseGroups() {
         // Arrange
+        wireupExpert(1, false, true);
+        wireupValidatorDiseaseGroups();
         Model model = mock(Model.class);
-        ExpertService expertService = createExpertService();
-        when(expertService.getExpertById(1).isSeegMember()).thenReturn(false);
-        DiseaseService diseaseService = mock(DiseaseService.class);
-        HashMap<String, List<DiseaseGroup>> result = new HashMap<>();
-        when(diseaseService.getValidatorDiseaseGroupMap()).thenReturn(result);
-        DataValidationController target = createTarget(null, diseaseService, expertService);
 
-        result.put("foo", Arrays.asList(mock(DiseaseGroup.class)));
+        HashMap<String, List<DiseaseGroup>> expectation = new HashMap<>();
+        expectation.put("foo", Arrays.asList(mock(DiseaseGroup.class)));
+        when(diseaseService.getValidatorDiseaseGroupMap()).thenReturn(expectation);
+
+        DataValidationController target = createTarget();
 
         // Act
         target.showPage(model);
 
         // Assert
-        verify(model).addAttribute("validatorDiseaseGroupMap", result);
+        verify(model).addAttribute("validatorDiseaseGroupMap", expectation);
     }
 
     @Test
-    public void getDiseaseOccurrencesForReviewByCurrentUserReturnsAllOccurrencesForSeegUser() throws Exception {
+    public void getDiseaseOccurrencesForReviewByCurrentUserReturnsCorrectOccurrences() throws Exception {
         // Arrange
-        ExpertService expertService = createExpertService(true);
-        List<DiseaseOccurrence> occurrences = mockOccurrences();
-        when(expertService.getDiseaseOccurrencesYetToBeReviewedByExpert(1, true, 1)).thenReturn(occurrences);
+        int expertId = 1;
+        boolean userIsSeeg = false;
+        int validatorDiseaseGroupId = 2;
+        wireupExpert(expertId, userIsSeeg, true);
 
-        DataValidationController target = createTarget(null, null, expertService);
+        DiseaseOccurrence o1 = AbstractDiseaseOccurrenceGeoJsonTests.defaultDiseaseOccurrence();
+        when(o1.getId()).thenReturn(1);
+
+        DiseaseOccurrence o2 = AbstractDiseaseOccurrenceGeoJsonTests.defaultDiseaseOccurrence();
+        when(o2.getId()).thenReturn(2);
+
+        List<DiseaseOccurrence> occurrences = Arrays.asList(o1, o2);
+        when(expertService.getDiseaseOccurrencesYetToBeReviewedByExpert(expertId, userIsSeeg, validatorDiseaseGroupId)).thenReturn(occurrences);
+
+        DataValidationController target = createTarget();
 
         // Act
         ResponseEntity<GeoJsonDiseaseOccurrenceFeatureCollection> result =
-                target.getDiseaseOccurrencesForReviewByCurrentUser(1);
+                target.getDiseaseOccurrencesForReviewByCurrentUser(validatorDiseaseGroupId);
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(result.getBody().getFeatures()).hasSameSizeAs(occurrences);
-    }
-
-
-    private List<DiseaseOccurrence> mockOccurrences() {
-        // Occurrence of disease group where automatic model runs are not enabled.
-        DiseaseOccurrence o1 = AbstractDiseaseOccurrenceGeoJsonTests.defaultDiseaseOccurrence();
-        when(o1.getId()).thenReturn(1);
-
-        DiseaseOccurrence o2 = mockOccurrenceOfDiseaseGroupWithAutomaticModelRunsEnabled();
-        when(o2.getId()).thenReturn(2);
-
-        return Arrays.asList(o1, o2);
-    }
-
-    @Test
-    public void getDiseaseOccurrencesForReviewByCurrentUserReturnsCorrectOccurrenceForExternalUser() throws Exception {
-        // Arrange
-        ExpertService expertService = createExpertService(false);
-        DiseaseOccurrence occurrence = mockOccurrenceOfDiseaseGroupWithAutomaticModelRunsEnabled();
-        when(expertService.getDiseaseOccurrencesYetToBeReviewedByExpert(1, false, 1)).thenReturn(Arrays.asList(occurrence));
-
-        DataValidationController target = createTarget(null, null, expertService);
-
-        // Act
-        ResponseEntity<GeoJsonDiseaseOccurrenceFeatureCollection> result =
-                target.getDiseaseOccurrencesForReviewByCurrentUser(1);
-
-        // Assert
-        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(result.getBody().getFeatures()).hasSize(1);
-    }
-
-    private DiseaseOccurrence mockOccurrenceOfDiseaseGroupWithAutomaticModelRunsEnabled() {
-        DiseaseOccurrence occurrence = AbstractDiseaseOccurrenceGeoJsonTests.defaultDiseaseOccurrence();
-
-        DiseaseGroup diseaseGroup = AbstractDiseaseOccurrenceGeoJsonTests.defaultDiseaseGroup();
-        when(diseaseGroup.isAutomaticModelRunsEnabled()).thenReturn(true);
-        when(occurrence.getDiseaseGroup()).thenReturn(diseaseGroup);
-
-        return occurrence;
+        assertThat(result.getBody().getFeatures().get(0).getId()).isEqualTo(1);
+        assertThat(result.getBody().getFeatures().get(1).getId()).isEqualTo(2);
     }
 
     @Test
     public void getDiseaseOccurrencesForReviewByCurrentUserFailsForInvalidDisease() throws Exception {
         // Arrange
-        ExpertService expertService = createExpertService();
-        when(expertService.getDiseaseOccurrencesYetToBeReviewedByExpert(1, false, 1)).thenThrow(new IllegalArgumentException());
+        Integer expertId = 1;
+        boolean userIsSeeg = true;
+        Integer validatorDiseaseGroupId = 2;
+        wireupExpert(expertId, userIsSeeg, false);
+        when(expertService.getDiseaseOccurrencesYetToBeReviewedByExpert(expertId, userIsSeeg, validatorDiseaseGroupId)).thenThrow(new IllegalArgumentException());
 
-        DataValidationController target = createTarget(null, null, expertService);
+        DataValidationController target = createTarget();
 
         // Act
         ResponseEntity<GeoJsonDiseaseOccurrenceFeatureCollection> result =
-                target.getDiseaseOccurrencesForReviewByCurrentUser(1);
+                target.getDiseaseOccurrencesForReviewByCurrentUser(validatorDiseaseGroupId);
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @Test
-    public void submitDiseaseOccurrenceReviewReturnsForbiddenForNonSeegUserIfDuringDiseaseSetUp() {
+    public void submitDiseaseOccurrenceReviewReturnsHttpForbiddenForNonSeegUserBeforeFirstModelRunPrep() {
         // Arrange
-        DiseaseService diseaseService = createDiseaseServiceWithOccurrence();
+        boolean userIsSeeg = false;
+        boolean hasModelRunPrepOccurredForDisease = false;
+        String review = "YES";
 
-        ExpertService expertService = createExpertService();
-        when(expertService.doesDiseaseOccurrenceReviewExist(anyInt(), anyInt())).thenReturn(false);
+        Integer expertId = 1;
+        Integer validatorDiseaseGroupId = 2;
+        Integer diseaseOccurrenceId = 3;
 
-        DataValidationController target = createTarget(null, diseaseService, expertService);
+        wireupExpert(expertId, userIsSeeg, false);
+        wireupForOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, true, hasModelRunPrepOccurredForDisease);
+
+        DataValidationController target = createTarget();
 
         // Act
-        ResponseEntity result = target.submitDiseaseOccurrenceReview(1, 1, "YES");
+        ResponseEntity result = target.submitDiseaseOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, review);
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+        verify(expertService, never()).saveDiseaseOccurrenceReview(anyInt(), anyInt(), any(DiseaseOccurrenceReviewResponse.class));
     }
 
     @Test
-    public void submitDiseaseOccurrenceReviewReturnsHttpNoContentForValidInputsForSeegUser() {
+    public void submitDiseaseOccurrenceReviewReturnsHttpNoContentForSeegUserBeforeFirstModelRunPrep() {
         // Arrange
-        DiseaseService diseaseService = mock(DiseaseService.class);
-        when(diseaseService.doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(anyInt(), anyInt()))
-                .thenReturn(true);
+        boolean userIsSeeg = true;
+        boolean hasModelRunPrepOccurredForDisease = false;
+        String review = "YES";
 
-        ExpertService expertService = createExpertService(true);
-        when(expertService.doesDiseaseOccurrenceReviewExist(anyInt(), anyInt())).thenReturn(false);
+        Integer expertId = 1;
+        Integer validatorDiseaseGroupId = 2;
+        Integer diseaseOccurrenceId = 3;
 
-        DataValidationController target = createTarget(null, diseaseService, expertService);
+        wireupExpert(expertId, userIsSeeg, false);
+        wireupForOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, true, hasModelRunPrepOccurredForDisease);
+
+        DataValidationController target = createTarget();
 
         // Act
-        ResponseEntity result = target.submitDiseaseOccurrenceReview(1, 1, "YES");
+        ResponseEntity result = target.submitDiseaseOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, review);
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+        verify(expertService).saveDiseaseOccurrenceReview(expertId, diseaseOccurrenceId, DiseaseOccurrenceReviewResponse.YES);
     }
 
     @Test
-    public void submitDiseaseOccurrenceReviewReturnsHttpBadRequestForInvalidInputOccurrenceDoesNotMatchDisease() {
+    public void submitDiseaseOccurrenceReviewReturnsHttpNoContentForNonSeegUserAfterFirstModelRunPrep() {
         // Arrange
-        DiseaseService diseaseService = createDiseaseServiceWithOccurrence();
-        when(diseaseService.doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(anyInt(), anyInt()))
-                .thenReturn(false);
+        boolean userIsSeeg = false;
+        boolean hasModelRunPrepOccurredForDisease = true;
+        String review = "YES";
 
-        ExpertService expertService = createExpertService(true);
-        when(expertService.doesDiseaseOccurrenceReviewExist(anyInt(), anyInt())).thenReturn(false);
+        Integer expertId = 1;
+        Integer validatorDiseaseGroupId = 2;
+        Integer diseaseOccurrenceId = 3;
 
-        DataValidationController target = createTarget(null, diseaseService, expertService);
+        wireupExpert(expertId, userIsSeeg, false);
+        wireupForOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, true, hasModelRunPrepOccurredForDisease);
+
+        DataValidationController target = createTarget();
 
         // Act
-        ResponseEntity result = target.submitDiseaseOccurrenceReview(1, 1, "YES");
+        ResponseEntity result = target.submitDiseaseOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, review);
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+        verify(expertService).saveDiseaseOccurrenceReview(expertId, diseaseOccurrenceId, DiseaseOccurrenceReviewResponse.YES);
+    }
+
+    @Test
+    public void submitDiseaseOccurrenceReviewReturnsHttpNoContentForSeegUserAfterFirstModelRunPrep() {
+        // Arrange
+        boolean userIsSeeg = true;
+        boolean hasModelRunPrepOccurredForDisease = true;
+        String review = "YES";
+
+        Integer expertId = 1;
+        Integer validatorDiseaseGroupId = 2;
+        Integer diseaseOccurrenceId = 3;
+
+        wireupExpert(expertId, userIsSeeg, false);
+        wireupForOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, true, hasModelRunPrepOccurredForDisease);
+
+        DataValidationController target = createTarget();
+
+        // Act
+        ResponseEntity result = target.submitDiseaseOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, review);
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+        verify(expertService).saveDiseaseOccurrenceReview(expertId, diseaseOccurrenceId, DiseaseOccurrenceReviewResponse.YES);
+    }
+
+    @Test
+    public void submitDiseaseOccurrenceReviewReturnsHttpBadRequestForMissingValidatorDiseaseGroupId() {
+        // Arrange
+        Integer validatorDiseaseGroupId = 2;
+        Integer diseaseOccurrenceId = 3;
+        String review = "YES";
+
+        wireupExpert(1, false, false);
+        wireupForOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, true, true);
+
+        DataValidationController target = createTarget();
+
+        // Act
+        ResponseEntity result = target.submitDiseaseOccurrenceReview(null, diseaseOccurrenceId, review);
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        verify(expertService, never()).saveDiseaseOccurrenceReview(anyInt(), anyInt(), any(DiseaseOccurrenceReviewResponse.class));
+    }
+
+    @Test
+    public void submitDiseaseOccurrenceReviewReturnsHttpBadRequestForMissingDiseaseOccurrenceId() {
+        // Arrange
+        Integer validatorDiseaseGroupId = 2;
+        Integer diseaseOccurrenceId = 3;
+        String review = "YES";
+
+        wireupExpert(1, false, false);
+        wireupForOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, true, true);
+
+        DataValidationController target = createTarget();
+
+        // Act
+        ResponseEntity result = target.submitDiseaseOccurrenceReview(validatorDiseaseGroupId, null, review);
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        verify(expertService, never()).saveDiseaseOccurrenceReview(anyInt(), anyInt(), any(DiseaseOccurrenceReviewResponse.class));
+    }
+
+    @Test
+    public void submitDiseaseOccurrenceReviewReturnsHttpBadRequestForMissingReview() {
+        // Arrange
+        Integer validatorDiseaseGroupId = 2;
+        Integer diseaseOccurrenceId = 3;
+
+        wireupExpert(1, false, false);
+        wireupForOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, true, true);
+
+        DataValidationController target = createTarget();
+
+        // Act
+        ResponseEntity result = target.submitDiseaseOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, null);
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        verify(expertService, never()).saveDiseaseOccurrenceReview(anyInt(), anyInt(), any(DiseaseOccurrenceReviewResponse.class));
+    }
+
+    @Test
+    public void submitDiseaseOccurrenceReviewReturnsHttpBadRequestForInvalidValidatorDiseaseGroupId() {
+        // Arrange
+        Integer validatorDiseaseGroupId = 2;
+        Integer diseaseOccurrenceId = 3;
+        String review = "YES";
+
+        wireupExpert(1, false, false);
+        wireupForOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, true, true);
+
+        DataValidationController target = createTarget();
+
+        // Act
+        ResponseEntity result = target.submitDiseaseOccurrenceReview(validatorDiseaseGroupId + 1, diseaseOccurrenceId, review);
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        verify(expertService, never()).saveDiseaseOccurrenceReview(anyInt(), anyInt(), any(DiseaseOccurrenceReviewResponse.class));
+    }
+
+    @Test
+    public void submitDiseaseOccurrenceReviewReturnsHttpBadRequestForInvalidValidatorDiseaseOccurrenceId() {
+        // Arrange
+        Integer validatorDiseaseGroupId = 2;
+        Integer diseaseOccurrenceId = 3;
+        String review = "YES";
+
+        wireupExpert(1, false, false);
+        wireupForOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, true, true);
+
+        DataValidationController target = createTarget();
+
+        // Act
+        ResponseEntity result = target.submitDiseaseOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId + 1, review);
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        verify(expertService, never()).saveDiseaseOccurrenceReview(anyInt(), anyInt(), any(DiseaseOccurrenceReviewResponse.class));
+    }
+
+    @Test
+    public void submitDiseaseOccurrenceReviewReturnsHttpBadRequestForInvalidReview() {
+        // Arrange
+        Integer validatorDiseaseGroupId = 2;
+        Integer diseaseOccurrenceId = 3;
+        String review = "YES";
+
+        wireupExpert(1, false, false);
+        wireupForOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, true, true);
+
+        DataValidationController target = createTarget();
+
+        // Act
+        ResponseEntity result = target.submitDiseaseOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, review + "1");
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        verify(expertService, never()).saveDiseaseOccurrenceReview(anyInt(), anyInt(), any(DiseaseOccurrenceReviewResponse.class));
+    }
+
+    @Test
+    public void submitDiseaseOccurrenceReviewReturnsHttpBadRequestForUnmatchedValidatorDiseaseGroupAndDiseaseOccurrence() {
+        // Arrange
+        boolean doesOccurrenceBelongToValidatorGroup = false;
+
+        Integer validatorDiseaseGroupId = 2;
+        Integer diseaseOccurrenceId = 3;
+        String review = "YES";
+
+        wireupExpert(1, false, false);
+        wireupForOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, doesOccurrenceBelongToValidatorGroup, true);
+
+        DataValidationController target = createTarget();
+
+        // Act
+        ResponseEntity result = target.submitDiseaseOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, review);
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        verify(expertService, never()).saveDiseaseOccurrenceReview(anyInt(), anyInt(), any(DiseaseOccurrenceReviewResponse.class));
+    }
+
+    @Test
+    public void submitDiseaseOccurrenceReviewReturnsHttpBadRequestForAlreadyReviewOccurrence() {
+        // Arrange
+        Integer expertId = 1;
+
+        Integer validatorDiseaseGroupId = 2;
+        Integer diseaseOccurrenceId = 3;
+        String review = "YES";
+
+        wireupExpert(expertId, false, false);
+        wireupForOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, true, true);
+        wireupExistingOccurrenceReview(expertId, diseaseOccurrenceId);
+
+        DataValidationController target = createTarget();
+
+        // Act
+        ResponseEntity result = target.submitDiseaseOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, review);
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        verify(expertService, never()).saveDiseaseOccurrenceReview(anyInt(), anyInt(), any(DiseaseOccurrenceReviewResponse.class));
+    }
+
+    @Test
+    public void getDiseaseExtentForDiseaseGroupFailsForInvalidDiseaseGroup() throws Exception {
+        // Arrange
+        wireupExpert(1, false, true);
+        int diseaseGroupId = 3;
+        diseaseService = mock(DiseaseService.class);
+        when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(null);
+
+        DataValidationController target = createTarget();
+
+        // Act
+        ResponseEntity<GeoJsonDiseaseExtentFeatureCollection> result = target.getDiseaseExtentForDiseaseGroup(diseaseGroupId);
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @Test
-    public void submitDiseaseOccurrenceReviewReturnsHttpBadRequestForInvalidReviewAlreadyExists() {
+    public void getDiseaseExtentForDiseaseGroupReturnsCorrectEmptyForNonSeegUserAndPreModelRunDisease() {
         // Arrange
-        DiseaseService diseaseService = createDiseaseServiceWithOccurrence();
-        when(diseaseService.doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(anyInt(), anyInt()))
-                .thenReturn(false);
+        boolean isSeeg = false;
+        boolean diseaseGroupHasModelRun = false;
+        int diseaseGroupId = 3;
+        int expertId = 1;
+        wireupExpert(expertId, isSeeg, true);
+        wireupDiseaseExtent(diseaseGroupId, expertId, diseaseGroupHasModelRun);
 
-        ExpertService expertService = createExpertService(true);
-        when(expertService.doesDiseaseOccurrenceReviewExist(anyInt(), anyInt())).thenReturn(true);
-
-        DataValidationController target = createTarget(null, diseaseService, expertService);
-        // Act
-        ResponseEntity result = target.submitDiseaseOccurrenceReview(1, 1, "YES");
-
-        // Assert
-        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    }
-
-    @Test
-    public void getDiseaseExtentForDiseaseGroupReturnsExtentToNonSeegUserIfAutomaticModelRunsEnabled() {
-        List<AdminUnitDiseaseExtentClass> diseaseExtent = createDiseaseExtent();
-        testGetDiseaseExtent(false, true, diseaseExtent, diseaseExtent);
-    }
-
-    @Test
-    public void getDiseaseExtentForDiseaseGroupReturnsExtentToSeegUserIfAutomaticModelRunsEnabled() {
-        List<AdminUnitDiseaseExtentClass> diseaseExtent = createDiseaseExtent();
-        testGetDiseaseExtent(true, true, diseaseExtent, diseaseExtent);
-    }
-
-    @Test
-    public void getDiseaseExtentForDiseaseGroupReturnsEmptyExtentToNonSeegUserIfDuringDiseaseSetUp() {
-        List<AdminUnitDiseaseExtentClass> diseaseExtent = createDiseaseExtent();
-        testGetDiseaseExtent(false, false, diseaseExtent, null);
-    }
-
-    @Test
-    public void getDiseaseExtentForDiseaseGroupReturnsExtentToSeegUserIfDuringDiseaseSetUp() {
-        List<AdminUnitDiseaseExtentClass> diseaseExtent = createDiseaseExtent();
-        testGetDiseaseExtent(true, false, diseaseExtent, diseaseExtent);
-    }
-
-    private void testGetDiseaseExtent(boolean userIsSeeg, boolean automaticModelRunsEnabled,
-                                      List<AdminUnitDiseaseExtentClass> diseaseExtent, List<AdminUnitDiseaseExtentClass> expectedDiseaseExtent) {
-        Integer diseaseGroupId = 22;
-        ExpertService expertService = createExpertService(userIsSeeg);
-
-        DiseaseService diseaseService = mock(DiseaseService.class);
-        when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(mock(DiseaseGroup.class));
-        when(diseaseService.getDiseaseGroupById(diseaseGroupId).isAutomaticModelRunsEnabled()).thenReturn(automaticModelRunsEnabled);
-        when(diseaseService.getDiseaseExtentByDiseaseGroupId(diseaseGroupId)).thenReturn(diseaseExtent);
-
-        DataValidationController target = createTarget(null, diseaseService, expertService);
+        DataValidationController target = createTarget();
 
         // Act
         ResponseEntity<GeoJsonDiseaseExtentFeatureCollection> result = target.getDiseaseExtentForDiseaseGroup(diseaseGroupId);
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
-        GeoJsonDiseaseExtentFeatureCollection body = result.getBody();
-        assertThat(body.getType()).isEqualTo(GeoJsonObjectType.FEATURE_COLLECTION);
-        assertThat(body.getCrs()).isNotNull();
-        if (expectedDiseaseExtent != null) {
-            assertThat(body.getFeatures()).hasSameSizeAs(expectedDiseaseExtent);
-        } else {
-            assertThat(body.getFeatures()).isEmpty();
-        }
+        assertThat(result.getBody().getFeatures()).hasSize(0);
     }
 
     @Test
-    public void getDiseaseExtentForDiseaseGroupFailsForInvalidDiseaseGroup() throws Exception {
+    public void getDiseaseExtentForDiseaseGroupReturnsCorrectContentForSeegUserAndPreModelRunDisease() {
         // Arrange
-        DiseaseService diseaseService = mock(DiseaseService.class);
-        when(diseaseService.getDiseaseExtentByDiseaseGroupId(anyInt())).thenThrow(new IllegalArgumentException());
+        boolean isSeeg = true;
+        boolean diseaseGroupHasModelRun = false;
+        int diseaseGroupId = 3;
+        int expertId = 1;
+        wireupExpert(expertId, isSeeg, true);
+        wireupDiseaseExtent(diseaseGroupId, expertId, diseaseGroupHasModelRun);
 
-        DataValidationController target = createTarget(null, diseaseService, null);
+        DataValidationController target = createTarget();
 
         // Act
-        ResponseEntity<GeoJsonDiseaseExtentFeatureCollection> result = target.getDiseaseExtentForDiseaseGroup(0);
+        ResponseEntity<GeoJsonDiseaseExtentFeatureCollection> result = target.getDiseaseExtentForDiseaseGroup(diseaseGroupId);
 
         // Assert
-        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(result.getBody().getFeatures()).hasSize(2);
+        assertThat(result.getBody().getFeatures().get(0).getId()).isEqualTo(1);
+        assertThat(result.getBody().getFeatures().get(0).getProperties().needsReview()).isFalse();
+        assertThat(result.getBody().getFeatures().get(1).getId()).isEqualTo(2);
+        assertThat(result.getBody().getFeatures().get(1).getProperties().needsReview()).isTrue();
     }
 
     @Test
-    public void getDefaultDiseaseExtentReturnsExtentForDengue() throws Exception {
+    public void getDiseaseExtentForDiseaseGroupReturnsCorrectContentForNonSeegUserAndPostModelRunDisease() {
         // Arrange
-        int defaultDiseaseGroupId = 87;
-        DiseaseService diseaseService = mock(DiseaseService.class);
-        DataValidationController target = new DataValidationController(mock(CurrentUserService.class), diseaseService, mock(ExpertService.class));
+        boolean isSeeg = false;
+        boolean diseaseGroupHasModelRun = true;
+        int diseaseGroupId = 3;
+        int expertId = 1;
+        wireupExpert(expertId, isSeeg, true);
+        wireupDiseaseExtent(diseaseGroupId, expertId, diseaseGroupHasModelRun);
+
+        DataValidationController target = createTarget();
 
         // Act
-        target.getDefaultDiseaseExtent();
+        ResponseEntity<GeoJsonDiseaseExtentFeatureCollection> result = target.getDiseaseExtentForDiseaseGroup(diseaseGroupId);
 
         // Assert
-        verify(diseaseService).getDiseaseExtentByDiseaseGroupId(defaultDiseaseGroupId);
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(result.getBody().getFeatures()).hasSize(2);
+        assertThat(result.getBody().getFeatures().get(0).getId()).isEqualTo(1);
+        assertThat(result.getBody().getFeatures().get(0).getProperties().needsReview()).isFalse();
+        assertThat(result.getBody().getFeatures().get(1).getId()).isEqualTo(2);
+        assertThat(result.getBody().getFeatures().get(1).getProperties().needsReview()).isTrue();
+    }
+
+    @Test
+    public void getDiseaseExtentForDiseaseGroupReturnsCorrectContentForSeegUserAndPostModelRunDisease() {
+        // Arrange
+        boolean isSeeg = true;
+        boolean diseaseGroupHasModelRun = true;
+        int diseaseGroupId = 3;
+        int expertId = 1;
+        wireupExpert(expertId, isSeeg, true);
+        wireupDiseaseExtent(diseaseGroupId, expertId, diseaseGroupHasModelRun);
+
+        DataValidationController target = createTarget();
+
+        // Act
+        ResponseEntity<GeoJsonDiseaseExtentFeatureCollection> result = target.getDiseaseExtentForDiseaseGroup(diseaseGroupId);
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(result.getBody().getFeatures()).hasSize(2);
+        assertThat(result.getBody().getFeatures().get(0).getId()).isEqualTo(1);
+        assertThat(result.getBody().getFeatures().get(0).getProperties().needsReview()).isFalse();
+        assertThat(result.getBody().getFeatures().get(1).getId()).isEqualTo(2);
+        assertThat(result.getBody().getFeatures().get(1).getProperties().needsReview()).isTrue();
     }
 
     @Test
     public void getDefaultDiseaseExtentReturnsExpectedResponseEntity() {
         // Arrange
-        int defaultDiseaseGroupId = 87;
-        DiseaseService diseaseService = mock(DiseaseService.class);
-        when(diseaseService.getDiseaseExtentByDiseaseGroupId(defaultDiseaseGroupId)).thenReturn(createDiseaseExtent());
+        wireupAnonmousUser();
+        wireupDiseaseExtent(87, 1, true);
 
-        DataValidationController target = new DataValidationController(mock(CurrentUserService.class), diseaseService, mock(ExpertService.class));
+        DataValidationController target = createTarget();
 
         // Act
         ResponseEntity<GeoJsonDiseaseExtentFeatureCollection> result = target.getDefaultDiseaseExtent();
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
-        for (GeoJsonDiseaseExtentFeature feature : result.getBody().getFeatures()) {
-            assertThat(feature.getProperties().needsReview()).isTrue();
-        }
+        assertThat(result.getBody().getFeatures()).hasSize(2);
+        assertThat(result.getBody().getFeatures().get(0).getId()).isEqualTo(1);
+        assertThat(result.getBody().getFeatures().get(0).getProperties().needsReview()).isTrue();
+        assertThat(result.getBody().getFeatures().get(1).getId()).isEqualTo(2);
+        assertThat(result.getBody().getFeatures().get(1).getProperties().needsReview()).isTrue();
     }
 
     @Test
     public void getLatestDiseaseOccurrencesForAdminUnitDiseaseExtentClassForDefaultDiseaseGroupCallsMethodWithDengue() {
         // Arrange
+        wireupExpert(1, false, true);
+        diseaseService = mock(DiseaseService.class);
         int defaultDiseaseGroupId = 87;
         int gaulCode = 1;
         DataValidationController spy = spy(createTarget());
@@ -490,173 +704,293 @@ public class DataValidationControllerTest {
     }
 
     @Test
-    public void submitAdminUnitReviewAcceptsNullReview() {
+    public void submitAdminUnitReviewReturnsHttpForbiddenForNonSeegUserBeforeFirstModelRunPrep() {
         // Arrange
-        int diseaseGroupId = 1;
-        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
-        diseaseGroup.setAutomaticModelRunsStartDate(DateTime.now());
+        boolean userIsSeeg = false;
+        boolean hasModelRunPrepOccurredForDisease = false;
+        String review = "ABSENCE";
 
-        DiseaseService diseaseService = mock(DiseaseService.class);
-        when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
+        Integer expertId = 1;
+        Integer diseaseId = 2;
+        Integer gaulCode = 3;
 
-        DataValidationController target = createTarget(null, diseaseService, null);
+        wireupExpert(expertId, userIsSeeg, false);
+        wireupForExtentReview(diseaseId, gaulCode, review, hasModelRunPrepOccurredForDisease);
+
+        DataValidationController target = createTarget();
 
         // Act
-        ResponseEntity result = target.submitAdminUnitReview(diseaseGroupId, 2, null);
-
-        // Assert
-        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
-    }
-
-    @Test
-    public void submitAdminUnitReviewReturnsHttpNoContentForValidInputs() {
-        // Arrange
-        DiseaseService diseaseService = mock(DiseaseService.class);
-        DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
-        when(diseaseService.getDiseaseGroupById(1)).thenReturn(diseaseGroup);
-        when(diseaseGroup.isAutomaticModelRunsEnabled()).thenReturn(true);
-        DiseaseExtentClass diseaseExtentClass = mock(DiseaseExtentClass.class);
-        when(diseaseService.getDiseaseExtentClass("PRESENCE")).thenReturn(diseaseExtentClass);
-
-        CurrentUserService currentUserService = createCurrentUserService();
-        when(currentUserService.getCurrentUserId()).thenReturn(1);
-
-        ExpertService expertService = createExpertService();
-
-        DataValidationController target = createTarget(currentUserService, diseaseService, expertService);
-
-        // Act
-        ResponseEntity result = target.submitAdminUnitReview(1, 2, "PRESENCE");
-
-        // Assert
-        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
-        verify(expertService).saveAdminUnitReview(1, 1, 2, diseaseExtentClass);
-    }
-
-    @Test
-    public void submitAdminUnitReviewReturnsHttpBadRequestForInvalidDisease() {
-        // Arrange
-        DiseaseService diseaseService = mock(DiseaseService.class);
-        when(diseaseService.getDiseaseGroupById(1)).thenReturn(null);
-
-        DataValidationController target = createTarget(null, diseaseService, null);
-
-        // Act
-        ResponseEntity result = target.submitAdminUnitReview(1, 1, "PRESENCE");
-
-        // Assert
-        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    }
-
-    @Test
-    public void submitAdminUnitReviewReturnsHttpForbiddenForNonSeegMemberReviewingNotAutomaticDisease() {
-        // Arrange
-        DiseaseService diseaseService = mock(DiseaseService.class);
-        DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
-        when(diseaseService.getDiseaseGroupById(1)).thenReturn(diseaseGroup);
-        when(diseaseGroup.isAutomaticModelRunsEnabled()).thenReturn(false);
-
-        DataValidationController target = createTarget(null, diseaseService, null);
-
-        // Act
-        ResponseEntity result = target.submitAdminUnitReview(1, 1, "PRESENCE");
+        ResponseEntity result = target.submitAdminUnitReview(diseaseId, gaulCode, review);
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+        verify(expertService, never()).saveAdminUnitReview(anyInt(), anyInt(), anyInt(), any(DiseaseExtentClass.class));
     }
 
     @Test
-    public void submitAdminUnitReviewReturnsHttpNoContentForSeegMemberReviewingNotAutomaticDisease() {
+    public void submitAdminUnitReviewReturnsHttpNoContentForSeegUserBeforeFirstModelRunPrep() {
         // Arrange
-        DiseaseService diseaseService = mock(DiseaseService.class);
-        DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
-        when(diseaseService.getDiseaseGroupById(1)).thenReturn(diseaseGroup);
-        when(diseaseGroup.isAutomaticModelRunsEnabled()).thenReturn(true);
-        when(diseaseService.getDiseaseExtentClass("PRESENCE")).thenReturn(mock(DiseaseExtentClass.class));
+        boolean userIsSeeg = true;
+        boolean hasModelRunPrepOccurredForDisease = false;
+        String review = "ABSENCE";
 
-        ExpertService expertService = createExpertService();
-        when(expertService.getExpertById(1).isSeegMember()).thenReturn(true);
+        Integer expertId = 1;
+        Integer diseaseId = 2;
+        Integer gaulCode = 3;
 
-        DataValidationController target = createTarget(null, diseaseService, expertService);
+        wireupExpert(expertId, userIsSeeg, false);
+        wireupForExtentReview(diseaseId, gaulCode, review, hasModelRunPrepOccurredForDisease);
+
+        DataValidationController target = createTarget();
 
         // Act
-        ResponseEntity result = target.submitAdminUnitReview(1, 1, "PRESENCE");
+        ResponseEntity result = target.submitAdminUnitReview(diseaseId, gaulCode, review);
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+        verify(expertService).saveAdminUnitReview(expertId, diseaseId, gaulCode, diseaseExtentClass);
+    }
+
+    @Test
+    public void submitAdminUnitReviewReturnsHttpNoContentForNonSeegUserAfterFirstModelRunPrep() {
+        // Arrange
+        boolean userIsSeeg = false;
+        boolean hasModelRunPrepOccurredForDisease = true;
+        String review = "ABSENCE";
+
+        Integer expertId = 1;
+        Integer diseaseId = 2;
+        Integer gaulCode = 3;
+
+        wireupExpert(expertId, userIsSeeg, false);
+        wireupForExtentReview(diseaseId, gaulCode, review, hasModelRunPrepOccurredForDisease);
+
+        DataValidationController target = createTarget();
+
+        // Act
+        ResponseEntity result = target.submitAdminUnitReview(diseaseId, gaulCode, review);
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+        verify(expertService).saveAdminUnitReview(expertId, diseaseId, gaulCode, diseaseExtentClass);
+    }
+
+    @Test
+    public void submitAdminUnitOccurrenceReviewReturnsHttpNoContentForSeegUserAfterFirstModelRunPrep() {
+        // Arrange
+        boolean userIsSeeg = true;
+        boolean hasModelRunPrepOccurredForDisease = true;
+        String review = "ABSENCE";
+
+        Integer expertId = 1;
+        Integer diseaseId = 2;
+        Integer gaulCode = 3;
+
+        wireupExpert(expertId, userIsSeeg, false);
+        wireupForExtentReview(diseaseId, gaulCode, review, hasModelRunPrepOccurredForDisease);
+
+        DataValidationController target = createTarget();
+
+        // Act
+        ResponseEntity result = target.submitAdminUnitReview(diseaseId, gaulCode, review);
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+        verify(expertService).saveAdminUnitReview(expertId, diseaseId, gaulCode, diseaseExtentClass);
+    }
+
+    @Test
+    public void submitAdminUnitReviewReturnsHttpBadRequestForMissingDiseaseGroupId() {
+        // Arrange
+        boolean userIsSeeg = false;
+        boolean hasModelRunPrepOccurredForDisease = true;
+        String review = "ABSENCE";
+
+        Integer expertId = 1;
+        Integer diseaseId = 2;
+        Integer gaulCode = 3;
+
+        wireupExpert(expertId, userIsSeeg, false);
+        wireupForExtentReview(diseaseId, gaulCode, review, hasModelRunPrepOccurredForDisease);
+
+        DataValidationController target = createTarget();
+
+        // Act
+        ResponseEntity result = target.submitAdminUnitReview(null, gaulCode, review);
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        verify(expertService, never()).saveAdminUnitReview(anyInt(), anyInt(), anyInt(), any(DiseaseExtentClass.class));
+    }
+
+    @Test
+    public void submitAdminUnitReviewReturnsHttpBadRequestForMissingGaulCode() {
+        // Arrange
+        boolean userIsSeeg = false;
+        boolean hasModelRunPrepOccurredForDisease = true;
+        String review = "ABSENCE";
+
+        Integer expertId = 1;
+        Integer diseaseId = 2;
+        Integer gaulCode = 3;
+
+        wireupExpert(expertId, userIsSeeg, false);
+        wireupForExtentReview(diseaseId, gaulCode, review, hasModelRunPrepOccurredForDisease);
+
+        DataValidationController target = createTarget();
+
+        // Act
+        ResponseEntity result = target.submitAdminUnitReview(diseaseId, null, review);
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        verify(expertService, never()).saveAdminUnitReview(anyInt(), anyInt(), anyInt(), any(DiseaseExtentClass.class));
+    }
+
+    @Test
+    public void submitAdminUnitReviewReturnsHttpNoContentForMissingReview() {
+        // Arrange - I don't know
+        boolean userIsSeeg = false;
+        boolean hasModelRunPrepOccurredForDisease = true;
+        String review = "ABSENCE";
+
+        Integer expertId = 1;
+        Integer diseaseId = 2;
+        Integer gaulCode = 3;
+
+        wireupExpert(expertId, userIsSeeg, false);
+        wireupForExtentReview(diseaseId, gaulCode, review, hasModelRunPrepOccurredForDisease);
+
+        DataValidationController target = createTarget();
+
+        // Act
+        ResponseEntity result = target.submitAdminUnitReview(diseaseId, gaulCode, null);
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+        verify(expertService).saveAdminUnitReview(expertId, diseaseId, gaulCode, null);
+    }
+
+    @Test
+    public void submitAdminUnitReviewReturnsHttpBadRequestForInvalidDiseaseGroupId() {
+        // Arrange
+        boolean userIsSeeg = false;
+        boolean hasModelRunPrepOccurredForDisease = true;
+        String review = "ABSENCE";
+
+        Integer expertId = 1;
+        Integer diseaseId = 2;
+        Integer gaulCode = 3;
+
+        wireupExpert(expertId, userIsSeeg, false);
+        wireupForExtentReview(diseaseId, gaulCode, review, hasModelRunPrepOccurredForDisease);
+
+        DataValidationController target = createTarget();
+
+        // Act
+        ResponseEntity result = target.submitAdminUnitReview(diseaseId + 1, gaulCode, review);
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        verify(expertService, never()).saveAdminUnitReview(anyInt(), anyInt(), anyInt(), any(DiseaseExtentClass.class));
+    }
+
+    @Test
+    public void submitAdminUnitReviewReturnsHttpBadRequestForInvalidGaulCode() {
+        // Arrange
+        boolean userIsSeeg = false;
+        boolean hasModelRunPrepOccurredForDisease = true;
+        String review = "ABSENCE";
+
+        Integer expertId = 1;
+        Integer diseaseId = 2;
+        Integer gaulCode = 3;
+
+        wireupExpert(expertId, userIsSeeg, false);
+        wireupForExtentReview(diseaseId, gaulCode, review, hasModelRunPrepOccurredForDisease);
+
+        DataValidationController target = createTarget();
+
+        // Act
+        ResponseEntity result = target.submitAdminUnitReview(diseaseId, gaulCode + 1, review);
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        verify(expertService, never()).saveAdminUnitReview(anyInt(), anyInt(), anyInt(), any(DiseaseExtentClass.class));
     }
 
     @Test
     public void submitAdminUnitReviewReturnsHttpBadRequestForInvalidReview() {
         // Arrange
-        DiseaseService diseaseService = mock(DiseaseService.class);
-        DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
-        when(diseaseService.getDiseaseGroupById(1)).thenReturn(diseaseGroup);
-        when(diseaseGroup.isAutomaticModelRunsEnabled()).thenReturn(true);
+        boolean userIsSeeg = false;
+        boolean hasModelRunPrepOccurredForDisease = true;
+        String review = "ABSENCE";
 
-        when(diseaseService.getDiseaseExtentClass("PRESENCE")).thenReturn(null);
+        Integer expertId = 1;
+        Integer diseaseId = 2;
+        Integer gaulCode = 3;
 
-        DataValidationController target = createTarget(null, diseaseService, null);
+        wireupExpert(expertId, userIsSeeg, false);
+        wireupForExtentReview(diseaseId, gaulCode, review, hasModelRunPrepOccurredForDisease);
+
+        DataValidationController target = createTarget();
 
         // Act
-        ResponseEntity result = target.submitAdminUnitReview(1, 1, "PRESENCE");
+        ResponseEntity result = target.submitAdminUnitReview(diseaseId, gaulCode, review + "1");
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        verify(expertService, never()).saveAdminUnitReview(anyInt(), anyInt(), anyInt(), any(DiseaseExtentClass.class));
+    }
+
+    @Test
+    public void submitAdminUnitReviewReturnsHttpBadRequestForAlreadyReviewAdminUnit() {
+        // Arrange
+        boolean userIsSeeg = false;
+        boolean hasModelRunPrepOccurredForDisease = true;
+        String review = "ABSENCE";
+
+        Integer expertId = 1;
+        Integer diseaseId = 2;
+        Integer gaulCode = 3;
+
+        wireupExpert(expertId, userIsSeeg, false);
+        wireupForExtentReview(diseaseId, gaulCode, review, hasModelRunPrepOccurredForDisease);
+        wireupExistingExtentReview(expertId, gaulCode);
+
+        DataValidationController target = createTarget();
+
+        // Act
+        ResponseEntity result = target.submitAdminUnitReview(diseaseId, gaulCode, review);
+
+        // Assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        verify(expertService, never()).saveAdminUnitReview(anyInt(), anyInt(), anyInt(), any(DiseaseExtentClass.class));
     }
 
     private DataValidationController createTarget() {
-        return createTarget(null, null, null);
-    }
-
-    private DataValidationController createTarget(CurrentUserService currentUserService, DiseaseService diseaseService, ExpertService expertService) {
-        return new DataValidationController(
-                currentUserService == null ? createCurrentUserService() : currentUserService,
-                diseaseService == null ? mock(DiseaseService.class) : diseaseService,
-                expertService == null ? createExpertService() : expertService);
-    }
-
-    private CurrentUserService createCurrentUserService() {
-        CurrentUserService currentUserService = mock(CurrentUserService.class);
-        when(currentUserService.getCurrentUserId()).thenReturn(1);
-        return currentUserService;
-    }
-
-    private DiseaseService createDiseaseServiceWithOccurrence() {
-        DiseaseService diseaseService = mock(DiseaseService.class);
-        DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
-        DiseaseOccurrence occurrence = mock(DiseaseOccurrence.class);
-
-        when(diseaseGroup.isAutomaticModelRunsEnabled()).thenReturn(false);
-        when(occurrence.getDiseaseGroup()).thenReturn(diseaseGroup);
-        when(diseaseService.getDiseaseOccurrenceById(anyInt())).thenReturn(occurrence);
-        when(diseaseService.doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(anyInt(), anyInt()))
-                .thenReturn(true);
-        return diseaseService;
-    }
-
-    private ExpertService createExpertService() {
-        return createExpertService(false);
-    }
-
-    private ExpertService createExpertService(boolean userIsSeeg) {
-        ExpertService returnedExpertService = mock(ExpertService.class);
-        Expert returnedExpert = mock(Expert.class);
-        when(returnedExpert.isSeegMember()).thenReturn(userIsSeeg);
-        when(returnedExpert.hasSeenHelpText()).thenReturn(true);
-        when(returnedExpertService.getExpertById(1)).thenReturn(returnedExpert);
-        return returnedExpertService;
+        return new DataValidationController(currentUserService, diseaseService, expertService, geometryService);
     }
 
     private List<AdminUnitDiseaseExtentClass> createDiseaseExtent() {
-        AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass = new AdminUnitDiseaseExtentClass(
-                createAdminUnitGlobal(), new DiseaseGroup(), new DiseaseExtentClass(DiseaseExtentClass.PRESENCE), 0);
-        return Arrays.asList(adminUnitDiseaseExtentClass);
+        diseaseGroup = mockIfNull(diseaseGroup, DiseaseGroup.class);
+
+        return Arrays.asList(
+                new AdminUnitDiseaseExtentClass(createAdminUnitGlobal(1), diseaseGroup, new DiseaseExtentClass(DiseaseExtentClass.PRESENCE), 0),
+                new AdminUnitDiseaseExtentClass(createAdminUnitGlobal(2), diseaseGroup, new DiseaseExtentClass(DiseaseExtentClass.PRESENCE), 0)
+        );
     }
 
-    private AdminUnitGlobal createAdminUnitGlobal() {
+    private List<AdminUnitReview> createReviews() {
+        AdminUnitReview adminUnitReview = mock(AdminUnitReview.class);
+        when(adminUnitReview.getAdminUnitGlobalOrTropicalGaulCode()).thenReturn(1);
+        when(adminUnitReview.getCreatedDate()).thenReturn(DateTime.now());
+        return Arrays.asList(adminUnitReview);
+    }
+
+    private AdminUnitGlobal createAdminUnitGlobal(int gaul) {
         AdminUnitGlobal adminUnitGlobal = new AdminUnitGlobal();
-        adminUnitGlobal.setGaulCode(1);
+        adminUnitGlobal.setGaulCode(gaul);
         adminUnitGlobal.setPublicName("AUG");
         adminUnitGlobal.setLevel('1');
         adminUnitGlobal.setSimplifiedGeom(createMultiPolygon());
@@ -666,5 +1000,91 @@ public class DataValidationControllerTest {
     private MultiPolygon createMultiPolygon() {
         Polygon polygon = GeometryUtils.createPolygon(1, 1, 2, 2, 3, 3, 1, 1);
         return GeometryUtils.createMultiPolygon(polygon);
+    }
+
+    private <T> T mockIfNull(T mock, Class<T> classToMock) {
+        return mock == null ? mock(classToMock) : mock;
+    }
+
+    private void wireupAnonmousUser() {
+        currentUserService = mockIfNull(currentUserService, CurrentUserService.class);
+
+        when(currentUserService.getCurrentUserId()).thenReturn(null);
+    }
+
+    private void wireupExpert(Integer expertId, boolean isSeeg, boolean seenHelp) {
+        expertService = mockIfNull(expertService, ExpertService.class);
+        currentUserService = mockIfNull(currentUserService, CurrentUserService.class);
+        expert = mockIfNull(expert, Expert.class);
+
+        when(currentUserService.getCurrentUserId()).thenReturn(expertId);
+        when(expertService.getExpertById(expertId)).thenReturn(expert);
+        when(expert.isSeegMember()).thenReturn(isSeeg);
+        when(expert.hasSeenHelpText()).thenReturn(seenHelp);
+    }
+
+    private void wireupValidatorDiseaseGroups(ValidatorDiseaseGroup... groups) {
+        diseaseService = mockIfNull(diseaseService, DiseaseService.class);
+
+        List<ValidatorDiseaseGroup> list = new ArrayList<>();
+        list.addAll(Arrays.asList(groups));
+
+        when(diseaseService.getAllValidatorDiseaseGroups()).thenReturn(list);
+    }
+
+    private void wireupExistingOccurrenceReview(Integer expertId, Integer occurrenceId) {
+        expertService = mockIfNull(expertService, ExpertService.class);
+
+        when(expertService.doesDiseaseOccurrenceReviewExist(expertId, occurrenceId)).thenReturn(true);
+    }
+
+    private void wireupExistingExtentReview(Integer expertId, Integer gaulCode) {
+        expertService = mockIfNull(expertService, ExpertService.class);
+
+        when(expertService.doesAdminUnitReviewExistForLatestDiseaseExtent(expertId, diseaseGroup, createAdminUnitGlobal(gaulCode))).thenReturn(true);
+    }
+
+    private void wireupDiseaseGroup(Integer id, boolean hasModelRunPrepOccurredForDiseaseGroup) {
+        diseaseService = mockIfNull(diseaseService, DiseaseService.class);
+        diseaseGroup = mockIfNull(diseaseGroup, DiseaseGroup.class);
+
+        when(diseaseService.getDiseaseGroupById(id)).thenReturn(diseaseGroup);
+        when(diseaseGroup.getLastModelRunPrepDate()).thenReturn(hasModelRunPrepOccurredForDiseaseGroup ? DateTime.now().minusHours(1) : null);
+        when(diseaseGroup.getLastExtentGenerationDate()).thenReturn(hasModelRunPrepOccurredForDiseaseGroup ? DateTime.now().minusHours(1) : null);
+    }
+
+    private void wireupDiseaseExtent(Integer diseaseGroupId, Integer expertId, boolean hasModelRunPrepOccurredForDiseaseGroup) {
+        wireupDiseaseGroup(diseaseGroupId, hasModelRunPrepOccurredForDiseaseGroup);
+
+        expertService = mockIfNull(expertService, ExpertService.class);
+
+        List<AdminUnitDiseaseExtentClass> diseaseExtent = createDiseaseExtent();
+        when(diseaseService.getDiseaseExtentByDiseaseGroupId(eq(diseaseGroupId))).thenReturn(diseaseExtent);
+        List<AdminUnitReview> reviews = createReviews();
+        when(expertService.getAllAdminUnitReviewsForDiseaseGroup(eq(expertId), eq(diseaseGroupId))).thenReturn(reviews);
+    }
+
+    private void wireupForOccurrenceReview(Integer validatorDiseaseGroupId, Integer diseaseOccurrenceId, boolean isValidatorDiseaseGroupCorrect, boolean hasModelRunPrepOccurredForDiseaseGroup) {
+        wireupDiseaseGroup(99, hasModelRunPrepOccurredForDiseaseGroup);
+
+        validatorDiseaseGroup = mockIfNull(validatorDiseaseGroup, ValidatorDiseaseGroup.class);
+        diseaseOccurrence = mockIfNull(diseaseOccurrence, DiseaseOccurrence.class);
+
+        when(diseaseService.getValidatorDiseaseGroupById(validatorDiseaseGroupId)).thenReturn(validatorDiseaseGroup);
+        when(diseaseService.getDiseaseOccurrenceById(diseaseOccurrenceId)).thenReturn(diseaseOccurrence);
+        when(diseaseOccurrence.getId()).thenReturn(diseaseOccurrenceId);
+        when(diseaseOccurrence.getValidatorDiseaseGroup()).thenReturn(isValidatorDiseaseGroupCorrect ? validatorDiseaseGroup : mock(ValidatorDiseaseGroup.class));
+        when(diseaseOccurrence.getDiseaseGroup()).thenReturn(diseaseGroup);
+        when(validatorDiseaseGroup.getId()).thenReturn(validatorDiseaseGroupId);
+    }
+
+    private void wireupForExtentReview(Integer diseaseId, Integer gaulCode, String review, boolean hasModelRunPrepOccurredForDiseaseGroup) {
+        wireupDiseaseGroup(diseaseId, hasModelRunPrepOccurredForDiseaseGroup);
+
+        geometryService = mockIfNull(geometryService, GeometryService.class);
+        diseaseExtentClass = mockIfNull(diseaseExtentClass, DiseaseExtentClass.class);
+
+        when(geometryService.getAdminUnitGlobalOrTropicalByGaulCode(diseaseGroup, gaulCode)).thenReturn(createAdminUnitGlobal(gaulCode));
+        when(diseaseService.getDiseaseExtentClass(review)).thenReturn(diseaseExtentClass);
     }
 }

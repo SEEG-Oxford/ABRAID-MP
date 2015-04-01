@@ -19,6 +19,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.DisplayJsonView;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.support.ResponseView;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.GeometryService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 
@@ -42,13 +43,15 @@ public class DataValidationController extends AbstractController {
     private final CurrentUserService currentUserService;
     private final DiseaseService diseaseService;
     private final ExpertService expertService;
+    private final GeometryService geometryService;
 
     @Autowired
     public DataValidationController(CurrentUserService currentUserService, DiseaseService diseaseService,
-                                    ExpertService expertService) {
+                                    ExpertService expertService, GeometryService geometryService) {
         this.currentUserService = currentUserService;
         this.diseaseService = diseaseService;
         this.expertService = expertService;
+        this.geometryService = geometryService;
     }
 
     /**
@@ -185,31 +188,34 @@ public class DataValidationController extends AbstractController {
                                                         String review) {
         Integer expertId = currentUserService.getCurrentUserId();
 
-        // Only SEEG members may submit disease occurrence reviews for disease groups still in setup phase.
+        // Basic validation
+        if (validatorDiseaseGroupId == null || occurrenceId == null || review == null) {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+
+        // Convert the input values to domain objects, and check they all mapped across correctly
         DiseaseOccurrence occurrence = diseaseService.getDiseaseOccurrenceById(occurrenceId);
-        if (!diseaseGroupIsAccessibleToExpert(expertId, occurrence.getDiseaseGroup())) {
+        ValidatorDiseaseGroup validatorDiseaseGroup =
+                diseaseService.getValidatorDiseaseGroupById(validatorDiseaseGroupId);
+        DiseaseOccurrenceReviewResponse diseaseOccurrenceReviewResponse =
+                DiseaseOccurrenceReviewResponse.parseFromString(review);
+        if (occurrence == null || validatorDiseaseGroup == null || diseaseOccurrenceReviewResponse == null) {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+
+        // Do extended checks -
+        // * The specified occurrence matches the specified validator disease group.
+        // * The specified occurrence hasn't already been reviewed by this expert.
+        // * The specified occurrence's disease group is accessible to this expert.
+        if (!doesDiseaseOccurrenceBelongToValidatorDiseaseGroup(occurrence, validatorDiseaseGroup) ||
+                hasExpertReviewedOccurrence(expertId, occurrence)) {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        } else if (!diseaseGroupIsAccessibleToExpert(expertId, occurrence.getDiseaseGroup())) {
             return new ResponseEntity(HttpStatus.FORBIDDEN);
         }
 
-        // Convert the submitted string to its matching DiseaseOccurrenceReview enum.
-        // Return a Bad Request ResponseEntity if value is anything other than YES, UNSURE or NO.
-        DiseaseOccurrenceReviewResponse diseaseOccurrenceReviewResponse;
-        try {
-             diseaseOccurrenceReviewResponse = DiseaseOccurrenceReviewResponse.valueOf(review);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
-        }
-
-        boolean validInputParameters =
-                diseaseService.doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(occurrenceId,
-                validatorDiseaseGroupId) && (!expertService.doesDiseaseOccurrenceReviewExist(expertId, occurrenceId));
-
-        if (validInputParameters) {
-            expertService.saveDiseaseOccurrenceReview(expertId, occurrenceId, diseaseOccurrenceReviewResponse);
-            return new ResponseEntity(HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
-        }
+        expertService.saveDiseaseOccurrenceReview(expertId, occurrenceId, diseaseOccurrenceReviewResponse);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
     /**
@@ -237,15 +243,11 @@ public class DataValidationController extends AbstractController {
         // Only SEEG members may view disease extent for disease groups still in setup phase.
         // Other users see an empty extent.
         if (diseaseGroupIsAccessibleToExpert(expertId, diseaseGroup)) {
-            try {
-                List<AdminUnitDiseaseExtentClass> diseaseExtent =
-                        diseaseService.getDiseaseExtentByDiseaseGroupId(diseaseGroupId);
-                List<AdminUnitReview> reviews =
-                        expertService.getAllAdminUnitReviewsForDiseaseGroup(expertId, diseaseGroupId);
-                featureCollection = new GeoJsonDiseaseExtentFeatureCollection(diseaseExtent, reviews);
-            } catch (IllegalArgumentException e) {
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            }
+            List<AdminUnitDiseaseExtentClass> diseaseExtent =
+                    diseaseService.getDiseaseExtentByDiseaseGroupId(diseaseGroupId);
+            List<AdminUnitReview> reviews =
+                    expertService.getAllAdminUnitReviewsForDiseaseGroup(expertId, diseaseGroupId);
+            featureCollection = new GeoJsonDiseaseExtentFeatureCollection(diseaseExtent, reviews);
         } else {
             featureCollection = new GeoJsonDiseaseExtentFeatureCollection(
                     new ArrayList<AdminUnitDiseaseExtentClass>(), new ArrayList<AdminUnitReview>());
@@ -332,24 +334,27 @@ public class DataValidationController extends AbstractController {
                                                 String review) {
         Integer expertId = currentUserService.getCurrentUserId();
 
-        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
-        if (diseaseGroup == null) {
+        // Basic validation - review is allowed to be null ("I don't know")
+        if (diseaseGroupId == null || gaulCode == null) {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
 
-        // Only SEEG members may submit disease extent reviews for disease groups still in setup phase.
-        if (!diseaseGroupIsAccessibleToExpert(expertId, diseaseGroup)) {
-            return new ResponseEntity(HttpStatus.FORBIDDEN);
+        // Convert the input values to domain objects, and check they all mapped across correctly
+        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+        AdminUnitGlobalOrTropical adminUnit =
+                geometryService.getAdminUnitGlobalOrTropicalByGaulCode(diseaseGroup, gaulCode);
+        DiseaseExtentClass adminUnitReviewResponse = diseaseService.getDiseaseExtentClass(review);
+        if (diseaseGroup == null || adminUnit == null || (review != null && adminUnitReviewResponse == null)) {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
 
-        // Convert the submitted string to its matching DiseaseExtentClass row. Return a Bad Request ResponseEntity if
-        // the review value is not found in the database.
-        DiseaseExtentClass adminUnitReviewResponse = null;
-        if (review != null) {
-            adminUnitReviewResponse = diseaseService.getDiseaseExtentClass(review);
-            if (adminUnitReviewResponse == null) {
-                return new ResponseEntity(HttpStatus.BAD_REQUEST);
-            }
+        // Do extended checks -
+        // * The specified admin unit hasn't already been reviewed by this expert, in the current extent
+        // * The specified occurrence's disease group is accessible to this expert.
+        if (hasExpertReviewedAdminUnitSinceLastGeneration(expertId, diseaseGroup, adminUnit)) {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        } else if (!diseaseGroupIsAccessibleToExpert(expertId, diseaseGroup)) {
+            return new ResponseEntity(HttpStatus.FORBIDDEN);
         }
 
         expertService.saveAdminUnitReview(expertId, diseaseGroupId, gaulCode, adminUnitReviewResponse);
@@ -375,6 +380,21 @@ public class DataValidationController extends AbstractController {
     }
 
     private boolean diseaseGroupIsAccessibleToExpert(Integer expertId, DiseaseGroup diseaseGroup) {
+        // Only SEEG members may interact with disease groups before the first model run is requested.
         return userIsSeegMember(expertId) || diseaseGroup.getLastModelRunPrepDate() != null;
+    }
+
+    private boolean doesDiseaseOccurrenceBelongToValidatorDiseaseGroup(
+            DiseaseOccurrence occurrence, ValidatorDiseaseGroup validatorDiseaseGroup) {
+        return validatorDiseaseGroup.equals(occurrence.getValidatorDiseaseGroup());
+    }
+
+    private boolean hasExpertReviewedOccurrence(Integer expertId, DiseaseOccurrence occurrence) {
+        return expertService.doesDiseaseOccurrenceReviewExist(expertId, occurrence.getId());
+    }
+
+    private boolean hasExpertReviewedAdminUnitSinceLastGeneration(
+            Integer expertId, DiseaseGroup diseaseGroup, AdminUnitGlobalOrTropical adminUnit) {
+        return expertService.doesAdminUnitReviewExistForLatestDiseaseExtent(expertId, diseaseGroup, adminUnit);
     }
 }

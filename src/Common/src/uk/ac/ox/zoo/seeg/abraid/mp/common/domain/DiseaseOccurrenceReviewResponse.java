@@ -28,4 +28,23 @@ public enum DiseaseOccurrenceReviewResponse {
     public double getValue() {
         return value;
     }
+
+    /**
+     * Parses a review string to a DiseaseOccurrenceReviewResponse object.
+     * @param string The review string.
+     * @return A DiseaseOccurrenceReviewResponse.
+     */
+    public static DiseaseOccurrenceReviewResponse parseFromString(String string) {
+        if (string == null) {
+            return null;
+        }
+
+        DiseaseOccurrenceReviewResponse result;
+        try {
+            result = DiseaseOccurrenceReviewResponse.valueOf(string);
+        } catch (IllegalArgumentException e) {
+            result = null;
+        }
+        return result;
+    }
 }

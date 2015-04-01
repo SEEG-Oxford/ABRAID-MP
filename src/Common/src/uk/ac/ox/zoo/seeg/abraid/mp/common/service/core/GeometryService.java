@@ -26,10 +26,19 @@ public interface GeometryService {
      * Gets a list of admin units for global or tropical diseases, depending on whether the specified disease group
      * is a global or a tropical disease.
      * @param diseaseGroup The disease group.
-     * @return The disease extent.
+     * @return The admin units.
      */
     List<? extends AdminUnitGlobalOrTropical> getAllAdminUnitGlobalsOrTropicalsForDiseaseGroup(
             DiseaseGroup diseaseGroup);
+
+    /**
+     * Gets the  global or tropical admin unit for a specific gaul code, depending on whether the
+     * specified disease group is a global or a tropical disease.
+     * @param diseaseGroup The disease group.
+     * @param gaulCode The gaul code.
+     * @return The admin unit.
+     */
+    AdminUnitGlobalOrTropical getAdminUnitGlobalOrTropicalByGaulCode(DiseaseGroup diseaseGroup, Integer gaulCode);
 
     /**
      * Gets the list of African countries that should be considered when calculating

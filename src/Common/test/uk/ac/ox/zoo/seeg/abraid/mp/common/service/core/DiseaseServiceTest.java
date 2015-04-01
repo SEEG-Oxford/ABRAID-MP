@@ -351,33 +351,6 @@ public class DiseaseServiceTest {
     }
 
     @Test
-    public void doesDiseaseOccurrenceMatchDiseaseGroupReturnsExpectedResult() {
-        // Arrange
-        int validatorDiseaseGroupId = 1;
-        ValidatorDiseaseGroup validatorDiseaseGroup = new ValidatorDiseaseGroup(validatorDiseaseGroupId);
-
-        int diseaseGroupId = 1;
-        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
-        diseaseGroup.setValidatorDiseaseGroup(validatorDiseaseGroup);
-
-        int occurrenceId = 2;
-        DiseaseOccurrence occurrence = new DiseaseOccurrence(occurrenceId);
-        occurrence.setDiseaseGroup(diseaseGroup);
-        when(diseaseOccurrenceDao.getById(occurrenceId)).thenReturn(occurrence);
-
-        // Act
-        boolean diseaseOccurrenceMatches =
-                diseaseService.doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(occurrenceId,
-                        validatorDiseaseGroupId);
-        boolean diseaseOccurrenceDoesNotMatch =
-                diseaseService.doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(occurrenceId, 3);
-
-        // Assert
-        assertThat(diseaseOccurrenceMatches).isTrue();
-        assertThat(diseaseOccurrenceDoesNotMatch).isFalse();
-    }
-
-    @Test
     public void getDiseaseExtentByDiseaseGroupIdReturnsGlobalExtentForGlobalDisease() {
         // Arrange
         int diseaseGroupId = 10;

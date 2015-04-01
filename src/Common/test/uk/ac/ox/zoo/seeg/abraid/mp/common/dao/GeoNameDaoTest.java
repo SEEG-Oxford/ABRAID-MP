@@ -7,6 +7,10 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.GeoName;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * Tests for GeoNameDao.
+ * Copyright (c) 2015 University of Oxford
+ */
 public class GeoNameDaoTest extends AbstractCommonSpringIntegrationTests {
         @Autowired
         private GeoNameDao geoNameDao;

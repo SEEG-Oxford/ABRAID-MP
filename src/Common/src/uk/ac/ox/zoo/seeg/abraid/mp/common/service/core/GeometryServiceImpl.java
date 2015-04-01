@@ -56,15 +56,36 @@ public class GeometryServiceImpl implements GeometryService {
      * Gets a list of admin units for global or tropical diseases, depending on whether the specified disease group
      * is a global or a tropical disease.
      * @param diseaseGroup The disease group.
-     * @return The disease extent.
+     * @return The admin units.
      */
     @Override
     public List<? extends AdminUnitGlobalOrTropical> getAllAdminUnitGlobalsOrTropicalsForDiseaseGroup(
             DiseaseGroup diseaseGroup) {
-        if (diseaseGroup.isGlobal() != null && diseaseGroup.isGlobal()) {
+        if (diseaseGroup == null) {
+            return null;
+        } else if (isGlobalDiseaseGroup(diseaseGroup)) {
             return adminUnitGlobalDao.getAll();
         } else {
             return adminUnitTropicalDao.getAll();
+        }
+    }
+
+    /**
+     * Gets the  global or tropical admin unit for a specific gaul code, depending on whether the
+     * specified disease group is a global or a tropical disease.
+     * @param diseaseGroup The disease group.
+     * @param gaulCode The gaul code.
+     * @return The admin unit.
+     */
+    @Override
+    public AdminUnitGlobalOrTropical getAdminUnitGlobalOrTropicalByGaulCode(
+            DiseaseGroup diseaseGroup, Integer gaulCode) {
+        if (diseaseGroup == null) {
+            return null;
+        } else if (isGlobalDiseaseGroup(diseaseGroup)) {
+            return adminUnitGlobalDao.getByGaulCode(gaulCode);
+        } else {
+            return adminUnitTropicalDao.getByGaulCode(gaulCode);
         }
     }
 
@@ -133,5 +154,9 @@ public class GeometryServiceImpl implements GeometryService {
     @Override
     public List<LandSeaBorder> getAllLandSeaBorders() {
         return landSeaBorderDao.getAll();
+    }
+
+    private boolean isGlobalDiseaseGroup(DiseaseGroup diseaseGroup) {
+        return diseaseGroup.isGlobal() != null && diseaseGroup.isGlobal();
     }
 }

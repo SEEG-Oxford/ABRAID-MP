@@ -287,7 +287,7 @@ public class DiseaseServiceImpl implements DiseaseService {
      */
     @Override
     public DiseaseExtentClass getDiseaseExtentClass(String name) {
-        return diseaseExtentClassDao.getByName(name);
+        return (name == null) ? null : diseaseExtentClassDao.getByName(name);
     }
 
     @Override
@@ -354,20 +354,6 @@ public class DiseaseServiceImpl implements DiseaseService {
 
         return matchingOccurrences.size() > 0;
     }
-
-    /**
-     * Determines whether the specified occurrence's disease id belongs to the corresponding validator disease group.
-     * @param diseaseOccurrenceId The id of the disease occurrence.
-     * @param validatorDiseaseGroupId The id of the validator disease group.
-     * @return True if the occurrence refers to a disease in the validator disease group, otherwise false.
-     */
-    @Override
-    public boolean doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(Integer diseaseOccurrenceId,
-                                                                                  Integer validatorDiseaseGroupId) {
-        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(diseaseOccurrenceId);
-        return validatorDiseaseGroupId.equals(occurrence.getValidatorDiseaseGroup().getId());
-    }
-
 
     /**
      * Saves a disease occurrence.
