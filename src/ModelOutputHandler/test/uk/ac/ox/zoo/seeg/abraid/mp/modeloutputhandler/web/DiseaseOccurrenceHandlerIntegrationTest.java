@@ -2,7 +2,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
-import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
 import org.junit.Test;
 import org.kubek2k.springockito.annotations.ReplaceWithMock;
