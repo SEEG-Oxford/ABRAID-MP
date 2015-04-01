@@ -5,7 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.GeometryService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.DiseaseOccurrenceSpreadTable;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.DiseaseOccurrenceSpreadTableRow;
 
@@ -26,13 +26,13 @@ public class DiseaseOccurrenceSpreadHelperTest {
     private List<Country> countries;
     private DiseaseOccurrenceSpreadHelper helper;
     private DiseaseService diseaseService;
-    private LocationService locationService;
+    private GeometryService geometryService;
 
     @Before
     public void setUp() {
         diseaseService = mock(DiseaseService.class);
-        locationService = mock(LocationService.class);
-        helper = new DiseaseOccurrenceSpreadHelper(diseaseService, locationService);
+        geometryService = mock(GeometryService.class);
+        helper = new DiseaseOccurrenceSpreadHelper(diseaseService, geometryService);
         setUpCountries();
     }
 
@@ -128,7 +128,7 @@ public class DiseaseOccurrenceSpreadHelperTest {
         countries.add(new Country(269, "Yemen", false));
         countries.add(new Country(6, "Sudan", true));
         countries.add(new Country(180, "Nicaragua", false));
-        when(locationService.getAllCountries()).thenReturn(countries);
+        when(geometryService.getAllCountries()).thenReturn(countries);
     }
 
     private void mockGetDiseaseGroupAndOccurrences(int diseaseGroupId, List<DiseaseOccurrence> occurrences) {

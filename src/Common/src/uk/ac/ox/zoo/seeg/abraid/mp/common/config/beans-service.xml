@@ -18,6 +18,7 @@
     <bean id="diseaseService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseServiceImpl" autowire="constructor"/>
     <bean id="expertService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertServiceImpl" autowire="constructor"/>
     <bean id="locationService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationServiceImpl" autowire="constructor"/>
+    <bean id="geometryService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.GeometryServiceImpl" autowire="constructor"/>
     <bean id="modelRunService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunServiceImpl" autowire="constructor">
         <constructor-arg name="daysBetweenModelRuns" value="${days.between.model.runs}" />
     </bean>

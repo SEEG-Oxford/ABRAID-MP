@@ -121,6 +121,30 @@ public class ExpertServiceImpl implements ExpertService {
     }
 
     /**
+     * Determines whether a review already exists for the specified admin unit, disease group and expert.
+     * Each expert can only submit one review per disease/admin unit for each run of the disease extent generator.
+     * The createdDate of the experts most recent matching review will be checked against the disease group's
+     * lastExtentGenerationDate property.
+     *
+     * @param expertId The id of the specified expert.
+     * @param diseaseGroup The disease group.
+     * @param adminUnit The tropical or global admin unit.
+     * @return True if the review already exists, otherwise false.
+     */
+    @Override
+    public boolean doesAdminUnitReviewExistForLatestDiseaseExtent(
+            Integer expertId, DiseaseGroup diseaseGroup, AdminUnitGlobalOrTropical adminUnit) {
+        DateTime lastExtentGenerationDate = diseaseGroup.getLastExtentGenerationDate();
+        if (lastExtentGenerationDate == null) {
+            return false;
+        } else {
+            DateTime lastReviewDate = adminUnitReviewDao.getLastReviewDateByExpertIdAndDiseaseGroupIdAndGaulCode(
+                    expertId, diseaseGroup.getId(), adminUnit.getGaulCode());
+            return lastReviewDate != null && lastReviewDate.isAfter(diseaseGroup.getLastExtentGenerationDate());
+        }
+    }
+
+    /**
      * Gets all reviews for the specified disease group, including repeat reviews.
      * @param diseaseGroupId The id of the disease group.
      * @return A list of reviews.

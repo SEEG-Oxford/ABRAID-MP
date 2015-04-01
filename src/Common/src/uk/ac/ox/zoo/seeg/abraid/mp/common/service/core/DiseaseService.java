@@ -57,15 +57,6 @@ public interface DiseaseService {
     Map<String, List<DiseaseGroup>> getValidatorDiseaseGroupMap();
 
     /**
-     * Gets a list of admin units for global or tropical diseases, depending on whether the specified disease group
-     * is a global or a tropical disease.
-     * @param diseaseGroupId The ID of the disease group.
-     * @return The disease extent.
-     */
-    List<? extends AdminUnitGlobalOrTropical> getAllAdminUnitGlobalsOrTropicalsForDiseaseGroupId(
-            Integer diseaseGroupId);
-
-    /**
      * Gets the disease occurrence with the specified ID.
      * @param diseaseOccurrenceId The id of the disease occurrence.
      * @return The disease occurrence.
@@ -206,14 +197,6 @@ public interface DiseaseService {
      */
     boolean doesDiseaseOccurrenceExist(DiseaseOccurrence occurrence);
 
-    /**
-     * Determines whether the specified occurrence's disease id belongs to the corresponding validator disease group.
-     * @param diseaseOccurrenceId The id of the disease occurrence.
-     * @param validatorDiseaseGroupId The id of the validator disease group.
-     * @return True if the occurrence refers to a disease in the validator disease group, otherwise false.
-     */
-    boolean doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(Integer diseaseOccurrenceId,
-                                                                           Integer validatorDiseaseGroupId);
     /**
      * Saves a disease occurrence.
      * @param diseaseOccurrence The disease occurrence to save.

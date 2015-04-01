@@ -64,13 +64,26 @@ public interface ExpertService {
     Long getDiseaseOccurrenceReviewCount(Integer expertId);
 
     /**
-     * Determines whether a review for the specified disease occurrence, by the specified expert,
-     * already exists in the database.
+     * Determines whether a review for the specified disease occurrence, by the specified expert, already exists.
      * @param expertId The id of the specified expert.
      * @param diseaseOccurrenceId The id of the disease occurrence.
      * @return True if the review already exists, otherwise false.
      */
     boolean doesDiseaseOccurrenceReviewExist(Integer expertId, Integer diseaseOccurrenceId);
+
+    /**
+     * Determines whether a review already exists for the specified admin unit, disease group and expert.
+     * Each expert can only submit one review per disease/admin unit for each run of the disease extent generator.
+     * The createdDate of the experts most recent matching review will be checked against the disease group's
+     * lastExtentGenerationDate property.
+     *
+     * @param expertId The id of the specified expert.
+     * @param diseaseGroup The disease group.
+     * @param adminUnit The tropical or global admin unit.
+     * @return True if the review already exists, otherwise false.
+     */
+    boolean doesAdminUnitReviewExistForLatestDiseaseExtent(
+            Integer expertId, DiseaseGroup diseaseGroup, AdminUnitGlobalOrTropical adminUnit);
 
     /**
      * Gets all reviews for the specified disease group, including repeat reviews.
