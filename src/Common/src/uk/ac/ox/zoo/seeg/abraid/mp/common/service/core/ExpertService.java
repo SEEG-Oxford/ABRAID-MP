@@ -43,7 +43,7 @@ public interface ExpertService {
 
     /**
      * Gets a list of occurrence points, for the specified validator disease group, for which the specified expert has
-     * not yet submitted a review. Only SEEG users may view occurrences of disease groups during setup phase.
+     * not yet submitted a review. Only SEEG users may view occurrences of disease groups before first model run prep.
      * Other external users may only view occurrences of disease groups with automatic model runs enabled.
      * @param expertId The id of the specified expert.
      * @param userIsSeeg Whether the expert is a member of SEEG, and therefore should review more occurrences.
@@ -74,7 +74,7 @@ public interface ExpertService {
     /**
      * Determines whether a review already exists for the specified admin unit, disease group and expert.
      * Each expert can only submit one review per disease/admin unit for each run of the disease extent generator.
-     * The createdDate of the experts most recent matching review will be checked against the disease group's
+     * The createdDate of the expert's most recent matching review will be checked against the disease group's
      * lastExtentGenerationDate property.
      *
      * @param expertId The id of the specified expert.

@@ -2,7 +2,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
-import org.joda.time.LocalDateTime;
 import org.junit.Test;
 import org.kubek2k.springockito.annotations.ReplaceWithMock;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +70,7 @@ public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringInteg
 
         int diseaseGroupId = 87;
         DateTime batchStartDate = new DateTime("2014-02-24"); // Occurrence date for earliest READY occurrence
-        DateTime batchEndDate = new DateTime("2014-02-26").minusMillis(1).minusHours(1);
+        DateTime batchEndDate = new DateTime("2014-02-26").minusMillis(1);
         ModelRun modelRun = createAndSaveTestModelRun(diseaseGroupId, batchStartDate, batchEndDate, null);
 
         // As this is the first batch, there was no training data available, so no prediction can be made.
@@ -112,8 +111,8 @@ public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringInteg
         DateTimeUtils.setCurrentMillisFixed(now.getMillis());
 
         int diseaseGroupId = 87;
-        DateTime batchStartDate = new LocalDateTime("2014-02-24").toDateTime(); // Occurrence date for earliest READY occurrence
-        DateTime batchEndDate = new LocalDateTime("2014-02-26").toDateTime().minusMillis(1);
+        DateTime batchStartDate = new DateTime("2014-02-24"); // Occurrence date for earliest READY occurrence
+        DateTime batchEndDate = new DateTime("2014-02-26").minusMillis(1);
         createAndSaveTestModelRun(diseaseGroupId, batchStartDate, batchEndDate, DateTime.now().minusWeeks(1));
         ModelRun modelRun2 = createAndSaveTestModelRun(diseaseGroupId, batchStartDate, batchEndDate, null);
 

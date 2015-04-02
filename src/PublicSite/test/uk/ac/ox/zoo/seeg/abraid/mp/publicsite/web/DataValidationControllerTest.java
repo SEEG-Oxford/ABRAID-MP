@@ -41,7 +41,7 @@ public class DataValidationControllerTest {
     private DiseaseExtentClass diseaseExtentClass = null;
 
     @After
-    public void cleanup() {
+    public void cleanUp() {
         validatorDiseaseGroup = null;
         diseaseOccurrence = null;
         diseaseGroup = null;
@@ -80,8 +80,8 @@ public class DataValidationControllerTest {
     @Test
     public void showPageReturnsDataValidationContentPageWithModelData() {
         // Arrange
-        wireupAnonmousUser();
-        wireupValidatorDiseaseGroups();
+        wireUpAnonmousUser();
+        wireUpValidatorDiseaseGroups();
         Model model = mock(Model.class);
         DataValidationController target = createTarget();
 
@@ -95,7 +95,7 @@ public class DataValidationControllerTest {
     @Test
     public void showPageReturnsDataModelForAnonymousUser() {
         // Arrange
-        wireupAnonmousUser();
+        wireUpAnonmousUser();
 
         Model model = mock(Model.class);
         DataValidationController target = createTarget();
@@ -122,8 +122,8 @@ public class DataValidationControllerTest {
     public void showPageReturnsDataModelForLoggedInNonSeegUser() {
         // Arrange
         boolean isSeeg = false;
-        wireupExpert(1, isSeeg, true);
-        wireupValidatorDiseaseGroups();
+        wireUpExpert(1, isSeeg, true);
+        wireUpValidatorDiseaseGroups();
         Model model = mock(Model.class);
         DataValidationController target = createTarget();
 
@@ -149,8 +149,8 @@ public class DataValidationControllerTest {
     public void showPageReturnsDataModelForLoggedInSeegUser() {
         // Arrange
         boolean isSeeg = true;
-        wireupExpert(1, isSeeg, true);
-        wireupValidatorDiseaseGroups();
+        wireUpExpert(1, isSeeg, true);
+        wireUpValidatorDiseaseGroups();
         Model model = mock(Model.class);
         DataValidationController target = createTarget();
 
@@ -173,8 +173,8 @@ public class DataValidationControllerTest {
     public void showPageIndicatesToShowHelpTextToLoggedInUserOnce() {
         // Arrange
         boolean seenHelp = false;
-        wireupExpert(1, false, seenHelp);
-        wireupValidatorDiseaseGroups();
+        wireUpExpert(1, false, seenHelp);
+        wireUpValidatorDiseaseGroups();
         Model model = mock(Model.class);
         DataValidationController target = createTarget();
 
@@ -191,8 +191,8 @@ public class DataValidationControllerTest {
     public void showPageIndicatesNotToShowHelpTextToLoggedInUserWhenUserHasAlreadySeenHelpText() {
         // Arrange
         boolean seenHelp = true;
-        wireupExpert(1, false, seenHelp);
-        wireupValidatorDiseaseGroups();
+        wireUpExpert(1, false, seenHelp);
+        wireUpValidatorDiseaseGroups();
         Model model = mock(Model.class);
         DataValidationController target = createTarget();
 
@@ -218,7 +218,7 @@ public class DataValidationControllerTest {
         List<ValidatorDiseaseGroup> validatorDiseaseGroups = new ArrayList<>();
         validatorDiseaseGroups.addAll(Arrays.asList(c, b, a, e, d));
 
-        wireupExpert(1, false, true);
+        wireUpExpert(1, false, true);
         when(expertService.getDiseaseInterests(1)).thenReturn(diseaseInterests);
         diseaseService = mockIfNull(diseaseService, DiseaseService.class);
         when(diseaseService.getAllValidatorDiseaseGroups()).thenReturn(validatorDiseaseGroups);
@@ -234,8 +234,8 @@ public class DataValidationControllerTest {
     @Test
     public void showPageReturnsValidatorDiseaseGroups() {
         // Arrange
-        wireupExpert(1, false, true);
-        wireupValidatorDiseaseGroups();
+        wireUpExpert(1, false, true);
+        wireUpValidatorDiseaseGroups();
         Model model = mock(Model.class);
 
         HashMap<String, List<DiseaseGroup>> expectation = new HashMap<>();
@@ -257,7 +257,7 @@ public class DataValidationControllerTest {
         int expertId = 1;
         boolean userIsSeeg = false;
         int validatorDiseaseGroupId = 2;
-        wireupExpert(expertId, userIsSeeg, true);
+        wireUpExpert(expertId, userIsSeeg, true);
 
         DiseaseOccurrence o1 = AbstractDiseaseOccurrenceGeoJsonTests.defaultDiseaseOccurrence();
         when(o1.getId()).thenReturn(1);
@@ -287,7 +287,7 @@ public class DataValidationControllerTest {
         Integer expertId = 1;
         boolean userIsSeeg = true;
         Integer validatorDiseaseGroupId = 2;
-        wireupExpert(expertId, userIsSeeg, false);
+        wireUpExpert(expertId, userIsSeeg, false);
         when(expertService.getDiseaseOccurrencesYetToBeReviewedByExpert(expertId, userIsSeeg, validatorDiseaseGroupId)).thenThrow(new IllegalArgumentException());
 
         DataValidationController target = createTarget();
@@ -311,8 +311,8 @@ public class DataValidationControllerTest {
         Integer validatorDiseaseGroupId = 2;
         Integer diseaseOccurrenceId = 3;
 
-        wireupExpert(expertId, userIsSeeg, false);
-        wireupForOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, true, hasModelRunPrepOccurredForDisease);
+        wireUpExpert(expertId, userIsSeeg, false);
+        wireUpForOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, true, hasModelRunPrepOccurredForDisease);
 
         DataValidationController target = createTarget();
 
@@ -335,8 +335,8 @@ public class DataValidationControllerTest {
         Integer validatorDiseaseGroupId = 2;
         Integer diseaseOccurrenceId = 3;
 
-        wireupExpert(expertId, userIsSeeg, false);
-        wireupForOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, true, hasModelRunPrepOccurredForDisease);
+        wireUpExpert(expertId, userIsSeeg, false);
+        wireUpForOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, true, hasModelRunPrepOccurredForDisease);
 
         DataValidationController target = createTarget();
 
@@ -359,8 +359,8 @@ public class DataValidationControllerTest {
         Integer validatorDiseaseGroupId = 2;
         Integer diseaseOccurrenceId = 3;
 
-        wireupExpert(expertId, userIsSeeg, false);
-        wireupForOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, true, hasModelRunPrepOccurredForDisease);
+        wireUpExpert(expertId, userIsSeeg, false);
+        wireUpForOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, true, hasModelRunPrepOccurredForDisease);
 
         DataValidationController target = createTarget();
 
@@ -383,8 +383,8 @@ public class DataValidationControllerTest {
         Integer validatorDiseaseGroupId = 2;
         Integer diseaseOccurrenceId = 3;
 
-        wireupExpert(expertId, userIsSeeg, false);
-        wireupForOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, true, hasModelRunPrepOccurredForDisease);
+        wireUpExpert(expertId, userIsSeeg, false);
+        wireUpForOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, true, hasModelRunPrepOccurredForDisease);
 
         DataValidationController target = createTarget();
 
@@ -403,8 +403,8 @@ public class DataValidationControllerTest {
         Integer diseaseOccurrenceId = 3;
         String review = "YES";
 
-        wireupExpert(1, false, false);
-        wireupForOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, true, true);
+        wireUpExpert(1, false, false);
+        wireUpForOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, true, true);
 
         DataValidationController target = createTarget();
 
@@ -423,8 +423,8 @@ public class DataValidationControllerTest {
         Integer diseaseOccurrenceId = 3;
         String review = "YES";
 
-        wireupExpert(1, false, false);
-        wireupForOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, true, true);
+        wireUpExpert(1, false, false);
+        wireUpForOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, true, true);
 
         DataValidationController target = createTarget();
 
@@ -442,8 +442,8 @@ public class DataValidationControllerTest {
         Integer validatorDiseaseGroupId = 2;
         Integer diseaseOccurrenceId = 3;
 
-        wireupExpert(1, false, false);
-        wireupForOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, true, true);
+        wireUpExpert(1, false, false);
+        wireUpForOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, true, true);
 
         DataValidationController target = createTarget();
 
@@ -462,8 +462,8 @@ public class DataValidationControllerTest {
         Integer diseaseOccurrenceId = 3;
         String review = "YES";
 
-        wireupExpert(1, false, false);
-        wireupForOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, true, true);
+        wireUpExpert(1, false, false);
+        wireUpForOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, true, true);
 
         DataValidationController target = createTarget();
 
@@ -482,8 +482,8 @@ public class DataValidationControllerTest {
         Integer diseaseOccurrenceId = 3;
         String review = "YES";
 
-        wireupExpert(1, false, false);
-        wireupForOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, true, true);
+        wireUpExpert(1, false, false);
+        wireUpForOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, true, true);
 
         DataValidationController target = createTarget();
 
@@ -502,8 +502,8 @@ public class DataValidationControllerTest {
         Integer diseaseOccurrenceId = 3;
         String review = "YES";
 
-        wireupExpert(1, false, false);
-        wireupForOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, true, true);
+        wireUpExpert(1, false, false);
+        wireUpForOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, true, true);
 
         DataValidationController target = createTarget();
 
@@ -524,8 +524,8 @@ public class DataValidationControllerTest {
         Integer diseaseOccurrenceId = 3;
         String review = "YES";
 
-        wireupExpert(1, false, false);
-        wireupForOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, doesOccurrenceBelongToValidatorGroup, true);
+        wireUpExpert(1, false, false);
+        wireUpForOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, doesOccurrenceBelongToValidatorGroup, true);
 
         DataValidationController target = createTarget();
 
@@ -546,9 +546,9 @@ public class DataValidationControllerTest {
         Integer diseaseOccurrenceId = 3;
         String review = "YES";
 
-        wireupExpert(expertId, false, false);
-        wireupForOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, true, true);
-        wireupExistingOccurrenceReview(expertId, diseaseOccurrenceId);
+        wireUpExpert(expertId, false, false);
+        wireUpForOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, true, true);
+        wireUpExistingOccurrenceReview(expertId, diseaseOccurrenceId);
 
         DataValidationController target = createTarget();
 
@@ -563,7 +563,7 @@ public class DataValidationControllerTest {
     @Test
     public void getDiseaseExtentForDiseaseGroupFailsForInvalidDiseaseGroup() throws Exception {
         // Arrange
-        wireupExpert(1, false, true);
+        wireUpExpert(1, false, true);
         int diseaseGroupId = 3;
         diseaseService = mock(DiseaseService.class);
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(null);
@@ -584,8 +584,8 @@ public class DataValidationControllerTest {
         boolean diseaseGroupHasModelRun = false;
         int diseaseGroupId = 3;
         int expertId = 1;
-        wireupExpert(expertId, isSeeg, true);
-        wireupDiseaseExtent(diseaseGroupId, expertId, diseaseGroupHasModelRun);
+        wireUpExpert(expertId, isSeeg, true);
+        wireUpDiseaseExtent(diseaseGroupId, expertId, diseaseGroupHasModelRun);
 
         DataValidationController target = createTarget();
 
@@ -604,8 +604,8 @@ public class DataValidationControllerTest {
         boolean diseaseGroupHasModelRun = false;
         int diseaseGroupId = 3;
         int expertId = 1;
-        wireupExpert(expertId, isSeeg, true);
-        wireupDiseaseExtent(diseaseGroupId, expertId, diseaseGroupHasModelRun);
+        wireUpExpert(expertId, isSeeg, true);
+        wireUpDiseaseExtent(diseaseGroupId, expertId, diseaseGroupHasModelRun);
 
         DataValidationController target = createTarget();
 
@@ -628,8 +628,8 @@ public class DataValidationControllerTest {
         boolean diseaseGroupHasModelRun = true;
         int diseaseGroupId = 3;
         int expertId = 1;
-        wireupExpert(expertId, isSeeg, true);
-        wireupDiseaseExtent(diseaseGroupId, expertId, diseaseGroupHasModelRun);
+        wireUpExpert(expertId, isSeeg, true);
+        wireUpDiseaseExtent(diseaseGroupId, expertId, diseaseGroupHasModelRun);
 
         DataValidationController target = createTarget();
 
@@ -652,8 +652,8 @@ public class DataValidationControllerTest {
         boolean diseaseGroupHasModelRun = true;
         int diseaseGroupId = 3;
         int expertId = 1;
-        wireupExpert(expertId, isSeeg, true);
-        wireupDiseaseExtent(diseaseGroupId, expertId, diseaseGroupHasModelRun);
+        wireUpExpert(expertId, isSeeg, true);
+        wireUpDiseaseExtent(diseaseGroupId, expertId, diseaseGroupHasModelRun);
 
         DataValidationController target = createTarget();
 
@@ -672,8 +672,8 @@ public class DataValidationControllerTest {
     @Test
     public void getDefaultDiseaseExtentReturnsExpectedResponseEntity() {
         // Arrange
-        wireupAnonmousUser();
-        wireupDiseaseExtent(87, 1, true);
+        wireUpAnonmousUser();
+        wireUpDiseaseExtent(87, 1, true);
 
         DataValidationController target = createTarget();
 
@@ -692,7 +692,7 @@ public class DataValidationControllerTest {
     @Test
     public void getLatestDiseaseOccurrencesForAdminUnitDiseaseExtentClassForDefaultDiseaseGroupCallsMethodWithDengue() {
         // Arrange
-        wireupExpert(1, false, true);
+        wireUpExpert(1, false, true);
         diseaseService = mock(DiseaseService.class);
         int defaultDiseaseGroupId = 87;
         int gaulCode = 1;
@@ -714,8 +714,8 @@ public class DataValidationControllerTest {
         Integer diseaseId = 2;
         Integer gaulCode = 3;
 
-        wireupExpert(expertId, userIsSeeg, false);
-        wireupForExtentReview(diseaseId, gaulCode, review, hasModelRunPrepOccurredForDisease);
+        wireUpExpert(expertId, userIsSeeg, false);
+        wireUpForExtentReview(diseaseId, gaulCode, review, hasModelRunPrepOccurredForDisease);
 
         DataValidationController target = createTarget();
 
@@ -738,8 +738,8 @@ public class DataValidationControllerTest {
         Integer diseaseId = 2;
         Integer gaulCode = 3;
 
-        wireupExpert(expertId, userIsSeeg, false);
-        wireupForExtentReview(diseaseId, gaulCode, review, hasModelRunPrepOccurredForDisease);
+        wireUpExpert(expertId, userIsSeeg, false);
+        wireUpForExtentReview(diseaseId, gaulCode, review, hasModelRunPrepOccurredForDisease);
 
         DataValidationController target = createTarget();
 
@@ -762,8 +762,8 @@ public class DataValidationControllerTest {
         Integer diseaseId = 2;
         Integer gaulCode = 3;
 
-        wireupExpert(expertId, userIsSeeg, false);
-        wireupForExtentReview(diseaseId, gaulCode, review, hasModelRunPrepOccurredForDisease);
+        wireUpExpert(expertId, userIsSeeg, false);
+        wireUpForExtentReview(diseaseId, gaulCode, review, hasModelRunPrepOccurredForDisease);
 
         DataValidationController target = createTarget();
 
@@ -786,8 +786,8 @@ public class DataValidationControllerTest {
         Integer diseaseId = 2;
         Integer gaulCode = 3;
 
-        wireupExpert(expertId, userIsSeeg, false);
-        wireupForExtentReview(diseaseId, gaulCode, review, hasModelRunPrepOccurredForDisease);
+        wireUpExpert(expertId, userIsSeeg, false);
+        wireUpForExtentReview(diseaseId, gaulCode, review, hasModelRunPrepOccurredForDisease);
 
         DataValidationController target = createTarget();
 
@@ -810,8 +810,8 @@ public class DataValidationControllerTest {
         Integer diseaseId = 2;
         Integer gaulCode = 3;
 
-        wireupExpert(expertId, userIsSeeg, false);
-        wireupForExtentReview(diseaseId, gaulCode, review, hasModelRunPrepOccurredForDisease);
+        wireUpExpert(expertId, userIsSeeg, false);
+        wireUpForExtentReview(diseaseId, gaulCode, review, hasModelRunPrepOccurredForDisease);
 
         DataValidationController target = createTarget();
 
@@ -834,8 +834,8 @@ public class DataValidationControllerTest {
         Integer diseaseId = 2;
         Integer gaulCode = 3;
 
-        wireupExpert(expertId, userIsSeeg, false);
-        wireupForExtentReview(diseaseId, gaulCode, review, hasModelRunPrepOccurredForDisease);
+        wireUpExpert(expertId, userIsSeeg, false);
+        wireUpForExtentReview(diseaseId, gaulCode, review, hasModelRunPrepOccurredForDisease);
 
         DataValidationController target = createTarget();
 
@@ -858,8 +858,8 @@ public class DataValidationControllerTest {
         Integer diseaseId = 2;
         Integer gaulCode = 3;
 
-        wireupExpert(expertId, userIsSeeg, false);
-        wireupForExtentReview(diseaseId, gaulCode, review, hasModelRunPrepOccurredForDisease);
+        wireUpExpert(expertId, userIsSeeg, false);
+        wireUpForExtentReview(diseaseId, gaulCode, review, hasModelRunPrepOccurredForDisease);
 
         DataValidationController target = createTarget();
 
@@ -882,8 +882,8 @@ public class DataValidationControllerTest {
         Integer diseaseId = 2;
         Integer gaulCode = 3;
 
-        wireupExpert(expertId, userIsSeeg, false);
-        wireupForExtentReview(diseaseId, gaulCode, review, hasModelRunPrepOccurredForDisease);
+        wireUpExpert(expertId, userIsSeeg, false);
+        wireUpForExtentReview(diseaseId, gaulCode, review, hasModelRunPrepOccurredForDisease);
 
         DataValidationController target = createTarget();
 
@@ -906,8 +906,8 @@ public class DataValidationControllerTest {
         Integer diseaseId = 2;
         Integer gaulCode = 3;
 
-        wireupExpert(expertId, userIsSeeg, false);
-        wireupForExtentReview(diseaseId, gaulCode, review, hasModelRunPrepOccurredForDisease);
+        wireUpExpert(expertId, userIsSeeg, false);
+        wireUpForExtentReview(diseaseId, gaulCode, review, hasModelRunPrepOccurredForDisease);
 
         DataValidationController target = createTarget();
 
@@ -930,8 +930,8 @@ public class DataValidationControllerTest {
         Integer diseaseId = 2;
         Integer gaulCode = 3;
 
-        wireupExpert(expertId, userIsSeeg, false);
-        wireupForExtentReview(diseaseId, gaulCode, review, hasModelRunPrepOccurredForDisease);
+        wireUpExpert(expertId, userIsSeeg, false);
+        wireUpForExtentReview(diseaseId, gaulCode, review, hasModelRunPrepOccurredForDisease);
 
         DataValidationController target = createTarget();
 
@@ -954,9 +954,9 @@ public class DataValidationControllerTest {
         Integer diseaseId = 2;
         Integer gaulCode = 3;
 
-        wireupExpert(expertId, userIsSeeg, false);
-        wireupForExtentReview(diseaseId, gaulCode, review, hasModelRunPrepOccurredForDisease);
-        wireupExistingExtentReview(expertId, gaulCode);
+        wireUpExpert(expertId, userIsSeeg, false);
+        wireUpForExtentReview(diseaseId, gaulCode, review, hasModelRunPrepOccurredForDisease);
+        wireUpExistingExtentReview(expertId, gaulCode);
 
         DataValidationController target = createTarget();
 
@@ -1006,13 +1006,13 @@ public class DataValidationControllerTest {
         return mock == null ? mock(classToMock) : mock;
     }
 
-    private void wireupAnonmousUser() {
+    private void wireUpAnonmousUser() {
         currentUserService = mockIfNull(currentUserService, CurrentUserService.class);
 
         when(currentUserService.getCurrentUserId()).thenReturn(null);
     }
 
-    private void wireupExpert(Integer expertId, boolean isSeeg, boolean seenHelp) {
+    private void wireUpExpert(Integer expertId, boolean isSeeg, boolean seenHelp) {
         expertService = mockIfNull(expertService, ExpertService.class);
         currentUserService = mockIfNull(currentUserService, CurrentUserService.class);
         expert = mockIfNull(expert, Expert.class);
@@ -1023,7 +1023,7 @@ public class DataValidationControllerTest {
         when(expert.hasSeenHelpText()).thenReturn(seenHelp);
     }
 
-    private void wireupValidatorDiseaseGroups(ValidatorDiseaseGroup... groups) {
+    private void wireUpValidatorDiseaseGroups(ValidatorDiseaseGroup... groups) {
         diseaseService = mockIfNull(diseaseService, DiseaseService.class);
 
         List<ValidatorDiseaseGroup> list = new ArrayList<>();
@@ -1032,19 +1032,19 @@ public class DataValidationControllerTest {
         when(diseaseService.getAllValidatorDiseaseGroups()).thenReturn(list);
     }
 
-    private void wireupExistingOccurrenceReview(Integer expertId, Integer occurrenceId) {
+    private void wireUpExistingOccurrenceReview(Integer expertId, Integer occurrenceId) {
         expertService = mockIfNull(expertService, ExpertService.class);
 
         when(expertService.doesDiseaseOccurrenceReviewExist(expertId, occurrenceId)).thenReturn(true);
     }
 
-    private void wireupExistingExtentReview(Integer expertId, Integer gaulCode) {
+    private void wireUpExistingExtentReview(Integer expertId, Integer gaulCode) {
         expertService = mockIfNull(expertService, ExpertService.class);
 
         when(expertService.doesAdminUnitReviewExistForLatestDiseaseExtent(expertId, diseaseGroup, createAdminUnitGlobal(gaulCode))).thenReturn(true);
     }
 
-    private void wireupDiseaseGroup(Integer id, boolean hasModelRunPrepOccurredForDiseaseGroup) {
+    private void wireUpDiseaseGroup(Integer id, boolean hasModelRunPrepOccurredForDiseaseGroup) {
         diseaseService = mockIfNull(diseaseService, DiseaseService.class);
         diseaseGroup = mockIfNull(diseaseGroup, DiseaseGroup.class);
 
@@ -1053,8 +1053,8 @@ public class DataValidationControllerTest {
         when(diseaseGroup.getLastExtentGenerationDate()).thenReturn(hasModelRunPrepOccurredForDiseaseGroup ? DateTime.now().minusHours(1) : null);
     }
 
-    private void wireupDiseaseExtent(Integer diseaseGroupId, Integer expertId, boolean hasModelRunPrepOccurredForDiseaseGroup) {
-        wireupDiseaseGroup(diseaseGroupId, hasModelRunPrepOccurredForDiseaseGroup);
+    private void wireUpDiseaseExtent(Integer diseaseGroupId, Integer expertId, boolean hasModelRunPrepOccurredForDiseaseGroup) {
+        wireUpDiseaseGroup(diseaseGroupId, hasModelRunPrepOccurredForDiseaseGroup);
 
         expertService = mockIfNull(expertService, ExpertService.class);
 
@@ -1064,8 +1064,8 @@ public class DataValidationControllerTest {
         when(expertService.getAllAdminUnitReviewsForDiseaseGroup(eq(expertId), eq(diseaseGroupId))).thenReturn(reviews);
     }
 
-    private void wireupForOccurrenceReview(Integer validatorDiseaseGroupId, Integer diseaseOccurrenceId, boolean isValidatorDiseaseGroupCorrect, boolean hasModelRunPrepOccurredForDiseaseGroup) {
-        wireupDiseaseGroup(99, hasModelRunPrepOccurredForDiseaseGroup);
+    private void wireUpForOccurrenceReview(Integer validatorDiseaseGroupId, Integer diseaseOccurrenceId, boolean isValidatorDiseaseGroupCorrect, boolean hasModelRunPrepOccurredForDiseaseGroup) {
+        wireUpDiseaseGroup(99, hasModelRunPrepOccurredForDiseaseGroup);
 
         validatorDiseaseGroup = mockIfNull(validatorDiseaseGroup, ValidatorDiseaseGroup.class);
         diseaseOccurrence = mockIfNull(diseaseOccurrence, DiseaseOccurrence.class);
@@ -1078,8 +1078,8 @@ public class DataValidationControllerTest {
         when(validatorDiseaseGroup.getId()).thenReturn(validatorDiseaseGroupId);
     }
 
-    private void wireupForExtentReview(Integer diseaseId, Integer gaulCode, String review, boolean hasModelRunPrepOccurredForDiseaseGroup) {
-        wireupDiseaseGroup(diseaseId, hasModelRunPrepOccurredForDiseaseGroup);
+    private void wireUpForExtentReview(Integer diseaseId, Integer gaulCode, String review, boolean hasModelRunPrepOccurredForDiseaseGroup) {
+        wireUpDiseaseGroup(diseaseId, hasModelRunPrepOccurredForDiseaseGroup);
 
         geometryService = mockIfNull(geometryService, GeometryService.class);
         diseaseExtentClass = mockIfNull(diseaseExtentClass, DiseaseExtentClass.class);

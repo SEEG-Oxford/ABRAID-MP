@@ -110,18 +110,18 @@ public class AdminUnitReviewDaoTest extends AbstractCommonSpringIntegrationTests
     }
 
     @Test
-         public void getLastReviewDateByExpertIdAndDiseaseGroupIdAndGaulCodeReturnsCorrectDateForGlobal() {
+    public void getLastReviewDateByExpertIdAndDiseaseGroupIdAndGaulCodeReturnsCorrectDateForGlobal() {
         // Arrange
         int gaulCode = 24;
-        AdminUnitReview firstReview = new AdminUnitReview(expertDao.getById(1), gaulCode, null, diseaseGroupDao.getById(87), diseaseExtentClassDao.getByName(DiseaseExtentClass.POSSIBLE_ABSENCE));
+        AdminUnitReview firstReview = new AdminUnitReview(expertDao.getById(1), gaulCode, null, diseaseGroupDao.getById(22), diseaseExtentClassDao.getByName(DiseaseExtentClass.POSSIBLE_ABSENCE));
         adminUnitReviewDao.save(firstReview);
         flushAndClear();
-        AdminUnitReview secondReview = new AdminUnitReview(expertDao.getById(1), gaulCode, null, diseaseGroupDao.getById(87), diseaseExtentClassDao.getByName(DiseaseExtentClass.POSSIBLE_ABSENCE));
+        AdminUnitReview secondReview = new AdminUnitReview(expertDao.getById(1), gaulCode, null, diseaseGroupDao.getById(22), diseaseExtentClassDao.getByName(DiseaseExtentClass.POSSIBLE_ABSENCE));
         adminUnitReviewDao.save(secondReview);
         flushAndClear();
 
         // Act
-        DateTime actual = adminUnitReviewDao.getLastReviewDateByExpertIdAndDiseaseGroupIdAndGaulCode(1, 87, gaulCode);
+        DateTime actual = adminUnitReviewDao.getLastReviewDateByExpertIdAndDiseaseGroupIdAndGaulCode(1, 22, gaulCode);
 
         // Assert
         assertThat(actual).isEqualTo(secondReview.getCreatedDate());

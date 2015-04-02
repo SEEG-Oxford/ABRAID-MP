@@ -555,7 +555,7 @@ public class ExpertServiceTest {
         when(diseaseGroup.getLastExtentGenerationDate()).thenReturn(DateTime.now());
         when(diseaseGroup.getId()).thenReturn(2);
         AdminUnitGlobalOrTropical adminUnit = mock(AdminUnitGlobalOrTropical.class);
-        when(adminUnit.getCountryGaulCode()).thenReturn(3);
+        when(adminUnit.getGaulCode()).thenReturn(3);
 
         when(adminUnitReviewDao.getLastReviewDateByExpertIdAndDiseaseGroupIdAndGaulCode(1, 2, 3)).thenReturn(null);
         // Act
@@ -573,7 +573,7 @@ public class ExpertServiceTest {
         when(diseaseGroup.getLastExtentGenerationDate()).thenReturn(lastExtentGeneration);
         when(diseaseGroup.getId()).thenReturn(2);
         AdminUnitGlobalOrTropical adminUnit = mock(AdminUnitGlobalOrTropical.class);
-        when(adminUnit.getCountryGaulCode()).thenReturn(3);
+        when(adminUnit.getGaulCode()).thenReturn(3);
 
         when(adminUnitReviewDao.getLastReviewDateByExpertIdAndDiseaseGroupIdAndGaulCode(1, 2, 3)).thenReturn(lastExtentGeneration.minusHours(1));
 
@@ -592,7 +592,7 @@ public class ExpertServiceTest {
         when(diseaseGroup.getLastExtentGenerationDate()).thenReturn(lastExtentGeneration);
         when(diseaseGroup.getId()).thenReturn(2);
         AdminUnitGlobalOrTropical adminUnit = mock(AdminUnitGlobalOrTropical.class);
-        when(adminUnit.getCountryGaulCode()).thenReturn(3);
+        when(adminUnit.getGaulCode()).thenReturn(3);
 
         when(adminUnitReviewDao.getLastReviewDateByExpertIdAndDiseaseGroupIdAndGaulCode(1, 2, 3)).thenReturn(lastExtentGeneration.plusHours(1));
 
@@ -600,7 +600,7 @@ public class ExpertServiceTest {
         boolean result = expertService.doesAdminUnitReviewExistForLatestDiseaseExtent(1, diseaseGroup, adminUnit);
 
         // Assert
-        assertThat(result).isFalse();
+        assertThat(result).isTrue();
     }
 
     @Test

@@ -34,7 +34,7 @@ public class DiseaseExtentGeneratorTest {
     private DiseaseService diseaseService;
     private ExpertService expertService;
     private ModelRunService modelRunService;
-    private GeometryService geometeryService;
+    private GeometryService geometryService;
 
     private DiseaseExtentClass presenceDiseaseExtentClass = new DiseaseExtentClass(DiseaseExtentClass.PRESENCE, 100);
     private DiseaseExtentClass possiblePresenceDiseaseExtentClass = new DiseaseExtentClass(DiseaseExtentClass.POSSIBLE_PRESENCE, 50);
@@ -53,10 +53,10 @@ public class DiseaseExtentGeneratorTest {
         diseaseService = mock(DiseaseService.class);
         expertService = mock(ExpertService.class);
         modelRunService = mock(ModelRunService.class);
-        geometeryService = mock(GeometryService.class);
+        geometryService = mock(GeometryService.class);
         adminUnits = getAdminUnits();
 
-        diseaseExtentGenerator = new DiseaseExtentGenerator(diseaseService, expertService, modelRunService, geometeryService);
+        diseaseExtentGenerator = new DiseaseExtentGenerator(diseaseService, expertService, modelRunService, geometryService);
         mockGetDiseaseExtentClass(presenceDiseaseExtentClass);
         mockGetDiseaseExtentClass(possiblePresenceDiseaseExtentClass);
         mockGetDiseaseExtentClass(uncertainDiseaseExtentClass);
@@ -353,7 +353,7 @@ public class DiseaseExtentGeneratorTest {
     }
 
     private void mockGetAllAdminUnitGlobalsOrTropicalsForDiseaseGroup() {
-        when(geometeryService.getAllAdminUnitGlobalsOrTropicalsForDiseaseGroup(diseaseGroup))
+        when(geometryService.getAllAdminUnitGlobalsOrTropicalsForDiseaseGroup(diseaseGroup))
                 .thenAnswer(convertToAnswer(adminUnits));
     }
 

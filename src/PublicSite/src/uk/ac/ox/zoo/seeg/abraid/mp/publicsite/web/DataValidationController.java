@@ -145,7 +145,7 @@ public class DataValidationController extends AbstractController {
 
     /**
      * Returns the disease occurrence points in need of review by the current user for a given disease id.
-     * Only SEEG users may view occurrences of disease groups during setup phase.
+     * Only SEEG users may view occurrences of disease groups before first model run prep.
      * Other external users may only view occurrences of disease groups with automatic model runs enabled.
      * @param validatorDiseaseGroupId The id of the validator disease group for which to return occurrence points.
      * @return A GeoJSON DTO containing the occurrence points.
@@ -240,7 +240,7 @@ public class DataValidationController extends AbstractController {
         }
 
         GeoJsonDiseaseExtentFeatureCollection featureCollection;
-        // Only SEEG members may view disease extent for disease groups still in setup phase.
+        // Only SEEG members may view disease extent for disease groups before first model run prep.
         // Other users see an empty extent.
         if (diseaseGroupIsAccessibleToExpert(expertId, diseaseGroup)) {
             List<AdminUnitDiseaseExtentClass> diseaseExtent =
