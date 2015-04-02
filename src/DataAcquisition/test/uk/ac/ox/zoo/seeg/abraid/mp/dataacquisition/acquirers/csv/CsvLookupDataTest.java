@@ -5,7 +5,7 @@ import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.AlertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.GeometryService;
 
 import java.util.*;
 
@@ -20,16 +20,16 @@ import static org.mockito.Mockito.*;
  */
 public class CsvLookupDataTest {
     private AlertService alertService;
-    private LocationService locationService;
+    private GeometryService geometryService;
     private DiseaseService diseaseService;
     private CsvLookupData lookupData;
 
     @Before
     public void setUp() {
         alertService = mock(AlertService.class);
-        locationService = mock(LocationService.class);
+        geometryService = mock(GeometryService.class);
         diseaseService = mock(DiseaseService.class);
-        lookupData = new CsvLookupData(alertService, locationService, diseaseService);
+        lookupData = new CsvLookupData(alertService, geometryService, diseaseService);
     }
 
     @Test
@@ -39,7 +39,7 @@ public class CsvLookupDataTest {
         Country country2 = new Country(2, "Test country 2");
 
         List<Country> countries = Arrays.asList(country1, country2);
-        when(locationService.getAllCountries()).thenReturn(countries);
+        when(geometryService.getAllCountries()).thenReturn(countries);
 
         Map<String, Country> expectedCountryMap = new HashMap<>();
         expectedCountryMap.put("test country 1", country1);

@@ -40,7 +40,7 @@ import javax.persistence.Table;
                 name = "getDiseaseOccurrencesYetToBeReviewedByExpert",
                 query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
                         "where d.diseaseGroup.validatorDiseaseGroup.id=:validatorDiseaseGroupId " +
-                        "and (:userIsSeeg = true or d.diseaseGroup.automaticModelRunsStartDate is not null) " +
+                        "and (:userIsSeeg = true or d.diseaseGroup.lastModelRunPrepDate is not null) " +
                         "and d.status = 'IN_REVIEW' " +
                         "and d.id not in " +
                         "(select diseaseOccurrence.id from DiseaseOccurrenceReview where expert.id=:expertId)"

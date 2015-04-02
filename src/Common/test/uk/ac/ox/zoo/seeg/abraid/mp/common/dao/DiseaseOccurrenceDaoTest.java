@@ -225,15 +225,15 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
 
         Expert expert = expertDao.getByEmail("helena.patching@zoo.ox.ac.uk");
 
-        DiseaseOccurrence occurrenceInDiseaseGroupSetup = saveOccurrenceInDiseaseGroupSetup(validatorDiseaseGroup);
-        DiseaseOccurrence occurrenceInAutomaticModelRuns = saveOccurrenceInAutomaticModelRuns(validatorDiseaseGroup);
+        DiseaseOccurrence occurrenceWithModelRunPrepDate = saveOccurrenceInDiseaseGroupWithModelRunPrepDate(validatorDiseaseGroup);
+        DiseaseOccurrence occurrenceWithoutModelRunPrepDate = saveOccurrenceInDiseaseGroupWithoutModelRunPrepDate(validatorDiseaseGroup);
 
         // Act
         List<DiseaseOccurrence> list = diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewedByExpert(expert.getId(), expert.isSeegMember(), validatorDiseaseGroupId);
 
         // Assert
         assertThat(list).hasSize(2);
-        assertThat(list).containsOnly(occurrenceInAutomaticModelRuns, occurrenceInDiseaseGroupSetup);
+        assertThat(list).containsOnly(occurrenceWithModelRunPrepDate, occurrenceWithoutModelRunPrepDate);
     }
 
     @Test
@@ -244,44 +244,44 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
 
         Expert expert = expertDao.getByEmail("edward.wiles@zoo.ox.ac.uk");
 
-        DiseaseOccurrence occurrenceInAutomaticModelRuns = saveOccurrenceInAutomaticModelRuns(validatorDiseaseGroup);
-        DiseaseOccurrence occurrenceInDiseaseGroupSetup = saveOccurrenceInDiseaseGroupSetup(validatorDiseaseGroup);
+        DiseaseOccurrence occurrenceWithModelRunPrepDate = saveOccurrenceInDiseaseGroupWithModelRunPrepDate(validatorDiseaseGroup);
+        DiseaseOccurrence occurrenceWithoutModelRunPrepDate = saveOccurrenceInDiseaseGroupWithoutModelRunPrepDate(validatorDiseaseGroup);
 
         // Act
         List<DiseaseOccurrence> list = diseaseOccurrenceDao.getDiseaseOccurrencesYetToBeReviewedByExpert(expert.getId(), expert.isSeegMember(), validatorDiseaseGroupId);
 
         // Assert
         assertThat(list).hasSize(1);
-        assertThat(list).contains(occurrenceInAutomaticModelRuns);
-        assertThat(list).doesNotContain(occurrenceInDiseaseGroupSetup);
+        assertThat(list).contains(occurrenceWithModelRunPrepDate);
+        assertThat(list).doesNotContain(occurrenceWithoutModelRunPrepDate);
     }
 
-    private DiseaseOccurrence saveOccurrenceInDiseaseGroupSetup(ValidatorDiseaseGroup validatorDiseaseGroup) {
-        DiseaseGroup diseaseGroupInSetup = diseaseGroupDao.getById(1);
-        diseaseGroupInSetup.setAutomaticModelRunsStartDate(null);
-        diseaseGroupInSetup.setValidatorDiseaseGroup(validatorDiseaseGroup);
-        diseaseGroupDao.save(diseaseGroupInSetup);
+    private DiseaseOccurrence saveOccurrenceInDiseaseGroupWithoutModelRunPrepDate(ValidatorDiseaseGroup validatorDiseaseGroup) {
+        DiseaseGroup diseaseGroup = diseaseGroupDao.getById(1);
+        diseaseGroup.setLastModelRunPrepDate(null);
+        diseaseGroup.setValidatorDiseaseGroup(validatorDiseaseGroup);
+        diseaseGroupDao.save(diseaseGroup);
 
-        DiseaseOccurrence occurrenceInDiseaseGroupSetup = diseaseOccurrenceDao.getById(272407);
-        occurrenceInDiseaseGroupSetup.setStatus(DiseaseOccurrenceStatus.IN_REVIEW);
-        occurrenceInDiseaseGroupSetup.setDiseaseGroup(diseaseGroupInSetup);
-        diseaseOccurrenceDao.save(occurrenceInDiseaseGroupSetup);
+        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(272407);
+        occurrence.setStatus(DiseaseOccurrenceStatus.IN_REVIEW);
+        occurrence.setDiseaseGroup(diseaseGroup);
+        diseaseOccurrenceDao.save(occurrence);
 
-        return occurrenceInDiseaseGroupSetup;
+        return occurrence;
     }
 
-    private DiseaseOccurrence saveOccurrenceInAutomaticModelRuns(ValidatorDiseaseGroup validatorDiseaseGroup) {
-        DiseaseGroup diseaseGroupInAutomaticModelRuns = diseaseGroupDao.getById(2);
-        diseaseGroupInAutomaticModelRuns.setAutomaticModelRunsStartDate(DateTime.now());
-        diseaseGroupInAutomaticModelRuns.setValidatorDiseaseGroup(validatorDiseaseGroup);
-        diseaseGroupDao.save(diseaseGroupInAutomaticModelRuns);
+    private DiseaseOccurrence saveOccurrenceInDiseaseGroupWithModelRunPrepDate(ValidatorDiseaseGroup validatorDiseaseGroup) {
+        DiseaseGroup diseaseGroup = diseaseGroupDao.getById(2);
+        diseaseGroup.setLastModelRunPrepDate(DateTime.now().minusHours(1));
+        diseaseGroup.setValidatorDiseaseGroup(validatorDiseaseGroup);
+        diseaseGroupDao.save(diseaseGroup);
 
-        DiseaseOccurrence occurrenceInAutomaticModelRuns = diseaseOccurrenceDao.getById(273401);
-        occurrenceInAutomaticModelRuns.setStatus(DiseaseOccurrenceStatus.IN_REVIEW);
-        occurrenceInAutomaticModelRuns.setDiseaseGroup(diseaseGroupInAutomaticModelRuns);
-        diseaseOccurrenceDao.save(occurrenceInAutomaticModelRuns);
+        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(273401);
+        occurrence.setStatus(DiseaseOccurrenceStatus.IN_REVIEW);
+        occurrence.setDiseaseGroup(diseaseGroup);
+        diseaseOccurrenceDao.save(occurrence);
 
-        return occurrenceInAutomaticModelRuns;
+        return occurrence;
     }
 
     @Test

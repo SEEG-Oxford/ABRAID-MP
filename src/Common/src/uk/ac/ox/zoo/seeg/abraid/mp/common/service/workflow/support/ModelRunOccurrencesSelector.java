@@ -6,7 +6,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.GeometryService;
 
 import java.util.*;
 
@@ -51,7 +51,7 @@ public class ModelRunOccurrencesSelector {
     private static final Logger LOGGER = Logger.getLogger(ModelRunOccurrencesSelector.class);
 
     private DiseaseService diseaseService;
-    private LocationService locationService;
+    private GeometryService geometryService;
     private EmailService emailService;
 
     // Minimum Data Spread parameters for the disease group
@@ -68,11 +68,11 @@ public class ModelRunOccurrencesSelector {
     private Set<Integer> countriesWithAtLeastOneOccurrence;     // For disease groups using all countries
     private Map<Integer, Integer> occurrenceCountPerCountry;    // For disease groups using only the African countries
 
-    public ModelRunOccurrencesSelector(DiseaseService diseaseService, LocationService locationService,
+    public ModelRunOccurrencesSelector(DiseaseService diseaseService, GeometryService geometryService,
                                        EmailService emailService, int diseaseGroupId,
                                        boolean onlyUseGoldStandardOccurrences) {
         this.diseaseService = diseaseService;
-        this.locationService = locationService;
+        this.geometryService = geometryService;
         this.emailService = emailService;
         initialise(diseaseGroupId, onlyUseGoldStandardOccurrences);
     }
@@ -139,7 +139,7 @@ public class ModelRunOccurrencesSelector {
     // If MDS is not met, continue to select points until it does, unless we run out of points.
     private List<DiseaseOccurrence> refineSubsetForAfricanDiseaseGroup(List<DiseaseOccurrence> occurrences) {
         if (parametersNotNull(minDistinctCountries, highFrequencyThreshold, minHighFrequencyCountries)) {
-            countriesOfInterest = locationService.getCountriesForMinDataSpreadCalculation();
+            countriesOfInterest = geometryService.getCountriesForMinDataSpreadCalculation();
             constructOccurrenceCountPerCountryMap(occurrences);
             while (!minDataSpreadCheckForAfricanDiseaseGroup()) {
                 int n = occurrences.size();

@@ -41,6 +41,16 @@ public interface AdminUnitReviewDao {
     List<AdminUnitReview> getByExpertIdAndDiseaseGroupId(Integer expertId, Integer diseaseGroupId);
 
     /**
+     * Gets the date of the last admin unit review submitted by a specific expert, disease group and gaul code.
+     * @param expertId The expert's Id.
+     * @param diseaseGroupId The disease group's Id.
+     * @param gaulCode The admin unit's gaulCode.
+     * @return The date of the last admin unit review.
+     */
+    DateTime getLastReviewDateByExpertIdAndDiseaseGroupIdAndGaulCode(
+            Integer expertId, Integer diseaseGroupId, Integer gaulCode);
+
+    /**
      * Gets the date of the last admin unit review submitted by a specific expert.
      * @param expertId The expert's Id.
      * @return The date of the last admin unit review.
@@ -52,4 +62,5 @@ public interface AdminUnitReviewDao {
      * @param adminUnitReview The review to save.
      */
     void save(AdminUnitReview adminUnitReview);
+
 }
