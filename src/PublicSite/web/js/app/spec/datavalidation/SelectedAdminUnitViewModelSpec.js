@@ -72,12 +72,31 @@ define([
             });
         });
 
-        describe("holds a boolean value which", function () {
+        describe("holds a 'hasSelectedAdminUnit' boolean value which", function () {
             it("indicates whether an admin unit is selected", function () {
                 vm.selectedAdminUnit(null);
-                expect(vm.hasSelectedAdminUnit()).toBeFalsy();
+                expect(vm.hasSelectedAdminUnit()).toBe(false);
                 vm.selectedAdminUnit("foo");
-                expect(vm.hasSelectedAdminUnit()).toBeTruthy();
+                expect(vm.hasSelectedAdminUnit()).toBe(true);
+            });
+        });
+
+        describe("holds an 'submitting' boolean value which", function () {
+            it("indicates whether a review is being submitted", function () {
+                expect(vm.submitting).toBeObservable();
+                expect(vm.submitting()).toBe(false);
+                vm.selectedAdminUnit({id: 1});
+                expect(vm.submitting()).toBe(false);
+                vm.submitReview();
+                expect(vm.submitting()).toBe(true);
+                jasmine.Ajax.requests.mostRecent().response({ status: 204 });
+                expect(vm.submitting()).toBe(false);
+                vm.selectedAdminUnit({id: 1});
+                expect(vm.submitting()).toBe(false);
+                vm.submitReview();
+                expect(vm.submitting()).toBe(true);
+                jasmine.Ajax.requests.mostRecent().response({ status: 400 });
+                expect(vm.submitting()).toBe(false);
             });
         });
 
