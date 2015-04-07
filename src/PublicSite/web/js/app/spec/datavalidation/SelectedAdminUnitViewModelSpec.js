@@ -82,19 +82,31 @@ define([
         });
 
         describe("holds an 'submitting' boolean value which", function () {
-            it("indicates whether a review is being submitted", function () {
+            it("is observable", function () {
                 expect(vm.submitting).toBeObservable();
+            });
+
+            it("starts false", function () {
                 expect(vm.submitting()).toBe(false);
+            });
+
+            it("changes to true when a review is summitted", function () {
                 vm.selectedAdminUnit({id: 1});
                 expect(vm.submitting()).toBe(false);
                 vm.submitReview();
                 expect(vm.submitting()).toBe(true);
+            });
+
+            it("is false after a review is successfully submitted", function () {
+                vm.selectedAdminUnit({id: 1});
+                vm.submitReview();
                 jasmine.Ajax.requests.mostRecent().response({ status: 204 });
                 expect(vm.submitting()).toBe(false);
+            });
+
+            it("is false after a review is unsuccessfully submitted", function () {
                 vm.selectedAdminUnit({id: 1});
-                expect(vm.submitting()).toBe(false);
                 vm.submitReview();
-                expect(vm.submitting()).toBe(true);
                 jasmine.Ajax.requests.mostRecent().response({ status: 400 });
                 expect(vm.submitting()).toBe(false);
             });
