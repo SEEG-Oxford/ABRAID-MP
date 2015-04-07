@@ -29,7 +29,7 @@ define(["ko"], function (ko) {
         };
 
         // View Model State
-        self.validationTypes = [DISEASE_OCCURRENCES, DISEASE_EXTENT];
+        self.validationTypes = [DISEASE_EXTENT, DISEASE_OCCURRENCES];
         self.selectedType = ko.observable(self.validationTypes[0]);
         self.groups = [
             new Group("Your Disease Interests", diseaseInterests),

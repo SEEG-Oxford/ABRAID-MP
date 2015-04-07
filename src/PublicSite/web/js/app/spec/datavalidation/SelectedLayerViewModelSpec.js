@@ -20,8 +20,8 @@ define([
                 expect(vm.selectedType).toBeObservable();
             });
 
-            it("is initially 'disease occurrences'", function () {
-                expect(vm.selectedType()).toBe("disease occurrences");
+            it("is initially 'disease extent'", function () {
+                expect(vm.selectedType()).toBe("disease extent");
             });
 
             it("fires the 'layers-changed' event when its value changes", function () {
