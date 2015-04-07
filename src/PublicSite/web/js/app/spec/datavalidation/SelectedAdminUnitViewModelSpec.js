@@ -90,7 +90,7 @@ define([
                 expect(vm.submitting()).toBe(false);
             });
 
-            it("changes to true when a review is summitted", function () {
+            it("changes to true when a review is submitted", function () {
                 vm.selectedAdminUnit({id: 1});
                 expect(vm.submitting()).toBe(false);
                 vm.submitReview();

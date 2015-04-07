@@ -96,7 +96,7 @@ define([
                 expect(vm.submitting()).toBe(false);
             });
 
-            it("changes to true when a review is summitted", function () {
+            it("changes to true when a review is submitted", function () {
                 vm.selectedPoint(feature);
                 expect(vm.submitting()).toBe(false);
                 vm.submitReview();
