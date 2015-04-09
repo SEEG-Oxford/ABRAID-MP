@@ -18,12 +18,12 @@ public class HandlersAsyncWrapper extends AbstractAsynchronousActionHandler {
     private static Logger logger = Logger.getLogger(HandlersAsyncWrapper.class);
     private static final int THREAD_POOL_SIZE = 1;
 
-    private DiseaseOccurrenceHandler diseaseOccurrenceHandler;
+    private BatchingHandler batchingHandler;
 
     @Autowired
-    public HandlersAsyncWrapper(DiseaseOccurrenceHandler diseaseOccurrenceHandler) {
+    public HandlersAsyncWrapper(BatchingHandler batchingHandler) {
         super(THREAD_POOL_SIZE, logger);
-        this.diseaseOccurrenceHandler = diseaseOccurrenceHandler;
+        this.batchingHandler = batchingHandler;
     }
 
     /**
@@ -36,7 +36,7 @@ public class HandlersAsyncWrapper extends AbstractAsynchronousActionHandler {
             @Override
             public Object call() throws Exception {
                 try {
-                    diseaseOccurrenceHandler.handle(modelRun);
+                    batchingHandler.handle(modelRun);
                 } catch (Exception e) {
                     logger.error(e);
                 }

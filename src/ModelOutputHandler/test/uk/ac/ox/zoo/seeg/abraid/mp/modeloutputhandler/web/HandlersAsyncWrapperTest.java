@@ -15,8 +15,8 @@ public class HandlersAsyncWrapperTest {
     @Test
     public void handlersAreCalledSuccessfully() throws Exception {
         // Arrange
-        DiseaseOccurrenceHandler diseaseOccurrenceHandler = mock(DiseaseOccurrenceHandler.class);
-        HandlersAsyncWrapper wrapper = new HandlersAsyncWrapper(diseaseOccurrenceHandler);
+        BatchingHandler batchingHandler = mock(BatchingHandler.class);
+        HandlersAsyncWrapper wrapper = new HandlersAsyncWrapper(batchingHandler);
 
         ModelRun modelRun = new ModelRun();
 
@@ -24,20 +24,21 @@ public class HandlersAsyncWrapperTest {
         wrapper.handle(modelRun).get();
 
         // Assert
-        verify(diseaseOccurrenceHandler).handle(same(modelRun));
+        verify(batchingHandler).handle(same(modelRun));
     }
 
     @Test
     public void exceptionThrownByAHandlerIsCaught() throws Exception {
         // Arrange
-        DiseaseOccurrenceHandler diseaseOccurrenceHandler = mock(DiseaseOccurrenceHandler.class);
-        HandlersAsyncWrapper wrapper = new HandlersAsyncWrapper(diseaseOccurrenceHandler);
+        BatchingHandler batchingHandler = mock(BatchingHandler.class);
+        HandlersAsyncWrapper wrapper = new HandlersAsyncWrapper(batchingHandler);
         Logger mockLogger = GeneralTestUtils.createMockLogger(wrapper);
 
         ModelRun modelRun = new ModelRun();
 
         RuntimeException exception = new RuntimeException("Test message");
-        doThrow(exception).when(diseaseOccurrenceHandler).handle(modelRun);
+        doThrow(exception).when(batchingHandler).handle(modelRun);
+
         // Act
         wrapper.handle(modelRun).get();
 

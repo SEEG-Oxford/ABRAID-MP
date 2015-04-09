@@ -4,16 +4,16 @@ import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 
 /**
- * Handles disease occurrences. Specifically, if a batch end date is specified in the model run, it sets the
+ * Handles batching of disease occurrences. Specifically, if a batch end date is specified in the model run, it sets the
  * "validation parameters" (e.g. environmental suitability, distance from disease extent) for the disease occurrences up
  * until the end date.
  *
  * Copyright (c) 2014 University of Oxford
  */
-public class DiseaseOccurrenceHandler {
-    private DiseaseOccurrenceHandlerHelper helper;
+public class BatchingHandler {
+    private BatchingHandlerHelper helper;
 
-    public DiseaseOccurrenceHandler(DiseaseOccurrenceHandlerHelper helper) {
+    public BatchingHandler(BatchingHandlerHelper helper) {
         this.helper = helper;
     }
 

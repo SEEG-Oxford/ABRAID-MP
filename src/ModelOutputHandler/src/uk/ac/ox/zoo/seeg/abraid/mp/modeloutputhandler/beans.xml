@@ -20,8 +20,8 @@
     <bean id="mainHandler" class="uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web.MainHandler" autowire="constructor" />
 
     <bean id="handlersAsyncWrapper" class="uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web.HandlersAsyncWrapper" autowire="constructor" destroy-method="cleanup"/>
-    <bean id="diseaseOccurrenceHandler" class="uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web.DiseaseOccurrenceHandler" autowire="constructor"/>
-    <bean id="diseaseOccurrenceHandlerHelper" class="uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web.DiseaseOccurrenceHandlerHelper" autowire="constructor"/>
+    <bean id="batchingHandler" class="uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web.BatchingHandler" autowire="constructor"/>
+    <bean id="batchingHandlerHelper" class="uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web.BatchingHandlerHelper" autowire="constructor"/>
     <bean id="modelOutputRasterMaskingHelper" class="uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web.ModelOutputRasterMaskingHelper" autowire="constructor"/>
     <bean id="waterBodiesMaskRasterFileLocator" class="uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web.WaterBodiesMaskRasterFileLocator">
         <constructor-arg name="waterBodiesMaskRasterFile" value="${abraid.base.dir}/modeloutput/waterbodies.tif" />
