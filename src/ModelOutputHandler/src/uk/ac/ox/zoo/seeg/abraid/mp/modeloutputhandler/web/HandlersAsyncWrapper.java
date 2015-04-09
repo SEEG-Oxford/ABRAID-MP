@@ -15,17 +15,14 @@ import java.util.concurrent.Future;
  * Copyright (c) 2014 University of Oxford
  */
 public class HandlersAsyncWrapper extends AbstractAsynchronousActionHandler {
-    private static final Logger LOGGER = Logger.getLogger(HandlersAsyncWrapper.class);
+    private static Logger logger = Logger.getLogger(HandlersAsyncWrapper.class);
     private static final int THREAD_POOL_SIZE = 1;
 
-    private DiseaseExtentGenerationHandler diseaseExtentGenerationHandler;
     private DiseaseOccurrenceHandler diseaseOccurrenceHandler;
 
     @Autowired
-    public HandlersAsyncWrapper(DiseaseExtentGenerationHandler diseaseExtentGenerationHandler,
-                                DiseaseOccurrenceHandler diseaseOccurrenceHandler) {
-        super(THREAD_POOL_SIZE, LOGGER);
-        this.diseaseExtentGenerationHandler = diseaseExtentGenerationHandler;
+    public HandlersAsyncWrapper(DiseaseOccurrenceHandler diseaseOccurrenceHandler) {
+        super(THREAD_POOL_SIZE, logger);
         this.diseaseOccurrenceHandler = diseaseOccurrenceHandler;
     }
 
@@ -39,10 +36,9 @@ public class HandlersAsyncWrapper extends AbstractAsynchronousActionHandler {
             @Override
             public Object call() throws Exception {
                 try {
-                    diseaseExtentGenerationHandler.handle(modelRun);
                     diseaseOccurrenceHandler.handle(modelRun);
                 } catch (Exception e) {
-                    LOGGER.error(e);
+                    logger.error(e);
                 }
                 return null;
             }
