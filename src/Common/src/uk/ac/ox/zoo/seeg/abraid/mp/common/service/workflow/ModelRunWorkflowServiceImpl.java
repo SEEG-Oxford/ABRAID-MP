@@ -5,15 +5,11 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.GeometryService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.*;
 
 import java.util.List;
 
-import static ch.lambdaj.Lambda.extract;
-import static ch.lambdaj.Lambda.min;
-import static ch.lambdaj.Lambda.on;
+import static ch.lambdaj.Lambda.*;
 
 /**
  * Service class to support the workflow surrounding a model run request.
@@ -25,32 +21,29 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
     private ModelRunRequester modelRunRequester;
     private DiseaseOccurrenceReviewManager reviewManager;
     private DiseaseService diseaseService;
-    private GeometryService geometryService;
+    private ModelRunOccurrencesSelector modelRunOccurrencesSelector;
     private DiseaseExtentGenerator diseaseExtentGenerator;
     private AutomaticModelRunsEnabler automaticModelRunsEnabler;
     private MachineWeightingPredictor machineWeightingPredictor;
-    private EmailService emailService;
     private BatchDatesValidator batchDatesValidator;
 
     public ModelRunWorkflowServiceImpl(WeightingsCalculator weightingsCalculator,
                                        ModelRunRequester modelRunRequester,
                                        DiseaseOccurrenceReviewManager reviewManager,
                                        DiseaseService diseaseService,
-                                       GeometryService geometryService,
+                                       ModelRunOccurrencesSelector modelRunOccurrencesSelector,
                                        DiseaseExtentGenerator diseaseExtentGenerator,
                                        AutomaticModelRunsEnabler automaticModelRunsEnabler,
                                        MachineWeightingPredictor machineWeightingPredictor,
-                                       EmailService emailService,
                                        BatchDatesValidator batchDatesValidator) {
         this.weightingsCalculator = weightingsCalculator;
         this.modelRunRequester = modelRunRequester;
         this.reviewManager = reviewManager;
         this.diseaseService = diseaseService;
-        this.geometryService = geometryService;
+        this.modelRunOccurrencesSelector = modelRunOccurrencesSelector;
         this.diseaseExtentGenerator = diseaseExtentGenerator;
         this.automaticModelRunsEnabler = automaticModelRunsEnabler;
         this.machineWeightingPredictor = machineWeightingPredictor;
-        this.emailService = emailService;
         this.batchDatesValidator = batchDatesValidator;
     }
 
@@ -131,7 +124,8 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
         DateTime minimumOccurrenceDate = null;
         if (diseaseGroup.isAutomaticModelRunsEnabled()) {
             // Find the minimum occurrence date if automatic model runs are enabled (it is unused if they are disabled)
-            List<DiseaseOccurrence> occurrencesForModelRun = selectOccurrencesForModelRun(diseaseGroup.getId(), false);
+            List<DiseaseOccurrence> occurrencesForModelRun = modelRunOccurrencesSelector.selectOccurrencesForModelRun(
+                    diseaseGroup.getId(), false);
             minimumOccurrenceDate = extractMinimumOccurrenceDate(occurrencesForModelRun);
         }
         diseaseExtentGenerator.generateDiseaseExtent(diseaseGroup, minimumOccurrenceDate, false);
@@ -193,28 +187,14 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
 
     private void requestModelRun(DiseaseGroup diseaseGroup, DateTime batchStartDate, DateTime batchEndDate,
                                  boolean onlyUseGoldStandardOccurrences) {
-        List<DiseaseOccurrence> occurrencesForModelRun =
-                selectOccurrencesForModelRun(diseaseGroup.getId(), onlyUseGoldStandardOccurrences);
+        List<DiseaseOccurrence> occurrencesForModelRun = modelRunOccurrencesSelector.selectOccurrencesForModelRun(
+                diseaseGroup.getId(), onlyUseGoldStandardOccurrences);
         modelRunRequester.requestModelRun(diseaseGroup.getId(), occurrencesForModelRun, batchStartDate, batchEndDate);
     }
 
     private void updateLastModelRunPrepDate(DiseaseGroup diseaseGroup, DateTime modelRunPrepDate) {
         diseaseGroup.setLastModelRunPrepDate(modelRunPrepDate);
         diseaseService.saveDiseaseGroup(diseaseGroup);
-    }
-
-    /**
-     * Selects occurrences for a model run, for the specified disease group.
-     * @param diseaseGroupId The disease group ID.
-     * @param onlyUseGoldStandardOccurrences True if only "gold standard" disease occurrences should be selected,
-     * otherwise false.
-     * @return The occurrences to send to the model.
-     */
-    public List<DiseaseOccurrence> selectOccurrencesForModelRun(int diseaseGroupId,
-                                                                boolean onlyUseGoldStandardOccurrences) {
-        ModelRunOccurrencesSelectorHelper selector = new ModelRunOccurrencesSelectorHelper(diseaseService,
-                geometryService, emailService, diseaseGroupId, onlyUseGoldStandardOccurrences);
-        return selector.selectModelRunDiseaseOccurrences();
     }
 
     private DateTime extractMinimumOccurrenceDate(List<DiseaseOccurrence> occurrencesForModelRun) {

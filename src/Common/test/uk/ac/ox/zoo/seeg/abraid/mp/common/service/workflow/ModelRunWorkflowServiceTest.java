@@ -7,8 +7,6 @@ import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.GeometryService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.*;
 
 import java.util.ArrayList;
@@ -31,8 +29,8 @@ public class ModelRunWorkflowServiceTest {
     private ModelRunWorkflowServiceImpl modelRunWorkflowService;
     private AutomaticModelRunsEnabler automaticModelRunsEnabler;
     private MachineWeightingPredictor machineWeightingPredictor;
-    private EmailService emailService;
     private BatchDatesValidator batchDatesValidator;
+    private ModelRunOccurrencesSelector modelRunOccurrencesSelector;
 
     @Before
     public void setUp() {
@@ -40,15 +38,14 @@ public class ModelRunWorkflowServiceTest {
         modelRunRequester = mock(ModelRunRequester.class);
         reviewManager = mock(DiseaseOccurrenceReviewManager.class);
         diseaseService = mock(DiseaseService.class);
-        GeometryService geometryService = mock(GeometryService.class);
         diseaseExtentGenerator = mock(DiseaseExtentGenerator.class);
         automaticModelRunsEnabler = mock(AutomaticModelRunsEnabler.class);
         machineWeightingPredictor = mock(MachineWeightingPredictor.class);
-        emailService = mock(EmailService.class);
         batchDatesValidator = mock(BatchDatesValidator.class);
-        modelRunWorkflowService = spy(new ModelRunWorkflowServiceImpl(weightingsCalculator, modelRunRequester,
-                reviewManager, diseaseService, geometryService, diseaseExtentGenerator, automaticModelRunsEnabler,
-                machineWeightingPredictor, emailService, batchDatesValidator));
+        modelRunOccurrencesSelector = mock(ModelRunOccurrencesSelector.class);
+        modelRunWorkflowService = new ModelRunWorkflowServiceImpl(weightingsCalculator, modelRunRequester,
+                reviewManager, diseaseService, modelRunOccurrencesSelector, diseaseExtentGenerator,
+                automaticModelRunsEnabler, machineWeightingPredictor, batchDatesValidator);
     }
 
     @Test
@@ -68,7 +65,7 @@ public class ModelRunWorkflowServiceTest {
         List<DiseaseOccurrence> occurrencesForTrainingPredictor = new ArrayList<>();
 
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
-        doReturn(occurrences).when(modelRunWorkflowService).selectOccurrencesForModelRun(diseaseGroupId, false);
+        when(modelRunOccurrencesSelector.selectOccurrencesForModelRun(diseaseGroupId, false)).thenReturn(occurrences);
         when(diseaseService.getDiseaseOccurrencesForTrainingPredictor(diseaseGroupId)).thenReturn(
                 occurrencesForTrainingPredictor);
 
@@ -105,7 +102,7 @@ public class ModelRunWorkflowServiceTest {
         String exceptionMessage = "Invalid batch dates";
 
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
-        doReturn(occurrences).when(modelRunWorkflowService).selectOccurrencesForModelRun(diseaseGroupId, false);
+        when(modelRunOccurrencesSelector.selectOccurrencesForModelRun(diseaseGroupId, false)).thenReturn(occurrences);
         when(diseaseService.getDiseaseOccurrencesForTrainingPredictor(diseaseGroupId)).thenReturn(
                 occurrencesForTrainingPredictor);
         doThrow(new ModelRunWorkflowException(exceptionMessage)).when(batchDatesValidator).validate(
@@ -133,7 +130,7 @@ public class ModelRunWorkflowServiceTest {
         List<DiseaseOccurrence> occurrencesForTrainingPredictor = new ArrayList<>();
 
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
-        doReturn(occurrences).when(modelRunWorkflowService).selectOccurrencesForModelRun(diseaseGroupId, false);
+        when(modelRunOccurrencesSelector.selectOccurrencesForModelRun(diseaseGroupId, false)).thenReturn(occurrences);
         when(diseaseService.getDiseaseOccurrencesForTrainingPredictor(diseaseGroupId)).thenReturn(
                 occurrencesForTrainingPredictor);
 
@@ -164,7 +161,7 @@ public class ModelRunWorkflowServiceTest {
         List<DiseaseOccurrence> occurrencesForTrainingPredictor = new ArrayList<>();
 
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
-        doReturn(occurrences).when(modelRunWorkflowService).selectOccurrencesForModelRun(diseaseGroupId, true);
+        when(modelRunOccurrencesSelector.selectOccurrencesForModelRun(diseaseGroupId, true)).thenReturn(occurrences);
         when(diseaseService.getDiseaseOccurrencesForTrainingPredictor(diseaseGroupId)).thenReturn(
                 occurrencesForTrainingPredictor);
 
@@ -213,7 +210,8 @@ public class ModelRunWorkflowServiceTest {
 
         // Assert
         verify(diseaseExtentGenerator).generateDiseaseExtent(eq(diseaseGroup), eq((DateTime) null), eq(false));
-        verify(modelRunWorkflowService, never()).selectOccurrencesForModelRun(anyInt(), anyBoolean());
+        verify(modelRunOccurrencesSelector, never()).selectOccurrencesForModelRun(anyInt(), anyBoolean());
+
     }
 
     @Test
@@ -224,7 +222,7 @@ public class ModelRunWorkflowServiceTest {
         diseaseGroup.setAutomaticModelRunsStartDate(DateTime.now());
         DateTime minimumOccurrenceDate = DateTime.now();
         List<DiseaseOccurrence> occurrences = createListWithMultipleDates(minimumOccurrenceDate.plus(1), minimumOccurrenceDate, minimumOccurrenceDate.plusWeeks(1));
-        doReturn(occurrences).when(modelRunWorkflowService).selectOccurrencesForModelRun(diseaseGroupId, false);
+        when(modelRunOccurrencesSelector.selectOccurrencesForModelRun(diseaseGroupId, false)).thenReturn(occurrences);
 
         // Act
         modelRunWorkflowService.generateDiseaseExtent(diseaseGroup);
