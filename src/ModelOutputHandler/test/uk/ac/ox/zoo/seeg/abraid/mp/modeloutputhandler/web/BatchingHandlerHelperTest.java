@@ -22,8 +22,8 @@ import static org.mockito.Mockito.*;
  *
  * Copyright (c) 2014 University of Oxford
  */
-public class DiseaseOccurrenceHandlerHelperTest {
-    private DiseaseOccurrenceHandlerHelper helper;
+public class BatchingHandlerHelperTest {
+    private BatchingHandlerHelper helper;
     private DiseaseService diseaseService;
     private ModelRunService modelRunService;
     private DiseaseOccurrenceValidationService diseaseOccurrenceValidationService;
@@ -33,7 +33,7 @@ public class DiseaseOccurrenceHandlerHelperTest {
         diseaseService = mock(DiseaseService.class);
         modelRunService = mock(ModelRunService.class);
         diseaseOccurrenceValidationService = mock(DiseaseOccurrenceValidationService.class);
-        helper = new DiseaseOccurrenceHandlerHelper(diseaseService, modelRunService,
+        helper = new BatchingHandlerHelper(diseaseService, modelRunService,
                 diseaseOccurrenceValidationService);
         DateTimeUtils.setCurrentMillisFixed(DateTime.now().getMillis());
     }
