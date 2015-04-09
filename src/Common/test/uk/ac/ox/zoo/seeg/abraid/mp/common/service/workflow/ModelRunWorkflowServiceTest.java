@@ -76,7 +76,7 @@ public class ModelRunWorkflowServiceTest {
         verify(batchDatesValidator).validate(eq(diseaseGroupId), eq(batchStartDateWithMinimumTime), eq(batchEndDateWithMaximumTime));
         verify(weightingsCalculator).updateDiseaseOccurrenceExpertWeightings(eq(diseaseGroupId));
         verify(weightingsCalculator).updateExpertsWeightings();
-        verify(reviewManager).updateDiseaseOccurrenceStatus(eq(diseaseGroupId), eq(DateTime.now()));
+        verify(reviewManager).updateDiseaseOccurrenceStatus(eq(diseaseGroupId), eq(false));
         verify(diseaseExtentGenerator).generateDiseaseExtent(eq(diseaseGroup), isNull(DateTime.class), eq(false));
         verify(modelRunRequester).requestModelRun(eq(diseaseGroupId), same(occurrences),
                 eq(batchStartDateWithMinimumTime), eq(batchEndDateWithMaximumTime));
@@ -139,7 +139,7 @@ public class ModelRunWorkflowServiceTest {
 
         // Assert
         verify(weightingsCalculator).updateDiseaseOccurrenceExpertWeightings(eq(diseaseGroupId));
-        verify(reviewManager).updateDiseaseOccurrenceStatus(eq(diseaseGroupId), eq(DateTime.now()));
+        verify(reviewManager).updateDiseaseOccurrenceStatus(eq(diseaseGroupId), eq(true));
         verify(diseaseExtentGenerator).generateDiseaseExtent(eq(diseaseGroup), same(minimumOccurrenceDate),
                 eq(false));
         verify(modelRunRequester).requestModelRun(eq(diseaseGroupId), same(occurrences), isNull(DateTime.class),
@@ -171,12 +171,11 @@ public class ModelRunWorkflowServiceTest {
         // Assert
         verify(weightingsCalculator, never()).updateDiseaseOccurrenceExpertWeightings(anyInt());
         verify(weightingsCalculator).updateExpertsWeightings();
-        verify(reviewManager, never()).updateDiseaseOccurrenceStatus(anyInt(), any(DateTime.class));
+        verify(reviewManager, never()).updateDiseaseOccurrenceStatus(anyInt(), eq(false));
         verify(diseaseExtentGenerator).generateDiseaseExtent(eq(diseaseGroup), isNull(DateTime.class), eq(true));
         verify(modelRunRequester).requestModelRun(eq(diseaseGroupId), same(occurrences), isNull(DateTime.class),
                 isNull(DateTime.class));
         verify(diseaseService).saveDiseaseGroup(same(diseaseGroup));
-        verify(machineWeightingPredictor).train(eq(diseaseGroupId), same(occurrencesForTrainingPredictor));
     }
 
     @Test
@@ -192,21 +191,13 @@ public class ModelRunWorkflowServiceTest {
     }
 
     @Test
-    public void updateExpertsWeightings() {
-        // Act
-        modelRunWorkflowService.updateExpertsWeightings();
-        // Assert
-        verify(weightingsCalculator).updateExpertsWeightings();
-    }
-
-    @Test
     public void generateDiseaseExtentWithAutomaticModelRunsDisabled() {
         // Arrange
         int diseaseGroupId = 1;
         DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
 
         // Act
-        modelRunWorkflowService.generateDiseaseExtent(diseaseGroup);
+        modelRunWorkflowService.generateDiseaseExtent(diseaseGroup, false, false);
 
         // Assert
         verify(diseaseExtentGenerator).generateDiseaseExtent(eq(diseaseGroup), eq((DateTime) null), eq(false));
@@ -225,7 +216,7 @@ public class ModelRunWorkflowServiceTest {
         when(modelRunOccurrencesSelector.selectOccurrencesForModelRun(diseaseGroupId, false)).thenReturn(occurrences);
 
         // Act
-        modelRunWorkflowService.generateDiseaseExtent(diseaseGroup);
+        modelRunWorkflowService.generateDiseaseExtent(diseaseGroup, true, false);
 
         // Assert
         verify(diseaseExtentGenerator).generateDiseaseExtent(eq(diseaseGroup), same(minimumOccurrenceDate),
@@ -239,7 +230,7 @@ public class ModelRunWorkflowServiceTest {
         DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
 
         // Act
-        modelRunWorkflowService.generateDiseaseExtentUsingGoldStandardOccurrences(diseaseGroup);
+        modelRunWorkflowService.generateDiseaseExtent(diseaseGroup, false, true);
 
         // Assert
         verify(diseaseExtentGenerator).generateDiseaseExtent(eq(diseaseGroup), eq((DateTime) null), eq(true));

@@ -148,11 +148,7 @@ public class AdminDiseaseGroupController extends AbstractController {
                                                 boolean onlyUseGoldStandardOccurrences) {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         if (diseaseGroup != null) {
-            if (onlyUseGoldStandardOccurrences) {
-                modelRunWorkflowService.generateDiseaseExtentUsingGoldStandardOccurrences(diseaseGroup);
-            } else {
-                modelRunWorkflowService.generateDiseaseExtent(diseaseGroup);
-            }
+            modelRunWorkflowService.generateDiseaseExtent(diseaseGroup, false, onlyUseGoldStandardOccurrences);
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } else {
             return new ResponseEntity(HttpStatus.NOT_FOUND);

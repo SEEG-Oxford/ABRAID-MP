@@ -120,7 +120,7 @@ public class AdminDiseaseGroupControllerTest {
         ResponseEntity response = controller.generateDiseaseExtent(diseaseGroupId, false);
 
         // Assert
-        verify(modelRunWorkflowService).generateDiseaseExtent(same(diseaseGroup));
+        verify(modelRunWorkflowService).generateDiseaseExtent(same(diseaseGroup), eq(false), eq(false));
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 
@@ -135,7 +135,7 @@ public class AdminDiseaseGroupControllerTest {
         ResponseEntity response = controller.generateDiseaseExtent(diseaseGroupId, true);
 
         // Assert
-        verify(modelRunWorkflowService).generateDiseaseExtentUsingGoldStandardOccurrences(same(diseaseGroup));
+        verify(modelRunWorkflowService).generateDiseaseExtent(same(diseaseGroup), eq(false), eq(true));
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 
@@ -148,7 +148,7 @@ public class AdminDiseaseGroupControllerTest {
         ResponseEntity response = controller.generateDiseaseExtent(diseaseGroupId, false);
 
         // Assert
-        verify(modelRunWorkflowService, never()).generateDiseaseExtent(any(DiseaseGroup.class));
+        verify(modelRunWorkflowService, never()).generateDiseaseExtent(any(DiseaseGroup.class), anyBoolean(), anyBoolean());
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
@@ -161,7 +161,7 @@ public class AdminDiseaseGroupControllerTest {
         ResponseEntity response = controller.generateDiseaseExtent(diseaseGroupId, false);
 
         // Assert
-        verify(modelRunWorkflowService, never()).generateDiseaseExtentUsingGoldStandardOccurrences(any(DiseaseGroup.class));
+        verify(modelRunWorkflowService, never()).generateDiseaseExtent(any(DiseaseGroup.class), anyBoolean(), anyBoolean());
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 

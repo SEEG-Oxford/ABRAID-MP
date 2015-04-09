@@ -27,7 +27,7 @@ public class DiseaseOccurrenceReviewManagerTest {
         DateTime automaticModelRunsStartDate = createdDate.minusDays(2);
         DiseaseOccurrence occurrence = arrangeDates(createdDate, automaticModelRunsStartDate, lastModelRunPrepDate);
         // Act and Assert
-        executeTest(occurrence, true, DiseaseOccurrenceStatus.IN_REVIEW, 7);
+        executeTest(occurrence, true, true, DiseaseOccurrenceStatus.IN_REVIEW, 7);
     }
 
     @Test
@@ -38,7 +38,7 @@ public class DiseaseOccurrenceReviewManagerTest {
         DateTime automaticModelRunsStartDate = createdDate.minusDays(2);
         DiseaseOccurrence occurrence = arrangeDates(createdDate, automaticModelRunsStartDate, lastModelRunPrepDate);
         // Act and Assert
-        executeTest(occurrence, false, DiseaseOccurrenceStatus.IN_REVIEW, 7);
+        executeTest(occurrence, true, false, DiseaseOccurrenceStatus.IN_REVIEW, 7);
     }
 
     @Test
@@ -49,7 +49,7 @@ public class DiseaseOccurrenceReviewManagerTest {
         DateTime automaticModelRunsStartDate = createdDate.minusDays(2);
         DiseaseOccurrence occurrence = arrangeDates(createdDate, automaticModelRunsStartDate, lastModelRunPrepDate);
         // Act and Assert
-        executeTest(occurrence, true, DiseaseOccurrenceStatus.READY, 5);
+        executeTest(occurrence, true, true, DiseaseOccurrenceStatus.READY, 5);
     }
 
     @Test
@@ -60,7 +60,7 @@ public class DiseaseOccurrenceReviewManagerTest {
         DateTime automaticModelRunsStartDate = createdDate.minusDays(2);
         DiseaseOccurrence occurrence = arrangeDates(createdDate, automaticModelRunsStartDate, lastModelRunPrepDate);
         // Act and Assert
-        executeTest(occurrence, false, DiseaseOccurrenceStatus.DISCARDED_UNREVIEWED, 6);
+        executeTest(occurrence, true, false, DiseaseOccurrenceStatus.DISCARDED_UNREVIEWED, 6);
     }
 
     @Test
@@ -71,7 +71,7 @@ public class DiseaseOccurrenceReviewManagerTest {
         DateTime automaticModelRunsStartDate = createdDate.minusDays(2);
         DiseaseOccurrence occurrence = arrangeDates(createdDate, automaticModelRunsStartDate, lastModelRunPrepDate);
         // Act and Assert
-        executeTest(occurrence, true, DiseaseOccurrenceStatus.READY, 8);
+        executeTest(occurrence, true, true, DiseaseOccurrenceStatus.READY, 8);
     }
 
     @Test
@@ -82,7 +82,7 @@ public class DiseaseOccurrenceReviewManagerTest {
         DateTime automaticModelRunsStartDate = createdDate.minusDays(2);
         DiseaseOccurrence occurrence = arrangeDates(createdDate, automaticModelRunsStartDate, lastModelRunPrepDate);
         // Act and Assert
-        executeTest(occurrence, false, DiseaseOccurrenceStatus.DISCARDED_UNREVIEWED, 15);
+        executeTest(occurrence, true, false, DiseaseOccurrenceStatus.DISCARDED_UNREVIEWED, 15);
     }
 
     @Test
@@ -93,7 +93,7 @@ public class DiseaseOccurrenceReviewManagerTest {
         DateTime createdDate = automaticModelRunsStartDate.minusDays(2);
         DiseaseOccurrence occurrence = arrangeDates(createdDate, automaticModelRunsStartDate, lastModelRunPrepDate);
         // Act and Assert
-        executeTest(occurrence, true, DiseaseOccurrenceStatus.IN_REVIEW, 7);
+        executeTest(occurrence, true, true, DiseaseOccurrenceStatus.IN_REVIEW, 7);
     }
 
     @Test
@@ -104,7 +104,7 @@ public class DiseaseOccurrenceReviewManagerTest {
         DateTime createdDate = automaticModelRunsStartDate.minusDays(2);
         DiseaseOccurrence occurrence = arrangeDates(createdDate, automaticModelRunsStartDate, lastModelRunPrepDate);
         // Act and Assert
-        executeTest(occurrence, false, DiseaseOccurrenceStatus.IN_REVIEW, 7);
+        executeTest(occurrence, true, false, DiseaseOccurrenceStatus.IN_REVIEW, 7);
     }
 
     @Test
@@ -115,7 +115,7 @@ public class DiseaseOccurrenceReviewManagerTest {
         DateTime createdDate = automaticModelRunsStartDate.minusDays(2);
         DiseaseOccurrence occurrence = arrangeDates(createdDate, automaticModelRunsStartDate, lastModelRunPrepDate);
         // Act and Assert
-        executeTest(occurrence, true, DiseaseOccurrenceStatus.READY, 7);
+        executeTest(occurrence, true, true, DiseaseOccurrenceStatus.READY, 7);
     }
 
     @Test
@@ -126,7 +126,7 @@ public class DiseaseOccurrenceReviewManagerTest {
         DateTime createdDate = automaticModelRunsStartDate.minusDays(2);
         DiseaseOccurrence occurrence = arrangeDates(createdDate, automaticModelRunsStartDate, lastModelRunPrepDate);
         // Act and Assert
-        executeTest(occurrence, false, DiseaseOccurrenceStatus.DISCARDED_UNREVIEWED, 7);
+        executeTest(occurrence, true, false, DiseaseOccurrenceStatus.DISCARDED_UNREVIEWED, 7);
     }
 
     @Test
@@ -137,7 +137,7 @@ public class DiseaseOccurrenceReviewManagerTest {
         DateTime createdDate = automaticModelRunsStartDate.minusDays(2);
         DiseaseOccurrence occurrence = arrangeDates(createdDate, automaticModelRunsStartDate, lastModelRunPrepDate);
         // Act and Assert
-        executeTest(occurrence, true, DiseaseOccurrenceStatus.READY, 7);
+        executeTest(occurrence, true, true, DiseaseOccurrenceStatus.READY, 7);
     }
 
     @Test
@@ -148,7 +148,7 @@ public class DiseaseOccurrenceReviewManagerTest {
         DateTime createdDate = automaticModelRunsStartDate.minusDays(2);
         DiseaseOccurrence occurrence = arrangeDates(createdDate, automaticModelRunsStartDate, lastModelRunPrepDate);
         // Act and Assert
-        executeTest(occurrence, false, DiseaseOccurrenceStatus.DISCARDED_UNREVIEWED, 7);
+        executeTest(occurrence, true, false, DiseaseOccurrenceStatus.DISCARDED_UNREVIEWED, 7);
     }
 
     @Test
@@ -158,7 +158,7 @@ public class DiseaseOccurrenceReviewManagerTest {
         DateTime createdDate = lastModelRunPrepDate.minusDays(0);
         DiseaseOccurrence occurrence = arrangeDates(createdDate, null, lastModelRunPrepDate);
         // Act and Assert
-        executeTest(occurrence, true, DiseaseOccurrenceStatus.READY, 7);
+        executeTest(occurrence, false, true, DiseaseOccurrenceStatus.READY, 7);
     }
 
     @Test
@@ -168,7 +168,7 @@ public class DiseaseOccurrenceReviewManagerTest {
         DateTime createdDate = lastModelRunPrepDate.minusDays(0);
         DiseaseOccurrence occurrence = arrangeDates(createdDate, null, lastModelRunPrepDate);
         // Act and Assert
-        executeTest(occurrence, false, DiseaseOccurrenceStatus.DISCARDED_UNREVIEWED, 7);
+        executeTest(occurrence, false, false, DiseaseOccurrenceStatus.DISCARDED_UNREVIEWED, 7);
     }
 
     private DiseaseOccurrence arrangeDates(DateTime createdDate, DateTime automaticModelRunsStartDate, DateTime lastModelRunPrepDate) {
@@ -184,15 +184,14 @@ public class DiseaseOccurrenceReviewManagerTest {
         return occurrence;
     }
 
-    private void executeTest(DiseaseOccurrence occurrence, boolean hasBeenReviewed,
+    private void executeTest(DiseaseOccurrence occurrence, boolean isAutomaticProcess, boolean hasBeenReviewed,
                              DiseaseOccurrenceStatus expectedStatus, int maxDays) {
         // Arrange
         DiseaseService diseaseService = mockDiseaseService(occurrence, hasBeenReviewed);
         DiseaseOccurrenceReviewManager target = new DiseaseOccurrenceReviewManager(diseaseService, maxDays);
-        DateTime lastModelRunPrepDate = occurrence.getDiseaseGroup().getLastModelRunPrepDate();
 
         // Act
-        target.updateDiseaseOccurrenceStatus(DISEASE_GROUP_ID, lastModelRunPrepDate);
+        target.updateDiseaseOccurrenceStatus(DISEASE_GROUP_ID, isAutomaticProcess);
 
         // Assert
         int expectedTimes = (expectedStatus == DiseaseOccurrenceStatus.READY ||
