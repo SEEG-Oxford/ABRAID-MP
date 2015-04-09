@@ -212,8 +212,8 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
      */
     public List<DiseaseOccurrence> selectOccurrencesForModelRun(int diseaseGroupId,
                                                                 boolean onlyUseGoldStandardOccurrences) {
-        ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, geometryService,
-                emailService, diseaseGroupId, onlyUseGoldStandardOccurrences);
+        ModelRunOccurrencesSelectorHelper selector = new ModelRunOccurrencesSelectorHelper(diseaseService,
+                geometryService, emailService, diseaseGroupId, onlyUseGoldStandardOccurrences);
         return selector.selectModelRunDiseaseOccurrences();
     }
 

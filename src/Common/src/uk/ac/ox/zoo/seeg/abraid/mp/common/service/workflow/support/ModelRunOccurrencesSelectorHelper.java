@@ -18,7 +18,7 @@ import static org.hamcrest.Matchers.notNullValue;
  * Return the set of occurrences to be used in the model run, satisfying Minimum Data Volume and Spread conditions.
  * Copyright (c) 2014 University of Oxford
  */
-public class ModelRunOccurrencesSelector {
+public class ModelRunOccurrencesSelectorHelper {
 
     // Log messages
     private static final String NOT_REQUESTING_EMAIL_MESSAGE_PREFIX =
@@ -48,7 +48,7 @@ public class ModelRunOccurrencesSelector {
     // Exception messages (these are displayed in the user interface via the Bad Request response text)
     private static final String EXCEPTION_MESSAGE_PREFIX = "Model cannot run because ";
 
-    private static final Logger LOGGER = Logger.getLogger(ModelRunOccurrencesSelector.class);
+    private static final Logger LOGGER = Logger.getLogger(ModelRunOccurrencesSelectorHelper.class);
 
     private DiseaseService diseaseService;
     private GeometryService geometryService;
@@ -68,9 +68,9 @@ public class ModelRunOccurrencesSelector {
     private Set<Integer> countriesWithAtLeastOneOccurrence;     // For disease groups using all countries
     private Map<Integer, Integer> occurrenceCountPerCountry;    // For disease groups using only the African countries
 
-    public ModelRunOccurrencesSelector(DiseaseService diseaseService, GeometryService geometryService,
-                                       EmailService emailService, int diseaseGroupId,
-                                       boolean onlyUseGoldStandardOccurrences) {
+    public ModelRunOccurrencesSelectorHelper(DiseaseService diseaseService, GeometryService geometryService,
+                                             EmailService emailService, int diseaseGroupId,
+                                             boolean onlyUseGoldStandardOccurrences) {
         this.diseaseService = diseaseService;
         this.geometryService = geometryService;
         this.emailService = emailService;
