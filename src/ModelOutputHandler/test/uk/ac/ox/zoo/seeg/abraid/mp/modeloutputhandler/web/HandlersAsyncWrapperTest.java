@@ -1,7 +1,9 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web;
 
+import org.apache.log4j.Logger;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
+import uk.ac.ox.zoo.seeg.abraid.mp.testutils.GeneralTestUtils;
 
 import static org.mockito.Mockito.*;
 
@@ -30,15 +32,17 @@ public class HandlersAsyncWrapperTest {
         // Arrange
         BatchingHandler batchingHandler = mock(BatchingHandler.class);
         HandlersAsyncWrapper wrapper = new HandlersAsyncWrapper(batchingHandler);
+        Logger mockLogger = GeneralTestUtils.createMockLogger(wrapper);
 
         ModelRun modelRun = new ModelRun();
 
-        doThrow(new RuntimeException("Test message")).when(batchingHandler).handle(modelRun);
+        RuntimeException exception = new RuntimeException("Test message");
+        doThrow(exception).when(batchingHandler).handle(modelRun);
 
         // Act
         wrapper.handle(modelRun).get();
 
         // Assert
-        verify(batchingHandler, never()).handle(same(modelRun));
+        verify(mockLogger).error(exception);
     }
 }
