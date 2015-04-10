@@ -143,16 +143,16 @@ public class AdminDiseaseGroupController extends AbstractController {
     @RequestMapping(value = ADMIN_DISEASE_GROUP_BASE_URL + "/{diseaseGroupId}/generatediseaseextent",
             method = RequestMethod.POST)
     @ResponseBody
-    @Transactional(rollbackFor = Exception.class)
     public ResponseEntity generateDiseaseExtent(@PathVariable int diseaseGroupId,
                                                 boolean onlyUseGoldStandardOccurrences) {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
-        if (diseaseGroup != null) {
-            modelRunWorkflowService.generateDiseaseExtent(diseaseGroup, false, onlyUseGoldStandardOccurrences);
-            return new ResponseEntity(HttpStatus.NO_CONTENT);
-        } else {
+        if (diseaseGroup == null) {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
+
+        modelRunWorkflowService.generateDiseaseExtent(diseaseGroupId, false, onlyUseGoldStandardOccurrences);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
+
     }
 
     /**
@@ -172,6 +172,11 @@ public class AdminDiseaseGroupController extends AbstractController {
     public synchronized ResponseEntity<String> requestModelRun(@PathVariable int diseaseGroupId, String batchStartDate,
                                                                String batchEndDate,
                                                                boolean onlyUseGoldStandardOccurrences) {
+        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+        if (diseaseGroup == null) {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+
         try {
             if (onlyUseGoldStandardOccurrences) {
                 modelRunWorkflowService.prepareForAndRequestModelRunUsingGoldStandardOccurrences(diseaseGroupId);

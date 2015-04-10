@@ -120,7 +120,7 @@ public class AdminDiseaseGroupControllerTest {
         ResponseEntity response = controller.generateDiseaseExtent(diseaseGroupId, false);
 
         // Assert
-        verify(modelRunWorkflowService).generateDiseaseExtent(same(diseaseGroup), eq(false), eq(false));
+        verify(modelRunWorkflowService).generateDiseaseExtent(diseaseGroupId, false, false);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 
@@ -135,7 +135,7 @@ public class AdminDiseaseGroupControllerTest {
         ResponseEntity response = controller.generateDiseaseExtent(diseaseGroupId, true);
 
         // Assert
-        verify(modelRunWorkflowService).generateDiseaseExtent(same(diseaseGroup), eq(false), eq(true));
+        verify(modelRunWorkflowService).generateDiseaseExtent(diseaseGroupId, false, true);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 
@@ -148,7 +148,7 @@ public class AdminDiseaseGroupControllerTest {
         ResponseEntity response = controller.generateDiseaseExtent(diseaseGroupId, false);
 
         // Assert
-        verify(modelRunWorkflowService, never()).generateDiseaseExtent(any(DiseaseGroup.class), anyBoolean(), anyBoolean());
+        verify(modelRunWorkflowService, never()).generateDiseaseExtent(anyInt(), anyBoolean(), anyBoolean());
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
@@ -161,7 +161,7 @@ public class AdminDiseaseGroupControllerTest {
         ResponseEntity response = controller.generateDiseaseExtent(diseaseGroupId, false);
 
         // Assert
-        verify(modelRunWorkflowService, never()).generateDiseaseExtent(any(DiseaseGroup.class), anyBoolean(), anyBoolean());
+        verify(modelRunWorkflowService, never()).generateDiseaseExtent(anyInt(), anyBoolean(), anyBoolean());
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
@@ -169,6 +169,8 @@ public class AdminDiseaseGroupControllerTest {
     public void requestModelRun() {
         // Arrange
         int diseaseGroupId = 87;
+        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
+        when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
         // Set the time zone to UTC, to allow the dates to be compared for equality after converting to/from string
         DateTime batchStartDate = DateTime.now().withZone(DateTimeZone.UTC);
         DateTime batchEndDate = DateTime.now().withZone(DateTimeZone.UTC).plusDays(1);
@@ -182,15 +184,46 @@ public class AdminDiseaseGroupControllerTest {
     }
 
     @Test
+    public void requestModelRunReturnsNotFoundForInvalidDiseaseGroupId() {
+        // Arrange
+        int diseaseGroupId = -1;
+        // Set the time zone to UTC, to allow the dates to be compared for equality after converting to/from string
+        DateTime batchStartDate = DateTime.now().withZone(DateTimeZone.UTC);
+        DateTime batchEndDate = DateTime.now().withZone(DateTimeZone.UTC).plusDays(1);
+
+        // Act
+        ResponseEntity response = controller.requestModelRun(diseaseGroupId, batchStartDate.toString(), batchEndDate.toString(), false);
+
+        // Assert
+        verify(modelRunWorkflowService, never()).prepareForAndRequestManuallyTriggeredModelRun(anyInt(), any(DateTime.class), any(DateTime.class));
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
     public void requestModelRunForGoldStandardOccurrences() {
         // Arrange
         int diseaseGroupId = 87;
+        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
+        when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
 
         // Act
         controller.requestModelRun(diseaseGroupId, null, null, true);
 
         // Assert
         verify(modelRunWorkflowService).prepareForAndRequestModelRunUsingGoldStandardOccurrences(eq(diseaseGroupId));
+    }
+
+    @Test
+    public void requestModelRunForGoldStandardOccurrencesReturnsNotFoundForInvalidDiseaseGroupId() {
+        // Arrange
+        int diseaseGroupId = -1;
+
+        // Act
+        ResponseEntity response = controller.requestModelRun(diseaseGroupId, null, null, true);
+
+        // Assert
+        verify(modelRunWorkflowService, never()).prepareForAndRequestModelRunUsingGoldStandardOccurrences(anyInt());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
     @Test

@@ -57,7 +57,10 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
     public void prepareForAndRequestAutomaticModelRun(int diseaseGroupId)
             throws ModelRunWorkflowException {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+        prepareForAndRequestAutomaticModelRun(diseaseGroup);
+    }
 
+    private void prepareForAndRequestAutomaticModelRun(DiseaseGroup diseaseGroup) {
         processOccurrencesOnDataValidator(diseaseGroup, true);
         generateDiseaseExtent(diseaseGroup, true, false);
 
@@ -77,11 +80,15 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
     public void prepareForAndRequestManuallyTriggeredModelRun(
             int diseaseGroupId, DateTime batchStartDate, DateTime batchEndDate) throws ModelRunWorkflowException {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+        prepareForAndRequestManuallyTriggeredModelRun(diseaseGroup, batchStartDate, batchEndDate);
+    }
 
+    private void prepareForAndRequestManuallyTriggeredModelRun(
+            DiseaseGroup diseaseGroup, DateTime batchStartDate, DateTime batchEndDate) {
         // Ensure that the batch date range is from start of day to end of day, then validate the dates
         batchStartDate = getBatchStartDateWithMinimumTime(batchStartDate);
         batchEndDate = getBatchEndDateWithMaximumTime(batchEndDate);
-        batchDatesValidator.validate(diseaseGroupId, batchStartDate, batchEndDate);
+        batchDatesValidator.validate(diseaseGroup, batchStartDate, batchEndDate);
 
         updateExpertsWeightings();
         processOccurrencesOnDataValidator(diseaseGroup, false);
@@ -102,7 +109,10 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
     public void prepareForAndRequestModelRunUsingGoldStandardOccurrences(int diseaseGroupId)
             throws ModelRunWorkflowException {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+        prepareForAndRequestModelRunUsingGoldStandardOccurrences(diseaseGroup);
+    }
 
+    private void prepareForAndRequestModelRunUsingGoldStandardOccurrences(DiseaseGroup diseaseGroup) {
         updateExpertsWeightings();
         generateDiseaseExtent(diseaseGroup, false, true);
 
@@ -118,11 +128,16 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
      * Process any occurrences currently on the validator.
      * First updating the expert weighting of all validator occurrences, then remove the appropriate occurrences from
      * the validator (setting their final weightings in the process).
-     * @param diseaseGroup The disease group to be processed.
+     * @param diseaseGroupId The disease group ID.
      * @param isAutomaticProcess If this is part of the automated daily process or for a manual model run.
      */
     @Override
-    public void processOccurrencesOnDataValidator(DiseaseGroup diseaseGroup, boolean isAutomaticProcess) {
+    public void processOccurrencesOnDataValidator(int diseaseGroupId, boolean isAutomaticProcess) {
+        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+        processOccurrencesOnDataValidator(diseaseGroup, isAutomaticProcess);
+    }
+
+    private void processOccurrencesOnDataValidator(DiseaseGroup diseaseGroup, boolean isAutomaticProcess) {
         // Update the expert weighting of all occurrences on the validator, then remove the appropriate occurrences
         // from the validator. Setting their validation & final weighting in the process.
         updateOccurrenceWeightingsAndStatus(diseaseGroup, isAutomaticProcess);
@@ -132,12 +147,18 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
 
     /**
      * Generate the disease extent for the specified disease group.
-     * @param diseaseGroup The disease group.
+     * @param diseaseGroupId The disease group ID.
      * @param isAutomaticProcess If this is part of the automated daily process or for a manual model run.
      * @param useOnlyGoldStandard If only gold standard occurrences should be used for extent generation (manual only).
      */
     @Override
     public void generateDiseaseExtent(
+            int diseaseGroupId, boolean isAutomaticProcess, boolean useOnlyGoldStandard) {
+        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+        generateDiseaseExtent(diseaseGroup, isAutomaticProcess, useOnlyGoldStandard);
+    }
+
+    private void generateDiseaseExtent(
             DiseaseGroup diseaseGroup, boolean isAutomaticProcess, boolean useOnlyGoldStandard) {
         DateTime minimumOccurrenceDate = null;
         if (isAutomaticProcess) {

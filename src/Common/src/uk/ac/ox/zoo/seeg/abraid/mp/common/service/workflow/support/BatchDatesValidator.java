@@ -25,20 +25,19 @@ public class BatchDatesValidator {
 
     /**
      * Validate the batch dates.
-     * @param diseaseGroupId The disease group ID.
+     * @param diseaseGroup The disease group.
      * @param batchStartDate The batch start date.
      * @param batchEndDate The batch end date.
      */
-    public void validate(int diseaseGroupId, DateTime batchStartDate, DateTime batchEndDate) {
+    public void validate(DiseaseGroup diseaseGroup, DateTime batchStartDate, DateTime batchEndDate) {
         if ((batchStartDate != null) && (batchEndDate != null) &&
-                !modelRunService.hasBatchingEverCompleted(diseaseGroupId)) {
+                !modelRunService.hasBatchingEverCompleted(diseaseGroup.getId())) {
             // If this is the first batch, count the number of points in the batch date range that are eligible
             // for a future model run containing only those points. If this is less than Minimum Data Volume, return an
             // error.
-            DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
             int minDataVolume = diseaseGroup.getMinDataVolume();
 
-            long occurrenceCount = diseaseService.getNumberOfDiseaseOccurrencesEligibleForModelRun(diseaseGroupId,
+            long occurrenceCount = diseaseService.getNumberOfDiseaseOccurrencesEligibleForModelRun(diseaseGroup.getId(),
                     batchStartDate, batchEndDate);
 
             if (occurrenceCount < minDataVolume) {

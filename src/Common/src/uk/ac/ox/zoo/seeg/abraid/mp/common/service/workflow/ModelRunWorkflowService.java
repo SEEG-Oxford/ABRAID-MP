@@ -1,7 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow;
 
 import org.joda.time.DateTime;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunWorkflowException;
 
 /**
@@ -48,18 +47,18 @@ public interface ModelRunWorkflowService {
      * Process any occurrences currently on the validator.
      * First updating the expert weighting of all validator occurrences, then remove the appropriate occurrences from
      * the validator (setting their final weightings in the process).
-     * @param diseaseGroup The disease group to be processed.
+     * @param diseaseGroupId The disease group ID.
      * @param isAutomaticProcess If this is part of the automated daily process or for a manual model run.
      */
-    void processOccurrencesOnDataValidator(DiseaseGroup diseaseGroup, boolean isAutomaticProcess);
+    void processOccurrencesOnDataValidator(int diseaseGroupId, boolean isAutomaticProcess);
 
     /**
      * Generates the disease extent for the specified disease group.
-     * @param diseaseGroup The disease group.
+     * @param diseaseGroupId The disease group ID.
      * @param isAutomaticProcess If this is part of the automated daily process or for a manual model run.
      * @param useOnlyGoldStandard If only gold standard occurrences should be used for extent generation (manual only).
      */
-    void generateDiseaseExtent(DiseaseGroup diseaseGroup, boolean isAutomaticProcess, boolean useOnlyGoldStandard);
+    void generateDiseaseExtent(int diseaseGroupId, boolean isAutomaticProcess, boolean useOnlyGoldStandard);
 
     /**
      * Set model runs to be triggered automatically for the specified disease group.
