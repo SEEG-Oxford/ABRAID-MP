@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow;
 
 import org.joda.time.DateTime;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseProcessType;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunWorkflowException;
 
 /**
@@ -11,32 +12,16 @@ public interface ModelRunWorkflowService {
 
     /**
      * Prepares for and requests a model run, for the specified disease group.
-     * This method is designed for use when automatically triggering one or more model runs.
      * @param diseaseGroupId The disease group ID.
-     * @throws ModelRunWorkflowException if the model run could not be requested.
-     */
-    void prepareForAndRequestAutomaticModelRun(int diseaseGroupId) throws ModelRunWorkflowException;
-
-    /**
-     * Prepares for and requests a model run, for the specified disease group.
-     * This method is designed for use when manually triggering a model run.
-     * @param diseaseGroupId The disease group ID.
+     * @param processType This type of process that is being performed (auto/manual/gold).
      * @param batchStartDate The start date for batching (if validator parameter batching should happen after the model
-     * run is completed), otherwise null.
+     * run is completed), otherwise null. (Only required for DiseaseProcessType.MANUAL)
      * @param batchEndDate The end date for batching (if it should happen), otherwise null.
+     *                     (Only required for DiseaseProcessType.MANUAL)
      * @throws ModelRunWorkflowException if the model run could not be requested.
      */
-    void prepareForAndRequestManuallyTriggeredModelRun(
-            int diseaseGroupId, DateTime batchStartDate, DateTime batchEndDate) throws ModelRunWorkflowException;
-
-    /**
-     * Prepares for and requests a model run using "gold standard" disease occurrences, for the specified disease group.
-     * This method is designed for use during disease group set-up, when a known set of good-quality occurrences has
-     * been uploaded to send to the model.
-     * @param diseaseGroupId The disease group ID.
-     * @throws ModelRunWorkflowException if the model run could not be requested.
-     */
-    void prepareForAndRequestModelRunUsingGoldStandardOccurrences(int diseaseGroupId) throws ModelRunWorkflowException;
+    void prepareForAndRequestModelRun(int diseaseGroupId, DiseaseProcessType processType,
+                                      DateTime batchStartDate, DateTime batchEndDate) throws ModelRunWorkflowException;
 
     /**
      * Calculates and saves the new weighting for each active expert.
@@ -48,17 +33,16 @@ public interface ModelRunWorkflowService {
      * First updating the expert weighting of all validator occurrences, then remove the appropriate occurrences from
      * the validator (setting their final weightings in the process).
      * @param diseaseGroupId The disease group ID.
-     * @param isAutomaticProcess If this is part of the automated daily process or for a manual model run.
+     * @param processType This type of process that is being performed (auto/manual/gold).
      */
-    void processOccurrencesOnDataValidator(int diseaseGroupId, boolean isAutomaticProcess);
+    void processOccurrencesOnDataValidator(int diseaseGroupId, DiseaseProcessType processType);
 
     /**
      * Generates the disease extent for the specified disease group.
      * @param diseaseGroupId The disease group ID.
-     * @param isAutomaticProcess If this is part of the automated daily process or for a manual model run.
-     * @param useOnlyGoldStandard If only gold standard occurrences should be used for extent generation (manual only).
+     * @param processType This type of process that is being performed (auto/manual/gold).
      */
-    void generateDiseaseExtent(int diseaseGroupId, boolean isAutomaticProcess, boolean useOnlyGoldStandard);
+    void generateDiseaseExtent(int diseaseGroupId, DiseaseProcessType processType);
 
     /**
      * Set model runs to be triggered automatically for the specified disease group.

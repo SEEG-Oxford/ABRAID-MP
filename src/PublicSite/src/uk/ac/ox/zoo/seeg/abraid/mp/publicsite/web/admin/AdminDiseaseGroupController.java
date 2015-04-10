@@ -18,6 +18,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.ModelRunWorkflowService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.BatchDatesValidator;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunWorkflowException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelWrapperWebServiceAsyncWrapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
@@ -44,9 +45,10 @@ public class AdminDiseaseGroupController extends AbstractController {
     private static final String SAVE_DISEASE_GROUP_ERROR = "Error saving changes to disease group %d (%s)";
     private static final String ADD_DISEASE_GROUP_SUCCESS = "Successfully added new disease group %d (%s)";
     private static final String ADD_DISEASE_GROUP_ERROR = "Error adding new disease group (%s)";
+    private static final String INVALID_COMBINATION_OF_INPUTS_ERROR = "Invalid combination of inputs";
+
     private static final String FAILED_TO_SYNCHRONISE_DISEASE_GROUPS =
             "Failed to synchronise the disease groups with all model wrapper instances";
-
     /** The base URL for the system administration disease group controller methods. */
     public static final String ADMIN_DISEASE_GROUP_BASE_URL = "/admin/diseases";
 
@@ -56,6 +58,7 @@ public class AdminDiseaseGroupController extends AbstractController {
     private ModelRunService modelRunService;
     private DiseaseOccurrenceSpreadHelper helper;
     private ModelWrapperWebServiceAsyncWrapper modelWrapperWebServiceAsyncWrapper;
+    private BatchDatesValidator batchDatesValidator;
 
     private Comparator<String> caseInsensitiveComparator = new Comparator<String>() {
         @Override
@@ -68,6 +71,7 @@ public class AdminDiseaseGroupController extends AbstractController {
     public AdminDiseaseGroupController(DiseaseService diseaseService, AbraidJsonObjectMapper objectMapper,
                                        ModelRunWorkflowService modelRunWorkflowService,
                                        ModelRunService modelRunService, DiseaseOccurrenceSpreadHelper helper,
+                                       BatchDatesValidator batchDatesValidator,
                                        ModelWrapperWebServiceAsyncWrapper modelWrapperWebServiceAsyncWrapper) {
         this.diseaseService = diseaseService;
         this.objectMapper = objectMapper;
@@ -75,6 +79,7 @@ public class AdminDiseaseGroupController extends AbstractController {
         this.modelRunService = modelRunService;
         this.helper = helper;
         this.modelWrapperWebServiceAsyncWrapper = modelWrapperWebServiceAsyncWrapper;
+        this.batchDatesValidator = batchDatesValidator;
     }
 
     /**
@@ -150,7 +155,10 @@ public class AdminDiseaseGroupController extends AbstractController {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
 
-        modelRunWorkflowService.generateDiseaseExtent(diseaseGroupId, false, onlyUseGoldStandardOccurrences);
+        DiseaseProcessType processType = onlyUseGoldStandardOccurrences ?
+                DiseaseProcessType.MANUAL_GOLD_STANDARD : DiseaseProcessType.MANUAL;
+
+        modelRunWorkflowService.generateDiseaseExtent(diseaseGroupId, processType);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
 
     }
@@ -174,24 +182,31 @@ public class AdminDiseaseGroupController extends AbstractController {
                                                                boolean onlyUseGoldStandardOccurrences) {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         if (diseaseGroup == null) {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        if (!checkCorrectModelRunParametersProvided(onlyUseGoldStandardOccurrences, batchStartDate, batchEndDate)) {
+            return new ResponseEntity<>(INVALID_COMBINATION_OF_INPUTS_ERROR, HttpStatus.BAD_REQUEST);
         }
 
         try {
             if (onlyUseGoldStandardOccurrences) {
-                modelRunWorkflowService.prepareForAndRequestModelRunUsingGoldStandardOccurrences(diseaseGroupId);
+                modelRunWorkflowService.prepareForAndRequestModelRun(
+                        diseaseGroupId, DiseaseProcessType.MANUAL_GOLD_STANDARD, null, null);
             } else {
-                DateTime parsedBatchStartDate = DateTime.parse(batchStartDate);
-                DateTime parsedBatchEndDate = DateTime.parse(batchEndDate);
-                modelRunWorkflowService.prepareForAndRequestManuallyTriggeredModelRun(diseaseGroupId,
-                        parsedBatchStartDate, parsedBatchEndDate);
+                // Ensure that the batch date range is from start of day to end of day, then validate the dates
+                DateTime parsedBatchStartDate = parseAndShiftToStartOfDay(batchStartDate);
+                DateTime parsedBatchEndDate = parseAndShiftToEndOfDay(batchEndDate);
+                batchDatesValidator.validate(diseaseGroup, parsedBatchStartDate, parsedBatchEndDate);
+
+                modelRunWorkflowService.prepareForAndRequestModelRun(
+                        diseaseGroupId, DiseaseProcessType.MANUAL, parsedBatchStartDate, parsedBatchEndDate);
             }
             return new ResponseEntity<>(HttpStatus.OK);
-        } catch (ModelRunWorkflowException e) {
+        } catch (ModelRunWorkflowException | IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
-
     /**
      * Enables automatic model runs for the specified disease group.
      * @param diseaseGroupId The id of the disease group for which to enable automatic model runs.
@@ -439,5 +454,28 @@ public class AdminDiseaseGroupController extends AbstractController {
         parameters.setMaxMonthsAgoForHigherOccurrenceScore(newValues.getMaxMonthsAgoForHigherOccurrenceScore());
         parameters.setLowerOccurrenceScore(newValues.getLowerOccurrenceScore());
         parameters.setHigherOccurrenceScore(newValues.getHigherOccurrenceScore());
+    }
+
+    private boolean checkCorrectModelRunParametersProvided(
+            boolean onlyUseGoldStandardOccurrences, String batchStartDate, String batchEndDate) {
+        boolean goldRun = (onlyUseGoldStandardOccurrences) && (batchEndDate == null) && (batchStartDate == null);
+        boolean manualRun = (!onlyUseGoldStandardOccurrences) && (batchEndDate != null) && (batchStartDate != null);
+        return goldRun || manualRun;
+    }
+
+    private DateTime parseAndShiftToStartOfDay(String dateString) throws IllegalArgumentException {
+        return parseDateTime(dateString).withTimeAtStartOfDay();
+    }
+
+    private DateTime parseAndShiftToEndOfDay(String dateString) throws IllegalArgumentException {
+        return parseAndShiftToStartOfDay(dateString).plusDays(1).minusMillis(1);
+    }
+
+    private DateTime parseDateTime(String dateString) throws IllegalArgumentException {
+        DateTime parsed = DateTime.parse(dateString);
+        if (parsed == null) {
+            throw new IllegalArgumentException("Could not parse date time");
+        }
+        return parsed;
     }
 }

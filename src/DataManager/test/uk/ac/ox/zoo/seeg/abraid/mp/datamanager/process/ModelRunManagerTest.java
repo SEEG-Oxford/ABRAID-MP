@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ModelRunDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseProcessType;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunServiceImpl;
@@ -122,7 +123,7 @@ public class ModelRunManagerTest {
         arrangeAndAct(weekHasElapsed, newLocationCountOverThreshold);
 
         // Assert
-        verify(modelRunWorkflowService).prepareForAndRequestAutomaticModelRun(eq(DISEASE_GROUP_ID));
+        verify(modelRunWorkflowService).prepareForAndRequestModelRun(DISEASE_GROUP_ID, DiseaseProcessType.AUTOMATIC, null, null);
     }
 
     private void expectModelPrepNotToRun(Boolean weekHasElapsed, Boolean newLocationCountOverThreshold) {
@@ -131,7 +132,7 @@ public class ModelRunManagerTest {
         arrangeAndAct(weekHasElapsed, newLocationCountOverThreshold);
 
         // Assert
-        verify(modelRunWorkflowService, never()).prepareForAndRequestAutomaticModelRun(eq(DISEASE_GROUP_ID));
+        verify(modelRunWorkflowService, never()).prepareForAndRequestModelRun(DISEASE_GROUP_ID, DiseaseProcessType.AUTOMATIC, null, null);
     }
 
     private void arrangeAndAct(Boolean weekHasElapsed, Boolean newLocationCountOverThreshold) {

@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.datamanager.process;
 
 import org.springframework.transaction.annotation.Transactional;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseProcessType;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.ModelRunWorkflowService;
 
@@ -35,7 +36,8 @@ public class ModelRunManager {
     @Transactional(rollbackFor = Exception.class)
     public void prepareForAndRequestModelRun(int diseaseGroupId) {
         if (modelRunGatekeeper.modelShouldRun(diseaseGroupId)) {
-            modelRunWorkflowService.prepareForAndRequestAutomaticModelRun(diseaseGroupId);
+            modelRunWorkflowService.prepareForAndRequestModelRun(
+                    diseaseGroupId, DiseaseProcessType.AUTOMATIC, null, null);
         }
     }
 

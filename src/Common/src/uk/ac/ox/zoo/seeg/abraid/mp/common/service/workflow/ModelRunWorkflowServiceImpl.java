@@ -4,6 +4,7 @@ import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseProcessType;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.*;
 
@@ -25,7 +26,6 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
     private DiseaseExtentGenerator diseaseExtentGenerator;
     private AutomaticModelRunsEnabler automaticModelRunsEnabler;
     private MachineWeightingPredictor machineWeightingPredictor;
-    private BatchDatesValidator batchDatesValidator;
 
     public ModelRunWorkflowServiceImpl(WeightingsCalculator weightingsCalculator,
                                        ModelRunRequester modelRunRequester,
@@ -34,8 +34,7 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
                                        ModelRunOccurrencesSelector modelRunOccurrencesSelector,
                                        DiseaseExtentGenerator diseaseExtentGenerator,
                                        AutomaticModelRunsEnabler automaticModelRunsEnabler,
-                                       MachineWeightingPredictor machineWeightingPredictor,
-                                       BatchDatesValidator batchDatesValidator) {
+                                       MachineWeightingPredictor machineWeightingPredictor) {
         this.weightingsCalculator = weightingsCalculator;
         this.modelRunRequester = modelRunRequester;
         this.reviewManager = reviewManager;
@@ -44,79 +43,34 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
         this.diseaseExtentGenerator = diseaseExtentGenerator;
         this.automaticModelRunsEnabler = automaticModelRunsEnabler;
         this.machineWeightingPredictor = machineWeightingPredictor;
-        this.batchDatesValidator = batchDatesValidator;
     }
 
     /**
      * Prepares for and requests a model run, for the specified disease group.
      * This method is designed for use when automatically triggering one or more model runs.
      * @param diseaseGroupId The disease group ID.
-     * @throws ModelRunWorkflowException if the model run could not be requested.
-     */
-    @Override
-    public void prepareForAndRequestAutomaticModelRun(int diseaseGroupId)
-            throws ModelRunWorkflowException {
-        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
-        prepareForAndRequestAutomaticModelRun(diseaseGroup);
-    }
-
-    private void prepareForAndRequestAutomaticModelRun(DiseaseGroup diseaseGroup) {
-        processOccurrencesOnDataValidator(diseaseGroup, true);
-        generateDiseaseExtent(diseaseGroup, true, false);
-
-        requestModelRunAndSaveDate(diseaseGroup, null, null, false);
-    }
-
-    /**
-     * Prepares for and requests a model run, for the specified disease group.
-     * This method is designed for use when manually triggering a model run.
-     * @param diseaseGroupId The disease group ID.
+     * @param processType This type of process that is being performed (auto/manual/gold).
      * @param batchStartDate The start date for batching (if validator parameter batching should happen after the model
-     * run is completed), otherwise null.
+     * run is completed), otherwise null. (Only required for DiseaseProcessType.MANUAL)
      * @param batchEndDate The end date for batching (if it should happen), otherwise null.
+     *                     (Only required for DiseaseProcessType.MANUAL)
      * @throws ModelRunWorkflowException if the model run could not be requested.
      */
     @Override
-    public void prepareForAndRequestManuallyTriggeredModelRun(
-            int diseaseGroupId, DateTime batchStartDate, DateTime batchEndDate) throws ModelRunWorkflowException {
+    public void prepareForAndRequestModelRun(int diseaseGroupId, DiseaseProcessType processType,
+            DateTime batchStartDate, DateTime batchEndDate) throws ModelRunWorkflowException {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
-        prepareForAndRequestManuallyTriggeredModelRun(diseaseGroup, batchStartDate, batchEndDate);
-    }
+        DateTime now = DateTime.now();
 
-    private void prepareForAndRequestManuallyTriggeredModelRun(
-            DiseaseGroup diseaseGroup, DateTime batchStartDate, DateTime batchEndDate) {
-        // Ensure that the batch date range is from start of day to end of day, then validate the dates
-        batchStartDate = getBatchStartDateWithMinimumTime(batchStartDate);
-        batchEndDate = getBatchEndDateWithMaximumTime(batchEndDate);
-        batchDatesValidator.validate(diseaseGroup, batchStartDate, batchEndDate);
+        // Do model run prep if this is a manual run. For automatic runs, any necessary prep will have already been done
+        if (!processIsAutomatic(processType)) {
+            updateExpertsWeightings();
+            processOccurrencesOnDataValidator(diseaseGroup, processType);
+            generateDiseaseExtent(diseaseGroup, processType);
+        }
 
-        updateExpertsWeightings();
-        processOccurrencesOnDataValidator(diseaseGroup, false);
-        generateDiseaseExtent(diseaseGroup, false, false);
-
-        requestModelRunAndSaveDate(diseaseGroup, batchStartDate, batchEndDate, false);
-    }
-
-    /**
-     * Prepares for and requests a model run using "gold standard" disease occurrences, for the specified disease group.
-     * This method is designed for use during disease group set-up, when a known set of good-quality occurrences has
-     * been uploaded to send to the model. Experts' weightings are updated here - across all disease groups - to ensure
-     * their most up-to-date values are used in disease extent generation.
-     * @param diseaseGroupId The disease group ID.
-     * @throws ModelRunWorkflowException if the model run could not be requested.
-     */
-    @Override
-    public void prepareForAndRequestModelRunUsingGoldStandardOccurrences(int diseaseGroupId)
-            throws ModelRunWorkflowException {
-        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
-        prepareForAndRequestModelRunUsingGoldStandardOccurrences(diseaseGroup);
-    }
-
-    private void prepareForAndRequestModelRunUsingGoldStandardOccurrences(DiseaseGroup diseaseGroup) {
-        updateExpertsWeightings();
-        generateDiseaseExtent(diseaseGroup, false, true);
-
-        requestModelRunAndSaveDate(diseaseGroup, null, null, true);
+        requestModelRun(diseaseGroup, processType, batchStartDate, batchEndDate);
+        updateLastModelRunPrepDate(diseaseGroup, now);
     }
 
     @Override
@@ -129,18 +83,22 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
      * First updating the expert weighting of all validator occurrences, then remove the appropriate occurrences from
      * the validator (setting their final weightings in the process).
      * @param diseaseGroupId The disease group ID.
-     * @param isAutomaticProcess If this is part of the automated daily process or for a manual model run.
+     * @param processType This type of process that is being performed (auto/manual/gold).
      */
     @Override
-    public void processOccurrencesOnDataValidator(int diseaseGroupId, boolean isAutomaticProcess) {
+    public void processOccurrencesOnDataValidator(int diseaseGroupId, DiseaseProcessType processType) {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
-        processOccurrencesOnDataValidator(diseaseGroup, isAutomaticProcess);
+        processOccurrencesOnDataValidator(diseaseGroup, processType);
     }
 
-    private void processOccurrencesOnDataValidator(DiseaseGroup diseaseGroup, boolean isAutomaticProcess) {
-        // Update the expert weighting of all occurrences on the validator, then remove the appropriate occurrences
-        // from the validator. Setting their validation & final weighting in the process.
-        updateOccurrenceWeightingsAndStatus(diseaseGroup, isAutomaticProcess);
+    private void processOccurrencesOnDataValidator(DiseaseGroup diseaseGroup, DiseaseProcessType processType) {
+        // Update the expert weighting of all occurrences on the validator
+        weightingsCalculator.updateDiseaseOccurrenceExpertWeightings(diseaseGroup.getId());
+        // Remove the appropriate occurrences from the validator
+        reviewManager.updateDiseaseOccurrenceStatus(diseaseGroup.getId(), processIsAutomatic(processType));
+        // Set their validation & final weighting in the process
+        weightingsCalculator.updateDiseaseOccurrenceValidationWeightingAndFinalWeightings(diseaseGroup.getId());
+
         // Train the predictor using the updated knowledge of occurrences
         trainPredictor(diseaseGroup);
     }
@@ -148,26 +106,19 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
     /**
      * Generate the disease extent for the specified disease group.
      * @param diseaseGroupId The disease group ID.
-     * @param isAutomaticProcess If this is part of the automated daily process or for a manual model run.
-     * @param useOnlyGoldStandard If only gold standard occurrences should be used for extent generation (manual only).
+     * @param processType This type of process that is being performed (auto/manual/gold).
      */
     @Override
     public void generateDiseaseExtent(
-            int diseaseGroupId, boolean isAutomaticProcess, boolean useOnlyGoldStandard) {
+            int diseaseGroupId, DiseaseProcessType processType) {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
-        generateDiseaseExtent(diseaseGroup, isAutomaticProcess, useOnlyGoldStandard);
+        generateDiseaseExtent(diseaseGroup, processType);
     }
 
-    private void generateDiseaseExtent(
-            DiseaseGroup diseaseGroup, boolean isAutomaticProcess, boolean useOnlyGoldStandard) {
-        DateTime minimumOccurrenceDate = null;
-        if (isAutomaticProcess) {
-            // Find the minimum occurrence date if automatic model runs are enabled (it is unused if they are disabled)
-            List<DiseaseOccurrence> occurrencesForModelRun = modelRunOccurrencesSelector.selectOccurrencesForModelRun(
-                    diseaseGroup.getId(), false);
-            minimumOccurrenceDate = extractMinimumOccurrenceDate(occurrencesForModelRun);
-        }
-        diseaseExtentGenerator.generateDiseaseExtent(diseaseGroup, minimumOccurrenceDate, useOnlyGoldStandard);
+    private void generateDiseaseExtent(DiseaseGroup diseaseGroup, DiseaseProcessType processType) {
+        DateTime minimumOccurrenceDate = getDateOfEarliestOccurrenceForExtentGeneration(diseaseGroup, processType);
+        diseaseExtentGenerator.
+                generateDiseaseExtent(diseaseGroup, minimumOccurrenceDate, processIsGoldStandard(processType));
     }
 
     /**
@@ -179,31 +130,22 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
         automaticModelRunsEnabler.enable(diseaseGroupId);
     }
 
-    private void updateOccurrenceWeightingsAndStatus(DiseaseGroup diseaseGroup, boolean isAutomaticProcess) {
-        int diseaseGroupId = diseaseGroup.getId();
-        weightingsCalculator.updateDiseaseOccurrenceExpertWeightings(diseaseGroupId);
-        reviewManager.updateDiseaseOccurrenceStatus(diseaseGroupId, isAutomaticProcess);
-        weightingsCalculator.updateDiseaseOccurrenceValidationWeightingAndFinalWeightings(diseaseGroupId);
-    }
-
     private void trainPredictor(DiseaseGroup diseaseGroup) {
         List<DiseaseOccurrence> occurrencesForTrainingPredictor =
                 diseaseService.getDiseaseOccurrencesForTrainingPredictor(diseaseGroup.getId());
         machineWeightingPredictor.train(diseaseGroup.getId(), occurrencesForTrainingPredictor);
     }
 
-    private void requestModelRunAndSaveDate(DiseaseGroup diseaseGroup,
-                                            DateTime batchStartDate, DateTime batchEndDate,
-                                            boolean onlyUseGoldStandardOccurrences) {
-        requestModelRun(diseaseGroup, batchStartDate, batchEndDate, onlyUseGoldStandardOccurrences);
-        updateLastModelRunPrepDate(diseaseGroup, DateTime.now());
+    private List<DiseaseOccurrence> getModelRunOccurrences(DiseaseGroup diseaseGroup, DiseaseProcessType processType) {
+        return modelRunOccurrencesSelector.
+                selectOccurrencesForModelRun(diseaseGroup.getId(), processIsGoldStandard(processType));
     }
 
-    private void requestModelRun(DiseaseGroup diseaseGroup, DateTime batchStartDate, DateTime batchEndDate,
-                                 boolean onlyUseGoldStandardOccurrences) {
-        List<DiseaseOccurrence> occurrencesForModelRun = modelRunOccurrencesSelector.selectOccurrencesForModelRun(
-                diseaseGroup.getId(), onlyUseGoldStandardOccurrences);
-        modelRunRequester.requestModelRun(diseaseGroup.getId(), occurrencesForModelRun, batchStartDate, batchEndDate);
+    private void requestModelRun(DiseaseGroup diseaseGroup, DiseaseProcessType processType,
+                                 DateTime batchStartDate, DateTime batchEndDate) {
+        List<DiseaseOccurrence> modelRunOccurrences = getModelRunOccurrences(diseaseGroup, processType);
+        modelRunRequester.requestModelRun(diseaseGroup.getId(), modelRunOccurrences, batchStartDate, batchEndDate);
+
     }
 
     private void updateLastModelRunPrepDate(DiseaseGroup diseaseGroup, DateTime modelRunPrepDate) {
@@ -211,21 +153,26 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
         diseaseService.saveDiseaseGroup(diseaseGroup);
     }
 
-    private DateTime extractMinimumOccurrenceDate(List<DiseaseOccurrence> occurrencesForModelRun) {
-        if (occurrencesForModelRun == null || occurrencesForModelRun.isEmpty()) {
-            return null;
+    private DateTime getDateOfEarliestOccurrenceForExtentGeneration(
+            DiseaseGroup diseaseGroup, DiseaseProcessType processType) {
+        if (processIsAutomatic(processType)) {
+            // The minimum occurrence date for the disease extent is the same as the minimum occurrence date of all
+            // the occurrences that can be sent to the model
+            List<DiseaseOccurrence> modelRunOccurrences = getModelRunOccurrences(diseaseGroup, processType);
+
+            if (modelRunOccurrences != null && !modelRunOccurrences.isEmpty()) {
+                return min(extract(modelRunOccurrences, on(DiseaseOccurrence.class).getOccurrenceDate()));
+            }
         }
 
-        // The minimum occurrence date for the disease extent is the same as the minimum occurrence date of all
-        // the occurrences that can be sent to the model
-        return min(extract(occurrencesForModelRun, on(DiseaseOccurrence.class).getOccurrenceDate()));
+        return null;
     }
 
-    private DateTime getBatchStartDateWithMinimumTime(DateTime batchStartDate) {
-        return (batchStartDate == null) ? null : batchStartDate.withTimeAtStartOfDay();
+    private static boolean processIsAutomatic(DiseaseProcessType processType) {
+        return processType == DiseaseProcessType.AUTOMATIC;
     }
 
-    private DateTime getBatchEndDateWithMaximumTime(DateTime batchEndDate) {
-        return (batchEndDate == null) ? null : batchEndDate.withTimeAtStartOfDay().plusDays(1).minusMillis(1);
+    private static boolean processIsGoldStandard(DiseaseProcessType processType) {
+        return processType == DiseaseProcessType.MANUAL_GOLD_STANDARD;
     }
 }

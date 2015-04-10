@@ -30,8 +30,7 @@ public class BatchDatesValidator {
      * @param batchEndDate The batch end date.
      */
     public void validate(DiseaseGroup diseaseGroup, DateTime batchStartDate, DateTime batchEndDate) {
-        if ((batchStartDate != null) && (batchEndDate != null) &&
-                !modelRunService.hasBatchingEverCompleted(diseaseGroup.getId())) {
+        if (!modelRunService.hasBatchingEverCompleted(diseaseGroup.getId())) {
             // If this is the first batch, count the number of points in the batch date range that are eligible
             // for a future model run containing only those points. If this is less than Minimum Data Volume, return an
             // error.
