@@ -12,14 +12,14 @@ import uk.ac.ox.zoo.seeg.abraid.mp.datamanager.AbstractDataManagerSpringIntegrat
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Integration tests for the ModelRunGatekeeper class.
+ * Integration tests for the DiseaseProcessGatekeeper class.
  * Copyright (c) 2014 University of Oxford
  */
-public class ModelRunGatekeeperIntegrationTest extends AbstractDataManagerSpringIntegrationTests {
+public class DiseaseProcessGatekeeperIntegrationTest extends AbstractDataManagerSpringIntegrationTests {
     @Autowired
     private DiseaseService diseaseService;
     @Autowired
-    private ModelRunGatekeeper modelRunGatekeeper;
+    private DiseaseProcessGatekeeper diseaseProcessGatekeeper;
 
     private static final int DISEASE_GROUP_ID = 87;
     private static DiseaseGroup diseaseGroup;
@@ -135,7 +135,7 @@ public class ModelRunGatekeeperIntegrationTest extends AbstractDataManagerSpring
         }
 
         // Act
-        boolean result = modelRunGatekeeper.modelShouldRun(DISEASE_GROUP_ID);
+        boolean result = diseaseProcessGatekeeper.modelShouldRun(DISEASE_GROUP_ID);
 
         // Assert
         assertThat(result).isEqualTo(expectedResult);

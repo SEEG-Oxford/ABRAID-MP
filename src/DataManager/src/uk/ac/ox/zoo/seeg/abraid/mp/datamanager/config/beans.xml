@@ -16,8 +16,8 @@
 
     <!-- Process beans -->
     <bean id="dataAcquisitionManager" class="uk.ac.ox.zoo.seeg.abraid.mp.datamanager.process.DataAcquisitionManager" autowire="constructor"/>
-    <bean id="modelRunGatekeeper" class="uk.ac.ox.zoo.seeg.abraid.mp.datamanager.process.ModelRunGatekeeper" autowire="constructor"/>
-    <bean id="modelRunManager" class="uk.ac.ox.zoo.seeg.abraid.mp.datamanager.process.ModelRunManager" autowire="constructor"/>
+    <bean id="diseaseProcessGatekeeper" class="uk.ac.ox.zoo.seeg.abraid.mp.datamanager.process.DiseaseProcessGatekeeper" autowire="constructor"/>
+    <bean id="diseaseProcessManger" class="uk.ac.ox.zoo.seeg.abraid.mp.datamanager.process.DiseaseProcessManager" autowire="constructor"/>
 
     <!-- Main bean (program entry point) -->
     <bean id="main" class="uk.ac.ox.zoo.seeg.abraid.mp.datamanager.Main" autowire="constructor">

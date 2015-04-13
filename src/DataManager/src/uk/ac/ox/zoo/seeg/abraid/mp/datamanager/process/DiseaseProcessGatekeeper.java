@@ -7,11 +7,11 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 
 /**
- * Determines whether the model run should execute.
+ * Determines whether the steps in the daily disease process should execute.
  * Copyright (c) 2014 University of Oxford
  */
-public class ModelRunGatekeeper {
-    private static final Logger LOGGER = Logger.getLogger(ModelRunManager.class);
+public class DiseaseProcessGatekeeper {
+    private static final Logger LOGGER = Logger.getLogger(DiseaseProcessManager.class);
     private static final String DISEASE_GROUP_ID_MESSAGE = "MODEL RUN PREPARATION FOR DISEASE GROUP %d (%s)";
     private static final String NO_VALIDATION_PARAMETERS_THRESHOLDS =
             "Threshold (minNewLocationsTrigger, minEnvSuitability or minDistanceFromExtent) has not been defined";
@@ -27,15 +27,15 @@ public class ModelRunGatekeeper {
     private DiseaseService diseaseService;
     private ModelRunService modelRunService;
 
-    public ModelRunGatekeeper(DiseaseService diseaseService, ModelRunService modelRunService) {
+    public DiseaseProcessGatekeeper(DiseaseService diseaseService, ModelRunService modelRunService) {
         this.diseaseService = diseaseService;
         this.modelRunService = modelRunService;
     }
 
     /**
-     * Determines whether model run preparation tasks should be carried out.
+     * Determines whether model run should be carried out.
      * NB. This method is only ever called for disease groups that have automatic model runs enabled, as a result of
-     * modelRunManager.getDiseaseGroupIdsForAutomaticModelRuns() in Main.
+     * diseaseService.getDiseaseGroupIdsForAutomaticModelRuns() in Main.
      *
      * @param diseaseGroupId The id of the disease group for which the model run is being prepared.
      * @return True if:
@@ -54,6 +54,18 @@ public class ModelRunGatekeeper {
 
         LOGGER.info(dueToRun ? STARTING_MODEL_RUN_PREP : NOT_STARTING_MODEL_RUN_PREP);
         return dueToRun;
+    }
+
+    /**
+     * Determines whether a disease extent update should be carried out.
+     * NB. This method is only ever called for disease groups that have automatic model runs enabled, as a result of
+     * diseaseService.getDiseaseGroupIdsForAutomaticModelRuns() in Main.
+     *
+     * @param diseaseGroupId The id of the disease group for which the model run is being prepared.
+     * @return For now this just returns the same as modelShouldRun.
+     */
+    public boolean extentShouldRun(int diseaseGroupId) {
+        return modelShouldRun(diseaseGroupId);
     }
 
     private boolean neverBeenRunOrDaysBetweenRunsElapsed(DiseaseGroup diseaseGroup) {
