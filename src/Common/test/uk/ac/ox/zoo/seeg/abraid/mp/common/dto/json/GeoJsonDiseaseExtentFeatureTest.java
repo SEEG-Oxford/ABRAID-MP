@@ -25,6 +25,7 @@ public class GeoJsonDiseaseExtentFeatureTest extends AbstractDiseaseExtentGeoJso
                 adminUnitGlobal,
                 new DiseaseGroup(),
                 new DiseaseExtentClass(DiseaseExtentClass.PRESENCE),
+                new DiseaseExtentClass(DiseaseExtentClass.POSSIBLE_PRESENCE),
                 0);
         List<AdminUnitReview> reviews = new ArrayList<>();
 

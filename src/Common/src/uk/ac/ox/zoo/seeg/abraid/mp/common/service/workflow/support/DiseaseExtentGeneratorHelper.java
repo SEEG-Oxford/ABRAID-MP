@@ -268,11 +268,12 @@ public class DiseaseExtentGeneratorHelper {
             }
             DiseaseExtentClass newClass = classesByAdminUnit.get(adminUnit);
             if (!newClass.equals(row.getDiseaseExtentClass())) {
-                row.setDiseaseExtentClass(newClass);
                 row.setClassChangedDate(DateTime.now());
             }
-            row.setOccurrenceCount(entry.getValue().size());
-            row.setLatestOccurrences(findLatestOccurrences(entry.getValue()));
+            row.setDiseaseExtentClass(newClass);
+            row.setValidatorDiseaseExtentClass(newClass);
+            row.setValidatorOccurrenceCount(entry.getValue().size());
+            row.setLatestValidatorOccurrences(findLatestOccurrences(entry.getValue()));
             adminUnitDiseaseExtentClasses.add(row);
         }
         return adminUnitDiseaseExtentClasses;

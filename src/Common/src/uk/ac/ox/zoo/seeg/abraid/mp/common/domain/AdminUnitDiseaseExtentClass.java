@@ -32,19 +32,24 @@ public class AdminUnitDiseaseExtentClass extends AbstractAdminUnitDiseaseExtentC
     @JoinColumn(name = "disease_group_id")
     private DiseaseGroup diseaseGroup;
 
-    // The date on which the disease extent class last changed.
+    // The date on which the modelling disease extent class last changed.
     @Column(name = "class_changed_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime classChangedDate;
 
-    // The number of disease occurrences giving rise to this extent class.
-    @Column(name = "occurrence_count", nullable = false)
-    private int occurrenceCount;
+    // The disease extent class current under review by experts.
+    @ManyToOne
+    @JoinColumn(name = "validator_disease_extent_class", nullable = false)
+    private DiseaseExtentClass validatorDiseaseExtentClass;
 
-    // List of the latest disease occurrences that were used in determining this disease extent class classification.
+    // The number of disease occurrences giving rise to the validator extent class.
+    @Column(name = "validator_occurrence_count", nullable = false)
+    private int validatorOccurrenceCount;
+
+    // List of the latest disease occurrences that were used in determining the validator extent class classification.
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "admin_unit_disease_extent_class_id")
-    private List<DiseaseOccurrence> latestOccurrences;
+    private List<DiseaseOccurrence> latestValidatorOccurrences;
 
     public AdminUnitDiseaseExtentClass() {
     }
@@ -54,38 +59,44 @@ public class AdminUnitDiseaseExtentClass extends AbstractAdminUnitDiseaseExtentC
     }
 
     public AdminUnitDiseaseExtentClass(AdminUnitGlobal adminUnitGlobal, DiseaseGroup diseaseGroup,
-                                       DiseaseExtentClass diseaseExtentClass, Integer occurrenceCount) {
+            DiseaseExtentClass diseaseExtentClass, DiseaseExtentClass validatorDiseaseExtentClass,
+            Integer validatorOccurrenceCount) {
         this.setAdminUnitGlobal(adminUnitGlobal);
         this.diseaseGroup = diseaseGroup;
         this.setDiseaseExtentClass(diseaseExtentClass);
-        this.occurrenceCount = occurrenceCount;
+        this.validatorDiseaseExtentClass = validatorDiseaseExtentClass;
+        this.validatorOccurrenceCount = validatorOccurrenceCount;
     }
 
     public AdminUnitDiseaseExtentClass(AdminUnitTropical adminUnitTropical, DiseaseGroup diseaseGroup,
-                                       DiseaseExtentClass diseaseExtentClass, Integer occurrenceCount) {
+            DiseaseExtentClass diseaseExtentClass, DiseaseExtentClass validatorDiseaseExtentClass,
+            Integer validatorOccurrenceCount) {
         this.setAdminUnitTropical(adminUnitTropical);
         this.diseaseGroup = diseaseGroup;
         this.setDiseaseExtentClass(diseaseExtentClass);
-        this.occurrenceCount = occurrenceCount;
+        this.validatorDiseaseExtentClass = validatorDiseaseExtentClass;
+        this.validatorOccurrenceCount = validatorOccurrenceCount;
     }
 
     public AdminUnitDiseaseExtentClass(AdminUnitGlobal adminUnitGlobal, DiseaseGroup diseaseGroup,
-                                       DiseaseExtentClass diseaseExtentClass, Integer occurrenceCount,
-                                       DateTime classChangedDate) {
+            DiseaseExtentClass diseaseExtentClass, DiseaseExtentClass validatorDiseaseExtentClass,
+            Integer validatorOccurrenceCount, DateTime classChangedDate) {
         this.setAdminUnitGlobal(adminUnitGlobal);
         this.diseaseGroup = diseaseGroup;
         this.setDiseaseExtentClass(diseaseExtentClass);
-        this.occurrenceCount = occurrenceCount;
+        this.validatorDiseaseExtentClass = validatorDiseaseExtentClass;
+        this.validatorOccurrenceCount = validatorOccurrenceCount;
         this.classChangedDate = classChangedDate;
     }
 
     public AdminUnitDiseaseExtentClass(AdminUnitTropical adminUnitTropical, DiseaseGroup diseaseGroup,
-                                       DiseaseExtentClass diseaseExtentClass, Integer occurrenceCount,
-                                       DateTime classChangedDate) {
+            DiseaseExtentClass diseaseExtentClass, DiseaseExtentClass validatorDiseaseExtentClass,
+            Integer validatorOccurrenceCount, DateTime classChangedDate) {
         this.setAdminUnitTropical(adminUnitTropical);
         this.diseaseGroup = diseaseGroup;
         this.setDiseaseExtentClass(diseaseExtentClass);
-        this.occurrenceCount = occurrenceCount;
+        this.validatorDiseaseExtentClass = validatorDiseaseExtentClass;
+        this.validatorOccurrenceCount = validatorOccurrenceCount;
         this.classChangedDate = classChangedDate;
     }
 
@@ -105,20 +116,28 @@ public class AdminUnitDiseaseExtentClass extends AbstractAdminUnitDiseaseExtentC
         this.classChangedDate = classChangedDate;
     }
 
-    public int getOccurrenceCount() {
-        return occurrenceCount;
+    public int getValidatorOccurrenceCount() {
+        return validatorOccurrenceCount;
     }
 
-    public void setOccurrenceCount(int occurrenceCount) {
-        this.occurrenceCount = occurrenceCount;
+    public void setValidatorOccurrenceCount(int occurrenceCount) {
+        this.validatorOccurrenceCount = occurrenceCount;
     }
 
-    public List<DiseaseOccurrence> getLatestOccurrences() {
-        return latestOccurrences;
+    public List<DiseaseOccurrence> getLatestValidatorOccurrences() {
+        return latestValidatorOccurrences;
     }
 
-    public void setLatestOccurrences(List<DiseaseOccurrence> occurrences) {
-        this.latestOccurrences = occurrences;
+    public void setLatestValidatorOccurrences(List<DiseaseOccurrence> occurrences) {
+        this.latestValidatorOccurrences = occurrences;
+    }
+
+    public DiseaseExtentClass getValidatorDiseaseExtentClass() {
+        return validatorDiseaseExtentClass;
+    }
+
+    public void setValidatorDiseaseExtentClass(DiseaseExtentClass validatorDiseaseExtentClass) {
+        this.validatorDiseaseExtentClass = validatorDiseaseExtentClass;
     }
 
     ///COVERAGE:OFF - generated code
@@ -131,11 +150,13 @@ public class AdminUnitDiseaseExtentClass extends AbstractAdminUnitDiseaseExtentC
 
         AdminUnitDiseaseExtentClass that = (AdminUnitDiseaseExtentClass) o;
 
-        if (occurrenceCount != that.occurrenceCount) return false;
+        if (diseaseGroup != null ? !diseaseGroup.equals(that.diseaseGroup) : that.diseaseGroup != null) return false;
         if (classChangedDate != null ? !classChangedDate.equals(that.classChangedDate) : that.classChangedDate != null)
             return false;
-        if (diseaseGroup != null ? !diseaseGroup.equals(that.diseaseGroup) : that.diseaseGroup != null) return false;
-        if (latestOccurrences != null ? !latestOccurrences.equals(that.latestOccurrences) : that.latestOccurrences != null)
+        if (validatorDiseaseExtentClass != null ? !validatorDiseaseExtentClass.equals(that.validatorDiseaseExtentClass) : that.validatorDiseaseExtentClass != null)
+            return false;
+        if (validatorOccurrenceCount != that.validatorOccurrenceCount) return false;
+        if (latestValidatorOccurrences != null ? !latestValidatorOccurrences.equals(that.latestValidatorOccurrences) : that.latestValidatorOccurrences != null)
             return false;
 
         return true;
@@ -146,8 +167,9 @@ public class AdminUnitDiseaseExtentClass extends AbstractAdminUnitDiseaseExtentC
         int result = super.hashCode();
         result = 31 * result + (diseaseGroup != null ? diseaseGroup.hashCode() : 0);
         result = 31 * result + (classChangedDate != null ? classChangedDate.hashCode() : 0);
-        result = 31 * result + occurrenceCount;
-        result = 31 * result + (latestOccurrences != null ? latestOccurrences.hashCode() : 0);
+        result = 31 * result + (validatorDiseaseExtentClass != null ? validatorDiseaseExtentClass.hashCode() : 0);
+        result = 31 * result + validatorOccurrenceCount;
+        result = 31 * result + (latestValidatorOccurrences != null ? latestValidatorOccurrences.hashCode() : 0);
         return result;
     }
     ///CHECKSTYLE:ON

@@ -57,11 +57,12 @@ public class AdminUnitDiseaseExtentClassDaoTest extends AbstractCommonSpringInte
         AdminUnitGlobal adminUnitGlobal = adminUnitGlobalDao.getByGaulCode(gaulCode);
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(diseaseGroupId);
         DiseaseExtentClass extentClass = diseaseExtentClassDao.getByName("PRESENCE");
+        DiseaseExtentClass validatorExtentClass = diseaseExtentClassDao.getByName("POSSIBLE_ABSENCE");
         int occurrenceCount = 25;
         DateTime createdDate = DateTime.now();
 
         AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass = new AdminUnitDiseaseExtentClass(
-                adminUnitGlobal, diseaseGroup, extentClass, occurrenceCount, createdDate);
+                adminUnitGlobal, diseaseGroup, extentClass, validatorExtentClass, occurrenceCount, createdDate);
 
         // Act
         adminUnitDiseaseExtentClassDao.save(adminUnitDiseaseExtentClass);
@@ -76,7 +77,8 @@ public class AdminUnitDiseaseExtentClassDaoTest extends AbstractCommonSpringInte
         assertThat(adminUnitDiseaseExtentClass.getAdminUnitGlobal().getGaulCode()).isEqualTo(gaulCode);
         assertThat(adminUnitDiseaseExtentClass.getAdminUnitTropical()).isNull();
         assertThat(adminUnitDiseaseExtentClass.getDiseaseExtentClass()).isEqualTo(extentClass);
-        assertThat(adminUnitDiseaseExtentClass.getOccurrenceCount()).isEqualTo(occurrenceCount);
+        assertThat(adminUnitDiseaseExtentClass.getValidatorOccurrenceCount()).isEqualTo(occurrenceCount);
+        assertThat(adminUnitDiseaseExtentClass.getValidatorDiseaseExtentClass()).isEqualTo(validatorExtentClass);
         assertThat(adminUnitDiseaseExtentClass.getClassChangedDate()).isEqualTo(createdDate);
     }
 
@@ -88,11 +90,12 @@ public class AdminUnitDiseaseExtentClassDaoTest extends AbstractCommonSpringInte
         AdminUnitTropical adminUnitTropical = adminUnitTropicalDao.getByGaulCode(gaulCode);
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(diseaseGroupId);
         DiseaseExtentClass extentClass = diseaseExtentClassDao.getByName("ABSENCE");
+        DiseaseExtentClass validatorExtentClass = diseaseExtentClassDao.getByName("POSSIBLE_ABSENCE");
         int occurrenceCount = 0;
         DateTime changedDate = DateTime.now();
 
         AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass = new AdminUnitDiseaseExtentClass(
-                adminUnitTropical, diseaseGroup, extentClass, occurrenceCount);
+                adminUnitTropical, diseaseGroup, extentClass, validatorExtentClass, occurrenceCount);
         adminUnitDiseaseExtentClass.setClassChangedDate(changedDate);
 
         // Act
@@ -108,7 +111,8 @@ public class AdminUnitDiseaseExtentClassDaoTest extends AbstractCommonSpringInte
         assertThat(adminUnitDiseaseExtentClass.getAdminUnitTropical().getGaulCode()).isEqualTo(gaulCode);
         assertThat(adminUnitDiseaseExtentClass.getAdminUnitGlobal()).isNull();
         assertThat(adminUnitDiseaseExtentClass.getDiseaseExtentClass()).isEqualTo(extentClass);
-        assertThat(adminUnitDiseaseExtentClass.getOccurrenceCount()).isEqualTo(occurrenceCount);
+        assertThat(adminUnitDiseaseExtentClass.getValidatorDiseaseExtentClass()).isEqualTo(validatorExtentClass);
+        assertThat(adminUnitDiseaseExtentClass.getValidatorOccurrenceCount()).isEqualTo(occurrenceCount);
     }
 
     @Test(expected = ConstraintViolationException.class)
@@ -118,10 +122,11 @@ public class AdminUnitDiseaseExtentClassDaoTest extends AbstractCommonSpringInte
         AdminUnitTropical adminUnitTropical = adminUnitTropicalDao.getByGaulCode(204001);
         DiseaseGroup diseaseGroup = diseaseGroupDao.getById(96);
         DiseaseExtentClass extentClass = diseaseExtentClassDao.getByName(DiseaseExtentClass.ABSENCE);
+        DiseaseExtentClass validatorExtentClass = diseaseExtentClassDao.getByName(DiseaseExtentClass.POSSIBLE_ABSENCE);
         int occurrenceCount = 0;
 
         AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass = new AdminUnitDiseaseExtentClass(
-                adminUnitTropical, diseaseGroup, extentClass, occurrenceCount);
+                adminUnitTropical, diseaseGroup, extentClass, validatorExtentClass, occurrenceCount);
         adminUnitDiseaseExtentClass.setAdminUnitGlobal(adminUnitGlobal);
 
         // Act

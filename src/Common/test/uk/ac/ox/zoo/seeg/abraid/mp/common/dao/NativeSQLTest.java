@@ -243,9 +243,9 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
     }
 
     private void insertExtentForGlobalDisease(int diseaseGroupId) {
-        insertAdminUnitDiseaseExtentClass(153, diseaseGroupId, DiseaseExtentClass.ABSENCE);
-        insertAdminUnitDiseaseExtentClass(179, diseaseGroupId, DiseaseExtentClass.POSSIBLE_PRESENCE);
-        insertAdminUnitDiseaseExtentClass(826, diseaseGroupId, DiseaseExtentClass.PRESENCE);
+        insertAdminUnitDiseaseExtentClass(153, diseaseGroupId, DiseaseExtentClass.ABSENCE, DiseaseExtentClass.ABSENCE);
+        insertAdminUnitDiseaseExtentClass(179, diseaseGroupId, DiseaseExtentClass.POSSIBLE_PRESENCE, DiseaseExtentClass.ABSENCE);
+        insertAdminUnitDiseaseExtentClass(826, diseaseGroupId, DiseaseExtentClass.PRESENCE, DiseaseExtentClass.POSSIBLE_PRESENCE);
         flushAndClear();
     }
 
@@ -274,12 +274,13 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
         return (Integer) uniqueSQLResult(actualNumGeomsQuery);
     }
 
-    private void insertAdminUnitDiseaseExtentClass(int globalGaulCode, int diseaseGroupId, String extentClassName) {
+    private void insertAdminUnitDiseaseExtentClass(int globalGaulCode, int diseaseGroupId, String extentClassName, String validatorExtentClassName) {
         AdminUnitDiseaseExtentClass extentClass = new AdminUnitDiseaseExtentClass();
         extentClass.setAdminUnitGlobal(adminUnitGlobalDao.getByGaulCode(globalGaulCode));
         extentClass.setDiseaseGroup(diseaseGroupDao.getById(diseaseGroupId));
         extentClass.setDiseaseExtentClass(diseaseExtentClassDao.getByName(extentClassName));
-        extentClass.setOccurrenceCount(0);
+        extentClass.setValidatorDiseaseExtentClass(diseaseExtentClassDao.getByName(validatorExtentClassName));
+        extentClass.setValidatorOccurrenceCount(0);
         extentClass.setClassChangedDate(DateTime.now());
         adminUnitDiseaseExtentClassDao.save(extentClass);
     }

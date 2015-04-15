@@ -34,9 +34,10 @@ public class GeoJsonDiseaseExtentFeatureProperties {
                                                  List<AdminUnitReview> reviews)
     {
         setName(adminUnitDiseaseExtentClass.getAdminUnitGlobalOrTropical().getPublicName());
-        setDiseaseExtentClass(formatDisplayString(adminUnitDiseaseExtentClass.getDiseaseExtentClass().getName()));
+        setDiseaseExtentClass(
+                formatDisplayString(adminUnitDiseaseExtentClass.getValidatorDiseaseExtentClass().getName()));
         setNeedsReview(computeNeedsReview(adminUnitDiseaseExtentClass, reviews));
-        setOccurrenceCount(adminUnitDiseaseExtentClass.getOccurrenceCount());
+        setOccurrenceCount(adminUnitDiseaseExtentClass.getValidatorOccurrenceCount());
     }
 
     private String formatDisplayString(String s) {
