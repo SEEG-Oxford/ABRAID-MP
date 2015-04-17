@@ -4,7 +4,7 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Collection;
 
 /**
  * Represents the current extent class (e.g. presence, absence) of an administrative unit, for a specific disease group.
@@ -49,7 +49,7 @@ public class AdminUnitDiseaseExtentClass extends AbstractAdminUnitDiseaseExtentC
     // List of the latest disease occurrences that were used in determining the validator extent class classification.
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "admin_unit_disease_extent_class_id")
-    private List<DiseaseOccurrence> latestValidatorOccurrences;
+    private Collection<DiseaseOccurrence> latestValidatorOccurrences;
 
     public AdminUnitDiseaseExtentClass() {
     }
@@ -124,11 +124,11 @@ public class AdminUnitDiseaseExtentClass extends AbstractAdminUnitDiseaseExtentC
         this.validatorOccurrenceCount = occurrenceCount;
     }
 
-    public List<DiseaseOccurrence> getLatestValidatorOccurrences() {
+    public Collection<DiseaseOccurrence> getLatestValidatorOccurrences() {
         return latestValidatorOccurrences;
     }
 
-    public void setLatestValidatorOccurrences(List<DiseaseOccurrence> occurrences) {
+    public void setLatestValidatorOccurrences(Collection<DiseaseOccurrence> occurrences) {
         this.latestValidatorOccurrences = occurrences;
     }
 
