@@ -399,8 +399,7 @@ public class DiseaseExtentGeneratorTest {
     }
 
     private void expectUpdateAggregatedDiseaseExtent(int times) {
-        verify(diseaseService, times(times)).updateAggregatedDiseaseExtent(eq(diseaseGroupId),
-                eq(diseaseGroup.isGlobal()));
+        verify(diseaseService, times(times)).updateAggregatedDiseaseExtent(eq(diseaseGroup));
     }
 
     private List<DiseaseOccurrence> getOccurrences() {

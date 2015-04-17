@@ -223,10 +223,9 @@ public interface DiseaseService {
 
     /**
      * Updates the aggregated disease extent that is stored in the disease_extent table, for the specified disease.
-     * @param diseaseGroupId The disease group ID.
-     * @param isGlobal True if the disease is global, false if tropical.
+     * @param diseaseGroup The disease group.
      */
-    void updateAggregatedDiseaseExtent(int diseaseGroupId, boolean isGlobal);
+    void updateAggregatedDiseaseExtent(DiseaseGroup diseaseGroup);
 
     /**
      * Gets statistics about the occurrences of the specified disease group.

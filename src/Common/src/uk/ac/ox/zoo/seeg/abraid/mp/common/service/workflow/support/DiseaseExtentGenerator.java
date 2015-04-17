@@ -161,6 +161,6 @@ public class DiseaseExtentGenerator {
     }
 
     private void updateAggregatedDiseaseExtent(DiseaseGroup diseaseGroup) {
-        diseaseService.updateAggregatedDiseaseExtent(diseaseGroup.getId(), diseaseGroup.isGlobal());
+        diseaseService.updateAggregatedDiseaseExtent(diseaseGroup);
     }
 }

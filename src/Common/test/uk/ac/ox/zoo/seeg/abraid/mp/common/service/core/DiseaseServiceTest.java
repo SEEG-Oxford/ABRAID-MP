@@ -438,9 +438,12 @@ public class DiseaseServiceTest {
         // Arrange
         int diseaseGroupId = 87;
         boolean isGlobal = true;
+        DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
+        when(diseaseGroup.getId()).thenReturn(diseaseGroupId);
+        when(diseaseGroup.isGlobal()).thenReturn(isGlobal);
 
         // Act
-        diseaseService.updateAggregatedDiseaseExtent(diseaseGroupId, isGlobal);
+        diseaseService.updateAggregatedDiseaseExtent(diseaseGroup);
 
         // Assert
         verify(nativeSQL).updateAggregatedDiseaseExtent(eq(diseaseGroupId), eq(isGlobal));
