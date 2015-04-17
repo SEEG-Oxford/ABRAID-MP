@@ -16,5 +16,13 @@ public enum DiseaseProcessType {
     /**
      * A manually triggered process, using only gold standard data.
      */
-    MANUAL_GOLD_STANDARD
+    MANUAL_GOLD_STANDARD;
+
+    public boolean isAutomatic() {
+        return this == DiseaseProcessType.AUTOMATIC;
+    }
+
+    public boolean isGoldStandard() {
+        return this == DiseaseProcessType.MANUAL_GOLD_STANDARD;
+    }
 }
