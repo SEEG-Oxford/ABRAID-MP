@@ -7,6 +7,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseProcessType;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.extent.DiseaseExtentGenerator;
 
 import java.util.List;
 
@@ -118,7 +119,7 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
     private void generateDiseaseExtent(DiseaseGroup diseaseGroup, DiseaseProcessType processType) {
         DateTime minimumOccurrenceDate = getDateOfEarliestOccurrenceForExtentGeneration(diseaseGroup, processType);
         diseaseExtentGenerator.
-                generateDiseaseExtent(diseaseGroup, minimumOccurrenceDate, processType.isGoldStandard());
+        generateDiseaseExtent(diseaseGroup, minimumOccurrenceDate, processType);
     }
 
     /**

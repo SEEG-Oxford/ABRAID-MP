@@ -9,6 +9,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseProcessType;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.extent.DiseaseExtentGenerator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -75,7 +76,7 @@ public class ModelRunWorkflowServiceTest {
         verify(weightingsCalculator, never()).updateDiseaseOccurrenceExpertWeightings(anyInt());
         verify(weightingsCalculator, never()).updateExpertsWeightings();
         verify(reviewManager, never()).updateDiseaseOccurrenceStatus(anyInt(), anyBoolean());
-        verify(diseaseExtentGenerator, never()).generateDiseaseExtent(any(DiseaseGroup.class), any(DateTime.class), anyBoolean());
+        verify(diseaseExtentGenerator, never()).generateDiseaseExtent(any(DiseaseGroup.class), any(DateTime.class), any(DiseaseProcessType.class));
         verify(machineWeightingPredictor, never()).train(anyInt(), anyListOf(DiseaseOccurrence.class));
         //// Request run
         verify(modelRunRequester).requestModelRun(eq(diseaseGroupId), same(occurrences), isNull(DateTime.class), isNull(DateTime.class));
@@ -109,7 +110,7 @@ public class ModelRunWorkflowServiceTest {
         verify(weightingsCalculator).updateDiseaseOccurrenceExpertWeightings(eq(diseaseGroupId));
         verify(weightingsCalculator).updateExpertsWeightings();
         verify(reviewManager).updateDiseaseOccurrenceStatus(eq(diseaseGroupId), eq(false));
-        verify(diseaseExtentGenerator).generateDiseaseExtent(eq(diseaseGroup), isNull(DateTime.class), eq(false));
+        verify(diseaseExtentGenerator).generateDiseaseExtent(eq(diseaseGroup), isNull(DateTime.class), eq(DiseaseProcessType.MANUAL));
         verify(machineWeightingPredictor).train(eq(diseaseGroupId), same(occurrencesForTrainingPredictor));
         //// Request run
         verify(modelRunRequester).requestModelRun(eq(diseaseGroupId), same(occurrences), eq(batchStartDate), eq(batchEndDate));
@@ -141,7 +142,7 @@ public class ModelRunWorkflowServiceTest {
         verify(weightingsCalculator).updateDiseaseOccurrenceExpertWeightings(eq(diseaseGroupId));
         verify(weightingsCalculator).updateExpertsWeightings();
         verify(reviewManager).updateDiseaseOccurrenceStatus(eq(diseaseGroupId), eq(false));
-        verify(diseaseExtentGenerator).generateDiseaseExtent(eq(diseaseGroup), isNull(DateTime.class), eq(true));
+        verify(diseaseExtentGenerator).generateDiseaseExtent(eq(diseaseGroup), isNull(DateTime.class), eq(DiseaseProcessType.MANUAL_GOLD_STANDARD));
         verify(machineWeightingPredictor).train(eq(diseaseGroupId), same(occurrencesForTrainingPredictor));
         //// Request run
         verify(modelRunRequester).requestModelRun(eq(diseaseGroupId), same(occurrences), isNull(DateTime.class), isNull(DateTime.class));
@@ -171,7 +172,7 @@ public class ModelRunWorkflowServiceTest {
         modelRunWorkflowService.generateDiseaseExtent(diseaseGroupId, DiseaseProcessType.MANUAL);
 
         // Assert
-        verify(diseaseExtentGenerator).generateDiseaseExtent(eq(diseaseGroup), eq((DateTime) null), eq(false));
+        verify(diseaseExtentGenerator).generateDiseaseExtent(eq(diseaseGroup), eq((DateTime) null), eq(DiseaseProcessType.MANUAL));
         verify(modelRunOccurrencesSelector, never()).selectOccurrencesForModelRun(anyInt(), anyBoolean());
 
     }
@@ -191,7 +192,7 @@ public class ModelRunWorkflowServiceTest {
         modelRunWorkflowService.generateDiseaseExtent(diseaseGroupId, DiseaseProcessType.AUTOMATIC);
 
         // Assert
-        verify(diseaseExtentGenerator).generateDiseaseExtent(eq(diseaseGroup), same(minimumOccurrenceDate), eq(false));
+        verify(diseaseExtentGenerator).generateDiseaseExtent(eq(diseaseGroup), same(minimumOccurrenceDate), eq(DiseaseProcessType.AUTOMATIC));
     }
 
     @Test
@@ -205,7 +206,7 @@ public class ModelRunWorkflowServiceTest {
         modelRunWorkflowService.generateDiseaseExtent(diseaseGroupId, DiseaseProcessType.MANUAL_GOLD_STANDARD);
 
         // Assert
-        verify(diseaseExtentGenerator).generateDiseaseExtent(eq(diseaseGroup), eq((DateTime) null), eq(true));
+        verify(diseaseExtentGenerator).generateDiseaseExtent(eq(diseaseGroup), eq((DateTime) null), eq(DiseaseProcessType.MANUAL_GOLD_STANDARD));
     }
 
     private List<DiseaseOccurrence> createListWithDate(DateTime minimumOccurrenceDate) {
