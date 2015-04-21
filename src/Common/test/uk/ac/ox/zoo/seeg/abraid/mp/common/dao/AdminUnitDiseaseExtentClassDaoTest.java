@@ -32,6 +32,18 @@ public class AdminUnitDiseaseExtentClassDaoTest extends AbstractCommonSpringInte
     private DiseaseGroupDao diseaseGroupDao;
 
     @Test
+    public void getLatestChangeDateForDiseaseExtentClassByDiseaseGroupId() {
+        // Arrange
+        Integer diseaseGroupId = 87;
+
+        // Act
+        DateTime result = adminUnitDiseaseExtentClassDao.getLatestChangeDateForDiseaseExtentClassByDiseaseGroupId(diseaseGroupId);
+
+        // Assert
+        assertThat(result).isEqualTo(new DateTime("2014-06-10T17:45:25"));
+    }
+
+    @Test
     public void globalAdminUnitDiseaseExtentClassHasNullTropicalAdminUnit() {
         // Arrange - NB. Disease Group 22 in DB is a GLOBAL admin unit
         Integer diseaseGroupId = 22;

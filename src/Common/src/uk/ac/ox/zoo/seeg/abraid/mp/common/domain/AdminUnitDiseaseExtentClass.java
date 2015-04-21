@@ -22,6 +22,12 @@ import java.util.Collection;
                 query = "from AdminUnitDiseaseExtentClass a " +
                         "inner join fetch a.adminUnitTropical " +
                         "where a.diseaseGroup.id=:diseaseGroupId"
+        ),
+        @NamedQuery(
+                name = "getLatestChangeDateForDiseaseExtentClassByDiseaseGroupId",
+                query = "select max(a.classChangedDate) " +
+                        "from AdminUnitDiseaseExtentClass a " +
+                        "where a.diseaseGroup.id=:diseaseGroupId"
         )
 })
 @Entity

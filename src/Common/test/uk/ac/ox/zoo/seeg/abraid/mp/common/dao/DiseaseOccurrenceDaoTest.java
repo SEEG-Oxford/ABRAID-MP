@@ -668,7 +668,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     }
 
     @Test
-         public void getOccurrencesForBatching() {
+    public void getOccurrencesForBatching() {
         // Arrange - the first 3 of these occurrences are before or on the batch end date, the others are after.
         // There is also an occurrence (275714) with status DISCARDED_FAILED_QC which is before the batch end date.
         // One of the 3 occurrences is gold standard.

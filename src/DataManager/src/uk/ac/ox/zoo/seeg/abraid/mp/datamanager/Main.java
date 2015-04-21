@@ -39,6 +39,7 @@ public class Main {
         this.dataAcquisitionManager = dataAcquisitionManager;
         this.diseaseProcessManager = diseaseProcessManager;
         this.applicationVersion = applicationVersion;
+
     }
 
     /**
@@ -146,7 +147,6 @@ public class Main {
             // Ignore the exception, because it is thrown to roll back the transaction per disease group if the
             // process step fails. Logging has already been done by this point.
         }
-
     }
 
     /**

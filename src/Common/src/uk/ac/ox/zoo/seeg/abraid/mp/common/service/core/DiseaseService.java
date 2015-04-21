@@ -155,6 +155,13 @@ public interface DiseaseService {
     List<AdminUnitDiseaseExtentClass> getDiseaseExtentByDiseaseGroupId(Integer diseaseGroupId);
 
     /**
+     * Gets the latest disease extent class change date for the specified disease group.
+     * @param diseaseGroupId The ID of the disease group.
+     * @return The latest change date.
+     */
+    DateTime getLatestChangeDateForDiseaseExtentClassByDiseaseGroupId(Integer diseaseGroupId);
+
+    /**
      * Gets a disease extent class by name.
      * @param name The disease extent class name.
      * @return The corresponding disease extent class, or null if it does not exist.

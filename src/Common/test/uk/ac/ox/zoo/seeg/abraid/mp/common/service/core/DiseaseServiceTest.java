@@ -392,6 +392,23 @@ public class DiseaseServiceTest {
     }
 
     @Test
+    public void getLatestChangeDateForDiseaseExtentClassByDiseaseGroupId() {
+        // Arrange
+        int diseaseGroupId = 10;
+        DateTime expectedTime = DateTime.now().minusDays(3);
+
+        when(adminUnitDiseaseExtentClassDao.getLatestChangeDateForDiseaseExtentClassByDiseaseGroupId(diseaseGroupId))
+                .thenReturn(expectedTime);
+
+        // Act
+        DateTime result =
+                diseaseService.getLatestChangeDateForDiseaseExtentClassByDiseaseGroupId(diseaseGroupId);
+
+        // Assert
+        assertThat(result).isSameAs(expectedTime);
+    }
+
+    @Test
     public void getDiseaseExtentByDiseaseGroupIdReturnsTropicalExtentForUnspecifiedDisease() {
         // Arrange
         int diseaseGroupId = 10;
