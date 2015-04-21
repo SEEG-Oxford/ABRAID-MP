@@ -8,6 +8,8 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.*;
 
+import static ch.lambdaj.Lambda.extract;
+import static ch.lambdaj.Lambda.on;
 import static java.util.Map.Entry;
 
 /**
@@ -25,6 +27,7 @@ public class DiseaseServiceImpl implements DiseaseService {
     private ValidatorDiseaseGroupDao validatorDiseaseGroupDao;
     private AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao;
 
+    private ModelRunDao modelRunDao;
     private DiseaseExtentClassDao diseaseExtentClassDao;
     private int maxDaysOnValidator;
     private int daysBetweenModelRuns;
@@ -37,6 +40,7 @@ public class DiseaseServiceImpl implements DiseaseService {
                               HealthMapSubDiseaseDao healthMapSubDiseaseDao,
                               ValidatorDiseaseGroupDao validatorDiseaseGroupDao,
                               AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao,
+                              ModelRunDao modelRunDao,
                               DiseaseExtentClassDao diseaseExtentClassDao,
                               int maxDaysOnValidator,
                               int daysBetweenModelRuns,
@@ -48,6 +52,7 @@ public class DiseaseServiceImpl implements DiseaseService {
         this.healthMapSubDiseaseDao = healthMapSubDiseaseDao;
         this.validatorDiseaseGroupDao = validatorDiseaseGroupDao;
         this.adminUnitDiseaseExtentClassDao = adminUnitDiseaseExtentClassDao;
+        this.modelRunDao = modelRunDao;
         this.diseaseExtentClassDao = diseaseExtentClassDao;
         this.maxDaysOnValidator = maxDaysOnValidator;
         this.daysBetweenModelRuns = daysBetweenModelRuns;
@@ -205,7 +210,7 @@ public class DiseaseServiceImpl implements DiseaseService {
             Integer diseaseGroupId, Double minimumValidationWeighting, DateTime minimumOccurrenceDate,
             boolean onlyUseGoldStandardOccurrences) {
         return diseaseOccurrenceDao.getDiseaseOccurrencesForDiseaseExtent(
-            diseaseGroupId, minimumValidationWeighting, minimumOccurrenceDate, onlyUseGoldStandardOccurrences);
+                diseaseGroupId, minimumValidationWeighting, minimumOccurrenceDate, onlyUseGoldStandardOccurrences);
     }
 
     /**
@@ -246,15 +251,39 @@ public class DiseaseServiceImpl implements DiseaseService {
 
     /**
      * Gets the number of distinct locations from the new disease occurrences for the specified disease group.
-     * @param diseaseGroupId The id of the disease group.
-     * @param startDate Occurrences must be newer than this date.
-     * @param endDate Occurrences must be older than this date, to ensure they have had ample time in validation.
+     * @param diseaseGroup The disease group.
+     * @param cutoffDateForOccurrences Occurrences must be newer than this date
+     *                  (or N days prior, if they went through manual validation).
      * @return The number of locations.
      */
     @Override
-    public long getDistinctLocationsCountForTriggeringModelRun(int diseaseGroupId,
-                                                               DateTime startDate, DateTime endDate) {
-        return diseaseOccurrenceDao.getDistinctLocationsCountForTriggeringModelRun(diseaseGroupId, startDate, endDate);
+    public long getDistinctLocationsCountForTriggeringModelRun(
+            DiseaseGroup diseaseGroup, DateTime cutoffDateForOccurrences) {
+        diseaseGroup.getId();
+        Double minDistanceFromDiseaseExtent = diseaseGroup.getMinDistanceFromDiseaseExtent();
+        Double maxEnvironmentalSuitability = diseaseGroup.getMinEnvironmentalSuitability(); // Wrongly named on DG
+        Set<Integer> locationIdsUsedInLastModelRun = getLocationIdsFromLastModelRun(diseaseGroup);
+
+        return diseaseOccurrenceDao.getDistinctLocationsCountForTriggeringModelRun(diseaseGroup.getId(),
+                locationIdsUsedInLastModelRun,
+                cutoffDateForOccurrences,
+                subtractMaxDaysOnValidator(cutoffDateForOccurrences).toDateTimeAtStartOfDay(),
+                maxEnvironmentalSuitability,
+                minDistanceFromDiseaseExtent);
+    }
+
+    private HashSet<Integer> getLocationIdsFromLastModelRun(DiseaseGroup diseaseGroup) {
+        ModelRun lastModelRun = modelRunDao.getLastRequestedModelRun(diseaseGroup.getId());
+        if (lastModelRun == null) {
+            return new HashSet<>();
+        } else {
+            return new HashSet<>(
+                // Not that if the last model run was non-automatic then the input occurrences will be empty (not
+                // stored). This means that for the first auto model run the trigger may fire slightly early. CM says
+                // that this is the correct behavior.
+                extract(lastModelRun.getInputDiseaseOccurrences(), on(DiseaseOccurrence.class).getLocation().getId())
+            );
+        }
     }
 
     /**

@@ -58,13 +58,13 @@ import javax.persistence.Table;
                         "and d.finalWeighting is null "
         ),
         @NamedQuery(
-                name = "getDistinctLocationsCountForTriggeringModelRun",
-                query = "select count(distinct location) from DiseaseOccurrence " +
-                        "where diseaseGroup.id=:diseaseGroupId " +
-                        "and status in ('READY', 'IN_REVIEW') " +
-                        "and createdDate between :startDate and :endDate " +
-                        "and environmentalSuitability >= diseaseGroup.minEnvironmentalSuitability " +
-                        "and distanceFromDiseaseExtent >= diseaseGroup.minDistanceFromDiseaseExtent"
+                name = "getDistinctLocationsCountForTriggeringModelRunWithoutLastModelRunClause",
+                query = DiseaseOccurrence.NEW_LOCATION_COUNT_QUERY
+        ),
+        @NamedQuery(
+                name = "getDistinctLocationsCountForTriggeringModelRunWithLastModelRunClause",
+                query = DiseaseOccurrence.NEW_LOCATION_COUNT_QUERY +
+                        DiseaseOccurrence.NEW_LOCATION_COUNT_QUERY_NOT_IN_LAST_RUN_CLAUSE
         ),
         @NamedQuery(
                 name = "getDiseaseOccurrenceStatistics",
@@ -136,6 +136,36 @@ public class DiseaseOccurrence {
      * The final weighting assigned to a "gold standard" disease occurrence.
      */
     public static final double GOLD_STANDARD_FINAL_WEIGHTING = 1.0;
+
+    /**
+     * An HQL fragment used to count the new location for model triggering.
+     */
+    public static final String NEW_LOCATION_COUNT_QUERY =
+            "select count(distinct d.location.id) " +
+            "from DiseaseOccurrence as d " +
+            "where d.diseaseGroup.id=:diseaseGroupId " +
+            // Model eligible locations
+            "and d.location.isModelEligible is TRUE " +
+            // Linked to occurrences that were not available for use in the last model run
+            "and d.status='READY' " +
+            "and (" +
+                "(d.expertWeighting is NULL and createdDate > :cutoffForAutomaticallyValidated) " +
+                "or " +
+                "(d.expertWeighting is not NULL and createdDate > :cutoffForManuallyValidated) " +
+            ") " +
+            // Which are in areas of interest (new places)
+            "and (" +
+                "environmentalSuitability <= :maxEnvironmentalSuitability " +
+                "or " +
+                "distanceFromDiseaseExtent >= :minDistanceFromDiseaseExtent" +
+            ")";
+
+    /**
+     * An HQL fragment used to count the new location for model triggering.
+     * "That were not used in the last model run"
+     */
+    public static final String NEW_LOCATION_COUNT_QUERY_NOT_IN_LAST_RUN_CLAUSE =
+        " and d.location.id not in :locationsFromLastModelRun";
 
     // The primary key.
     @Id

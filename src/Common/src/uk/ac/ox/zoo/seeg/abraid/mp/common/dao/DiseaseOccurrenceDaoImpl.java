@@ -8,6 +8,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 /**
  * The DiseaseOccurrence entity's Data Access Object.
@@ -205,19 +206,44 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
 
     /**
      * Gets the number of distinct locations from the new disease occurrences for the specified disease group.
-     * A "new" occurrence has status READY or IN_REVIEW, and a suitable created_date.
-     * Occurrences must additionally satisfy that environmental suitability and distance from disease extent values are
-     * greater than minimum specified on the disease group.
+     * A "new" occurrence has status READY, and a suitable created_date.
+     * Occurrences must additionally satisfy one of:
+     * + The distance from disease extent values is greater than minimum specified on the disease group (a new area).
+     * + The environmental suitability values is lest than max specified on the disease group (a new area).
      * @param diseaseGroupId The ID of the disease group.
-     * @param startDate Occurrences must be newer than this date.
-     * @param endDate Occurrences must be older than this date, to ensure they have had ample time in validation.
+     * @param locationsFromLastModelRun A list of location ids used in the last model run.
+     * @param cutoffForAutomaticallyValidated Automatically validated occurrences must be newer than this date.
+     * @param cutoffForManuallyValidated Manually validated occurrences must be newer than this date.
+     * @param maxEnvironmentalSuitability The max environmental suitability of occurrences to consider.
+     * @param minDistanceFromDiseaseExtent The minimum distance from disease extent of occurrences to consider.
      * @return The number of locations.
      */
     @Override
     public long getDistinctLocationsCountForTriggeringModelRun(Integer diseaseGroupId,
-                                                               DateTime startDate, DateTime endDate) {
-        Query query = getParameterisedNamedQuery("getDistinctLocationsCountForTriggeringModelRun",
-                "diseaseGroupId", diseaseGroupId, "startDate", startDate, "endDate", endDate);
+                                                               Set<Integer> locationsFromLastModelRun,
+                                                               DateTime cutoffForAutomaticallyValidated,
+                                                               DateTime cutoffForManuallyValidated,
+                                                               Double maxEnvironmentalSuitability,
+                                                               Double minDistanceFromDiseaseExtent) {
+        Query query;
+        if (locationsFromLastModelRun.isEmpty()) {
+            query = getParameterisedNamedQuery(
+                    "getDistinctLocationsCountForTriggeringModelRunWithoutLastModelRunClause",
+                    "diseaseGroupId", diseaseGroupId,
+                    "cutoffForAutomaticallyValidated", cutoffForAutomaticallyValidated,
+                    "cutoffForManuallyValidated", cutoffForManuallyValidated,
+                    "maxEnvironmentalSuitability", maxEnvironmentalSuitability,
+                    "minDistanceFromDiseaseExtent", minDistanceFromDiseaseExtent);
+        } else {
+            query = getParameterisedNamedQuery(
+                    "getDistinctLocationsCountForTriggeringModelRunWithLastModelRunClause",
+                    "diseaseGroupId", diseaseGroupId,
+                    "cutoffForAutomaticallyValidated", cutoffForAutomaticallyValidated,
+                    "cutoffForManuallyValidated", cutoffForManuallyValidated,
+                    "maxEnvironmentalSuitability", maxEnvironmentalSuitability,
+                    "minDistanceFromDiseaseExtent", minDistanceFromDiseaseExtent,
+                    "locationsFromLastModelRun", locationsFromLastModelRun);
+        }
         return (long) query.uniqueResult();
     }
 

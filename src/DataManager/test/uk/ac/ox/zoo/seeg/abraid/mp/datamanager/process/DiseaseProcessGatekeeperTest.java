@@ -12,7 +12,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -47,99 +46,219 @@ public class DiseaseProcessGatekeeperTest {
         });
 
         // The default disease group for dengue has automatic model runs set to true
-        diseaseGroup = new DiseaseGroup(DISEASE_GROUP_ID);
-        diseaseGroup.setName("Dengue");
-        diseaseGroup.setAutomaticModelRunsStartDate(DateTime.now());
-
-        DateTimeUtils.setCurrentMillisFixed(1400148490000L);
+        diseaseGroup = mock(DiseaseGroup.class);
+        when(diseaseGroup.getId()).thenReturn(DISEASE_GROUP_ID);
+        when(diseaseGroup.getName()).thenReturn("Dengue");
+        when(diseaseGroup.getAutomaticModelRunsStartDate()).thenReturn(DateTime.now());
+        when(diseaseGroup.getMinDistanceFromDiseaseExtent()).thenReturn(0.0);
+        when(diseaseGroup.getMinEnvironmentalSuitability()).thenReturn(0.0);
+        when(diseaseService.getDiseaseGroupById(DISEASE_GROUP_ID)).thenReturn(diseaseGroup);
+        DateTimeUtils.setCurrentMillisFixed(1429543707000L);
     }
 
     @Test
-    public void modelShouldRunWhenLastModelRunPrepDateIsNullAndNewLocationsIsOverThreshold() throws Exception {
-        expectModelShouldRun(null, true);
+    public void modelShouldRunWhenLastModelRunPrepDateIsNull() throws Exception {
+        expectModelShouldRun(null, false, true);
+        expectModelShouldRun(null, false, false);
+        expectModelShouldRun(null, false, null);
+        expectModelShouldRun(null, true, true);
+        expectModelShouldRun(null, true, false);
+        expectModelShouldRun(null, true, null);
+        expectModelShouldRun(null, null, true);
+        expectModelShouldRun(null, null, false);
+        expectModelShouldRun(null, null, null);
     }
 
     @Test
-    public void modelShouldRunWhenLastModelRunPrepDateIsNullAndNewLocationsIsUnderThreshold() throws Exception {
-        expectModelShouldRun(null, false);
+    public void modelShouldRunWhenEnoughDaysHaveElapsedSinceLastModelRunPrepDate() throws Exception {
+        expectModelShouldRun(true, false, true);
+        expectModelShouldRun(true, false, false);
+        expectModelShouldRun(true, false, null);
+        expectModelShouldRun(true, true, true);
+        expectModelShouldRun(true, true, false);
+        expectModelShouldRun(true, true, null);
+        expectModelShouldRun(true, null, true);
+        expectModelShouldRun(true, null, false);
+        expectModelShouldRun(true, null, null);
+    }
+
+
+    @Test
+    public void modelShouldRunWhenNewLocationsIsOverThreshold() throws Exception {
+        expectModelShouldRun(true, false, true);
+        expectModelShouldRun(false, false, true);
+        expectModelShouldRun(null, false, true);
+        expectModelShouldRun(true, true, true);
+        expectModelShouldRun(false, true, true);
+        expectModelShouldRun(null, true, true);
+        expectModelShouldRun(true, null, true);
+        expectModelShouldRun(false, null, true);
+        expectModelShouldRun(null, null, true);
     }
 
     @Test
-    public void modelShouldRunWhenLastModelRunPrepDateIsNullAndThresholdIsNull() throws Exception {
-        expectModelShouldRun(null, null);
+    public void modelShouldRunWhenExtentHasChanged() throws Exception {
+        expectModelShouldRun(false, true, true);
+        expectModelShouldRun(true, true, false);
+        expectModelShouldRun(false, true, false);
+        expectModelShouldRun(null, true, false);
+        expectModelShouldRun(true, true, true);
+        expectModelShouldRun(false, true, true);
+        expectModelShouldRun(null, true, true);
+        expectModelShouldRun(true, true, null);
+        expectModelShouldRun(false, true, null);
+        expectModelShouldRun(null, true, null);
     }
 
     @Test
-    public void modelShouldRunWhenEnoughDaysHaveElapsedAndNewLocationsIsOverThreshold() throws Exception {
-        expectModelShouldRun(true, true);
+    public void modelShouldNotRunWhenNoConditionsMet() throws Exception {
+        expectModelShouldNotToRun(false, false, false);
+        expectModelShouldNotToRun(false, null, false);
+        expectModelShouldNotToRun(false, false, null);
+        expectModelShouldNotToRun(false, null, null);
     }
 
     @Test
-    public void modelShouldRunWhenEnoughDaysHaveElapsedAndNewLocationsIsUnderThreshold() throws Exception {
-        expectModelShouldRun(true, false);
+    public void modelShouldNotRunWhenMinDistanceFromDiseaseExtentNotDefined() throws Exception {
+        when(diseaseGroup.getMinDistanceFromDiseaseExtent()).thenReturn(null);
+        expectModelShouldNotToRun(false, false, true);
     }
 
     @Test
-    public void modelShouldRunWhenEnoughDaysHaveElapsedAndThresholdIsNull() throws Exception {
-        expectModelShouldRun(true, null);
+    public void modelShouldNotRunWhenMinEnvironmentalSuitabilityNotDefined() throws Exception {
+        when(diseaseGroup.getMinEnvironmentalSuitability()).thenReturn(null);
+        expectModelShouldNotToRun(false, false, true);
     }
 
     @Test
-    public void modelShouldRunWhenEnoughDaysHaveNotElapsedAndNewLocationsIsOverThreshold() throws Exception {
-        validationParametersThresholdsDefined();
-        expectModelShouldRun(false, true);
+    public void extentShouldRunWhenLastExtentGenerationDateIsNull() throws Exception {
+        expectExtentShouldRun(null, false, true);
+        expectExtentShouldRun(null, false, false);
+        expectExtentShouldRun(null, false, null);
+        expectExtentShouldRun(null, true, true);
+        expectExtentShouldRun(null, true, false);
+        expectExtentShouldRun(null, true, null);
+        expectExtentShouldRun(null, null, true);
+        expectExtentShouldRun(null, null, false);
+        expectExtentShouldRun(null, null, null);
     }
 
     @Test
-    public void modelShouldNotRunWhenEnoughDaysHaveNotPassedAndNewLocationsIsUnderThreshold() throws Exception {
-        validationParametersThresholdsDefined();
-        expectModelShouldNotToRun(false, false);
+    public void extentShouldRunWhenEnoughDaysHaveElapsedSinceLastExtentGenerationDate() throws Exception {
+        expectExtentShouldRun(true, false, true);
+        expectExtentShouldRun(true, false, false);
+        expectExtentShouldRun(true, false, null);
+        expectExtentShouldRun(true, true, true);
+        expectExtentShouldRun(true, true, false);
+        expectExtentShouldRun(true, true, null);
+        expectExtentShouldRun(true, null, true);
+        expectExtentShouldRun(true, null, false);
+        expectExtentShouldRun(true, null, null);
+    }
+
+
+    @Test
+    public void extentShouldRunWhenNewLocationsIsOverThreshold() throws Exception {
+        expectExtentShouldRun(true, false, true);
+        expectExtentShouldRun(false, false, true);
+        expectExtentShouldRun(null, false, true);
+        expectExtentShouldRun(true, true, true);
+        expectExtentShouldRun(false, true, true);
+        expectExtentShouldRun(null, true, true);
+        expectExtentShouldRun(true, null, true);
+        expectExtentShouldRun(false, null, true);
+        expectExtentShouldRun(null, null, true);
     }
 
     @Test
-    public void modelShouldNotRunWhenEnoughDaysHaveNotPassedAndLocationsThresholdIsNull() throws Exception {
-        validationParametersThresholdsDefined();
-        expectModelShouldNotToRun(false, null);
-    }
-
-    private void validationParametersThresholdsDefined() {
-        diseaseGroup.setMinDistanceFromDiseaseExtent(0.0);
-        diseaseGroup.setMinEnvironmentalSuitability(0.0);
+    public void extentShouldNotRunWhenNoConditionsMet() throws Exception {
+        expectExtentShouldNotToRun(false, false, false);
+        expectExtentShouldNotToRun(false, null, false);
+        expectExtentShouldNotToRun(false, false, null);
+        expectExtentShouldNotToRun(false, null, null);
+        // Extent class changes is not a condition for extent generation
+        expectExtentShouldNotToRun(false, true, false);
+        expectExtentShouldNotToRun(false, true, null);
     }
 
     @Test
-    public void modelShouldNotRunWhenEnoughDaysHaveNotElapsedAndMinEnvSuitabilityOrMinDistanceFromExtentNotDefined() throws Exception {
-        expectModelShouldNotToRun(false, true);
+    public void extentShouldNotRunWhenMinDistanceFromDiseaseExtentNotDefined() throws Exception {
+        when(diseaseGroup.getMinDistanceFromDiseaseExtent()).thenReturn(null);
+        expectExtentShouldNotToRun(false, false, true);
     }
 
-    private void expectModelShouldRun(Boolean weekHasElapsed, Boolean newLocationCountOverThreshold) {
+    @Test
+    public void extentShouldNotRunWhenMinEnvironmentalSuitabilityNotDefined() throws Exception {
+        when(diseaseGroup.getMinEnvironmentalSuitability()).thenReturn(null);
+        expectExtentShouldNotToRun(false, false, true);
+    }
+
+    private void expectModelShouldRun(Boolean weekHasElapsed, Boolean hasExtentChanged, Boolean newLocationCountOverThreshold) {
         // Arrange and Act
-        mockGetDiseaseGroupById();
-        boolean result = arrangeAndAct(weekHasElapsed, newLocationCountOverThreshold);
+        boolean result = arrangeAndAct(weekHasElapsed, hasExtentChanged, newLocationCountOverThreshold);
 
         // Assert
         assertThat(result).isTrue();
     }
 
-    private void expectModelShouldNotToRun(Boolean weekHasElapsed, Boolean newLocationCountOverThreshold) {
+    private void expectModelShouldNotToRun(Boolean weekHasElapsed, Boolean hasExtentChanged, Boolean newLocationCountOverThreshold) {
         // Arrange and Act
-        mockGetDiseaseGroupById();
-        boolean result = arrangeAndAct(weekHasElapsed, newLocationCountOverThreshold);
+        boolean result = arrangeAndAct(weekHasElapsed, hasExtentChanged, newLocationCountOverThreshold);
 
         // Assert
         assertThat(result).isFalse();
     }
 
-    private boolean arrangeAndAct(Boolean weekHasElapsed, Boolean newLocationCountOverThreshold) {
+    private void expectExtentShouldRun(Boolean weekHasElapsed, Boolean hasExtentChanged, Boolean newLocationCountOverThreshold) {
+        // Arrange and Act
+        boolean result = arrangeAndActExtent(weekHasElapsed, hasExtentChanged, newLocationCountOverThreshold);
+
+        // Assert
+        assertThat(result).isTrue();
+    }
+
+    private void expectExtentShouldNotToRun(Boolean weekHasElapsed, Boolean hasExtentChanged, Boolean newLocationCountOverThreshold) {
+        // Arrange and Act
+        boolean result = arrangeAndActExtent(weekHasElapsed, hasExtentChanged, newLocationCountOverThreshold);
+
+        // Assert
+        assertThat(result).isFalse();
+    }
+
+    private boolean arrangeAndAct(Boolean weekHasElapsed, Boolean hasExtentChanged, Boolean newLocationCountOverThreshold) {
         // Arrange
         long newLocationsCount = 10;
         setLastModelRunPrepDate(weekHasElapsed);
-        when(diseaseService.getDistinctLocationsCountForTriggeringModelRun(
-                eq(DISEASE_GROUP_ID), any(DateTime.class), any(DateTime.class))).thenReturn(newLocationsCount);
+        setLastClassChangeDate(weekHasElapsed, hasExtentChanged);
+        when(diseaseService.getDistinctLocationsCountForTriggeringModelRun(diseaseGroup, diseaseGroup.getLastModelRunPrepDate()))
+                .thenReturn(newLocationsCount);
         setMinNewLocations(newLocationsCount, newLocationCountOverThreshold);
 
         // Act
         return diseaseProcessGatekeeper.modelShouldRun(DISEASE_GROUP_ID);
+    }
+
+    private boolean arrangeAndActExtent(Boolean weekHasElapsed, Boolean hasExtentChanged, Boolean newLocationCountOverThreshold) {
+        // Arrange
+        long newLocationsCount = 10;
+        setLastExtentGenerationDate(weekHasElapsed);
+        setLastClassChangeDate(weekHasElapsed, hasExtentChanged);
+        when(diseaseService.getDistinctLocationsCountForTriggeringModelRun(diseaseGroup, diseaseGroup.getLastModelRunPrepDate()))
+                .thenReturn(newLocationsCount);
+        setMinNewLocations(newLocationsCount, newLocationCountOverThreshold);
+
+        // Act
+        return diseaseProcessGatekeeper.extentShouldRun(DISEASE_GROUP_ID);
+    }
+
+    private void setLastClassChangeDate(Boolean weekHasElapsed, Boolean hasChanged) {
+        DateTime changeDate = null;
+        if (hasChanged != null && weekHasElapsed != null) {
+            int runDays = weekHasElapsed ? 7 : 1;
+            int changeDays = hasChanged ? runDays - 1 : runDays + 1;
+            changeDate = DateTime.now().minusDays(changeDays);
+        }
+        when(diseaseService.getLatestChangeDateForDiseaseExtentClassByDiseaseGroupId(DISEASE_GROUP_ID)).thenReturn(changeDate);
     }
 
     private void setLastModelRunPrepDate(Boolean weekHasElapsed) {
@@ -148,7 +267,16 @@ public class DiseaseProcessGatekeeperTest {
             int days = weekHasElapsed ? 7 : 1;
             lastModelRunPrepDate = DateTime.now().minusDays(days);
         }
-        diseaseGroup.setLastModelRunPrepDate(lastModelRunPrepDate);
+        when(diseaseGroup.getLastModelRunPrepDate()).thenReturn(lastModelRunPrepDate);
+    }
+
+    private void setLastExtentGenerationDate(Boolean weekHasElapsed) {
+        DateTime lastExtentGenerationDate = null;
+        if (weekHasElapsed != null) {
+            int days = weekHasElapsed ? 7 : 1;
+            lastExtentGenerationDate = DateTime.now().minusDays(days);
+        }
+        when(diseaseGroup.getLastExtentGenerationDate()).thenReturn(lastExtentGenerationDate);
     }
 
     private void setMinNewLocations(long newLocationsCount, Boolean newLocationCountOverThreshold) {
@@ -157,10 +285,6 @@ public class DiseaseProcessGatekeeperTest {
             long thresholdAdjustment = newLocationCountOverThreshold ? -1 : +1;
             minNewLocations = (int) (newLocationsCount + thresholdAdjustment);
         }
-        diseaseGroup.setMinNewLocationsTrigger(minNewLocations);
-    }
-
-    private void mockGetDiseaseGroupById() {
-        when(diseaseService.getDiseaseGroupById(DISEASE_GROUP_ID)).thenReturn(diseaseGroup);
+        when(diseaseGroup.getMinNewLocationsTrigger()).thenReturn(minNewLocations);
     }
 }

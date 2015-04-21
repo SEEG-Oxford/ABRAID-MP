@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import static ch.lambdaj.Lambda.*;
@@ -50,6 +52,17 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
 
     private static Feed testFeed;
     private static Feed goldStandardFeed;
+    private static String insertOccurrenceQuery = "INSERT INTO disease_occurrence (disease_group_id, alert_id, location_id, status, expert_weighting, distance_from_extent, env_suitability, created_date, occurrence_date) VALUES (1, 212855, %s, '%s', %s, %s, %s, '%s', '" + LocalDateTime.now().toString() + "')";
+    private int modelIneligibleLocation1 = 6;
+    private int modelIneligibleLocation2 = 40;
+    private int modelEligibleCountryLocation = 12;
+    private int modelEligibleLocation1 = 133;
+    private int modelEligibleLocation2 = 5447;
+    private int modelEligibleLocation3 = 8648;
+    private int modelEligibleLocation4 = 14993;
+    private int modelEligibleLocation5 = 20635;
+    private int excludedButEligibleLocation1 = 2872;
+    private int excludedButEligibleLocation2 = 9394;
 
     @Before
     public void setUp() {
@@ -581,35 +594,142 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     }
 
     @Test
-    public void getDiseaseOccurrencesForTriggeringModelRunReturnsExpectedList() {
+    public void getDistinctLocationsCountForTriggeringModelRun() {
         // Arrange
-        int diseaseGroupId = 87;
-        int expectedCount = 3;
-        setUpParameterValues(diseaseGroupId, expectedCount);
+        LocalDateTime now = LocalDateTime.now();
 
-        // Act
-        long count = diseaseOccurrenceDao.getDistinctLocationsCountForTriggeringModelRun(
-                diseaseGroupId, DateTime.now().minusDays(1), DateTime.now().plusDays(1));
+        insertOccurrence(modelEligibleLocation1, "READY", null, 51.0, 0.4, now.minusHours(1).toString()); // yes
+        insertOccurrence(modelEligibleLocation2, "IN_REVIEW", null, 51.0, 0.4, now.minusHours(1).toString()); // no
+        insertOccurrence(modelEligibleLocation2, "IN_REVIEW", null, 51.0, 0.4, now.minusHours(1).toString()); // no
+        insertOccurrence(modelEligibleLocation3, "READY", null, 51.0, 0.4, now.minusHours(1).toString()); // yes
+        insertOccurrence(modelEligibleLocation4, "READY", null, 49.0, 0.6, now.minusHours(1).toString()); // no
+        insertOccurrence(modelEligibleLocation5, "READY", null, 51.0, 0.4, now.minusDays(2).toString()); // no
+        insertOccurrence(modelEligibleCountryLocation, "READY", null, 51.0, 0.6, now.minusHours(1).toString()); // yes
+        insertOccurrence(modelIneligibleLocation1, "READY", null, 51.0, 0.4, now.minusHours(1).toString()); // no
+        insertOccurrence(excludedButEligibleLocation2, "READY", null, 51.0, 0.4, now.minusHours(1).toString()); // no/yes
 
-        // Assert
-        assertThat(count).isEqualTo(expectedCount);
+        // Act/Assert
+        getDistinctLocationsCountForTriggeringModelRunActAssert(now, 3, 4);
     }
 
-    private void setUpParameterValues(int diseaseGroupId, int expectedCount) {
-        DiseaseGroup diseaseGroup = diseaseGroupDao.getById(diseaseGroupId);
-        diseaseGroup.setMinEnvironmentalSuitability(0.5);
-        diseaseGroup.setMinDistanceFromDiseaseExtent(50.0);
-        diseaseGroupDao.save(diseaseGroup);
+    @Test
+    public void getDistinctLocationsCountForTriggeringModelRunExcludesNonUnique() {
+        // Arrange
+        LocalDateTime now = LocalDateTime.now();
 
-        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getByDiseaseGroupId(diseaseGroupId);
-        // In DiseaseOccurrenceValidationServiceImpl addValidationParametersWithChecks, ES and DFDE are never added to country points
-        occurrences.removeAll(select(occurrences, having(on(DiseaseOccurrence.class).getLocation().getPrecision(), equalTo(LocationPrecision.COUNTRY))));
-        for (int i = 0; i < expectedCount; i++) {
-            DiseaseOccurrence occurrence = occurrences.get(i);
-            occurrence.setEnvironmentalSuitability(0.8);
-            occurrence.setDistanceFromDiseaseExtent(100.0);
-            diseaseOccurrenceDao.save(occurrence);
-        }
+        insertOccurrence(modelEligibleLocation1, "READY", null, 51.0, 0.4, now.minusHours(1).toString()); // yes
+        insertOccurrence(modelEligibleLocation1, "READY", null, 51.0, 0.4, now.minusHours(1).toString()); // yes
+
+        // Act/Assert
+        getDistinctLocationsCountForTriggeringModelRunActAssert(now, 1, 1);
+    }
+
+    @Test
+    public void getDistinctLocationsCountForTriggeringModelRunExcludesBasedOnStatus() {
+        // Arrange
+        LocalDateTime now = LocalDateTime.now();
+
+        insertOccurrence(modelEligibleLocation1, "READY", null, 51.0, 0.4, now.minusHours(1).toString()); // yes
+        insertOccurrence(modelEligibleLocation2, "IN_REVIEW", null, 51.0, 0.4, now.minusHours(1).toString()); // no
+        insertOccurrence(modelEligibleLocation3, "IN_REVIEW", null, 51.0, 0.4, now.minusHours(1).toString()); // no
+
+        // Act/Assert
+        getDistinctLocationsCountForTriggeringModelRunActAssert(now, 1, 1);
+    }
+
+    @Test
+    public void getDistinctLocationsCountForTriggeringModelRunExcludesBasedOnLocationEligibility() {
+        // Arrange
+        LocalDateTime now = LocalDateTime.now();
+
+        insertOccurrence(modelEligibleLocation1, "READY", null, 51.0, 0.4, now.minusHours(1).toString()); // yes
+        insertOccurrence(modelIneligibleLocation1, "READY", null, 51.0, 0.4, now.minusHours(1).toString()); // no
+        insertOccurrence(modelIneligibleLocation2, "READY", null, 51.0, 0.4, now.minusHours(1).toString()); // no
+
+        // Act/Assert
+        getDistinctLocationsCountForTriggeringModelRunActAssert(now, 1, 1);
+    }
+
+    @Test
+         public void getDistinctLocationsCountForTriggeringModelRunExcludesBasedCreationDate() {
+        // Arrange
+        LocalDateTime now = LocalDateTime.now();
+
+        insertOccurrence(modelEligibleLocation1, "READY", null, 51.0, 0.4, now.minusDays(1).plusMillis(1).toString()); // yes
+        insertOccurrence(modelEligibleLocation2, "READY", null, 51.0, 0.4, now.minusDays(1).toString()); // no
+        insertOccurrence(modelEligibleLocation3, "READY", null, 51.0, 0.4, now.minusDays(1).toString()); // no
+
+        // Act/Assert
+        getDistinctLocationsCountForTriggeringModelRunActAssert(now, 1, 1);
+    }
+
+    @Test
+    public void getDistinctLocationsCountForTriggeringModelRunExcludesBasedCreationDateAccountingForValidatorTime() {
+        // Arrange
+        LocalDateTime now = LocalDateTime.now();
+
+        insertOccurrence(modelEligibleLocation1, "READY", 0.5, 51.0, 0.4, now.minusDays(8).plusMillis(1).toString()); // yes
+        insertOccurrence(modelEligibleLocation2, "READY", 0.5, 51.0, 0.4, now.minusDays(8).toString()); // no
+        insertOccurrence(modelEligibleLocation3, "READY", 0.5, 51.0, 0.4, now.minusDays(8).toString()); // no
+
+        // Act/Assert
+        getDistinctLocationsCountForTriggeringModelRunActAssert(now, 1, 1);
+    }
+
+    @Test
+    public void getDistinctLocationsCountForTriggeringModelRunExcludesBasedOnDistanceFromExtent() {
+        // Arrange
+        LocalDateTime now = LocalDateTime.now();
+
+        insertOccurrence(modelEligibleLocation1, "READY", null, 51.0, 0.6, now.minusHours(1).toString()); // yes
+        insertOccurrence(modelEligibleLocation2, "READY", null, 49.0, 0.6, now.minusHours(1).toString()); // no
+        insertOccurrence(modelEligibleLocation3, "READY", null, 49.0, 0.6, now.minusHours(1).toString()); // no
+
+        // Act/Assert
+        getDistinctLocationsCountForTriggeringModelRunActAssert(now, 1, 1);
+    }
+
+    @Test
+    public void getDistinctLocationsCountForTriggeringModelRunExcludesBasedEnvironmentalSuitability() {
+        // Arrange
+        LocalDateTime now = LocalDateTime.now();
+
+        insertOccurrence(modelEligibleLocation1, "READY", null, 49.0, 0.4, now.minusHours(1).toString()); // yes
+        insertOccurrence(modelEligibleLocation2, "READY", null, 49.0, 0.6, now.minusHours(1).toString()); // no
+        insertOccurrence(modelEligibleLocation3, "READY", null, 49.0, 0.6, now.minusHours(1).toString()); // no
+
+        // Act/Assert
+        getDistinctLocationsCountForTriggeringModelRunActAssert(now, 1, 1);
+    }
+
+    @Test
+    public void getDistinctLocationsCountForTriggeringModelRunExcludesIdsUsedInLastRun() {
+        // Arrange
+        LocalDateTime now = LocalDateTime.now();
+
+        insertOccurrence(modelEligibleLocation1, "READY", null, 51.0, 0.4, now.minusHours(1).toString()); // yes
+        insertOccurrence(excludedButEligibleLocation1, "READY", null, 51.0, 0.4, now.minusHours(1).toString()); // no
+
+        // Act/Assert
+        getDistinctLocationsCountForTriggeringModelRunActAssert(now, 1, 2);
+    }
+
+    private void getDistinctLocationsCountForTriggeringModelRunActAssert(LocalDateTime now, int expectedCountWithLastModelRunIds, int expectedCountWithoutLastModelRunIds) {
+        HashSet<Integer> locationsFromLastModelRun = new HashSet<>(Arrays.asList(excludedButEligibleLocation1, excludedButEligibleLocation2));
+
+        // Act
+        long countWithLastModelRunIds = diseaseOccurrenceDao.getDistinctLocationsCountForTriggeringModelRun(
+                1, locationsFromLastModelRun, now.minusDays(1).toDateTime(), now.minusDays(8).toDateTime(), 0.5, 50.0);
+        long countWithoutLastModelRunIds = diseaseOccurrenceDao.getDistinctLocationsCountForTriggeringModelRun(
+                1, new HashSet<Integer>(),  now.minusDays(1).toDateTime(), now.minusDays(8).toDateTime(), 0.5, 50.0);
+
+        // Assert
+        assertThat(countWithLastModelRunIds).isEqualTo(expectedCountWithLastModelRunIds);
+        assertThat(countWithoutLastModelRunIds).isEqualTo(expectedCountWithoutLastModelRunIds);
+    }
+
+    private void insertOccurrence(int locationId, String status, Double expertWeighting, Double distanceFromDiseaseExtent, Double environmentalSuitability, String createdDate) {
+        executeSQLUpdate(String.format(insertOccurrenceQuery, locationId, status, expertWeighting, distanceFromDiseaseExtent, environmentalSuitability, createdDate));
         flushAndClear();
     }
 

@@ -130,12 +130,11 @@ public interface DiseaseService {
 
     /**
      * Gets the number of distinct locations from the new disease occurrences for the specified disease group.
-     * @param diseaseGroupId The id of the disease group.
-     * @param startDate Occurrences must be newer than this date.
-     * @param endDate Occurrences must be older than this date, to ensure they have had ample time in validation.
+     * @param diseaseGroup The disease group.
+     * @param cutoffDateForOccurrences Occurrences must have become ready for use after this date.
      * @return The number of locations.
      */
-    long getDistinctLocationsCountForTriggeringModelRun(int diseaseGroupId, DateTime startDate, DateTime endDate);
+    long getDistinctLocationsCountForTriggeringModelRun(DiseaseGroup diseaseGroup, DateTime cutoffDateForOccurrences);
 
     /**
      * Gets the list of most recent disease occurrences on the admin unit disease extent class (defined by the disease

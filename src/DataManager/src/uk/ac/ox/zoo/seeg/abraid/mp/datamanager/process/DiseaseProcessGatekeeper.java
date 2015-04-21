@@ -17,8 +17,8 @@ public class DiseaseProcessGatekeeper {
             "Threshold (minNewLocationsTrigger, minEnvSuitability or minDistanceFromExtent) has not been defined";
     private static final String NEVER_BEEN_EXECUTED_BEFORE =
             "Model run has never been executed before for this disease group";
-    private static final String NOT_ELAPSED = "Not enough days have elapsed since last model run preparation on %s";
-    private static final String ELAPSED = "Enough days have elapsed since last model run preparation on %s";
+    private static final String NOT_ELAPSED = "Not enough days have elapsed since last model run on %s";
+    private static final String ELAPSED = "Enough days have elapsed since last model run on %s";
     private static final String ENOUGH_NEW_LOCATIONS = "Number of new locations has exceeded minimum required";
     private static final String NOT_ENOUGH_NEW_LOCATIONS = "Number of new locations has not exceeded minimum value";
     private static final String STARTING_MODEL_RUN_PREP = "Starting model run preparation";
@@ -47,8 +47,13 @@ public class DiseaseProcessGatekeeper {
     public boolean modelShouldRun(int diseaseGroupId) {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         LOGGER.info(String.format(DISEASE_GROUP_ID_MESSAGE, diseaseGroupId, diseaseGroup.getName()));
+        DateTime lastModelRunTimestamp = diseaseGroup.getLastModelRunPrepDate();
 
-        boolean dueToRun = neverBeenRunOrDaysBetweenRunsElapsed(diseaseGroup) || enoughNewLocations(diseaseGroup);
+        boolean dueToRun =
+                neverBeenRun(lastModelRunTimestamp) ||
+                maxDaysBetweenProcessingElapsed(lastModelRunTimestamp) ||
+                extentHasChanged(lastModelRunTimestamp, diseaseGroup) ||
+                enoughNewLocations(lastModelRunTimestamp, diseaseGroup);
 
         LOGGER.info(dueToRun ? STARTING_MODEL_RUN_PREP : NOT_STARTING_MODEL_RUN_PREP);
         return dueToRun;
@@ -63,26 +68,40 @@ public class DiseaseProcessGatekeeper {
      * @return For now this just returns the same as modelShouldRun.
      */
     public boolean extentShouldRun(int diseaseGroupId) {
-        return modelShouldRun(diseaseGroupId);
+        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
+        LOGGER.info(String.format(DISEASE_GROUP_ID_MESSAGE, diseaseGroupId, diseaseGroup.getName()));
+        DateTime lastExtentGenerationDate = diseaseGroup.getLastExtentGenerationDate();
+        DateTime lastModelRunDate = diseaseGroup.getLastModelRunPrepDate();
+
+        boolean dueToRun =
+                neverBeenRun(lastExtentGenerationDate) ||
+                maxDaysBetweenProcessingElapsed(lastExtentGenerationDate) ||
+                enoughNewLocations(lastModelRunDate, diseaseGroup);
+
+        LOGGER.info(dueToRun ? STARTING_MODEL_RUN_PREP : NOT_STARTING_MODEL_RUN_PREP);
+        return dueToRun;
     }
 
-    private boolean neverBeenRunOrDaysBetweenRunsElapsed(DiseaseGroup diseaseGroup) {
-        DateTime lastModelRunPrepDate = diseaseGroup.getLastModelRunPrepDate();
-        if (lastModelRunPrepDate == null) {
+    private boolean neverBeenRun(DateTime lastProcessTimestamp) {
+        if (lastProcessTimestamp == null) {
             LOGGER.info(NEVER_BEEN_EXECUTED_BEFORE);
             return true;
-        } else {
-            LocalDate comparisonDate = diseaseService.subtractDaysBetweenModelRuns(DateTime.now());
-            LocalDate lastModelRunPrepDay = lastModelRunPrepDate.toLocalDate();
-            final boolean daysBetweenRunsElapsed = !comparisonDate.isBefore(lastModelRunPrepDay);
-            LOGGER.info(String.format(daysBetweenRunsElapsed ? ELAPSED : NOT_ELAPSED, lastModelRunPrepDate));
-            return daysBetweenRunsElapsed;
         }
+        return false;
     }
 
-    private boolean enoughNewLocations(DiseaseGroup diseaseGroup) {
+    private boolean maxDaysBetweenProcessingElapsed(DateTime lastProcessTimestamp) {
+        LocalDate comparisonDate = diseaseService.subtractDaysBetweenModelRuns(DateTime.now());
+        LocalDate lastProcessDate = lastProcessTimestamp.toLocalDate();
+        boolean maxDaysBetweenRunsElapsed = !comparisonDate.isBefore(lastProcessDate);
+        LOGGER.info(String.format(maxDaysBetweenRunsElapsed ? ELAPSED : NOT_ELAPSED, lastProcessDate));
+        return maxDaysBetweenRunsElapsed;
+    }
+
+    private boolean enoughNewLocations(DateTime lastProcessTimestamp, DiseaseGroup diseaseGroup) {
+        // In this context "new" means locations that were not used in the last model run for this disease.
         if (thresholdsDefined(diseaseGroup)) {
-            long count = getDistinctLocationsCount(diseaseGroup.getId());
+            long count = getDistinctLocationsCount(lastProcessTimestamp, diseaseGroup);
             int minimum = diseaseGroup.getMinNewLocationsTrigger();
 
             boolean hasEnoughNewLocations = count >= minimum;
@@ -102,9 +121,14 @@ public class DiseaseProcessGatekeeper {
                (diseaseGroup.getMinDistanceFromDiseaseExtent() != null);
     }
 
-    private long getDistinctLocationsCount(int diseaseGroupId) {
-        DateTime endDate = diseaseService.subtractDaysBetweenModelRuns(DateTime.now()).toDateTimeAtStartOfDay();
-        DateTime startDate = diseaseService.subtractDaysBetweenModelRuns(endDate).toDateTimeAtStartOfDay();
-        return diseaseService.getDistinctLocationsCountForTriggeringModelRun(diseaseGroupId, startDate, endDate);
+    private long getDistinctLocationsCount(DateTime lastProcessTimestamp, DiseaseGroup diseaseGroup) {
+        return diseaseService.getDistinctLocationsCountForTriggeringModelRun(
+                diseaseGroup, lastProcessTimestamp);
+    }
+
+    private boolean extentHasChanged(DateTime lastProcessTimestamp, DiseaseGroup diseaseGroup) {
+        DateTime lastChangeTimestamp =
+                diseaseService.getLatestChangeDateForDiseaseExtentClassByDiseaseGroupId(diseaseGroup.getId());
+        return lastChangeTimestamp != null && lastChangeTimestamp.isAfter(lastProcessTimestamp);
     }
 }
