@@ -1,6 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 
-import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 
 import java.util.Collection;
@@ -52,13 +51,6 @@ public interface ModelRunService {
      * @return True if batching has completed at least once for this disease group, otherwise false.
      */
     boolean hasBatchingEverCompleted(int diseaseGroupId);
-
-    /**
-     * Returns the input date, with the number of days between scheduled model runs subtracted.
-     * @param dateTime The input date.
-     * @return The input date minus the number of days between scheduled model runs.
-     */
-    DateTime subtractDaysBetweenModelRuns(DateTime dateTime);
 
     /**
      * Gets all the completed model runs of disease groups in setup, and - for disease groups not in setup - gets all

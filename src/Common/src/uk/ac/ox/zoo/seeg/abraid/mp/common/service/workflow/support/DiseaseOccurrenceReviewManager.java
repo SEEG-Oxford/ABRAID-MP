@@ -25,13 +25,11 @@ public class DiseaseOccurrenceReviewManager {
     private static final Logger LOGGER = Logger.getLogger(DiseaseOccurrenceReviewManager.class);
     private static final String LOG_MESSAGE =
             "Removed %d disease occurrence(s) from validation (of which %d discarded); %d occurrence(s) now remaining";
-    private final int maxDaysOnValidator;
 
     private DiseaseService diseaseService;
 
-    public DiseaseOccurrenceReviewManager(DiseaseService diseaseService, int maxDaysOnValidator) {
+    public DiseaseOccurrenceReviewManager(DiseaseService diseaseService) {
         this.diseaseService = diseaseService;
-        this.maxDaysOnValidator = maxDaysOnValidator;
     }
 
     /**
@@ -86,15 +84,15 @@ public class DiseaseOccurrenceReviewManager {
      * @return Whether the occurrence has been in review for long enough to have its status changed from IN_REVIEW.
      */
     private boolean occurrenceHasBeenInReviewForMoreThanMaximumNumberOfDays(DiseaseOccurrence occurrence) {
-        LocalDate comparisonDate = getComparisonDate(occurrence);
-        LocalDate modelRunPrepDate = DateTime.now().toLocalDate();
-        return !comparisonDate.isAfter(modelRunPrepDate);
+        LocalDate addedDate = getComparisonDate(occurrence);
+        LocalDate removalCutoff = diseaseService.subtractMaxDaysOnValidator(DateTime.now());
+        return !addedDate.isAfter(removalCutoff);
     }
 
     private LocalDate getComparisonDate(DiseaseOccurrence o) {
         LocalDate createdDate = o.getCreatedDate().toLocalDate();
         LocalDate automaticModelRunsStartDate = o.getDiseaseGroup().getAutomaticModelRunsStartDate().toLocalDate();
-        return getLatest(createdDate, automaticModelRunsStartDate).plusDays(maxDaysOnValidator);
+        return getLatest(createdDate, automaticModelRunsStartDate);
     }
 
     private LocalDate getLatest(LocalDate createdDate, LocalDate automaticModelRunsStartDate) {

@@ -15,13 +15,14 @@
 
     <!-- Core services -->
     <bean id="alertService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.AlertServiceImpl" autowire="constructor"/>
-    <bean id="diseaseService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseServiceImpl" autowire="constructor"/>
+    <bean id="diseaseService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseServiceImpl" autowire="constructor">
+        <constructor-arg name="maxDaysOnValidator" value="${max.days.for.occurrences.on.validator}" />
+        <constructor-arg name="daysBetweenModelRuns" value="${days.between.model.runs}" />
+    </bean>
     <bean id="expertService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertServiceImpl" autowire="constructor"/>
     <bean id="locationService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationServiceImpl" autowire="constructor"/>
     <bean id="geometryService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.GeometryServiceImpl" autowire="constructor"/>
-    <bean id="modelRunService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunServiceImpl" autowire="constructor">
-        <constructor-arg name="daysBetweenModelRuns" value="${days.between.model.runs}" />
-    </bean>
+    <bean id="modelRunService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunServiceImpl" autowire="constructor"/>
     <import resource="classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/beans-email-service.xml"/>
 
     <!-- Business workflow services -->
@@ -37,9 +38,7 @@
         <constructor-arg name="expertWeightingThreshold" value="${expert.weighting.threshold}" />
         <constructor-arg name="validationWeightingThreshold" value="${validation.weighting.threshold}" />
     </bean>
-    <bean id="diseaseOccurrenceReviewManager" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.DiseaseOccurrenceReviewManager" autowire="constructor">
-        <constructor-arg name="maxDaysOnValidator" value="${max.days.for.occurrences.on.validator}" />
-    </bean>
+    <bean id="diseaseOccurrenceReviewManager" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.DiseaseOccurrenceReviewManager" autowire="constructor"/>
     <bean id="modelRunRequester" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunRequester" autowire="constructor">
         <constructor-arg name="modelWrapperUrlCollection" ref="modelWrapperUrls" />
     </bean>

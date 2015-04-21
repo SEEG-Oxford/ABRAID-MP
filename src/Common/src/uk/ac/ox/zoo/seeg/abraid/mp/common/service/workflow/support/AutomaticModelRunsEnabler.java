@@ -6,7 +6,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceStatus;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.DiseaseOccurrenceValidationService;
 
 import java.util.ArrayList;
@@ -32,14 +31,11 @@ public class AutomaticModelRunsEnabler {
 
     private DiseaseService diseaseService;
     private DiseaseOccurrenceValidationService diseaseOccurrenceValidationService;
-    private ModelRunService modelRunService;
 
     public AutomaticModelRunsEnabler(DiseaseService diseaseService,
-                                     DiseaseOccurrenceValidationService diseaseOccurrenceValidationService,
-                                     ModelRunService modelRunService) {
+                                     DiseaseOccurrenceValidationService diseaseOccurrenceValidationService) {
         this.diseaseService = diseaseService;
         this.diseaseOccurrenceValidationService = diseaseOccurrenceValidationService;
-        this.modelRunService = modelRunService;
     }
 
     /**
@@ -73,7 +69,8 @@ public class AutomaticModelRunsEnabler {
         // Adds validation parameters for occurrences without a final weighting, using a cutoff date of the number of
         // days between model runs. This ensures that that experts are not overwhelmed with occurrences to validate.
         // Occurrences before the cutoff date are permanently ignored by setting their status to DISCARDED_UNUSED.
-        DateTime earliestDateForValidationParameters = modelRunService.subtractDaysBetweenModelRuns(DateTime.now());
+        DateTime earliestDateForValidationParameters =
+                diseaseService.subtractDaysBetweenModelRuns(DateTime.now()).toDateTimeAtStartOfDay();
         List<DiseaseOccurrence> occurrencesForValidationParameters = new ArrayList<>();
 
         for (DiseaseOccurrence occurrence : occurrences) {

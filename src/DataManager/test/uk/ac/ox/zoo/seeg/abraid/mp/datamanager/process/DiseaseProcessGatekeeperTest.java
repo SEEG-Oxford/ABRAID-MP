@@ -2,16 +2,19 @@ package uk.ac.ox.zoo.seeg.abraid.mp.datamanager.process;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
+import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ModelRunDao;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunServiceImpl;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Tests the DiseaseProcessGatekeeper.
@@ -27,8 +30,21 @@ public class DiseaseProcessGatekeeperTest {
     @Before
     public void setUp() {
         diseaseService = mock(DiseaseService.class);
-        ModelRunService modelRunService = new ModelRunServiceImpl(mock(ModelRunDao.class), 7);
-        diseaseProcessGatekeeper = new DiseaseProcessGatekeeper(diseaseService, modelRunService);
+        diseaseProcessGatekeeper = new DiseaseProcessGatekeeper(diseaseService);
+
+        when(diseaseService.subtractMaxDaysOnValidator(any(DateTime.class))).thenAnswer(new Answer<LocalDate>() {
+            @Override
+            public LocalDate answer(InvocationOnMock invocationOnMock) throws Throwable {
+                return ((DateTime) invocationOnMock.getArguments()[0]).toLocalDate().minusDays(7);
+            }
+        });
+
+        when(diseaseService.subtractDaysBetweenModelRuns(any(DateTime.class))).thenAnswer(new Answer<LocalDate>() {
+            @Override
+            public LocalDate answer(InvocationOnMock invocationOnMock) throws Throwable {
+                return ((DateTime) invocationOnMock.getArguments()[0]).toLocalDate().minusDays(7);
+            }
+        });
 
         // The default disease group for dengue has automatic model runs set to true
         diseaseGroup = new DiseaseGroup(DISEASE_GROUP_ID);

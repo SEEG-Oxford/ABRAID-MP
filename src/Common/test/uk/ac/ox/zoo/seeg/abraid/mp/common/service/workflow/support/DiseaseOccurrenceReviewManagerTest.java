@@ -1,7 +1,10 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 
@@ -187,8 +190,8 @@ public class DiseaseOccurrenceReviewManagerTest {
     private void executeTest(DiseaseOccurrence occurrence, boolean isAutomaticProcess, boolean hasBeenReviewed,
                              DiseaseOccurrenceStatus expectedStatus, int maxDays) {
         // Arrange
-        DiseaseService diseaseService = mockDiseaseService(occurrence, hasBeenReviewed);
-        DiseaseOccurrenceReviewManager target = new DiseaseOccurrenceReviewManager(diseaseService, maxDays);
+        DiseaseService diseaseService = mockDiseaseService(occurrence, hasBeenReviewed, maxDays);
+        DiseaseOccurrenceReviewManager target = new DiseaseOccurrenceReviewManager(diseaseService);
 
         // Act
         target.updateDiseaseOccurrenceStatus(DISEASE_GROUP_ID, isAutomaticProcess);
@@ -200,7 +203,7 @@ public class DiseaseOccurrenceReviewManagerTest {
         verify(diseaseService, times(expectedTimes)).saveDiseaseOccurrence(occurrence);
     }
 
-    private DiseaseService mockDiseaseService(DiseaseOccurrence occurrence, boolean hasBeenReviewed) {
+    private DiseaseService mockDiseaseService(DiseaseOccurrence occurrence, boolean hasBeenReviewed, final int maxDays) {
         DiseaseService diseaseService = mock(DiseaseService.class);
         when(diseaseService.getDiseaseOccurrencesInValidation(DISEASE_GROUP_ID)).thenReturn(Arrays.asList(occurrence));
         List<DiseaseOccurrenceReview> reviews = new ArrayList<>();
@@ -208,6 +211,12 @@ public class DiseaseOccurrenceReviewManagerTest {
             reviews.add(new DiseaseOccurrenceReview(mock(Expert.class), occurrence, DiseaseOccurrenceReviewResponse.UNSURE));
         }
         when(diseaseService.getAllDiseaseOccurrenceReviewsForOccurrencesInValidation(DISEASE_GROUP_ID)).thenReturn(reviews);
+        when(diseaseService.subtractMaxDaysOnValidator(any(DateTime.class))).thenAnswer(new Answer<LocalDate>() {
+            @Override
+            public LocalDate answer(InvocationOnMock invocationOnMock) throws Throwable {
+                return ((DateTime) invocationOnMock.getArguments()[0]).toLocalDate().minusDays(maxDays);
+            }
+        });
         return diseaseService;
     }
 }

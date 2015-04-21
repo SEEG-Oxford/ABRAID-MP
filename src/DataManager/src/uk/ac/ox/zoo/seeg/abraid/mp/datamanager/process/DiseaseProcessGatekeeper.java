@@ -2,9 +2,9 @@ package uk.ac.ox.zoo.seeg.abraid.mp.datamanager.process;
 
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 
 /**
  * Determines whether the steps in the daily disease process should execute.
@@ -25,11 +25,9 @@ public class DiseaseProcessGatekeeper {
     private static final String NOT_STARTING_MODEL_RUN_PREP = "Model run preparation will not be executed";
 
     private DiseaseService diseaseService;
-    private ModelRunService modelRunService;
 
-    public DiseaseProcessGatekeeper(DiseaseService diseaseService, ModelRunService modelRunService) {
+    public DiseaseProcessGatekeeper(DiseaseService diseaseService) {
         this.diseaseService = diseaseService;
-        this.modelRunService = modelRunService;
     }
 
     /**
@@ -74,8 +72,8 @@ public class DiseaseProcessGatekeeper {
             LOGGER.info(NEVER_BEEN_EXECUTED_BEFORE);
             return true;
         } else {
-            DateTime comparisonDate = modelRunService.subtractDaysBetweenModelRuns(DateTime.now());
-            DateTime lastModelRunPrepDay = lastModelRunPrepDate.withTimeAtStartOfDay();
+            LocalDate comparisonDate = diseaseService.subtractDaysBetweenModelRuns(DateTime.now());
+            LocalDate lastModelRunPrepDay = lastModelRunPrepDate.toLocalDate();
             final boolean daysBetweenRunsElapsed = !comparisonDate.isBefore(lastModelRunPrepDay);
             LOGGER.info(String.format(daysBetweenRunsElapsed ? ELAPSED : NOT_ELAPSED, lastModelRunPrepDate));
             return daysBetweenRunsElapsed;
@@ -105,8 +103,8 @@ public class DiseaseProcessGatekeeper {
     }
 
     private long getDistinctLocationsCount(int diseaseGroupId) {
-        DateTime endDate = modelRunService.subtractDaysBetweenModelRuns(DateTime.now());
-        DateTime startDate = modelRunService.subtractDaysBetweenModelRuns(endDate);
+        DateTime endDate = diseaseService.subtractDaysBetweenModelRuns(DateTime.now()).toDateTimeAtStartOfDay();
+        DateTime startDate = diseaseService.subtractDaysBetweenModelRuns(endDate).toDateTimeAtStartOfDay();
         return diseaseService.getDistinctLocationsCountForTriggeringModelRun(diseaseGroupId, startDate, endDate);
     }
 }

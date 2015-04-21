@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.*;
@@ -41,7 +42,7 @@ public class DiseaseServiceTest {
         nativeSQL = mock(NativeSQL.class);
         diseaseService = new DiseaseServiceImpl(diseaseOccurrenceDao, diseaseOccurrenceReviewDao, diseaseGroupDao,
                 healthMapDiseaseDao, healthMapSubDiseaseDao, validatorDiseaseGroupDao, adminUnitDiseaseExtentClassDao,
-                diseaseExtentClassDao, nativeSQL);
+                diseaseExtentClassDao, 5, 6, nativeSQL);
     }
 
     @Test
@@ -544,5 +545,31 @@ public class DiseaseServiceTest {
 
         // Assert
         assertThat(expectedOccurrences).isSameAs(actualOccurrences);
+    }
+
+    @Test
+    public void subtractMaxDaysOnValidator() {
+        // Arrange
+        DateTime inputDateTime = new DateTime("2014-10-09T12:13:14");
+        LocalDate expectedResult = new LocalDate("2014-10-04"); // minus 5
+
+        // Act
+        LocalDate actualResult = diseaseService.subtractMaxDaysOnValidator(inputDateTime);
+
+        // Assert
+        assertThat(actualResult).isEqualTo(expectedResult);
+    }
+
+    @Test
+    public void subtractDaysBetweenModelRuns() {
+        // Arrange
+        DateTime inputDateTime = new DateTime("2014-10-09T12:13:14");
+        LocalDate expectedResult = new LocalDate("2014-10-03"); // minus 6
+
+        // Act
+        LocalDate actualResult = diseaseService.subtractDaysBetweenModelRuns(inputDateTime);
+
+        // Assert
+        assertThat(actualResult).isEqualTo(expectedResult);
     }
 }

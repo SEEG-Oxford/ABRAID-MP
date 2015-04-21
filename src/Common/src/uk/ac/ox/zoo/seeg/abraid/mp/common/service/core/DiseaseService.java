@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.List;
@@ -273,4 +274,18 @@ public interface DiseaseService {
      * @return The number of occurrences that are eligible for being sent to the model.
      */
     long getNumberOfDiseaseOccurrencesEligibleForModelRun(int diseaseGroupId, DateTime startDate, DateTime endDate);
+
+    /**
+     * Returns the input date, with the max number of days on the validator subtracted.
+     * @param dateTime The input date.
+     * @return The input date minus the max number of days on the validator.
+     */
+    LocalDate subtractMaxDaysOnValidator(DateTime dateTime);
+
+    /**
+     * Returns the input date, with the number of days between scheduled model runs subtracted.
+     * @param dateTime The input date.
+     * @return The input date minus the number of days between scheduled model runs.
+     */
+    LocalDate subtractDaysBetweenModelRuns(DateTime dateTime);
 }

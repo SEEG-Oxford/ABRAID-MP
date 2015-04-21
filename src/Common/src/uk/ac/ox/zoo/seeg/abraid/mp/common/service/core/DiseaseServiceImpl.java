@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
@@ -25,6 +26,8 @@ public class DiseaseServiceImpl implements DiseaseService {
     private AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao;
 
     private DiseaseExtentClassDao diseaseExtentClassDao;
+    private int maxDaysOnValidator;
+    private int daysBetweenModelRuns;
     private NativeSQL nativeSQL;
 
     public DiseaseServiceImpl(DiseaseOccurrenceDao diseaseOccurrenceDao,
@@ -35,6 +38,8 @@ public class DiseaseServiceImpl implements DiseaseService {
                               ValidatorDiseaseGroupDao validatorDiseaseGroupDao,
                               AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao,
                               DiseaseExtentClassDao diseaseExtentClassDao,
+                              int maxDaysOnValidator,
+                              int daysBetweenModelRuns,
                               NativeSQL nativeSQL) {
         this.diseaseOccurrenceDao = diseaseOccurrenceDao;
         this.diseaseOccurrenceReviewDao = diseaseOccurrenceReviewDao;
@@ -44,6 +49,8 @@ public class DiseaseServiceImpl implements DiseaseService {
         this.validatorDiseaseGroupDao = validatorDiseaseGroupDao;
         this.adminUnitDiseaseExtentClassDao = adminUnitDiseaseExtentClassDao;
         this.diseaseExtentClassDao = diseaseExtentClassDao;
+        this.maxDaysOnValidator = maxDaysOnValidator;
+        this.daysBetweenModelRuns = daysBetweenModelRuns;
         this.nativeSQL = nativeSQL;
     }
 
@@ -465,6 +472,26 @@ public class DiseaseServiceImpl implements DiseaseService {
                                                                  DateTime endDate) {
         return diseaseOccurrenceDao.getNumberOfOccurrencesEligibleForModelRun(diseaseGroupId, startDate,
                 endDate);
+    }
+
+    /**
+     * Returns the input date, with the number of days between scheduled model runs subtracted.
+     * @param dateTime The input date.
+     * @return The input date minus the number of days between scheduled model runs.
+     */
+    @Override
+    public LocalDate subtractMaxDaysOnValidator(DateTime dateTime) {
+        return dateTime.toLocalDate().minusDays(maxDaysOnValidator);
+    }
+
+    /**
+     * Returns the input date, with the number of days between scheduled model runs subtracted.
+     * @param dateTime The input date.
+     * @return The input date minus the number of days between scheduled model runs.
+     */
+    @Override
+    public LocalDate subtractDaysBetweenModelRuns(DateTime dateTime) {
+        return dateTime.toLocalDate().minusDays(daysBetweenModelRuns);
     }
 
     private boolean isDiseaseGroupGlobal(Integer diseaseGroupId) {
