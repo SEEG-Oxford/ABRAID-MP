@@ -39,7 +39,6 @@ public class Main {
         this.dataAcquisitionManager = dataAcquisitionManager;
         this.diseaseProcessManager = diseaseProcessManager;
         this.applicationVersion = applicationVersion;
-
     }
 
     /**

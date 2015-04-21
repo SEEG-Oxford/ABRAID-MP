@@ -410,7 +410,6 @@ public class DiseaseServiceTest {
         when(diseaseGroup.getId()).thenReturn(diseaseGroupId);
         when(diseaseGroup.getMinDistanceFromDiseaseExtent()).thenReturn(minDistanceFromDiseaseExtent);
         when(diseaseGroup.getMinEnvironmentalSuitability()).thenReturn(maxEnvironmentalSuitability); // Wrongly named on DG
-        when(diseaseGroup.getMinEnvironmentalSuitability()).thenReturn(maxEnvironmentalSuitability); // Wrongly named on DG]
         ModelRun lastModelRun = mock(ModelRun.class);
         when(modelRunDao.getLastRequestedModelRun(diseaseGroup.getId())).thenReturn(lastModelRun);
         List<DiseaseOccurrence> occurrences = createOccurrences();
@@ -461,12 +460,12 @@ public class DiseaseServiceTest {
         int diseaseGroupId = 10;
         DateTime expectedTime = DateTime.now().minusDays(3);
 
-        when(adminUnitDiseaseExtentClassDao.getLatestChangeDateForDiseaseExtentClassByDiseaseGroupId(diseaseGroupId))
+        when(adminUnitDiseaseExtentClassDao.getLatestDiseaseExtentClassChangeDateByDiseaseGroupId(diseaseGroupId))
                 .thenReturn(expectedTime);
 
         // Act
         DateTime result =
-                diseaseService.getLatestChangeDateForDiseaseExtentClassByDiseaseGroupId(diseaseGroupId);
+                diseaseService.getLatestDiseaseExtentClassChangeDateByDiseaseGroupId(diseaseGroupId);
 
         // Assert
         assertThat(result).isSameAs(expectedTime);
@@ -632,7 +631,7 @@ public class DiseaseServiceTest {
     public void subtractMaxDaysOnValidator() {
         // Arrange
         DateTime inputDateTime = new DateTime("2014-10-09T12:13:14");
-        LocalDate expectedResult = new LocalDate("2014-10-04"); // minus 5
+        LocalDate expectedResult = new LocalDate("2014-10-04"); // minus 5 days (maxDaysOnValidator field)
 
         // Act
         LocalDate actualResult = diseaseService.subtractMaxDaysOnValidator(inputDateTime);
@@ -645,7 +644,7 @@ public class DiseaseServiceTest {
     public void subtractDaysBetweenModelRuns() {
         // Arrange
         DateTime inputDateTime = new DateTime("2014-10-09T12:13:14");
-        LocalDate expectedResult = new LocalDate("2014-10-03"); // minus 6
+        LocalDate expectedResult = new LocalDate("2014-10-03"); // minus 6 (daysBetweenModelRuns field)
 
         // Act
         LocalDate actualResult = diseaseService.subtractDaysBetweenModelRuns(inputDateTime);

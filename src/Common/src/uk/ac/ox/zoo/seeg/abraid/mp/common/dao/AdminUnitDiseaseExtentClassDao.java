@@ -17,7 +17,7 @@ public interface AdminUnitDiseaseExtentClassDao {
      * @param diseaseGroupId The ID of the disease group.
      * @return The latest change date.
      */
-    DateTime getLatestChangeDateForDiseaseExtentClassByDiseaseGroupId(Integer diseaseGroupId);
+    DateTime getLatestDiseaseExtentClassChangeDateByDiseaseGroupId(Integer diseaseGroupId);
 
     /**
      * Gets the list of most recent disease occurrences on the admin unit disease extent class (defined by disease group

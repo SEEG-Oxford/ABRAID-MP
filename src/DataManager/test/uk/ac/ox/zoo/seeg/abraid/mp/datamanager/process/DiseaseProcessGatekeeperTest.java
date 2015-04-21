@@ -258,7 +258,7 @@ public class DiseaseProcessGatekeeperTest {
             int changeDays = hasChanged ? runDays - 1 : runDays + 1;
             changeDate = DateTime.now().minusDays(changeDays);
         }
-        when(diseaseService.getLatestChangeDateForDiseaseExtentClassByDiseaseGroupId(DISEASE_GROUP_ID)).thenReturn(changeDate);
+        when(diseaseService.getLatestDiseaseExtentClassChangeDateByDiseaseGroupId(DISEASE_GROUP_ID)).thenReturn(changeDate);
     }
 
     private void setLastModelRunPrepDate(Boolean weekHasElapsed) {

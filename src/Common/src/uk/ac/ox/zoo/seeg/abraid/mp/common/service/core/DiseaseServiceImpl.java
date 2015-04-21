@@ -259,7 +259,6 @@ public class DiseaseServiceImpl implements DiseaseService {
     @Override
     public long getDistinctLocationsCountForTriggeringModelRun(
             DiseaseGroup diseaseGroup, DateTime cutoffDateForOccurrences) {
-        diseaseGroup.getId();
         Double minDistanceFromDiseaseExtent = diseaseGroup.getMinDistanceFromDiseaseExtent();
         Double maxEnvironmentalSuitability = diseaseGroup.getMinEnvironmentalSuitability(); // Wrongly named on DG
         Set<Integer> locationIdsUsedInLastModelRun = getLocationIdsFromLastModelRun(diseaseGroup);
@@ -278,7 +277,7 @@ public class DiseaseServiceImpl implements DiseaseService {
             return new HashSet<>();
         } else {
             return new HashSet<>(
-                // Not that if the last model run was non-automatic then the input occurrences will be empty (not
+                // Note that if the last model run was non-automatic then the input occurrences will be empty (not
                 // stored). This means that for the first auto model run the trigger may fire slightly early. CM says
                 // that this is the correct behavior.
                 extract(lastModelRun.getInputDiseaseOccurrences(), on(DiseaseOccurrence.class).getLocation().getId())
@@ -322,8 +321,8 @@ public class DiseaseServiceImpl implements DiseaseService {
      * @return The latest change date.
      */
     @Override
-    public DateTime getLatestChangeDateForDiseaseExtentClassByDiseaseGroupId(Integer diseaseGroupId) {
-        return adminUnitDiseaseExtentClassDao.getLatestChangeDateForDiseaseExtentClassByDiseaseGroupId(diseaseGroupId);
+    public DateTime getLatestDiseaseExtentClassChangeDateByDiseaseGroupId(Integer diseaseGroupId) {
+        return adminUnitDiseaseExtentClassDao.getLatestDiseaseExtentClassChangeDateByDiseaseGroupId(diseaseGroupId);
     }
 
     /**

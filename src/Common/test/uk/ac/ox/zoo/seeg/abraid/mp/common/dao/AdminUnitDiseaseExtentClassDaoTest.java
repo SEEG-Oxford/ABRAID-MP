@@ -32,12 +32,12 @@ public class AdminUnitDiseaseExtentClassDaoTest extends AbstractCommonSpringInte
     private DiseaseGroupDao diseaseGroupDao;
 
     @Test
-    public void getLatestChangeDateForDiseaseExtentClassByDiseaseGroupId() {
+    public void getLatestDiseaseExtentClassChangeDateByDiseaseGroupId() {
         // Arrange
         Integer diseaseGroupId = 87;
 
         // Act
-        DateTime result = adminUnitDiseaseExtentClassDao.getLatestChangeDateForDiseaseExtentClassByDiseaseGroupId(diseaseGroupId);
+        DateTime result = adminUnitDiseaseExtentClassDao.getLatestDiseaseExtentClassChangeDateByDiseaseGroupId(diseaseGroupId);
 
         // Assert
         assertThat(result).isEqualTo(new DateTime("2014-06-10T17:45:25"));

@@ -209,7 +209,7 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
      * A "new" occurrence has status READY, and a suitable created_date.
      * Occurrences must additionally satisfy one of:
      * + The distance from disease extent values is greater than minimum specified on the disease group (a new area).
-     * + The environmental suitability values is lest than max specified on the disease group (a new area).
+     * + The environmental suitability values is less than max specified on the disease group (a new area).
      * @param diseaseGroupId The ID of the disease group.
      * @param locationsFromLastModelRun A list of location ids used in the last model run.
      * @param cutoffForAutomaticallyValidated Automatically validated occurrences must be newer than this date.

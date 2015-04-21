@@ -24,7 +24,7 @@ import java.util.Collection;
                         "where a.diseaseGroup.id=:diseaseGroupId"
         ),
         @NamedQuery(
-                name = "getLatestChangeDateForDiseaseExtentClassByDiseaseGroupId",
+                name = "getLatestDiseaseExtentClassChangeDateByDiseaseGroupId",
                 query = "select max(a.classChangedDate) " +
                         "from AdminUnitDiseaseExtentClass a " +
                         "where a.diseaseGroup.id=:diseaseGroupId"

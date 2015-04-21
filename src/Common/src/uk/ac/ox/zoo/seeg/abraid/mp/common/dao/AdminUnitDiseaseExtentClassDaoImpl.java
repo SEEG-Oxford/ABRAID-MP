@@ -30,8 +30,8 @@ public class AdminUnitDiseaseExtentClassDaoImpl extends AbstractDao<AdminUnitDis
      * @return The latest change date.
      */
     @Override
-    public DateTime getLatestChangeDateForDiseaseExtentClassByDiseaseGroupId(Integer diseaseGroupId) {
-        Query query = getParameterisedNamedQuery("getLatestChangeDateForDiseaseExtentClassByDiseaseGroupId",
+    public DateTime getLatestDiseaseExtentClassChangeDateByDiseaseGroupId(Integer diseaseGroupId) {
+        Query query = getParameterisedNamedQuery("getLatestDiseaseExtentClassChangeDateByDiseaseGroupId",
                 "diseaseGroupId", diseaseGroupId);
         return (DateTime) query.uniqueResult();
     }
