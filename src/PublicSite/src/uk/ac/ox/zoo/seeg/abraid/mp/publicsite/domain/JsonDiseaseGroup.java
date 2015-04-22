@@ -20,8 +20,8 @@ public class JsonDiseaseGroup {
     private boolean automaticModelRuns;
     private Integer minNewLocations;
     private int minDataVolume;
-    private Double minEnvironmentalSuitability;
-    private Double minDistanceFromDiseaseExtent;
+    private Double maxEnvironmentalSuitabilityForTriggering;
+    private Double minDistanceFromDiseaseExtentForTriggering;
     private Integer minDistinctCountries;
     private Integer highFrequencyThreshold;
     private Integer minHighFrequencyCountries;
@@ -51,8 +51,8 @@ public class JsonDiseaseGroup {
         setAutomaticModelRuns(diseaseGroup.isAutomaticModelRunsEnabled());
         setMinNewLocations(diseaseGroup.getMinNewLocationsTrigger());
         setMinDataVolume(diseaseGroup.getMinDataVolume());
-        setMinEnvironmentalSuitability(diseaseGroup.getMinEnvironmentalSuitability());
-        setMinDistanceFromDiseaseExtent(diseaseGroup.getMinDistanceFromDiseaseExtent());
+        setMaxEnvironmentalSuitabilityForTriggering(diseaseGroup.getMaxEnvironmentalSuitabilityForTriggering());
+        setMinDistanceFromDiseaseExtentForTriggering(diseaseGroup.getMinDistanceFromDiseaseExtentForTriggering());
         setMinDistinctCountries(diseaseGroup.getMinDistinctCountries());
         setHighFrequencyThreshold(diseaseGroup.getHighFrequencyThreshold());
         setMinHighFrequencyCountries(diseaseGroup.getMinHighFrequencyCountries());
@@ -168,20 +168,20 @@ public class JsonDiseaseGroup {
         this.minDataVolume = minDataVolume;
     }
 
-    public Double getMinEnvironmentalSuitability() {
-        return minEnvironmentalSuitability;
+    public Double getMaxEnvironmentalSuitabilityForTriggering() {
+        return maxEnvironmentalSuitabilityForTriggering;
     }
 
-    public void setMinEnvironmentalSuitability(Double minEnvironmentalSuitability) {
-        this.minEnvironmentalSuitability = minEnvironmentalSuitability;
+    public void setMaxEnvironmentalSuitabilityForTriggering(Double maxEnvironmentalSuitabilityForTriggering) {
+        this.maxEnvironmentalSuitabilityForTriggering = maxEnvironmentalSuitabilityForTriggering;
     }
 
-    public Double getMinDistanceFromDiseaseExtent() {
-        return minDistanceFromDiseaseExtent;
+    public Double getMinDistanceFromDiseaseExtentForTriggering() {
+        return minDistanceFromDiseaseExtentForTriggering;
     }
 
-    public void setMinDistanceFromDiseaseExtent(Double minDistanceFromDiseaseExtent) {
-        this.minDistanceFromDiseaseExtent = minDistanceFromDiseaseExtent;
+    public void setMinDistanceFromDiseaseExtentForTriggering(Double minDistanceFromDiseaseExtentForTriggering) {
+        this.minDistanceFromDiseaseExtentForTriggering = minDistanceFromDiseaseExtentForTriggering;
     }
 
     public Integer getMinDistinctCountries() {

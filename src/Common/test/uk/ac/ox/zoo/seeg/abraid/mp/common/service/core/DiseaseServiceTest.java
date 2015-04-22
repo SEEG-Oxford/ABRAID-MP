@@ -408,8 +408,8 @@ public class DiseaseServiceTest {
 
         DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
         when(diseaseGroup.getId()).thenReturn(diseaseGroupId);
-        when(diseaseGroup.getMinDistanceFromDiseaseExtent()).thenReturn(minDistanceFromDiseaseExtent);
-        when(diseaseGroup.getMinEnvironmentalSuitability()).thenReturn(maxEnvironmentalSuitability); // Wrongly named on DG
+        when(diseaseGroup.getMinDistanceFromDiseaseExtentForTriggering()).thenReturn(minDistanceFromDiseaseExtent);
+        when(diseaseGroup.getMaxEnvironmentalSuitabilityForTriggering()).thenReturn(maxEnvironmentalSuitability);
         ModelRun lastModelRun = mock(ModelRun.class);
         when(modelRunDao.getLastRequestedModelRun(diseaseGroup.getId())).thenReturn(lastModelRun);
         List<DiseaseOccurrence> occurrences = createOccurrences();

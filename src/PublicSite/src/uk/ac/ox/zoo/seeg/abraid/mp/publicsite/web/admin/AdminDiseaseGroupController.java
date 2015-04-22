@@ -376,8 +376,10 @@ public class AdminDiseaseGroupController extends AbstractController {
         diseaseGroup.setGroupType(DiseaseGroupType.valueOf(settings.getGroupType()));
         diseaseGroup.setGlobal(settings.getIsGlobal());
         diseaseGroup.setMinNewLocationsTrigger(settings.getMinNewLocations());
-        diseaseGroup.setMinEnvironmentalSuitability(settings.getMinEnvironmentalSuitability());
-        diseaseGroup.setMinDistanceFromDiseaseExtent(settings.getMinDistanceFromDiseaseExtent());
+        diseaseGroup.setMaxEnvironmentalSuitabilityForTriggering(
+                settings.getMaxEnvironmentalSuitabilityForTriggering());
+        diseaseGroup.setMinDistanceFromDiseaseExtentForTriggering(
+                settings.getMinDistanceFromDiseaseExtentForTriggering());
         diseaseGroup.setMinDataVolume(settings.getMinDataVolume());
         diseaseGroup.setMinDistinctCountries(settings.getMinDistinctCountries());
         diseaseGroup.setMinHighFrequencyCountries(settings.getMinHighFrequencyCountries());

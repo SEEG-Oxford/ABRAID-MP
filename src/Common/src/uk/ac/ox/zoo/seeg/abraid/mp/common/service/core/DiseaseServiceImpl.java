@@ -259,8 +259,8 @@ public class DiseaseServiceImpl implements DiseaseService {
     @Override
     public long getDistinctLocationsCountForTriggeringModelRun(
             DiseaseGroup diseaseGroup, DateTime cutoffDateForOccurrences) {
-        Double minDistanceFromDiseaseExtent = diseaseGroup.getMinDistanceFromDiseaseExtent();
-        Double maxEnvironmentalSuitability = diseaseGroup.getMinEnvironmentalSuitability(); // Wrongly named on DG
+        Double minDistanceFromDiseaseExtent = diseaseGroup.getMinDistanceFromDiseaseExtentForTriggering();
+        Double maxEnvironmentalSuitability = diseaseGroup.getMaxEnvironmentalSuitabilityForTriggering();
         Set<Integer> locationIdsUsedInLastModelRun = getLocationIdsFromLastModelRun(diseaseGroup);
 
         return diseaseOccurrenceDao.getDistinctLocationsCountForTriggeringModelRun(diseaseGroup.getId(),
