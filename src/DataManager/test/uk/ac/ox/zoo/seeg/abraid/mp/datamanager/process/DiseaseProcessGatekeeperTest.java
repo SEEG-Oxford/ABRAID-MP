@@ -50,8 +50,8 @@ public class DiseaseProcessGatekeeperTest {
         when(diseaseGroup.getId()).thenReturn(DISEASE_GROUP_ID);
         when(diseaseGroup.getName()).thenReturn("Dengue");
         when(diseaseGroup.getAutomaticModelRunsStartDate()).thenReturn(DateTime.now());
-        when(diseaseGroup.getMinDistanceFromDiseaseExtent()).thenReturn(0.0);
-        when(diseaseGroup.getMinEnvironmentalSuitability()).thenReturn(0.0);
+        when(diseaseGroup.getMinDistanceFromDiseaseExtentForTriggering()).thenReturn(0.0);
+        when(diseaseGroup.getMaxEnvironmentalSuitabilityForTriggering()).thenReturn(0.0);
         when(diseaseService.getDiseaseGroupById(DISEASE_GROUP_ID)).thenReturn(diseaseGroup);
         DateTimeUtils.setCurrentMillisFixed(1429543707000L);
     }
@@ -120,13 +120,13 @@ public class DiseaseProcessGatekeeperTest {
 
     @Test
     public void modelShouldNotRunWhenMinDistanceFromDiseaseExtentNotDefined() throws Exception {
-        when(diseaseGroup.getMinDistanceFromDiseaseExtent()).thenReturn(null);
+        when(diseaseGroup.getMinDistanceFromDiseaseExtentForTriggering()).thenReturn(null);
         expectModelShouldNotToRun(false, false, true);
     }
 
     @Test
-    public void modelShouldNotRunWhenMinEnvironmentalSuitabilityNotDefined() throws Exception {
-        when(diseaseGroup.getMinEnvironmentalSuitability()).thenReturn(null);
+    public void modelShouldNotRunWhenMaxEnvironmentalSuitabilityNotDefined() throws Exception {
+        when(diseaseGroup.getMaxEnvironmentalSuitabilityForTriggering()).thenReturn(null);
         expectModelShouldNotToRun(false, false, true);
     }
 
@@ -183,13 +183,13 @@ public class DiseaseProcessGatekeeperTest {
 
     @Test
     public void extentShouldNotRunWhenMinDistanceFromDiseaseExtentNotDefined() throws Exception {
-        when(diseaseGroup.getMinDistanceFromDiseaseExtent()).thenReturn(null);
+        when(diseaseGroup.getMinDistanceFromDiseaseExtentForTriggering()).thenReturn(null);
         expectExtentShouldNotToRun(false, false, true);
     }
 
     @Test
-    public void extentShouldNotRunWhenMinEnvironmentalSuitabilityNotDefined() throws Exception {
-        when(diseaseGroup.getMinEnvironmentalSuitability()).thenReturn(null);
+    public void extentShouldNotRunWhenMaxEnvironmentalSuitabilityNotDefined() throws Exception {
+        when(diseaseGroup.getMaxEnvironmentalSuitabilityForTriggering()).thenReturn(null);
         expectExtentShouldNotToRun(false, false, true);
     }
 

@@ -24,8 +24,8 @@
                     Triggering a Model Run:
                     <br><br>
                     <@formGroup id="min-new-locations" title="Min. Number of New Locations" bind="formValue: minNewLocations"></@formGroup>
-                    <@formGroup id="min-environmental-suitability" title="Min. Environmental Suitability" bind="formValue: minEnvironmentalSuitability"></@formGroup>
-                    <@formGroup id="min-distance-from-extent" title="Min. Distance from Disease Extent" bind="formValue: minDistanceFromDiseaseExtent"></@formGroup>
+                    <@formGroup id="max-environmental-suitability-for-triggering" title="Max. Environmental Suitability" bind="formValue: maxEnvironmentalSuitabilityForTriggering"></@formGroup>
+                    <@formGroup id="min-distance-from-extent-for-triggering" title="Min. Distance from Disease Extent" bind="formValue: minDistanceFromDiseaseExtentForTriggering"></@formGroup>
                     Machine Learning:
                     <br><br>
                     <div class="form-group">

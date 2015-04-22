@@ -29,8 +29,10 @@ define([], function () {
             parentDiseaseGroup: { id: getId(diseaseGroupSettingsViewModel.selectedParentDiseaseGroup()) },
             validatorDiseaseGroup: { id: getId(diseaseGroupSettingsViewModel.selectedValidatorDiseaseGroup()) },
             minNewLocations: parseInteger(modelRunParametersViewModel.minNewLocations()),
-            minEnvironmentalSuitability: parseNumber(modelRunParametersViewModel.minEnvironmentalSuitability()),
-            minDistanceFromDiseaseExtent: parseNumber(modelRunParametersViewModel.minDistanceFromDiseaseExtent()),
+            maxEnvironmentalSuitabilityForTriggering:
+                parseNumber(modelRunParametersViewModel.maxEnvironmentalSuitabilityForTriggering()),
+            minDistanceFromDiseaseExtentForTriggering:
+                parseNumber(modelRunParametersViewModel.minDistanceFromDiseaseExtentForTriggering()),
             minDataVolume: parseInteger(modelRunParametersViewModel.minDataVolume()),
             minDistinctCountries: parseInteger(modelRunParametersViewModel.minDistinctCountries()),
             minHighFrequencyCountries: parseInteger(modelRunParametersViewModel.minHighFrequencyCountries()),

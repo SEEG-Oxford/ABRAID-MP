@@ -33,8 +33,8 @@ define([
             it("as observables", function () {
                 expect(vm.diseaseGroupId).toBeObservable();
                 expect(vm.minNewLocations).toBeObservable();
-                expect(vm.minEnvironmentalSuitability).toBeObservable();
-                expect(vm.minDistanceFromDiseaseExtent).toBeObservable();
+                expect(vm.maxEnvironmentalSuitabilityForTriggering).toBeObservable();
+                expect(vm.minDistanceFromDiseaseExtentForTriggering).toBeObservable();
                 expect(vm.minDataVolume).toBeObservable();
                 expect(vm.minDistinctCountries).toBeObservable();
                 expect(vm.minHighFrequencyCountries).toBeObservable();
@@ -51,10 +51,11 @@ define([
                 expectValidationRulesForNonNegativeInteger(vm.minHighFrequencyCountries);
                 expectValidationRulesForNonNegativeInteger(vm.highFrequencyThreshold);
 
-                expectValidationRulesForNumberBetweenZeroAndOne(vm.minEnvironmentalSuitability);
+                expectValidationRulesForNumberBetweenZeroAndOne(vm.maxEnvironmentalSuitabilityForTriggering);
                 expectValidationRulesForNumberBetweenZeroAndOne(vm.maxEnvironmentalSuitabilityWithoutML);
 
-                expect(vm.minDistanceFromDiseaseExtent).toHaveValidationRule({name: "number", params: true});
+                expect(vm.minDistanceFromDiseaseExtentForTriggering)
+                    .toHaveValidationRule({name: "number", params: true});
                 expect(vm.minDataVolume).toHaveValidationRule({name: "required", params: true});
             });
         });
@@ -65,8 +66,8 @@ define([
                 var diseaseGroup = {
                     id: "50",
                     minNewLocations: "1",
-                    minEnvironmentalSuitability: "0.2",
-                    minDistanceFromDiseaseExtent: "-300",
+                    maxEnvironmentalSuitabilityForTriggering: "0.2",
+                    minDistanceFromDiseaseExtentForTriggering: "-300",
                     minDataVolume: "2",
                     minDistinctCountries: "3",
                     minHighFrequencyCountries: "4",
@@ -83,8 +84,10 @@ define([
                 // Assert
                 expect(vm.diseaseGroupId()).toBe(diseaseGroup.id);
                 expect(vm.minNewLocations()).toBe(diseaseGroup.minNewLocations);
-                expect(vm.minEnvironmentalSuitability()).toBe(diseaseGroup.minEnvironmentalSuitability);
-                expect(vm.minDistanceFromDiseaseExtent()).toBe(diseaseGroup.minDistanceFromDiseaseExtent);
+                expect(vm.maxEnvironmentalSuitabilityForTriggering())
+                    .toBe(diseaseGroup.maxEnvironmentalSuitabilityForTriggering);
+                expect(vm.minDistanceFromDiseaseExtentForTriggering())
+                    .toBe(diseaseGroup.minDistanceFromDiseaseExtentForTriggering);
                 expect(vm.minDataVolume()).toBe(diseaseGroup.minDataVolume);
                 expect(vm.minDistinctCountries()).toBe(diseaseGroup.minDistinctCountries);
                 expect(vm.minHighFrequencyCountries()).toBe(diseaseGroup.minHighFrequencyCountries);
@@ -104,8 +107,8 @@ define([
                 var diseaseGroup = {
                     id: undefined,
                     minNewLocations: null,
-                    minEnvironmentalSuitability: undefined,
-                    minDistanceFromDiseaseExtent: 0,
+                    maxEnvironmentalSuitabilityForTriggering: undefined,
+                    minDistanceFromDiseaseExtentForTriggering: 0,
                     minDataVolume: "",
                     minDistinctCountries: NaN,
                     minHighFrequencyCountries: undefined,
@@ -122,8 +125,8 @@ define([
                 // Assert
                 expect(vm.diseaseGroupId()).toBe("");
                 expect(vm.minNewLocations()).toBe("");
-                expect(vm.minEnvironmentalSuitability()).toBe("");
-                expect(vm.minDistanceFromDiseaseExtent()).toBe(0);
+                expect(vm.maxEnvironmentalSuitabilityForTriggering()).toBe("");
+                expect(vm.minDistanceFromDiseaseExtentForTriggering()).toBe(0);
                 expect(vm.minDataVolume()).toBe("");
                 expect(vm.minDistinctCountries()).toBe("");
                 expect(vm.minHighFrequencyCountries()).toBe("");

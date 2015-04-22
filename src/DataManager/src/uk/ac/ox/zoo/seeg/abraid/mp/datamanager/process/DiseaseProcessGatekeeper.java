@@ -123,11 +123,11 @@ public class DiseaseProcessGatekeeper {
     }
 
     private boolean thresholdsDefined(DiseaseGroup diseaseGroup) {
-        // minEnvironmentalSuitability and minDistanceFromDiseaseExtent thresholds are used when selecting the "new"
+        // maxEnvironmentalSuitability and minDistanceFromDiseaseExtent thresholds are used when selecting the "new"
         // occurrences in getDistinctLocationsCount query, so we must ensure they are defined before continuing
         return (diseaseGroup.getMinNewLocationsTrigger() != null) &&
-               (diseaseGroup.getMinEnvironmentalSuitability() != null) &&
-               (diseaseGroup.getMinDistanceFromDiseaseExtent() != null);
+               (diseaseGroup.getMaxEnvironmentalSuitabilityForTriggering() != null) &&
+               (diseaseGroup.getMinDistanceFromDiseaseExtentForTriggering() != null);
     }
 
     private long getDistinctLocationsCount(DateTime lastProcessTimestamp, DiseaseGroup diseaseGroup) {
