@@ -175,6 +175,66 @@ public class ModelRunWorkflowServiceTest {
     }
 
     @Test
+    public void processOccurrencesOnDataValidatorForAuto() {
+        // Arrange
+        int diseaseGroupId = 87;
+        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
+        when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
+        List<DiseaseOccurrence> occurrencesForTrainingPredictor = new ArrayList<>();
+        when(diseaseService.getDiseaseOccurrencesForTrainingPredictor(diseaseGroupId)).thenReturn(
+                occurrencesForTrainingPredictor);
+
+        // Act
+        modelRunWorkflowService.processOccurrencesOnDataValidator(diseaseGroupId, DiseaseProcessType.AUTOMATIC);
+
+        // Assert
+        InOrder order = inOrder(automaticModelRunsEnabler, weightingsCalculator, reviewManager, machineWeightingPredictor);
+        order.verify(weightingsCalculator).updateDiseaseOccurrenceExpertWeightings(eq(diseaseGroupId));
+        order.verify(reviewManager).updateDiseaseOccurrenceStatus(eq(diseaseGroupId), eq(true));
+        order.verify(machineWeightingPredictor).train(eq(diseaseGroupId), same(occurrencesForTrainingPredictor));
+    }
+
+    @Test
+    public void processOccurrencesOnDataValidatorForManual() {
+        // Arrange
+        int diseaseGroupId = 87;
+        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
+        when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
+        List<DiseaseOccurrence> occurrencesForTrainingPredictor = new ArrayList<>();
+        when(diseaseService.getDiseaseOccurrencesForTrainingPredictor(diseaseGroupId)).thenReturn(
+                occurrencesForTrainingPredictor);
+
+        // Act
+        modelRunWorkflowService.processOccurrencesOnDataValidator(diseaseGroupId, DiseaseProcessType.MANUAL);
+
+        // Assert
+        InOrder order = inOrder(automaticModelRunsEnabler, weightingsCalculator, reviewManager, machineWeightingPredictor);
+        order.verify(weightingsCalculator).updateDiseaseOccurrenceExpertWeightings(eq(diseaseGroupId));
+        order.verify(reviewManager).updateDiseaseOccurrenceStatus(eq(diseaseGroupId), eq(false));
+        order.verify(machineWeightingPredictor).train(eq(diseaseGroupId), same(occurrencesForTrainingPredictor));
+    }
+
+    @Test
+    public void processOccurrencesOnDataValidatorForManualGoldStandard() {
+        // Arrange
+        int diseaseGroupId = 87;
+        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
+        when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
+        List<DiseaseOccurrence> occurrencesForTrainingPredictor = new ArrayList<>();
+        when(diseaseService.getDiseaseOccurrencesForTrainingPredictor(diseaseGroupId)).thenReturn(
+                occurrencesForTrainingPredictor);
+
+        // Act
+        modelRunWorkflowService.processOccurrencesOnDataValidator(diseaseGroupId, DiseaseProcessType.MANUAL_GOLD_STANDARD);
+
+        // Assert
+        InOrder order = inOrder(automaticModelRunsEnabler, weightingsCalculator, reviewManager, machineWeightingPredictor);
+        order.verify(weightingsCalculator).updateDiseaseOccurrenceExpertWeightings(eq(diseaseGroupId));
+        order.verify(reviewManager).updateDiseaseOccurrenceStatus(eq(diseaseGroupId), eq(false));
+        order.verify(machineWeightingPredictor).train(eq(diseaseGroupId), same(occurrencesForTrainingPredictor));
+    }
+
+    @Test
     public void generateDiseaseExtentForManualProcess() {
         // Arrange
         int diseaseGroupId = 1;
