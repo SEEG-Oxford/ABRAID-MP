@@ -17,9 +17,9 @@ public class DiseaseProcessGatekeeper {
     private static final String NO_VALIDATION_PARAMETERS_THRESHOLDS =
             "Threshold (minNewLocationsTrigger, minEnvSuitability or minDistanceFromExtent) has not been defined";
     private static final String NEVER_BEEN_EXECUTED_BEFORE =
-            "Process run has never been executed before for this disease group";
-    private static final String NOT_ELAPSED = "Not enough days have elapsed since last process run on %s";
-    private static final String ELAPSED = "Enough days have elapsed since last process run on %s";
+            "Process has never been executed before for this disease group";
+    private static final String NOT_ELAPSED = "Not enough days have elapsed since process last performed on %s";
+    private static final String ELAPSED = "Enough days have elapsed since process last performed on %s";
     private static final String ENOUGH_NEW_LOCATIONS = "Number of new locations has exceeded minimum required";
     private static final String NOT_ENOUGH_NEW_LOCATIONS = "Number of new locations has not exceeded minimum value";
     private static final String STARTING_EXTENT_GENERATION = "Starting extent generation";
