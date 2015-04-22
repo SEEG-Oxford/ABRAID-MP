@@ -128,6 +128,8 @@ public class ModelRunWorkflowServiceImpl implements ModelRunWorkflowService {
      */
     @Override
     public void enableAutomaticModelRuns(int diseaseGroupId) {
+        updateExpertsWeightings();
+        processOccurrencesOnDataValidator(diseaseGroupId, DiseaseProcessType.MANUAL);
         automaticModelRunsEnabler.enable(diseaseGroupId);
     }
 

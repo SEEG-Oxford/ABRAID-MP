@@ -4,6 +4,7 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InOrder;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseProcessType;
@@ -107,14 +108,15 @@ public class ModelRunWorkflowServiceTest {
 
         // Assert
         // Prep
-        verify(weightingsCalculator).updateDiseaseOccurrenceExpertWeightings(eq(diseaseGroupId));
-        verify(weightingsCalculator).updateExpertsWeightings();
-        verify(reviewManager).updateDiseaseOccurrenceStatus(eq(diseaseGroupId), eq(false));
-        verify(diseaseExtentGenerator).generateDiseaseExtent(eq(diseaseGroup), isNull(DateTime.class), eq(DiseaseProcessType.MANUAL));
-        verify(machineWeightingPredictor).train(eq(diseaseGroupId), same(occurrencesForTrainingPredictor));
+        InOrder order = inOrder(weightingsCalculator, reviewManager, diseaseExtentGenerator, machineWeightingPredictor, modelRunRequester, diseaseService);
+        order.verify(weightingsCalculator).updateExpertsWeightings();
+        order.verify(weightingsCalculator).updateDiseaseOccurrenceExpertWeightings(eq(diseaseGroupId));
+        order.verify(reviewManager).updateDiseaseOccurrenceStatus(eq(diseaseGroupId), eq(false));
+        order.verify(machineWeightingPredictor).train(eq(diseaseGroupId), same(occurrencesForTrainingPredictor));
+        order.verify(diseaseExtentGenerator).generateDiseaseExtent(eq(diseaseGroup), isNull(DateTime.class), eq(DiseaseProcessType.MANUAL));
         //// Request run
-        verify(modelRunRequester).requestModelRun(eq(diseaseGroupId), same(occurrences), eq(batchStartDate), eq(batchEndDate));
-        verify(diseaseService).saveDiseaseGroup(same(diseaseGroup));
+        order.verify(modelRunRequester).requestModelRun(eq(diseaseGroupId), same(occurrences), eq(batchStartDate), eq(batchEndDate));
+        order.verify(diseaseService).saveDiseaseGroup(same(diseaseGroup));
     }
 
     @Test
@@ -139,25 +141,36 @@ public class ModelRunWorkflowServiceTest {
 
         // Assert
         // Prep
-        verify(weightingsCalculator).updateDiseaseOccurrenceExpertWeightings(eq(diseaseGroupId));
-        verify(weightingsCalculator).updateExpertsWeightings();
-        verify(reviewManager).updateDiseaseOccurrenceStatus(eq(diseaseGroupId), eq(false));
-        verify(diseaseExtentGenerator).generateDiseaseExtent(eq(diseaseGroup), isNull(DateTime.class), eq(DiseaseProcessType.MANUAL_GOLD_STANDARD));
-        verify(machineWeightingPredictor).train(eq(diseaseGroupId), same(occurrencesForTrainingPredictor));
+        InOrder order = inOrder(weightingsCalculator, reviewManager, diseaseExtentGenerator, machineWeightingPredictor, modelRunRequester, diseaseService);
+        order.verify(weightingsCalculator).updateExpertsWeightings();
+        order.verify(weightingsCalculator).updateDiseaseOccurrenceExpertWeightings(eq(diseaseGroupId));
+        order.verify(reviewManager).updateDiseaseOccurrenceStatus(eq(diseaseGroupId), eq(false));
+        order.verify(machineWeightingPredictor).train(eq(diseaseGroupId), same(occurrencesForTrainingPredictor));
+        order.verify(diseaseExtentGenerator).generateDiseaseExtent(eq(diseaseGroup), isNull(DateTime.class), eq(DiseaseProcessType.MANUAL_GOLD_STANDARD));
         //// Request run
-        verify(modelRunRequester).requestModelRun(eq(diseaseGroupId), same(occurrences), isNull(DateTime.class), isNull(DateTime.class));
-        verify(diseaseService).saveDiseaseGroup(same(diseaseGroup));
+        order.verify(modelRunRequester).requestModelRun(eq(diseaseGroupId), same(occurrences), isNull(DateTime.class), isNull(DateTime.class));
+        order.verify(diseaseService).saveDiseaseGroup(same(diseaseGroup));
     }
 
     @Test
     public void enableAutomaticModelRuns() {
         // Arrange
         int diseaseGroupId = 87;
+        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
+        when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
+        List<DiseaseOccurrence> occurrencesForTrainingPredictor = new ArrayList<>();
+        when(diseaseService.getDiseaseOccurrencesForTrainingPredictor(diseaseGroupId)).thenReturn(
+                occurrencesForTrainingPredictor);
 
         // Act
         modelRunWorkflowService.enableAutomaticModelRuns(diseaseGroupId);
 
         // Assert
+        InOrder order = inOrder(automaticModelRunsEnabler, weightingsCalculator, reviewManager, machineWeightingPredictor);
+        order.verify(weightingsCalculator).updateExpertsWeightings();
+        order.verify(weightingsCalculator).updateDiseaseOccurrenceExpertWeightings(eq(diseaseGroupId));
+        order.verify(reviewManager).updateDiseaseOccurrenceStatus(eq(diseaseGroupId), eq(false));
+        order.verify(machineWeightingPredictor).train(eq(diseaseGroupId), same(occurrencesForTrainingPredictor));
         verify(automaticModelRunsEnabler).enable(eq(diseaseGroupId));
     }
 
