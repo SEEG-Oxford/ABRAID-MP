@@ -19,6 +19,8 @@ define([
     return function (baseUrl, alert, counter) {
         var self = this;
 
+        self.submitting = ko.observable(false);
+
         var diseaseId = null;
 
         function removefromSelfAdminUnits(gaulCode) {
@@ -35,6 +37,7 @@ define([
         self.submitReview = function (review) {
             var gaulCode = self.selectedAdminUnit().id;
             var url = baseUrl + "datavalidation/diseases/" + diseaseId + "/adminunits/" + gaulCode + "/validate";
+            self.submitting(true);
             $.post(url, { review: review })
                 .done(function () {
                     // Status 2xx
@@ -46,6 +49,9 @@ define([
                 })
                 .fail(function () {
                     alert("Something went wrong. Please try again.");
+                })
+                .always(function () {
+                    self.submitting(false);
                 });
         };
 

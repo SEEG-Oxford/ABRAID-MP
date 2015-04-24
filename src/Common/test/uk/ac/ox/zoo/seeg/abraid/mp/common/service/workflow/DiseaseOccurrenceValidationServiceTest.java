@@ -571,6 +571,32 @@ public class DiseaseOccurrenceValidationServiceTest {
         assertThat(caughtException()).isInstanceOf(RuntimeException.class);
     }
 
+    @Test
+    public void addValidationParametersWithChecksSendsToValidatorForNonAutomaticDisease() {
+        // Arrange
+        int diseaseGroupId = 30;
+        GridCoverage2D raster = mock(GridCoverage2D.class);
+
+        DiseaseOccurrence occurrence1 = createDiseaseOccurrence(diseaseGroupId, false, false);
+        DiseaseOccurrence occurrence2 = createDiseaseOccurrence(diseaseGroupId, false, false);
+        DiseaseOccurrence occurrence3 = createDiseaseOccurrence(diseaseGroupId, false, true); // GOLD
+        DiseaseGroup diseaseGroup = occurrence1.getDiseaseGroup();
+        List<DiseaseOccurrence> occurrences = Arrays.asList(occurrence1, occurrence2);
+
+        when(esHelper.getLatestMeanPredictionRaster(diseaseGroup)).thenReturn(raster);
+        when(esHelper.findEnvironmentalSuitability(any(DiseaseOccurrence.class), same(raster))).thenReturn(0.62);
+        when(dfdeHelper.findDistanceFromDiseaseExtent(any(DiseaseOccurrence.class))).thenReturn(900.0);
+        when(mwPredictor.findMachineWeighting(any(DiseaseOccurrence.class))).thenReturn(1.0);
+
+        // Act
+        service.addValidationParameters(occurrences);
+
+        // Assert
+        assertParameterValues(occurrence1, 0.62, 900.0, DiseaseOccurrenceStatus.IN_REVIEW);
+        assertParameterValues(occurrence2, 0.62, 900.0, DiseaseOccurrenceStatus.IN_REVIEW);
+        assertDefaultParameters(occurrence3, DiseaseOccurrenceStatus.READY);
+    }
+
     private DiseaseGroup createDiseaseGroup() {
         DiseaseGroup diseaseGroup = new DiseaseGroup(1);
         diseaseGroup.setAutomaticModelRunsStartDate(DateTime.now());

@@ -87,6 +87,37 @@ define([
             });
         });
 
+        describe("holds an 'submitting' boolean value which", function () {
+            it("is observable", function () {
+                expect(vm.submitting).toBeObservable();
+            });
+
+            it("starts false", function () {
+                expect(vm.submitting()).toBe(false);
+            });
+
+            it("changes to true when a review is submitted", function () {
+                vm.selectedPoint(feature);
+                expect(vm.submitting()).toBe(false);
+                vm.submitReview();
+                expect(vm.submitting()).toBe(true);
+            });
+
+            it("is false after a review is successfully submitted", function () {
+                vm.selectedPoint(feature);
+                vm.submitReview();
+                jasmine.Ajax.requests.mostRecent().response({ status: 204 });
+                expect(vm.submitting()).toBe(false);
+            });
+
+            it("is false after a review is unsuccessfully submitted", function () {
+                vm.selectedPoint(feature);
+                vm.submitReview();
+                jasmine.Ajax.requests.mostRecent().response({ status: 400 });
+                expect(vm.submitting()).toBe(false);
+            });
+        });
+
         describe("holds the translation URL which", function () {
             it("contains the relevant components", function () {
                 vm.selectedPoint(feature);

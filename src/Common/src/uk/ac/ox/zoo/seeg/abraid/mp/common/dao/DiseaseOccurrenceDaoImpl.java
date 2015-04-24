@@ -85,7 +85,7 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
 
     /**
      * Gets a list of occurrence points, for the specified validator disease group, for which the specified expert has
-     * not yet submitted a review. Only SEEG users may view occurrences of disease groups during setup phase.
+     * not yet submitted a review. Only SEEG users may view occurrences of disease groups before first model run prep.
      * Other external users may only view occurrences of disease groups with automatic model runs enabled.
      * @param expertId The id of the specified expert.
      * @param userIsSeeg Whether the expert is a member of SEEG, and therefore should review more occurrences.

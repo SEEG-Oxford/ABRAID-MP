@@ -150,7 +150,9 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
     }
 
     private void findAndSetMachineWeightingAndInReview(DiseaseOccurrence occurrence) {
-        if ((occurrence.getEnvironmentalSuitability() == null) || (occurrence.getDistanceFromDiseaseExtent() == null)) {
+        if (shouldGoDirectToDataValidator(occurrence)) {
+            // Prevent MW before auto (batching)
+            // Prevent null ES or DV in case something has gone wrong
             addOccurrenceToValidator(occurrence);
         } else {
             if (occurrence.getDiseaseGroup().useMachineLearning()) {
@@ -168,6 +170,13 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
                 }
             }
         }
+    }
+
+    private boolean shouldGoDirectToDataValidator(DiseaseOccurrence occurrence) {
+        return
+                (occurrence.getEnvironmentalSuitability() == null) ||
+                (occurrence.getDistanceFromDiseaseExtent() == null) ||
+                !occurrence.getDiseaseGroup().isAutomaticModelRunsEnabled();
     }
 
     private void addOccurrenceToValidator(DiseaseOccurrence occurrence) {
