@@ -6,10 +6,7 @@ import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseExtent;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroupType;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.List;
 
@@ -25,6 +22,9 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
     private DiseaseGroupDao diseaseGroupDao;
 
     @Autowired
+    private DiseaseOccurrenceDao diseaseOccurrenceDao;
+
+    @Autowired
     private ValidatorDiseaseGroupDao validatorDiseaseGroupDao;
 
     @Test
@@ -38,7 +38,7 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         ValidatorDiseaseGroup validatorDiseaseGroup = validatorDiseaseGroupDao.getById(validatorDiseaseGroupId);
         DateTime lastModelRunPrepDate = DateTime.now().minusHours(2);
         int minNewLocations = 100;
-        double minEnvironmentalSuitability = 0.5;
+        double maxEnvironmentalSuitability = 0.5;
         double minDistanceFromDiseaseExtent = 1;
         double maxEnvironmentalSuitabilityWithoutML = 0.4;
         double weighting = 0.5;
@@ -54,8 +54,8 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         diseaseGroup.setValidatorDiseaseGroup(validatorDiseaseGroup);
         diseaseGroup.setLastModelRunPrepDate(lastModelRunPrepDate);
         diseaseGroup.setMinNewLocationsTrigger(minNewLocations);
-        diseaseGroup.setMinEnvironmentalSuitability(minEnvironmentalSuitability);
-        diseaseGroup.setMinDistanceFromDiseaseExtent(minDistanceFromDiseaseExtent);
+        diseaseGroup.setMaxEnvironmentalSuitabilityForTriggering(maxEnvironmentalSuitability);
+        diseaseGroup.setMinDistanceFromDiseaseExtentForTriggering(minDistanceFromDiseaseExtent);
         diseaseGroup.setMaxEnvironmentalSuitabilityWithoutML(maxEnvironmentalSuitabilityWithoutML);
         diseaseGroup.setWeighting(weighting);
         diseaseGroup.setUseMachineLearning(false);
@@ -80,8 +80,8 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         assertThat(diseaseGroup.getValidatorDiseaseGroup().getId()).isEqualTo(validatorDiseaseGroupId);
         assertThat(diseaseGroup.getLastModelRunPrepDate()).isEqualTo(lastModelRunPrepDate);
         assertThat(diseaseGroup.getMinNewLocationsTrigger()).isEqualTo(minNewLocations);
-        assertThat(diseaseGroup.getMinEnvironmentalSuitability()).isEqualTo(minEnvironmentalSuitability);
-        assertThat(diseaseGroup.getMinDistanceFromDiseaseExtent()).isEqualTo(minDistanceFromDiseaseExtent);
+        assertThat(diseaseGroup.getMaxEnvironmentalSuitabilityForTriggering()).isEqualTo(maxEnvironmentalSuitability);
+        assertThat(diseaseGroup.getMinDistanceFromDiseaseExtentForTriggering()).isEqualTo(minDistanceFromDiseaseExtent);
         assertThat(diseaseGroup.getMaxEnvironmentalSuitabilityWithoutML()).isEqualTo(
                 maxEnvironmentalSuitabilityWithoutML);
         assertThat(diseaseGroup.useMachineLearning()).isFalse();
@@ -89,7 +89,8 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         assertThat(diseaseGroup.isGlobal()).isTrue();
         assertThat(diseaseGroup.getParentGroup()).isNull();
         assertThat(diseaseGroup.getCreatedDate()).isNotNull();
-        assertThat(diseaseGroup.getDiseaseExtentParameters()).isEqualToComparingFieldByField(parameters);
+        assertThat(diseaseGroup.getDiseaseExtentParameters()).isEqualToIgnoringGivenFields(parameters, "lastValidatorExtentUpdateInputOccurrences");
+        assertThat(diseaseGroup.getDiseaseExtentParameters().getLastValidatorExtentUpdateInputOccurrences()).isEmpty(); // Null should become empty collection
     }
 
     @Test
@@ -120,7 +121,8 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         assertThat(diseaseGroup.getParentGroup()).isEqualTo(diseaseCluster);
         assertThat(diseaseGroup.getCreatedDate()).isNotNull();
         assertThat(diseaseGroup.useMachineLearning()).isTrue();
-        assertThat(diseaseGroup.getDiseaseExtentParameters()).isEqualToComparingFieldByField(parameters);
+        assertThat(diseaseGroup.getDiseaseExtentParameters()).isEqualToIgnoringGivenFields(parameters, "lastValidatorExtentUpdateInputOccurrences");
+        assertThat(diseaseGroup.getDiseaseExtentParameters().getLastValidatorExtentUpdateInputOccurrences()).isEmpty(); // Null should become empty collection
     }
 
     @Test
@@ -152,7 +154,8 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         assertThat(disease.getParentGroup().getParentGroup()).isNotNull();
         assertThat(disease.getParentGroup().getParentGroup()).isEqualTo(diseaseCluster);
         assertThat(disease.getCreatedDate()).isNotNull();
-        assertThat(disease.getDiseaseExtentParameters()).isEqualToComparingFieldByField(parameters);
+        assertThat(disease.getDiseaseExtentParameters()).isEqualToIgnoringGivenFields(parameters, "lastValidatorExtentUpdateInputOccurrences");
+        assertThat(disease.getDiseaseExtentParameters().getLastValidatorExtentUpdateInputOccurrences()).isEmpty(); // Null should become empty collection
     }
 
     @Test
@@ -253,6 +256,54 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         diseaseGroup = diseaseGroupDao.getById(87);
         assertThat(diseaseGroup.getDiseaseExtentParameters().getMaxMonthsAgoForHigherOccurrenceScore()).isEqualTo(48);
     }
+
+    @Test
+    public void updateExistingDiseaseExtentWithLastOccurrences() {
+        // Arrange
+        DiseaseGroup diseaseGroup = diseaseGroupDao.getById(87);
+        DiseaseExtent diseaseExtent = diseaseGroup.getDiseaseExtentParameters();
+        List<DiseaseOccurrence> dengueOccurrences = diseaseOccurrenceDao.getByDiseaseGroupId(87);
+        assertThat(dengueOccurrences).isNotEmpty();
+
+        // Act
+        diseaseExtent.setLastValidatorExtentUpdateInputOccurrences(dengueOccurrences);
+        diseaseGroupDao.save(diseaseGroup);
+        flushAndClear();
+
+        // Assert
+        diseaseGroup = diseaseGroupDao.getById(87);
+        for (DiseaseOccurrence occurrence : dengueOccurrences) {
+            assertThat(diseaseGroup.getDiseaseExtentParameters().getLastValidatorExtentUpdateInputOccurrences()).contains(occurrence);
+        }
+        assertThat(diseaseGroup.getDiseaseExtentParameters().getLastValidatorExtentUpdateInputOccurrences()).hasSameSizeAs(dengueOccurrences);
+    }
+
+    @Test
+    public void updateExistingDiseaseExtentWithLastOccurrencesTwice() {
+        // Arrange
+        List<DiseaseOccurrence> dengueOccurrences = diseaseOccurrenceDao.getByDiseaseGroupId(87);
+        assertThat(dengueOccurrences).isNotEmpty();
+
+        // Act
+        DiseaseGroup diseaseGroup = diseaseGroupDao.getById(87);
+        diseaseGroup.getDiseaseExtentParameters().setLastValidatorExtentUpdateInputOccurrences(dengueOccurrences);
+        diseaseGroupDao.save(diseaseGroup);
+        flushAndClear();
+
+        diseaseGroup = diseaseGroupDao.getById(87);
+        diseaseGroup.getDiseaseExtentParameters().setLastValidatorExtentUpdateInputOccurrences(dengueOccurrences.subList(2, 3));
+        diseaseGroupDao.save(diseaseGroup);
+        sessionFactory.getCurrentSession().merge(diseaseGroup);
+        flushAndClear();
+
+        // Assert
+        diseaseGroup = diseaseGroupDao.getById(87);
+        for (DiseaseOccurrence occurrence : dengueOccurrences.subList(2, 3)) {
+            assertThat(diseaseGroup.getDiseaseExtentParameters().getLastValidatorExtentUpdateInputOccurrences()).contains(occurrence);
+        }
+        assertThat(diseaseGroup.getDiseaseExtentParameters().getLastValidatorExtentUpdateInputOccurrences()).hasSameSizeAs(dengueOccurrences.subList(2, 3));
+    }
+
 
     @Test
     public void addDiseaseExtentToDiseaseGroupSavesWithSameDiseaseGroupId() {

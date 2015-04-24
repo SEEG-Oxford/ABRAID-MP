@@ -22,6 +22,7 @@ public abstract class AbstractDiseaseExtentGeoJsonTests {
             defaultAdminUnitGlobal(),
             new DiseaseGroup(),
             new DiseaseExtentClass(DiseaseExtentClass.PRESENCE),
+            new DiseaseExtentClass(DiseaseExtentClass.POSSIBLE_PRESENCE),
             0
         );
     }
@@ -36,6 +37,7 @@ public abstract class AbstractDiseaseExtentGeoJsonTests {
             adminUnitGlobal,
             diseaseGroup,
             new DiseaseExtentClass(DiseaseExtentClass.PRESENCE),
+            new DiseaseExtentClass(DiseaseExtentClass.POSSIBLE_PRESENCE),
             0
         );
     }

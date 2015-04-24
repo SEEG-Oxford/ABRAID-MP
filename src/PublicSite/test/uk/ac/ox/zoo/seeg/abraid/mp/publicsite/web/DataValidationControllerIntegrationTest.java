@@ -65,8 +65,13 @@ public class DataValidationControllerIntegrationTest extends AbstractPublicSiteI
         PublicSiteUser loggedInUser = mock(PublicSiteUser.class);
         when(loggedInUser.getId()).thenReturn(1);
         Expert expert = mock(Expert.class);
+        ValidatorDiseaseGroup validatorDiseaseGroup = mock(ValidatorDiseaseGroup.class);
+        DiseaseOccurrence occurrence = mock(DiseaseOccurrence.class);
         when(expert.isSeegMember()).thenReturn(true);
         when(expertService.getExpertById(1)).thenReturn(expert);
+        when(occurrence.getValidatorDiseaseGroup()).thenReturn(validatorDiseaseGroup);
+        when(diseaseService.getValidatorDiseaseGroupById(anyInt())).thenReturn(validatorDiseaseGroup);
+        when(diseaseService.getDiseaseOccurrenceById(anyInt())).thenReturn(occurrence);
         AbstractAuthenticatingTests.setupCurrentUser(loggedInUser);
     }
 
@@ -128,7 +133,7 @@ public class DataValidationControllerIntegrationTest extends AbstractPublicSiteI
     @Test
     public void extentResourceAcceptsValidRequest() throws Exception {
         AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass = new AdminUnitDiseaseExtentClass(
-                createAdminUnitGlobal(), new DiseaseGroup(), new DiseaseExtentClass(DiseaseExtentClass.PRESENCE), 0);
+                createAdminUnitGlobal(), new DiseaseGroup(), new DiseaseExtentClass(DiseaseExtentClass.PRESENCE), new DiseaseExtentClass(DiseaseExtentClass.PRESENCE), 0);
         List<AdminUnitDiseaseExtentClass> map = Arrays.asList(adminUnitDiseaseExtentClass);
         Expert expert = mock(Expert.class);
         DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
@@ -217,9 +222,6 @@ public class DataValidationControllerIntegrationTest extends AbstractPublicSiteI
 
     @Test
     public void submitReviewAcceptsValidRequest() throws Exception {
-
-        when(diseaseService.doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(anyInt(), anyInt()))
-                .thenReturn(true);
         when(expertService.doesDiseaseOccurrenceReviewExist(anyInt(), anyInt())).thenReturn(false);
 
         this.mockMvc.perform(
@@ -230,8 +232,6 @@ public class DataValidationControllerIntegrationTest extends AbstractPublicSiteI
 
     @Test
     public void submitReviewOnlyAcceptsPOST() throws Exception {
-        when(diseaseService.doesDiseaseOccurrenceDiseaseGroupBelongToValidatorDiseaseGroup(anyInt(), anyInt()))
-                .thenReturn(true);
         when(expertService.doesDiseaseOccurrenceReviewExist(anyInt(), anyInt())).thenReturn(false);
 
         this.mockMvc.perform(

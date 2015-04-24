@@ -11,6 +11,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -455,6 +456,45 @@ public class ExpertServiceTest {
     }
 
     @Test
+    public void getCurrentAdminUnitReviewsForDiseaseGroup() {
+        // Arrange
+        int diseaseGroupId = 87;
+        List<AdminUnitReview> adminUnitReviews = new ArrayList<>();
+        DateTime now = DateTime.now();
+
+        AdminUnitReview old1 = mockAdminUnitReview(1, 1, now.minusMillis(2));
+        adminUnitReviews.add(old1); // should be removed
+        AdminUnitReview keep1 = mockAdminUnitReview(1, 1, now);
+        adminUnitReviews.add(keep1);
+        AdminUnitReview old2 = mockAdminUnitReview(1, 1, now.minusMillis(4));
+        adminUnitReviews.add(old2); // should be removed
+        AdminUnitReview keep2 = mockAdminUnitReview(2, 1, now.plusHours(1));
+        adminUnitReviews.add(keep2);
+        AdminUnitReview keep3 = mockAdminUnitReview(1, 2, now);
+        adminUnitReviews.add(keep3);
+        AdminUnitReview keep4 = mockAdminUnitReview(2, 2, now);
+        adminUnitReviews.add(keep4);
+
+        when(adminUnitReviewDao.getByDiseaseGroupId(diseaseGroupId)).thenReturn(adminUnitReviews);
+
+        // Act
+        Collection<AdminUnitReview> testAdminUnitReviews =
+                expertService.getCurrentAdminUnitReviewsForDiseaseGroup(diseaseGroupId);
+
+        // Assert
+        assertThat(testAdminUnitReviews).containsOnly(keep1, keep2, keep3, keep4);
+    }
+
+    private AdminUnitReview mockAdminUnitReview(int gaulCode, int expertId, DateTime createdDate) {
+        AdminUnitReview mock = mock(AdminUnitReview.class);
+        when(mock.getAdminUnitGlobalOrTropicalGaulCode()).thenReturn(gaulCode);
+        when(mock.getExpert()).thenReturn(mock(Expert.class));
+        when(mock.getExpert().getId()).thenReturn(expertId);
+        when(mock.getCreatedDate()).thenReturn(createdDate);
+        return mock;
+    }
+
+    @Test
     public void getAllAdminUnitReviewsForExpertAndDiseaseGroup() {
         // Arrange
         int diseaseGroupId = 87;
@@ -533,6 +573,74 @@ public class ExpertServiceTest {
 
         // Assert
         assertThat(result).isEqualTo(expectedResult);
+    }
+
+    @Test
+    public void doesAdminUnitReviewExistForLatestDiseaseExtentReturnsFalseForDiseaseWhichHasNeverHadAnExtentGenerated() {
+        // Arrange
+        DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
+        when(diseaseGroup.getLastExtentGenerationDate()).thenReturn(null);
+
+        // Act
+        boolean result = expertService.doesAdminUnitReviewExistForLatestDiseaseExtent(1, diseaseGroup, mock(AdminUnitGlobalOrTropical.class));
+
+        // Assert
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    public void doesAdminUnitReviewExistForLatestDiseaseExtentReturnsFalseNoReviewsExist() {
+        // Arrange
+        DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
+        when(diseaseGroup.getLastExtentGenerationDate()).thenReturn(DateTime.now());
+        when(diseaseGroup.getId()).thenReturn(2);
+        AdminUnitGlobalOrTropical adminUnit = mock(AdminUnitGlobalOrTropical.class);
+        when(adminUnit.getGaulCode()).thenReturn(3);
+
+        when(adminUnitReviewDao.getLastReviewDateByExpertIdAndDiseaseGroupIdAndGaulCode(1, 2, 3)).thenReturn(null);
+        // Act
+        boolean result = expertService.doesAdminUnitReviewExistForLatestDiseaseExtent(1, diseaseGroup, adminUnit);
+
+        // Assert
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    public void doesAdminUnitReviewExistForLatestDiseaseExtentReturnsFalseIfMostRecentReviewIsBeforeLastExtentGeneration() {
+        // Arrange
+        DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
+        DateTime lastExtentGeneration = DateTime.now();
+        when(diseaseGroup.getLastExtentGenerationDate()).thenReturn(lastExtentGeneration);
+        when(diseaseGroup.getId()).thenReturn(2);
+        AdminUnitGlobalOrTropical adminUnit = mock(AdminUnitGlobalOrTropical.class);
+        when(adminUnit.getGaulCode()).thenReturn(3);
+
+        when(adminUnitReviewDao.getLastReviewDateByExpertIdAndDiseaseGroupIdAndGaulCode(1, 2, 3)).thenReturn(lastExtentGeneration.minusHours(1));
+
+        // Act
+        boolean result = expertService.doesAdminUnitReviewExistForLatestDiseaseExtent(1, diseaseGroup, adminUnit);
+
+        // Assert
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    public void doesAdminUnitReviewExistForLatestDiseaseExtentReturnsTrueIfMostRecentReviewIsAfterLastExtentGeneration() {
+        // Arrange
+        DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
+        DateTime lastExtentGeneration = DateTime.now();
+        when(diseaseGroup.getLastExtentGenerationDate()).thenReturn(lastExtentGeneration);
+        when(diseaseGroup.getId()).thenReturn(2);
+        AdminUnitGlobalOrTropical adminUnit = mock(AdminUnitGlobalOrTropical.class);
+        when(adminUnit.getGaulCode()).thenReturn(3);
+
+        when(adminUnitReviewDao.getLastReviewDateByExpertIdAndDiseaseGroupIdAndGaulCode(1, 2, 3)).thenReturn(lastExtentGeneration.plusHours(1));
+
+        // Act
+        boolean result = expertService.doesAdminUnitReviewExistForLatestDiseaseExtent(1, diseaseGroup, adminUnit);
+
+        // Assert
+        assertThat(result).isTrue();
     }
 
     @Test

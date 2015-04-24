@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
+import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 
@@ -10,6 +11,13 @@ import java.util.List;
  * Copyright (c) 2014 University of Oxford
  */
 public interface AdminUnitDiseaseExtentClassDao {
+
+    /**
+     * Gets the latest disease extent class change date for the specified disease group.
+     * @param diseaseGroupId The ID of the disease group.
+     * @return The latest change date.
+     */
+    DateTime getLatestDiseaseExtentClassChangeDateByDiseaseGroupId(Integer diseaseGroupId);
 
     /**
      * Gets the list of most recent disease occurrences on the admin unit disease extent class (defined by disease group

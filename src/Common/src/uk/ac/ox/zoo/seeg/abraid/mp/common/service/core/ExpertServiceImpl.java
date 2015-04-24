@@ -1,12 +1,16 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 
+import org.apache.commons.math3.util.Pair;
 import org.joda.time.DateTime;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Service class for experts.
@@ -82,7 +86,7 @@ public class ExpertServiceImpl implements ExpertService {
 
     /**
      * Gets a list of occurrence points, for the specified validator disease group, for which the specified expert has
-     * not yet submitted a review. Only SEEG users may view occurrences of disease groups during setup phase.
+     * not yet submitted a review. Only SEEG users may view occurrences of disease groups before first model run prep.
      * Other external users may only view occurrences of disease groups with automatic model runs enabled.
      * @param expertId The id of the specified expert.
      * @param userIsSeeg Whether the expert is a member of SEEG, and therefore should review more occurrences.
@@ -121,6 +125,30 @@ public class ExpertServiceImpl implements ExpertService {
     }
 
     /**
+     * Determines whether a review already exists for the specified admin unit, disease group and expert.
+     * Each expert can only submit one review per disease/admin unit for each run of the disease extent generator.
+     * The createdDate of the expert's most recent matching review will be checked against the disease group's
+     * lastExtentGenerationDate property.
+     *
+     * @param expertId The id of the specified expert.
+     * @param diseaseGroup The disease group.
+     * @param adminUnit The tropical or global admin unit.
+     * @return True if the review already exists, otherwise false.
+     */
+    @Override
+    public boolean doesAdminUnitReviewExistForLatestDiseaseExtent(
+            Integer expertId, DiseaseGroup diseaseGroup, AdminUnitGlobalOrTropical adminUnit) {
+        DateTime lastExtentGenerationDate = diseaseGroup.getLastExtentGenerationDate();
+        if (lastExtentGenerationDate == null) {
+            return false;
+        } else {
+            DateTime lastReviewDate = adminUnitReviewDao.getLastReviewDateByExpertIdAndDiseaseGroupIdAndGaulCode(
+                    expertId, diseaseGroup.getId(), adminUnit.getGaulCode());
+            return lastReviewDate != null && lastReviewDate.isAfter(diseaseGroup.getLastExtentGenerationDate());
+        }
+    }
+
+    /**
      * Gets all reviews for the specified disease group, including repeat reviews.
      * @param diseaseGroupId The id of the disease group.
      * @return A list of reviews.
@@ -128,6 +156,29 @@ public class ExpertServiceImpl implements ExpertService {
     @Override
     public List<AdminUnitReview> getAllAdminUnitReviewsForDiseaseGroup(Integer diseaseGroupId) {
         return adminUnitReviewDao.getByDiseaseGroupId(diseaseGroupId);
+    }
+
+    /**
+     * Gets the reviews for the specified disease group, excluding repeat reviews (most recent only).
+     * @param diseaseGroupId The id of the disease group.
+     * @return A set of reviews.
+     */
+    @Override
+    public Collection<AdminUnitReview> getCurrentAdminUnitReviewsForDiseaseGroup(Integer diseaseGroupId) {
+        List<AdminUnitReview> allReviews = getAllAdminUnitReviewsForDiseaseGroup(diseaseGroupId);
+        Map<Pair<Integer, Integer>, AdminUnitReview> processedReviews = new HashMap<>();
+
+        for (AdminUnitReview review : allReviews) {
+            Pair<Integer, Integer> key = new Pair<>(
+                    review.getAdminUnitGlobalOrTropicalGaulCode(),
+                    review.getExpert().getId());
+
+            if (!processedReviews.containsKey(key) || reviewIsNewer(processedReviews.get(key), review)) {
+                processedReviews.put(key, review);
+            }
+        }
+
+        return processedReviews.values();
     }
 
     /**
@@ -139,6 +190,10 @@ public class ExpertServiceImpl implements ExpertService {
     @Override
     public List<AdminUnitReview> getAllAdminUnitReviewsForDiseaseGroup(Integer expertId, Integer diseaseGroupId) {
         return adminUnitReviewDao.getByExpertIdAndDiseaseGroupId(expertId, diseaseGroupId);
+    }
+
+    private static boolean reviewIsNewer(AdminUnitReview review, AdminUnitReview newReview) {
+        return review.getCreatedDate().isBefore(newReview.getCreatedDate());
     }
 
     /**

@@ -22,7 +22,7 @@ define([
 ], function (L, $, ko, _) {
     "use strict";
 
-    return function (baseUrl, wmsUrl, loggedIn, alert) {
+    return function (baseUrl, wmsUrl, loggedIn, alert, setTimeout) { // jshint ignore:line
 
         /** MAP AND BASE LAYER */
 
@@ -53,6 +53,14 @@ define([
             reuseTiles: true, // Enable Leaflet reuse of tiles within single page view
             tiled: true // Enable GeoWebCaching reuse of tiles between all users/page views
         });
+
+        // Track when zooming is happening
+        map.isZooming = false;
+        map.isPanning = false;
+        map.on("zoomstart", function () { map.isZooming = true; });
+        map.on("zoomend", function () { map.isZooming = false; });
+        map.on("movestart", function () { map.isPanning = true; });
+        map.on("moveend", function () { map.isPanning = false; });
 
         // Global colour variables
         var defaultColour = "#c478a9";      // Lighter pink/red
@@ -218,15 +226,77 @@ define([
             addDiseaseOccurrenceData(diseaseId);
         }
 
+        function findClosestOccurrenceMarkerToCoordinates(coords) {
+            return _.chain(layerMap).values().sortBy(function (marker) {
+                return coords.distanceTo(extractLatLng(marker));
+            }).first().value();
+        }
+
+        function clickOccurrenceMarker(marker) {
+            var latlong = marker.getLatLng();
+            marker.fireEvent("click", {
+                latlng: latlong,
+                layerPoint: map.latLngToLayerPoint(latlong),
+                containerPoint: map.latLngToContainerPoint(latlong)
+            });
+        }
+
+        function extractLatLng(marker) {
+            return new L.LatLng(marker.feature.geometry.coordinates[1], marker.feature.geometry.coordinates[0]);
+        }
+
+        function selectOccurrenceMarker(target) {
+            var targetLatLng = extractLatLng(target);
+            if (!map.getCenter().equals(targetLatLng)) {
+                // Center the target in the view
+                map.panTo(targetLatLng);
+            }
+
+            var recursivelySelectOccurrenceMarker = function () {
+                if (!map.isZooming && !map.isPanning) {
+                    var parent = clusterLayer.getVisibleParent(target);
+
+                    if (target._map) { /* jshint ignore:line */
+                        // The point is on the map, so click it
+                        clickOccurrenceMarker(target);
+                        // Complete
+                        return;
+                    } else if (parent) {
+                        // The closest point isn't on the map, but is inside a cluster on the map,
+                        // so click the cluster to open it. Then try again, so the spider leg gets clicked
+                        clickOccurrenceMarker(parent);
+                    } else {
+                        // Give up
+                        return;
+                    }
+                }
+
+                // If we are in the middle of an animation, wait for it to complete before continuing
+                // If we just clicked something that isn't the target occurrence, continue to try and click the target
+                setTimeout(recursivelySelectOccurrenceMarker, 50);
+            };
+            recursivelySelectOccurrenceMarker();
+        }
+
+        function selectClosestOccurrenceMarkerToCoordinates(coords) {
+            var closest = findClosestOccurrenceMarkerToCoordinates(coords);
+            selectOccurrenceMarker(closest);
+        }
+
         // Remove the feature's marker layer from the disease occurrence layer, and delete record of the feature.
-        function removeMarkerFromDiseaseOccurrenceLayer(id) {
+        // Then select the next feature for review.
+        function removeMarkerFromDiseaseOccurrenceLayerAndSelectNext(id) {
+            var coords = extractLatLng(layerMap[id]);
+
             clusterLayer.clearLayers();
             diseaseOccurrenceLayer.removeLayer(layerMap[id]);
             delete layerMap[id];
+
             if (_(layerMap).isEmpty()) {
                 ko.postbox.publish("no-features-to-review", true);
             } else {
                 clusterLayer.addLayer(diseaseOccurrenceLayer);
+                selectClosestOccurrenceMarkerToCoordinates(coords);
             }
         }
 
@@ -450,7 +520,7 @@ define([
         });
 
         ko.postbox.subscribe("occurrence-reviewed", function (id) {
-            removeMarkerFromDiseaseOccurrenceLayer(id);
+            removeMarkerFromDiseaseOccurrenceLayerAndSelectNext(id);
         });
 
         ko.postbox.subscribe("admin-unit-reviewed", function (id) {

@@ -11,15 +11,15 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.DiseaseOccurrenceVali
 import java.util.List;
 
 /**
- * Handles disease occurrences. Specifically, if a batch end date is specified in the model run, it sets the
+ * Handles batching of disease occurrences. Specifically, if a batch end date is specified in the model run, it sets the
  * "validation parameters" (e.g. environmental suitability, distance from disease extent) for the disease occurrences up
  * until the end date.
  *
  * Copyright (c) 2014 University of Oxford
  */
-public class DiseaseOccurrenceHandlerHelper {
-    private static final Logger LOGGER = Logger.getLogger(DiseaseOccurrenceHandlerHelper.class);
-    private static final String STARTING_HANDLING_LOG_MESSAGE = "Model run %d: starting disease occurrence handling";
+public class BatchingHandlerHelper {
+    private static final Logger LOGGER = Logger.getLogger(BatchingHandlerHelper.class);
+    private static final String STARTING_HANDLING_LOG_MESSAGE = "Model run %d: starting batching handling";
     private static final String INITIAL_BATCH_LOG_MESSAGE = "Model run %d: this is the initial batch, so setting " +
             "status to AWAITING_BATCHING and final weighting to null for %d occurrence(s) of disease group %d (%s)";
     private static final String VALIDATION_LOG_MESSAGE =
@@ -28,14 +28,14 @@ public class DiseaseOccurrenceHandlerHelper {
     private static final String VALIDATION_COMPLETED_LOG_MESSAGE =
             "Model run %d: setting validation parameters completed";
     private static final String LOG_DATE_FORMAT = "dd MMM yyyy";
-    private static final String NO_HANDLING_LOG_MESSAGE = "Model run %d: no disease occurrence handling to do";
+    private static final String NO_HANDLING_LOG_MESSAGE = "Model run %d: no batching handling to do";
 
     private DiseaseService diseaseService;
     private ModelRunService modelRunService;
     private DiseaseOccurrenceValidationService diseaseOccurrenceValidationService;
 
-    public DiseaseOccurrenceHandlerHelper(DiseaseService diseaseService, ModelRunService modelRunService,
-                                          DiseaseOccurrenceValidationService diseaseOccurrenceValidationService) {
+    public BatchingHandlerHelper(DiseaseService diseaseService, ModelRunService modelRunService,
+                                 DiseaseOccurrenceValidationService diseaseOccurrenceValidationService) {
         this.diseaseService = diseaseService;
         this.modelRunService = modelRunService;
         this.diseaseOccurrenceValidationService = diseaseOccurrenceValidationService;

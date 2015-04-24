@@ -35,12 +35,12 @@
         <div data-bind="if: hasSelectedAdminUnit()">
         <@security.authorize ifAnyGranted="ROLE_USER">
             <div id="reviewButtons">
-                <button type="button" class="btn btn-primary btn-sm btn-block" data-bind="click: function () { submitReview('PRESENCE') }">Presence</button>
-                <button type="button" class="btn btn-primary btn-sm btn-block" data-bind="click: function () { submitReview('POSSIBLE_PRESENCE') }">Possible presence</button>
-                <button type="button" class="btn btn-primary btn-sm btn-block" data-bind="click: function () { submitReview('UNCERTAIN') }">Uncertain<br /></button>
-                <button type="button" class="btn btn-primary btn-sm btn-block" data-bind="click: function () { submitReview('POSSIBLE_ABSENCE') }">Possible absence</button>
-                <button type="button" class="btn btn-primary btn-sm btn-block" data-bind="click: function () { submitReview('ABSENCE') }">Absence</button>
-                <button type="button" class="btn btn-danger btn-sm btn-block" data-bind="click: function () { submitReview(null) }">I don't know</button>
+                <button type="button" class="btn btn-primary btn-sm btn-block" data-bind="click: function () { submitReview('PRESENCE') }, disable: submitting">Presence</button>
+                <button type="button" class="btn btn-primary btn-sm btn-block" data-bind="click: function () { submitReview('POSSIBLE_PRESENCE') }, disable: submitting">Possible presence</button>
+                <button type="button" class="btn btn-primary btn-sm btn-block" data-bind="click: function () { submitReview('UNCERTAIN') }, disable: submitting">Uncertain<br /></button>
+                <button type="button" class="btn btn-primary btn-sm btn-block" data-bind="click: function () { submitReview('POSSIBLE_ABSENCE') }, disable: submitting">Possible absence</button>
+                <button type="button" class="btn btn-primary btn-sm btn-block" data-bind="click: function () { submitReview('ABSENCE') }, disable: submitting">Absence</button>
+                <button type="button" class="btn btn-danger btn-sm btn-block" data-bind="click: function () { submitReview(null) }, disable: submitting">I don't know</button>
             </div>
         </@security.authorize>
         </div>
@@ -114,9 +114,9 @@
     <div id="reviewButtons">
     <@security.authorize ifAnyGranted="ROLE_USER">
         <div class="btn-group">
-            <button type="button" class="btn btn-primary" data-bind="click: function () { submitReview('YES') }"><i class="fa fa-check"></i>&nbsp;Valid</button>
-            <button type="button" class="btn btn-primary" data-bind="click: function () { submitReview('UNSURE') }">Unsure<br /></button>
-            <button type="button" class="btn btn-primary" data-bind="click: function () { submitReview('NO') }"><i class="fa fa-times"></i>&nbsp;Invalid</button>
+            <button type="button" class="btn btn-primary" data-bind="click: function () { submitReview('YES') }, disable: submitting"><i class="fa fa-check"></i>&nbsp;Valid</button>
+            <button type="button" class="btn btn-primary" data-bind="click: function () { submitReview('UNSURE') }, disable: submitting">Unsure<br /></button>
+            <button type="button" class="btn btn-primary" data-bind="click: function () { submitReview('NO') }, disable: submitting"><i class="fa fa-times"></i>&nbsp;Invalid</button>
         </div>
     </@security.authorize>
     </div>

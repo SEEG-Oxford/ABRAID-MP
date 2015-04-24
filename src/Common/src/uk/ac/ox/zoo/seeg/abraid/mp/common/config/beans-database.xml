@@ -48,6 +48,7 @@
             <value>
                 hibernate.dialect = ${hibernate.dialect}
                 hibernate.show_sql = ${hibernate.show_sql}
+                jadira.usertype.databaseZone = jvm
             </value>
         </property>
         <property name="packagesToScan" value="uk.ac.ox.zoo.seeg.abraid.mp.common.domain" />

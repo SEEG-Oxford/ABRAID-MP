@@ -1,6 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 
-import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ModelRunDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
@@ -16,11 +15,9 @@ import java.util.List;
 @Transactional(rollbackFor = Exception.class)
 public class ModelRunServiceImpl implements ModelRunService {
     private final ModelRunDao modelRunDao;
-    private final int daysBetweenModelRuns;
 
-    public ModelRunServiceImpl(ModelRunDao modelRunDao, int daysBetweenModelRuns) {
+    public ModelRunServiceImpl(ModelRunDao modelRunDao) {
         this.modelRunDao = modelRunDao;
-        this.daysBetweenModelRuns = daysBetweenModelRuns;
     }
 
     /**
@@ -73,16 +70,6 @@ public class ModelRunServiceImpl implements ModelRunService {
     @Override
     public boolean hasBatchingEverCompleted(int diseaseGroupId) {
         return modelRunDao.hasBatchingEverCompleted(diseaseGroupId);
-    }
-
-    /**
-     * Returns the input date, with the number of days between scheduled model runs subtracted.
-     * @param dateTime The input date.
-     * @return The input date minus the number of days between scheduled model runs.
-     */
-    @Override
-    public DateTime subtractDaysBetweenModelRuns(DateTime dateTime) {
-        return dateTime.minusDays(daysBetweenModelRuns).withTimeAtStartOfDay();
     }
 
     /**

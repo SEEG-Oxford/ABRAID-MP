@@ -1,6 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 
-import org.joda.time.DateTime;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ModelRunDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
@@ -26,7 +25,7 @@ public class ModelRunServiceTest {
         ModelRun expectedRun = new ModelRun();
         ModelRunDao modelRunDao = mock(ModelRunDao.class);
         when(modelRunDao.getByName(name)).thenReturn(expectedRun);
-        ModelRunService modelRunService = new ModelRunServiceImpl(modelRunDao, 7);
+        ModelRunService modelRunService = new ModelRunServiceImpl(modelRunDao);
 
         // Act
         ModelRun actualRun = modelRunService.getModelRunByName(name);
@@ -40,7 +39,7 @@ public class ModelRunServiceTest {
         // Arrange
         ModelRun run = new ModelRun();
         ModelRunDao modelRunDao = mock(ModelRunDao.class);
-        ModelRunService modelRunService = new ModelRunServiceImpl(modelRunDao, 7);
+        ModelRunService modelRunService = new ModelRunServiceImpl(modelRunDao);
 
         // Act
         modelRunService.saveModelRun(run);
@@ -56,7 +55,7 @@ public class ModelRunServiceTest {
         ModelRun expectedModelRun = new ModelRun();
         ModelRunDao modelRunDao = mock(ModelRunDao.class);
         when(modelRunDao.getLastRequestedModelRun(diseaseGroupId)).thenReturn(expectedModelRun);
-        ModelRunService modelRunService = new ModelRunServiceImpl(modelRunDao, 7);
+        ModelRunService modelRunService = new ModelRunServiceImpl(modelRunDao);
 
         // Act
         ModelRun actualModelRun = modelRunService.getLastRequestedModelRun(diseaseGroupId);
@@ -72,7 +71,7 @@ public class ModelRunServiceTest {
         ModelRun expectedModelRun = new ModelRun();
         ModelRunDao modelRunDao = mock(ModelRunDao.class);
         when(modelRunDao.getMostRecentlyRequestedModelRunWhichCompleted(diseaseGroupId)).thenReturn(expectedModelRun);
-        ModelRunService modelRunService = new ModelRunServiceImpl(modelRunDao, 7);
+        ModelRunService modelRunService = new ModelRunServiceImpl(modelRunDao);
 
         // Act
         ModelRun actualModelRun = modelRunService.getMostRecentlyRequestedModelRunWhichCompleted(diseaseGroupId);
@@ -88,7 +87,7 @@ public class ModelRunServiceTest {
         ModelRun expectedModelRun = new ModelRun();
         ModelRunDao modelRunDao = mock(ModelRunDao.class);
         when(modelRunDao.getMostRecentlyFinishedModelRunWhichCompleted(diseaseGroupId)).thenReturn(expectedModelRun);
-        ModelRunService modelRunService = new ModelRunServiceImpl(modelRunDao, 7);
+        ModelRunService modelRunService = new ModelRunServiceImpl(modelRunDao);
 
         // Act
         ModelRun actualModelRun = modelRunService.getMostRecentlyFinishedModelRunWhichCompleted(diseaseGroupId);
@@ -103,7 +102,7 @@ public class ModelRunServiceTest {
         Collection<ModelRun> expectedRuns = Arrays.asList(mock(ModelRun.class), mock(ModelRun.class));
         ModelRunDao modelRunDao = mock(ModelRunDao.class);
         when(modelRunDao.getCompletedModelRunsForDisplay()).thenReturn(expectedRuns);
-        ModelRunService modelRunService = new ModelRunServiceImpl(modelRunDao, 7);
+        ModelRunService modelRunService = new ModelRunServiceImpl(modelRunDao);
 
         // Act
         Collection<ModelRun> runs = modelRunService.getCompletedModelRunsForDisplay();
@@ -118,7 +117,7 @@ public class ModelRunServiceTest {
         int diseaseGroupId = 87;
         ModelRunDao modelRunDao = mock(ModelRunDao.class);
         when(modelRunDao.hasBatchingEverCompleted(diseaseGroupId)).thenReturn(true);
-        ModelRunService modelRunService = new ModelRunServiceImpl(modelRunDao, 7);
+        ModelRunService modelRunService = new ModelRunServiceImpl(modelRunDao);
 
         // Act
         boolean result = modelRunService.hasBatchingEverCompleted(diseaseGroupId);
@@ -132,7 +131,7 @@ public class ModelRunServiceTest {
         // Arrange
         List<String> expected = Arrays.asList("A", "B", "C");
         ModelRunDao modelRunDao = mock(ModelRunDao.class);
-        ModelRunService modelRunService = new ModelRunServiceImpl(modelRunDao, 7);
+        ModelRunService modelRunService = new ModelRunServiceImpl(modelRunDao);
         when(modelRunDao.getModelRunRequestServersByUsage()).thenReturn(expected);
 
         // Act
@@ -142,19 +141,6 @@ public class ModelRunServiceTest {
         assertThat(result).isEqualTo(expected);
     }
 
-    @Test
-    public void subtractDaysBetweenModelRuns() {
-        // Arrange
-        ModelRunService modelRunService = new ModelRunServiceImpl(mock(ModelRunDao.class), 1234);
-        DateTime inputDateTime = new DateTime("2014-10-09T12:13:14");
-        DateTime expectedResult = new DateTime("2011-05-24T00:00:00");
-
-        // Act
-        DateTime actualResult = modelRunService.subtractDaysBetweenModelRuns(inputDateTime);
-
-        // Assert
-        assertThat(actualResult.getMillis()).isEqualTo(expectedResult.getMillis());
-    }
 
     @Test
     public void getModelRunsForDiseaseGroup() {
@@ -162,7 +148,7 @@ public class ModelRunServiceTest {
         Collection<ModelRun> expectedRuns = Arrays.asList(mock(ModelRun.class), mock(ModelRun.class));
         ModelRunDao modelRunDao = mock(ModelRunDao.class);
         when(modelRunDao.getModelRunsForDiseaseGroup(anyInt())).thenReturn(expectedRuns);
-        ModelRunService modelRunService = new ModelRunServiceImpl(modelRunDao, 7);
+        ModelRunService modelRunService = new ModelRunServiceImpl(modelRunDao);
 
         // Act
         Collection<ModelRun> result = modelRunService.getModelRunsForDiseaseGroup(87);

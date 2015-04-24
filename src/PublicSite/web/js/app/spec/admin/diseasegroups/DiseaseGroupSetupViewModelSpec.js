@@ -289,18 +289,34 @@ define([
                 expect(actualUrl).toBe(expectedUrl);
             });
 
-            it("build submission data which is correct", function () {
-                // Arrange
-                vm.batchEndDate("10 Jul 2014");
-                vm.onlyUseGoldStandardOccurrences(true);
-                var expectedBatchEndDate = "2014-07-10T00:00:00";
+            describe("build submission data which is correct", function () {
+                it("for manual run submission", function () {
+                    // Arrange
+                    vm.batchStartDate("09 Jul 2014");
+                    vm.batchEndDate("10 Jul 2014");
+                    vm.onlyUseGoldStandardOccurrences(false);
+                    var expectedBatchStartDate = "2014-07-09T00:00:00";
+                    var expectedBatchEndDate = "2014-07-10T00:00:00";
 
-                // Act
-                var actualData = vm.buildSubmissionData();
+                    // Act
+                    var actualData = vm.buildSubmissionData();
 
-                // Assert
-                expect(actualData.batchEndDate).toContain(expectedBatchEndDate);
-                expect(actualData.onlyUseGoldStandardOccurrences).toBe(true);
+                    // Assert
+                    expect(actualData.batchStartDate).toContain(expectedBatchStartDate);
+                    expect(actualData.batchEndDate).toContain(expectedBatchEndDate);
+                    expect(actualData.onlyUseGoldStandardOccurrences).toBe(false);
+                });
+
+                it("for gold standard run submission", function () {
+                    // Arrange
+                    vm.onlyUseGoldStandardOccurrences(true);
+
+                    // Act
+                    var actualData = vm.buildSubmissionData();
+
+                    // Assert
+                    expect(actualData.onlyUseGoldStandardOccurrences).toBe(true);
+                });
             });
         });
 

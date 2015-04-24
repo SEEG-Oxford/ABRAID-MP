@@ -50,6 +50,21 @@ public class AdminUnitReviewDaoImpl extends AbstractDao<AdminUnitReview, Integer
     }
 
     /**
+     * Gets the date of the last admin unit review submitted by a specific expert, disease group and gaul code.
+     * @param expertId The expert's Id.
+     * @param diseaseGroupId The disease group's Id.
+     * @param gaulCode The admin unit's gaulCode.
+     * @return The date of the last admin unit review.
+     */
+    @Override
+    public DateTime getLastReviewDateByExpertIdAndDiseaseGroupIdAndGaulCode(
+            Integer expertId, Integer diseaseGroupId, Integer gaulCode) {
+        Query query = getParameterisedNamedQuery("getLastAdminUnitReviewDateByExpertIdAndDiseaseGroupIdAndGaulCode",
+                "expertId", expertId, "diseaseGroupId", diseaseGroupId, "gaulCode", gaulCode);
+        return (DateTime) query.uniqueResult();
+    }
+
+    /**
      * Gets the date of the last admin unit review submitted by a specific expert.
      * @param expertId The expert's Id.
      * @return The date of the last admin unit review.
