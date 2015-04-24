@@ -171,7 +171,7 @@ public class ModelRunWorkflowServiceTest {
         order.verify(weightingsCalculator).updateDiseaseOccurrenceExpertWeightings(eq(diseaseGroupId));
         order.verify(reviewManager).updateDiseaseOccurrenceStatus(eq(diseaseGroupId), eq(false));
         order.verify(machineWeightingPredictor).train(eq(diseaseGroupId), same(occurrencesForTrainingPredictor));
-        verify(automaticModelRunsEnabler).enable(eq(diseaseGroupId));
+        order.verify(automaticModelRunsEnabler).enable(eq(diseaseGroupId));
     }
 
     @Test
