@@ -179,6 +179,26 @@ public class DiseaseOccurrenceValidationServiceTest {
     }
 
     @Test
+    public void addValidationParametersWithChecksSendsToValidatorForNonAutomaticDisease() {
+        // Arrange
+        int diseaseGroupId = 30;
+
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, false, false);
+        occurrence.getLocation().setHasPassedQc(true);
+        setIsGoldStandardProvenance(occurrence, false);
+
+        when(esHelper.findEnvironmentalSuitability(occurrence, null)).thenReturn(0.42);
+        when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence)).thenReturn(500.0);
+
+        // Act
+        service.addValidationParametersWithChecks(occurrence);
+
+        // Assert
+        assertDefaultParameters(occurrence, DiseaseOccurrenceStatus.IN_REVIEW);
+        verify(modelRunService, never()).hasBatchingEverCompleted(anyInt());
+    }
+
+    @Test
     public void addValidationParametersWithChecksSendsToValidatorIfESIsNullAndDistanceFromExtentIsNull() {
         // Arrange
         int diseaseGroupId = 30;
