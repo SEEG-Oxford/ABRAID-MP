@@ -179,26 +179,6 @@ public class DiseaseOccurrenceValidationServiceTest {
     }
 
     @Test
-    public void addValidationParametersWithChecksSendsToValidatorForNonAutomaticDisease() {
-        // Arrange
-        int diseaseGroupId = 30;
-
-        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, false, false);
-        occurrence.getLocation().setHasPassedQc(true);
-        setIsGoldStandardProvenance(occurrence, false);
-
-        when(esHelper.findEnvironmentalSuitability(occurrence, null)).thenReturn(0.42);
-        when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence)).thenReturn(500.0);
-
-        // Act
-        service.addValidationParametersWithChecks(occurrence);
-
-        // Assert
-        assertDefaultParameters(occurrence, DiseaseOccurrenceStatus.IN_REVIEW);
-        verify(modelRunService, never()).hasBatchingEverCompleted(anyInt());
-    }
-
-    @Test
     public void addValidationParametersWithChecksSendsToValidatorIfESIsNullAndDistanceFromExtentIsNull() {
         // Arrange
         int diseaseGroupId = 30;
@@ -589,6 +569,32 @@ public class DiseaseOccurrenceValidationServiceTest {
 
         // Assert
         assertThat(caughtException()).isInstanceOf(RuntimeException.class);
+    }
+
+    @Test
+    public void addValidationParametersWithChecksSendsToValidatorForNonAutomaticDisease() {
+        // Arrange
+        int diseaseGroupId = 30;
+        GridCoverage2D raster = mock(GridCoverage2D.class);
+
+        DiseaseOccurrence occurrence1 = createDiseaseOccurrence(diseaseGroupId, false, false);
+        DiseaseOccurrence occurrence2 = createDiseaseOccurrence(diseaseGroupId, false, false);
+        DiseaseOccurrence occurrence3 = createDiseaseOccurrence(diseaseGroupId, false, false);
+        DiseaseGroup diseaseGroup = occurrence1.getDiseaseGroup();
+        List<DiseaseOccurrence> occurrences = Arrays.asList(occurrence1, occurrence2);
+
+        when(esHelper.getLatestMeanPredictionRaster(diseaseGroup)).thenReturn(raster);
+        when(esHelper.findEnvironmentalSuitability(any(DiseaseOccurrence.class), same(raster))).thenReturn(0.62);
+        when(dfdeHelper.findDistanceFromDiseaseExtent(any(DiseaseOccurrence.class))).thenReturn(900.0);
+        when(mwPredictor.findMachineWeighting(any(DiseaseOccurrence.class))).thenReturn(1.0);
+
+        // Act
+        service.addValidationParameters(occurrences);
+
+        // Assert
+        assertParameterValues(occurrence1, 0.62, 900.0, DiseaseOccurrenceStatus.IN_REVIEW);
+        assertParameterValues(occurrence2, 0.62, 900.0, DiseaseOccurrenceStatus.IN_REVIEW);
+        assertParameterValues(occurrence3, 0.62, 900.0, DiseaseOccurrenceStatus.IN_REVIEW);
     }
 
     private DiseaseGroup createDiseaseGroup() {
