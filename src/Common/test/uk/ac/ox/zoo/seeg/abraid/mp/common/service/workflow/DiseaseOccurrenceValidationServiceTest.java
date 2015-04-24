@@ -579,7 +579,7 @@ public class DiseaseOccurrenceValidationServiceTest {
 
         DiseaseOccurrence occurrence1 = createDiseaseOccurrence(diseaseGroupId, false, false);
         DiseaseOccurrence occurrence2 = createDiseaseOccurrence(diseaseGroupId, false, false);
-        DiseaseOccurrence occurrence3 = createDiseaseOccurrence(diseaseGroupId, false, false);
+        DiseaseOccurrence occurrence3 = createDiseaseOccurrence(diseaseGroupId, false, true); // GOLD
         DiseaseGroup diseaseGroup = occurrence1.getDiseaseGroup();
         List<DiseaseOccurrence> occurrences = Arrays.asList(occurrence1, occurrence2);
 
@@ -594,7 +594,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         // Assert
         assertParameterValues(occurrence1, 0.62, 900.0, DiseaseOccurrenceStatus.IN_REVIEW);
         assertParameterValues(occurrence2, 0.62, 900.0, DiseaseOccurrenceStatus.IN_REVIEW);
-        assertParameterValues(occurrence3, 0.62, 900.0, DiseaseOccurrenceStatus.IN_REVIEW);
+        assertDefaultParameters(occurrence3, DiseaseOccurrenceStatus.READY);
     }
 
     private DiseaseGroup createDiseaseGroup() {
