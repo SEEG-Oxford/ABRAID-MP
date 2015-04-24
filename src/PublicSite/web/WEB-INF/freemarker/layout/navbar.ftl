@@ -42,11 +42,9 @@
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tools<span class="caret"></span></a>
                 <ul class="dropdown-menu" role="menu">
-                    <@security.authorize ifAnyGranted="ROLE_ADMIN">
-                        <li><a href="<@spring.url "/tools/uploadcsv/"/>">Upload CSV</a></li>
-                        <li><a href="<@spring.url "/admin/diseases/"/>">Administration - Diseases</a></li>
-                        <li><a href="<@spring.url "/admin/experts/"/>">Administration - Experts</a></li>
-                    </@security.authorize>
+                    <li><a href="<@spring.url "/tools/uploadcsv/"/>">Upload CSV</a></li>
+                    <li><a href="<@spring.url "/admin/diseases/"/>">Administration - Diseases</a></li>
+                    <li><a href="<@spring.url "/admin/experts/"/>">Administration - Experts</a></li>
                 </ul>
             </li>
         </@security.authorize>
