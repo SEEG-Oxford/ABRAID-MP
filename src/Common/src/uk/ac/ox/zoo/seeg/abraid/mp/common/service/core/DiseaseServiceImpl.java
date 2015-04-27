@@ -293,9 +293,9 @@ public class DiseaseServiceImpl implements DiseaseService {
      * @return The list of latest disease occurrences for the specified admin unit disease extent class.
      */
     @Override
-    public List<DiseaseOccurrence> getLatestOccurrencesForAdminUnitDiseaseExtentClass(DiseaseGroup diseaseGroup,
-                                                                                      Integer gaulCode) {
-        return adminUnitDiseaseExtentClassDao.getLatestOccurrencesForAdminUnitDiseaseExtentClass(
+    public List<DiseaseOccurrence> getLatestValidatorOccurrencesForAdminUnitDiseaseExtentClass(
+            DiseaseGroup diseaseGroup, Integer gaulCode) {
+        return adminUnitDiseaseExtentClassDao.getLatestValidatorOccurrencesForAdminUnitDiseaseExtentClass(
                 diseaseGroup.getId(), diseaseGroup.isGlobal(), gaulCode);
     }
 

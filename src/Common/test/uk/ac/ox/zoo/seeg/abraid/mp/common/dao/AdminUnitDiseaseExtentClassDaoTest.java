@@ -7,8 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
 
+import java.util.Arrays;
 import java.util.List;
 
+import static ch.lambdaj.Lambda.extract;
+import static ch.lambdaj.Lambda.on;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -29,6 +32,9 @@ public class AdminUnitDiseaseExtentClassDaoTest extends AbstractCommonSpringInte
     private DiseaseExtentClassDao diseaseExtentClassDao;
 
     @Autowired
+    private DiseaseOccurrenceDao diseaseOccurrenceDao;
+
+    @Autowired
     private DiseaseGroupDao diseaseGroupDao;
 
     @Test
@@ -41,6 +47,23 @@ public class AdminUnitDiseaseExtentClassDaoTest extends AbstractCommonSpringInte
 
         // Assert
         assertThat(result).isEqualTo(new DateTime("2014-06-10T17:45:25"));
+    }
+
+    @Test
+    public void getLatestValidatorOccurrencesForAdminUnitDiseaseExtentClass() {
+        // Arrange
+        AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass = adminUnitDiseaseExtentClassDao.getById(1);
+        adminUnitDiseaseExtentClass.setLatestValidatorOccurrences(diseaseOccurrenceDao.getByIds(Arrays.asList(272407, 272831, 274430)));
+        Integer diseaseGroupId = adminUnitDiseaseExtentClass.getDiseaseGroup().getId();
+        Boolean global = adminUnitDiseaseExtentClass.getDiseaseGroup().isGlobal();
+        Integer gaulCode = adminUnitDiseaseExtentClass.getAdminUnitGlobalOrTropical().getGaulCode();
+
+        // Act
+        List<DiseaseOccurrence> result = adminUnitDiseaseExtentClassDao.getLatestValidatorOccurrencesForAdminUnitDiseaseExtentClass(diseaseGroupId, global, gaulCode);
+
+        // Assert
+        List<Integer> ids = extract(result, on(DiseaseOccurrence.class).getId());
+        assertThat(ids).containsOnly(272407, 272831, 274430);
     }
 
     @Test

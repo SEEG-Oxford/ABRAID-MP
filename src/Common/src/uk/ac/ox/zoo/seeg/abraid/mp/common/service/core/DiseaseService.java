@@ -143,7 +143,7 @@ public interface DiseaseService {
      * @param gaulCode The gaul code the admin unit disease extent class represents.
      * @return The list of latest disease occurrences for the specified admin unit disease extent class.
      */
-    List<DiseaseOccurrence> getLatestOccurrencesForAdminUnitDiseaseExtentClass(DiseaseGroup diseaseGroup,
+    List<DiseaseOccurrence> getLatestValidatorOccurrencesForAdminUnitDiseaseExtentClass(DiseaseGroup diseaseGroup,
                                                                                Integer gaulCode);
 
     /**

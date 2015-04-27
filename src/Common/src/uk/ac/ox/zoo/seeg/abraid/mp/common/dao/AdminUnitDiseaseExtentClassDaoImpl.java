@@ -17,7 +17,7 @@ public class AdminUnitDiseaseExtentClassDaoImpl extends AbstractDao<AdminUnitDis
     private static final String GLOBAL = "Global";
     private static final String TROPICAL = "Tropical";
     private static final String LATEST_OCCURRENCES_QUERY =
-            "select latestOccurrences from AdminUnitDiseaseExtentClass a " +
+            "select latestValidatorOccurrences from AdminUnitDiseaseExtentClass a " +
             "where a.diseaseGroup.id=:diseaseGroupId " +
             "and a.adminUnit%s.gaulCode=:gaulCode";
     public AdminUnitDiseaseExtentClassDaoImpl(SessionFactory sessionFactory) {
@@ -46,7 +46,7 @@ public class AdminUnitDiseaseExtentClassDaoImpl extends AbstractDao<AdminUnitDis
      */
     @SuppressWarnings("unchecked")
     @Override
-    public List<DiseaseOccurrence> getLatestOccurrencesForAdminUnitDiseaseExtentClass(
+    public List<DiseaseOccurrence> getLatestValidatorOccurrencesForAdminUnitDiseaseExtentClass(
             Integer diseaseGroupId, boolean isGlobal, Integer gaulCode) {
         String queryString = String.format(LATEST_OCCURRENCES_QUERY, isGlobal ? GLOBAL : TROPICAL);
 
