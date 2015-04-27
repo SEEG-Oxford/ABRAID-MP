@@ -150,9 +150,7 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
     }
 
     private void findAndSetMachineWeightingAndInReview(DiseaseOccurrence occurrence) {
-        if (shouldGoDirectToDataValidator(occurrence)) {
-            // Prevent MW before auto (batching)
-            // Prevent null ES or DV in case something has gone wrong
+        if (shouldGoDirectlyToDataValidator(occurrence)) {
             addOccurrenceToValidator(occurrence);
         } else {
             if (occurrence.getDiseaseGroup().useMachineLearning()) {
@@ -172,7 +170,9 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
         }
     }
 
-    private boolean shouldGoDirectToDataValidator(DiseaseOccurrence occurrence) {
+    private boolean shouldGoDirectlyToDataValidator(DiseaseOccurrence occurrence) {
+        // Prevent MW before auto (batching)
+        // Prevent null ES or DV in case something has gone wrong
         return
                 (occurrence.getEnvironmentalSuitability() == null) ||
                 (occurrence.getDistanceFromDiseaseExtent() == null) ||

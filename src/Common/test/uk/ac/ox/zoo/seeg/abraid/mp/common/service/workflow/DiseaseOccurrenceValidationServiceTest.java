@@ -595,6 +595,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         assertParameterValues(occurrence1, 0.62, 900.0, DiseaseOccurrenceStatus.IN_REVIEW);
         assertParameterValues(occurrence2, 0.62, 900.0, DiseaseOccurrenceStatus.IN_REVIEW);
         assertDefaultParameters(occurrence3, DiseaseOccurrenceStatus.READY);
+        verify(mwPredictor, never()).findMachineWeighting(any(DiseaseOccurrence.class));
     }
 
     private DiseaseGroup createDiseaseGroup() {
