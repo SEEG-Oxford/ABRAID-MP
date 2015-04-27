@@ -20,8 +20,9 @@ public class DiseaseProcessGatekeeper {
             "Process has never been executed before for this disease group";
     private static final String NOT_ELAPSED = "Not enough days have elapsed since process last performed on %s";
     private static final String ELAPSED = "Enough days have elapsed since process last performed on %s";
-    private static final String ENOUGH_NEW_LOCATIONS = "Number of new locations has exceeded minimum required";
-    private static final String NOT_ENOUGH_NEW_LOCATIONS = "Number of new locations has not exceeded minimum value";
+    private static final String ENOUGH_NEW_LOCATIONS = "Number of new locations has exceeded minimum required (%s/%s)";
+    private static final String NOT_ENOUGH_NEW_LOCATIONS =
+            "Number of new locations has not exceeded minimum value (%s/%s)";
     private static final String STARTING_EXTENT_GENERATION = "Starting extent generation";
     private static final String NOT_STARTING_EXTENT_GENERATION = "Extent generation will not be executed";
     private static final String STARTING_MODEL_RUN = "Starting model run";
@@ -114,7 +115,8 @@ public class DiseaseProcessGatekeeper {
             int minimum = diseaseGroup.getMinNewLocationsTrigger();
 
             boolean hasEnoughNewLocations = count >= minimum;
-            LOGGER.info(hasEnoughNewLocations ? ENOUGH_NEW_LOCATIONS : NOT_ENOUGH_NEW_LOCATIONS);
+            String logMessageTemplate = hasEnoughNewLocations ? ENOUGH_NEW_LOCATIONS : NOT_ENOUGH_NEW_LOCATIONS;
+            LOGGER.info(String.format(logMessageTemplate, count, minimum));
             return hasEnoughNewLocations;
         } else {
             LOGGER.info(NO_VALIDATION_PARAMETERS_THRESHOLDS);
