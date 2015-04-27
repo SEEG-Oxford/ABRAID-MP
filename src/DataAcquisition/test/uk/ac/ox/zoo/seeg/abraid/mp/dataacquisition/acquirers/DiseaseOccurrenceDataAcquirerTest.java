@@ -291,7 +291,7 @@ public class DiseaseOccurrenceDataAcquirerTest {
         catchException(acquirer).acquire(occurrence);
 
         // Assert
-        assertThat(caughtException()).hasMessage("Occurrence date for occurrence is older than than the max allowable age.");
+        assertThat(caughtException()).hasMessage("Occurrence date for occurrence is older than the max allowable age.");
         verify(diseaseService, never()).saveDiseaseOccurrence(any(DiseaseOccurrence.class));
     }
 

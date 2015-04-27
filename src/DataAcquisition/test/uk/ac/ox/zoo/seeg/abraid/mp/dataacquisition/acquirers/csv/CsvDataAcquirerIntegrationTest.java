@@ -40,7 +40,7 @@ public class CsvDataAcquirerIntegrationTest extends AbstractDataAcquisitionSprin
     @Before
     public void setup() {
         // Sun, 27 Apr 2014 09:45:41
-        // CSV_OCCURRENCE1, CSV_OCCURRENCE2 and TEST_ISO_8859_1_FILE
+        // CSV_OCCURRENCE1, CSV_OCCURRENCE2 and TEST_ISO_8859_1_FILE all have occurrence dates less than 1 year prior.
         DateTimeUtils.setCurrentMillisFixed(1398591941000L);
     }
 
