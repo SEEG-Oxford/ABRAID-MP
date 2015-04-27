@@ -2,6 +2,8 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.csv;
 
 import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeUtils;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
@@ -34,6 +36,13 @@ public class CsvDataAcquirerIntegrationTest extends AbstractDataAcquisitionSprin
 
     @Autowired
     private DiseaseOccurrenceDao diseaseOccurrenceDao;
+
+    @Before
+    public void setup() {
+        // Sun, 27 Apr 2014 09:45:41
+        // CSV_OCCURRENCE1, CSV_OCCURRENCE2 and TEST_ISO_8859_1_FILE
+        DateTimeUtils.setCurrentMillisFixed(1398591941000L);
+    }
 
     @Test
     public void acquireIsSuccessful() {

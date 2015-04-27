@@ -2,9 +2,11 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers;
 
 import com.vividsolutions.jts.geom.Point;
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ProvenanceNames;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.DiseaseOccurrenceValidationService;
@@ -24,21 +26,28 @@ public class DiseaseOccurrenceDataAcquirer {
     private static final String MULTIPLE_LOCATIONS_MATCH_MESSAGE =
             "More than one location already exists at point (%f,%f) and with precision %s. Arbitrarily using " +
             "location ID %d.";
+    private static final String OCCURRENCE_IS_TOO_OLD =
+            "Occurrence date for occurrence is older than than the max allowable age.";
+    private static final String OCCURRENCE_IS_IN_THE_FUTURE =
+            "Occurrence date for occurrence is in the future.";
 
     private DiseaseService diseaseService;
     private LocationService locationService;
     private DiseaseOccurrenceValidationService diseaseOccurrenceValidationService;
     private QCManager qcManager;
     private PostQCManager postQcManager;
+    private int maxDaysAgoForOccurrenceAcquisition;
 
     public DiseaseOccurrenceDataAcquirer(DiseaseService diseaseService, LocationService locationService,
                                          DiseaseOccurrenceValidationService diseaseOccurrenceValidationService,
-                                         QCManager qcManager, PostQCManager postQcManager) {
+                                         QCManager qcManager, PostQCManager postQcManager,
+                                         int maxDaysAgoForOccurrenceAcquisition) {
         this.diseaseService = diseaseService;
         this.locationService = locationService;
         this.diseaseOccurrenceValidationService = diseaseOccurrenceValidationService;
         this.qcManager = qcManager;
         this.postQcManager = postQcManager;
+        this.maxDaysAgoForOccurrenceAcquisition = maxDaysAgoForOccurrenceAcquisition;
     }
 
     /**
@@ -48,6 +57,8 @@ public class DiseaseOccurrenceDataAcquirer {
      */
     public boolean acquire(DiseaseOccurrence occurrence) {
         if (occurrence != null) {
+            rejectOccurrenceIfOccurrenceDateInvalid(occurrence);
+
             Location location = continueLocationConversion(occurrence.getLocation());
             occurrence.setLocation(location);
 
@@ -61,6 +72,29 @@ public class DiseaseOccurrenceDataAcquirer {
         }
 
         return false;
+    }
+
+    private void rejectOccurrenceIfOccurrenceDateInvalid(DiseaseOccurrence occurrence) {
+        if (!occurrenceIsGoldStandard(occurrence) && occurrenceIsTooOld(occurrence)) {
+            throw new DataAcquisitionException(OCCURRENCE_IS_TOO_OLD);
+        } else if (occurrenceIsInTheFuture(occurrence)) {
+            throw new DataAcquisitionException(OCCURRENCE_IS_IN_THE_FUTURE);
+        }
+    }
+
+    private boolean occurrenceIsTooOld(DiseaseOccurrence occurrence) {
+        return occurrence.getOccurrenceDate().withTimeAtStartOfDay().plusDays(maxDaysAgoForOccurrenceAcquisition)
+                .isBefore(DateTime.now().withTimeAtStartOfDay());
+    }
+
+    private boolean occurrenceIsInTheFuture(DiseaseOccurrence occurrence) {
+        // Allow one day's leeway, just to avoid any timezone issues.
+        return occurrence.getOccurrenceDate().withTimeAtStartOfDay().minusDays(1)
+                .isAfter(DateTime.now().withTimeAtStartOfDay());
+    }
+
+    private boolean occurrenceIsGoldStandard(DiseaseOccurrence occurrence) {
+        return occurrence.getAlert().getFeed().getProvenance().getName().equals(ProvenanceNames.MANUAL_GOLD_STANDARD);
     }
 
     // Returns the converted location, or null if the location could not be converted further

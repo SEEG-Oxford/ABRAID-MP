@@ -1,5 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.datamanager;
 
+import org.joda.time.DateTimeUtils;
+import org.junit.Before;
 import org.junit.Test;
 import org.kubek2k.springockito.annotations.ReplaceWithMock;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +43,12 @@ public class MainQCTest extends AbstractWebServiceClientIntegrationTests {
 
     @Autowired
     private GeoNameDao geoNameDao;
+
+    @Before
+    public void setup() {
+        // Mon, 27 Jan 2014 12:12:21
+        DateTimeUtils.setCurrentMillisFixed(1390824741000L);
+    }
 
     @Test
     public void mainMethodAcquiresDataFromFiles() {

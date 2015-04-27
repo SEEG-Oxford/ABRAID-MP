@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers;
 
 import com.vividsolutions.jts.geom.Point;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
@@ -41,13 +42,13 @@ public class DiseaseOccurrenceDataAcquirerTest {
         qcManager = mock(QCManager.class);
         postQcManager = mock(PostQCManager.class);
         acquirer = new DiseaseOccurrenceDataAcquirer(diseaseService, locationService,
-                diseaseOccurrenceValidationService, qcManager, postQcManager);
+                diseaseOccurrenceValidationService, qcManager, postQcManager, 365);
     }
 
     @Test
     public void acquireDoesNotSaveIfOccurrenceAlreadyExists() {
         // Arrange
-        DiseaseOccurrence occurrence = new DiseaseOccurrence();
+        DiseaseOccurrence occurrence = createDefaultDiseaseOccurrence();
         locationIsKnownToAlreadyExist(occurrence);
         mockDiseaseOccurrenceAlreadyExists(occurrence, true);
 
@@ -269,6 +270,7 @@ public class DiseaseOccurrenceDataAcquirerTest {
         DiseaseOccurrence occurrence = new DiseaseOccurrence();
         Location location = new Location(20, 10, LocationPrecision.ADMIN1);
         occurrence.setLocation(location);
+        occurrence.setOccurrenceDate(DateTime.now());
         setAlert(occurrence, false);
         return occurrence;
     }
@@ -277,6 +279,7 @@ public class DiseaseOccurrenceDataAcquirerTest {
         DiseaseOccurrence occurrence = new DiseaseOccurrence();
         Location location = new Location(20, 10, LocationPrecision.ADMIN1);
         occurrence.setLocation(location);
+        occurrence.setOccurrenceDate(DateTime.now());
         setAlert(occurrence, true);
         return occurrence;
     }
