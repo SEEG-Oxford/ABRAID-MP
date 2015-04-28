@@ -28,6 +28,34 @@ define([
                 // Assert
                 expect(vm.count()).toBe(expectedCount);
             });
+
+            it("sets its value to 0 when the 'admin-unit-selected' event is fired with undefined", function () {
+                // Arrange
+                vm.count(6);
+                // Act
+                ko.postbox.publish("admin-unit-selected", undefined);
+                // Assert
+                expect(vm.count()).toBe(0);
+            });
+
+            it("sets its value to 0 when the 'admin-unit-selected' event is fired with empty", function () {
+                // Arrange
+                vm.count(6);
+                var data = { count: 0 };
+                // Act
+                ko.postbox.publish("admin-unit-selected", data);
+                // Assert
+                expect(vm.count()).toBe(0);
+            });
+
+            it("sets its value to 0 when the 'layers-changed' event is fired", function () {
+                // Arrange
+                vm.count(6);
+                // Act
+                ko.postbox.publish("layers-changed", {});
+                // Assert
+                expect(vm.count()).toBe(0);
+            });
         });
 
         describe("holds the list of occurrences which", function () {
@@ -96,7 +124,39 @@ define([
                         // Assert
                         expect(jasmine.Ajax.requests.mostRecent().url).toBe(url);
                     });
-                });
+
+                    it("to empty when the event is fired with undefined", function () {
+                        // Arrange
+                        var vm = new LatestOccurrencesViewModel(baseUrl, true);
+                        vm.occurrences([1, 2, 3]);
+                        // Act
+                        ko.postbox.publish("admin-unit-selected", undefined);
+                        // Assert
+                        expect(vm.occurrences().length).toBe(0);
+                    });
+
+                    it("to empty when the 'admin-unit-selected' event is fired with empty", function () {
+                        // Arrange
+                        var vm = new LatestOccurrencesViewModel(baseUrl, true);
+                        vm.occurrences([1, 2, 3]);
+                        var data = { id: 1, count: 0 };
+                        // Act
+                        ko.postbox.publish("admin-unit-selected", data);
+                        // Assert
+                        expect(vm.occurrences().length).toBe(0);
+                    });
+                }
+            );
+
+            it("sets its value to 0 when the 'layers-changed' event is fired", function () {
+                // Arrange
+                var vm = new LatestOccurrencesViewModel();
+                vm.occurrences([1, 2, 3]);
+                // Act
+                ko.postbox.publish("layers-changed", {});
+                // Assert
+                expect(vm.occurrences().length).toBe(0);
+            });
         });
 
         describe("holds a boolean to indicate whether to show the list of occurrences which", function () {

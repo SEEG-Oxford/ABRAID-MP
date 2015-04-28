@@ -27,15 +27,18 @@ define([
         var ajax;
         var diseaseGroupId;
 
-        function getUrl(adminUnitId) {
+        var getUrl = function (adminUnitId) {
             var adminUnits = loggedIn ? ("diseases/" + diseaseGroupId + "/adminunits/") : "defaultadminunits/";
             return baseUrl + "datavalidation/" + adminUnits + adminUnitId + "/occurrences";
-        }
+        };
 
-        ko.postbox.subscribe("admin-unit-selected", function (adminUnit) {
+        var clear = function () {
             self.occurrences([]);
             self.count(0);
+        };
 
+        ko.postbox.subscribe("admin-unit-selected", function (adminUnit) {
+            clear();
             if (adminUnit && adminUnit.count > 0) {
                 self.count(adminUnit.count);
                 if (ajax) {
@@ -53,6 +56,7 @@ define([
 
         ko.postbox.subscribe("layers-changed", function (layer) {
             diseaseGroupId = (layer.type === DISEASE_EXTENT) ? layer.diseaseId : undefined;
+            clear();
         });
     };
 });
