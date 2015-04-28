@@ -148,7 +148,7 @@ define([
                 }
             );
 
-            it("sets its value to 0 when the 'layers-changed' event is fired", function () {
+            it("sets its value to empty when the 'layers-changed' event is fired", function () {
                 // Arrange
                 var vm = new LatestOccurrencesViewModel();
                 vm.occurrences([1, 2, 3]);
