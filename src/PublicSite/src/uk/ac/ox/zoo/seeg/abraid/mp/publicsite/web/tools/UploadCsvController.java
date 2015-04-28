@@ -42,7 +42,7 @@ public class UploadCsvController extends AbstractController {
      * Returns the Upload CSV page.
      * @return The Upload CSV page name.
      */
-    @Secured({ "ROLE_SEEG" })
+    @Secured({ "ROLE_ADMIN" })
     @RequestMapping(value = "/tools/uploadcsv", method = RequestMethod.GET)
     public String showCSVPage() {
         return "tools/uploadcsv";
@@ -55,7 +55,7 @@ public class UploadCsvController extends AbstractController {
      * @return A response entity with JsonFileUploadResponse for compatibility with iframe based upload.
      * @throws Exception if upload could not be performed
      */
-    @Secured({ "ROLE_SEEG" })
+    @Secured({ "ROLE_ADMIN" })
     @RequestMapping(value = "/tools/uploadcsv/upload", method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseBody

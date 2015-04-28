@@ -16,7 +16,6 @@ import static org.mockito.Mockito.*;
  * Copyright (c) 2015 University of Oxford
  */
 public class MainTest {
-
     @Test
     public void runMainCallsCorrectSequenceOfSteps() throws Exception {
         // Arrange

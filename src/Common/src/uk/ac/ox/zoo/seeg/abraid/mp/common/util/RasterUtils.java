@@ -122,7 +122,7 @@ public final class RasterUtils {
      * @throws IOException thrown if unable to load the raster.
      */
     public static GridCoverage2D loadRaster(File location) throws IOException {
-        LOGGER.info(String.format(LOG_READING_RASTER, location.getAbsolutePath()));
+        LOGGER.debug(String.format(LOG_READING_RASTER, location.getAbsolutePath()));
         if (location.exists()) {
             GridCoverage2DReader reader = null;
             try {

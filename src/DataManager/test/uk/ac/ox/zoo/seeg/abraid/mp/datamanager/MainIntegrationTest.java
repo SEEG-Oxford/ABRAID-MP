@@ -3,6 +3,8 @@ package uk.ac.ox.zoo.seeg.abraid.mp.datamanager;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Polygon;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeUtils;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +67,12 @@ public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTest
 
     @Autowired
     private ModelRunService modelRunService;
+
+    @Before
+    public void before() {
+        // Sun, 27 Apr 2014 09:45:41
+        DateTimeUtils.setCurrentMillisFixed(1398591941000L);
+    }
 
     @Test
     public void mainMethodAcquiresDataFromWebService() throws Exception {
