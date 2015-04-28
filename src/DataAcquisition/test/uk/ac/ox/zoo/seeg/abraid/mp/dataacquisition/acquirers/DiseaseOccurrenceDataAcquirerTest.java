@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers;
 
 import com.vividsolutions.jts.geom.Point;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
@@ -18,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.googlecode.catchexception.CatchException.catchException;
+import static com.googlecode.catchexception.CatchException.caughtException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -41,13 +44,13 @@ public class DiseaseOccurrenceDataAcquirerTest {
         qcManager = mock(QCManager.class);
         postQcManager = mock(PostQCManager.class);
         acquirer = new DiseaseOccurrenceDataAcquirer(diseaseService, locationService,
-                diseaseOccurrenceValidationService, qcManager, postQcManager);
+                diseaseOccurrenceValidationService, qcManager, postQcManager, 365);
     }
 
     @Test
     public void acquireDoesNotSaveIfOccurrenceAlreadyExists() {
         // Arrange
-        DiseaseOccurrence occurrence = new DiseaseOccurrence();
+        DiseaseOccurrence occurrence = createDefaultDiseaseOccurrence();
         locationIsKnownToAlreadyExist(occurrence);
         mockDiseaseOccurrenceAlreadyExists(occurrence, true);
 
@@ -265,10 +268,88 @@ public class DiseaseOccurrenceDataAcquirerTest {
         verifySuccessfulSave(occurrence, true, result);
     }
 
+    @Test
+    public void acquireRejectsNullDiseaseOccurrence() {
+        // Arrange
+        DiseaseOccurrence occurrence = null;
+
+        // Act
+        boolean result = acquirer.acquire(occurrence);
+
+        // Assert
+        assertThat(result).isFalse();
+        verify(diseaseService, never()).saveDiseaseOccurrence(any(DiseaseOccurrence.class));
+    }
+
+    @Test
+    public void acquireRejectsOutdatedDiseaseOccurrence() {
+        // Arrange
+        DiseaseOccurrence occurrence = createDefaultDiseaseOccurrence();
+        occurrence.setOccurrenceDate(DateTime.now().minusYears(1).minusDays(1));
+
+        // Act
+        catchException(acquirer).acquire(occurrence);
+
+        // Assert
+        assertThat(caughtException()).hasMessage("Occurrence date for occurrence is older than the max allowable age.");
+        verify(diseaseService, never()).saveDiseaseOccurrence(any(DiseaseOccurrence.class));
+    }
+
+    @Test
+    public void acquireSavesOutdatedGoldStandardDiseaseOccurrence() {
+        // Arrange
+        DiseaseOccurrence occurrence = createGoldStandardOccurrence();
+        occurrence.setOccurrenceDate(DateTime.now().minusYears(1).minusDays(1));
+        mockGetLocationsByPointAndPrecision(occurrence.getLocation().getGeom(), occurrence.getLocation().getPrecision(),
+                new ArrayList<Location>());
+        mockRunQC(occurrence.getLocation(), true);
+
+        // Act
+        boolean result = acquirer.acquire(occurrence);
+
+        // Assert
+        assertThat(occurrence.getLocation().hasPassedQc()).isTrue();
+        verify(postQcManager).runPostQCProcesses(same(occurrence.getLocation()));
+        verifySuccessfulSave(occurrence, true, result);
+    }
+
+    @Test
+    public void acquireRejectsFutureDiseaseOccurrence() {
+        // Arrange
+        DiseaseOccurrence occurrence = createDefaultDiseaseOccurrence();
+        occurrence.setOccurrenceDate(DateTime.now().plusDays(2));
+
+        // Act
+        catchException(acquirer).acquire(occurrence);
+
+        // Assert
+        assertThat(caughtException()).hasMessage("Occurrence date for occurrence is in the future.");
+        verify(diseaseService, never()).saveDiseaseOccurrence(any(DiseaseOccurrence.class));
+    }
+
+    @Test
+    public void acquireSavesOccurrenceJustInTheFuture() {
+        // Arrange -- This is to protect against date time zone edge cases
+        DiseaseOccurrence occurrence = createGoldStandardOccurrence();
+        occurrence.setOccurrenceDate(DateTime.now().plusDays(1));
+        mockGetLocationsByPointAndPrecision(occurrence.getLocation().getGeom(), occurrence.getLocation().getPrecision(),
+                new ArrayList<Location>());
+        mockRunQC(occurrence.getLocation(), true);
+
+        // Act
+        boolean result = acquirer.acquire(occurrence);
+
+        // Assert
+        assertThat(occurrence.getLocation().hasPassedQc()).isTrue();
+        verify(postQcManager).runPostQCProcesses(same(occurrence.getLocation()));
+        verifySuccessfulSave(occurrence, true, result);
+    }
+
     private DiseaseOccurrence createDefaultDiseaseOccurrence() {
         DiseaseOccurrence occurrence = new DiseaseOccurrence();
         Location location = new Location(20, 10, LocationPrecision.ADMIN1);
         occurrence.setLocation(location);
+        occurrence.setOccurrenceDate(DateTime.now());
         setAlert(occurrence, false);
         return occurrence;
     }
@@ -277,6 +358,7 @@ public class DiseaseOccurrenceDataAcquirerTest {
         DiseaseOccurrence occurrence = new DiseaseOccurrence();
         Location location = new Location(20, 10, LocationPrecision.ADMIN1);
         occurrence.setLocation(location);
+        occurrence.setOccurrenceDate(DateTime.now());
         setAlert(occurrence, true);
         return occurrence;
     }
