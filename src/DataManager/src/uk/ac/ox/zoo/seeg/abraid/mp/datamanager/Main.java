@@ -3,9 +3,12 @@ package uk.ac.ox.zoo.seeg.abraid.mp.datamanager;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunWorkflowException;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.datamanager.process.DataAcquisitionManager;
-import uk.ac.ox.zoo.seeg.abraid.mp.datamanager.process.ModelRunManager;
+import uk.ac.ox.zoo.seeg.abraid.mp.datamanager.process.DiseaseProcessManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Entry point for the DataAcquisition module.
@@ -18,18 +21,23 @@ public class Main {
      */
     public static final String APPLICATION_CONTEXT_LOCATION =
             "classpath:uk/ac/ox/zoo/seeg/abraid/mp/datamanager/config/beans.xml";
+
     private static final Logger LOGGER = Logger.getLogger(Main.class);
     private static final String STARTED_MESSAGE = "Data Manager version %s: started";
     private static final String FINISHED_MESSAGE = "Data Manager finished";
 
-    private DataAcquisitionManager dataAcquisitionManager;
-    private ModelRunManager modelRunManager;
-    private String applicationVersion;
+    private final DiseaseService diseaseService;
+    private final DataAcquisitionManager dataAcquisitionManager;
+    private final DiseaseProcessManager diseaseProcessManager;
+    private final String applicationVersion;
 
-    public Main(DataAcquisitionManager dataAcquisitionManager, ModelRunManager modelRunManager,
+    public Main(DiseaseService diseaseService,
+                DataAcquisitionManager dataAcquisitionManager,
+                DiseaseProcessManager diseaseProcessManager,
                 String applicationVersion) {
+        this.diseaseService = diseaseService;
         this.dataAcquisitionManager = dataAcquisitionManager;
-        this.modelRunManager = modelRunManager;
+        this.diseaseProcessManager = diseaseProcessManager;
         this.applicationVersion = applicationVersion;
     }
 
@@ -67,11 +75,63 @@ public class Main {
      */
     public static void runMain(ApplicationContext context, String[] args) {
         Main main = (Main) context.getBean("main");
-        main.logStarted();
-        main.runDataAcquisition(args);
-        main.updateExpertsWeightings();
-        main.prepareForAndRequestModelRuns();
-        main.logFinished();
+        main.runMain(args);
+    }
+
+    /**
+     * Performs the main DataManager process.
+     * @param dataAcquisitionArgs Command line arguments. If specified, these are interpreted as a list of file
+     *                            names containing HealthMap JSON data to acquire.
+     */
+    public void runMain(String[] dataAcquisitionArgs) {
+        logStarted();
+        List<Integer> diseaseGroupIdsForAutomaticModelRuns = getDiseaseGroupIdsForAutomaticModelRuns();
+        updateExpertsWeightings();
+        processOccurrencesOnDataValidator(diseaseGroupIdsForAutomaticModelRuns);
+        runDataAcquisition(dataAcquisitionArgs);
+        updateDiseaseExtents(diseaseGroupIdsForAutomaticModelRuns);
+        requestModelRuns(diseaseGroupIdsForAutomaticModelRuns);
+        logFinished();
+    }
+
+    private void logStarted() {
+        String message = String.format(STARTED_MESSAGE, applicationVersion);
+        LOGGER.info(message);
+        System.out.println(message);
+    }
+
+    private List<Integer> getDiseaseGroupIdsForAutomaticModelRuns() {
+        List<Integer> diseaseGroupIdsForAutomaticModelRuns = diseaseService.getDiseaseGroupIdsForAutomaticModelRuns();
+        // Return a mutable version of the list.
+        return new ArrayList<>(diseaseGroupIdsForAutomaticModelRuns);
+    }
+
+    /**
+     * Calculates and saves the new weighting for each active expert, with their reviews across all disease groups.
+     */
+    private void updateExpertsWeightings() {
+        try {
+            diseaseProcessManager.updateExpertsWeightings();
+        } catch (Exception e) { ///CHECKSTYLE:SUPPRESS EmptyBlock
+            // Ignore the exception, because it is thrown to roll back the transaction if the process step fails.
+            // Logging has already been done by this point.
+        }
+
+    }
+
+    /**
+     * Process any occurrences currently on the validator, for each disease group that has automatic model runs enabled.
+     * @param diseaseGroupIdsForAutomaticModelRuns The id of all disease groups to act on.
+     */
+    private void processOccurrencesOnDataValidator(List<Integer> diseaseGroupIdsForAutomaticModelRuns) {
+        for (Integer diseaseGroupId : diseaseGroupIdsForAutomaticModelRuns) {
+            try {
+                diseaseProcessManager.processOccurrencesOnDataValidator(diseaseGroupId);
+            } catch (Exception e) { ///CHECKSTYLE:SUPPRESS EmptyBlock
+                // Ignore the exception, because it is thrown to roll back the transaction per disease group if the
+                // process step fails. Logging has already been done by this point.
+            }
+        }
     }
 
     /**
@@ -79,36 +139,47 @@ public class Main {
      * @param fileNames A list of file names containing data to acquire. If no file names are specified
      * (or if null), the HealthMap web service will be called instead.
      */
-    public void runDataAcquisition(String[] fileNames) {
-        dataAcquisitionManager.runDataAcquisition(fileNames);
+    private void runDataAcquisition(String[] fileNames) {
+        try {
+            dataAcquisitionManager.runDataAcquisition(fileNames);
+        } catch (Exception e) { ///CHECKSTYLE:SUPPRESS EmptyBlock
+            // Ignore the exception, because it is thrown to roll back the transaction per disease group if the
+            // process step fails. Logging has already been done by this point.
+        }
     }
 
     /**
-     * Calculates and saves the new weighting for each active expert, with their reviews across all disease groups.
+     * Updates the disease extents if required, for each disease group that has automatic model runs enabled.
+     * @param diseaseGroupIdsForAutomaticModelRuns The id of all disease groups to act on.
      */
-    public void updateExpertsWeightings() {
-        modelRunManager.updateExpertsWeightings();
-    }
-
-    /**
-     * Requests a model run (after preparation and if relevant), for each disease group that has automatic model
-     * runs enabled.
-     */
-    public void prepareForAndRequestModelRuns() {
-        for (int diseaseGroupId : modelRunManager.getDiseaseGroupIdsForAutomaticModelRuns()) {
+    private void updateDiseaseExtents(List<Integer> diseaseGroupIdsForAutomaticModelRuns) {
+        List<Integer> diseaseGroupIdsForAutomaticModelRunsClone = new ArrayList<>(diseaseGroupIdsForAutomaticModelRuns);
+        for (Integer diseaseGroupId : diseaseGroupIdsForAutomaticModelRunsClone) {
             try {
-                modelRunManager.prepareForAndRequestModelRun(diseaseGroupId);
-            } catch (ModelRunWorkflowException e) { ///CHECKSTYLE:SUPPRESS EmptyBlock
-            // Ignore the exception, because it is thrown to roll back the transaction per disease group if the model
-            // run request fails. Logging has already been done by this point.
+                diseaseProcessManager.updateDiseaseExtents(diseaseGroupId);
+            } catch (Exception e) { ///CHECKSTYLE:SUPPRESS EmptyBlock
+                // Catch the exception, because it is thrown to roll back the transaction per disease group if the
+                // process step fails. Logging has already been done by this point.
+
+                // If extent generation fails for a disease, we should not attempt a model run today for that disease
+                diseaseGroupIdsForAutomaticModelRuns.remove(diseaseGroupId);
             }
         }
     }
 
-    private void logStarted() {
-        String message = String.format(STARTED_MESSAGE, applicationVersion);
-        LOGGER.info(message);
-        System.out.println(message);
+    /**
+     * Requests a model run if required, for each disease group that has automatic model runs enabled.
+     * @param diseaseGroupIdsForAutomaticModelRuns The id of all disease groups to act on.
+     */
+    private void requestModelRuns(List<Integer> diseaseGroupIdsForAutomaticModelRuns) {
+        for (Integer diseaseGroupId : diseaseGroupIdsForAutomaticModelRuns) {
+            try {
+                diseaseProcessManager.requestModelRun(diseaseGroupId);
+            } catch (Exception e) { ///CHECKSTYLE:SUPPRESS EmptyBlock
+                // Ignore the exception, because it is thrown to roll back the transaction per disease group if the
+                // process step fails. Logging has already been done by this point.
+            }
+        }
     }
 
     private void logFinished() {

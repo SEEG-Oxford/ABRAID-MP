@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.junit.Before;
 import org.junit.Test;
 import org.kubek2k.springockito.annotations.ReplaceWithMock;
@@ -14,9 +15,11 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroupType;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseProcessType;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.ModelRunWorkflowService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.BatchDatesValidator;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.AbstractAuthenticatingTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.AbstractPublicSiteIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
@@ -53,6 +56,10 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
     @ReplaceWithMock
     @Autowired
     private ModelRunWorkflowService modelRunWorkflowService;
+
+    @ReplaceWithMock
+    @Autowired
+    private BatchDatesValidator batchDatesValidator;
 
     @Before
     public void setup() {
@@ -143,8 +150,8 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
     public void requestModelRun() throws Exception {
         // Arrange
         int diseaseGroupId = 87;
-        DateTime batchStartDate = DateTime.now();
-        DateTime batchEndDate = DateTime.now().plusDays(1);
+        DateTime batchStartDate = DateTime.now(DateTimeZone.UTC);
+        DateTime batchEndDate = DateTime.now(DateTimeZone.UTC).plusDays(1);
         String url = AdminDiseaseGroupController.ADMIN_DISEASE_GROUP_BASE_URL + "/" + diseaseGroupId + "/requestmodelrun";
 
         // Act
@@ -155,8 +162,11 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
         this.mockMvc.perform(requestBuilder).andExpect(status().isOk());
 
         // Assert
-        verify(modelRunWorkflowService).prepareForAndRequestManuallyTriggeredModelRun(eq(diseaseGroupId),
-                argThat(new DateTimeMatcher(batchStartDate)), argThat(new DateTimeMatcher(batchEndDate)));
+        verify(modelRunWorkflowService).prepareForAndRequestModelRun(
+                eq(diseaseGroupId),
+                eq(DiseaseProcessType.MANUAL),
+                argThat(new DateTimeMatcher(batchStartDate.withTimeAtStartOfDay())),
+                argThat(new DateTimeMatcher(batchEndDate.withTimeAtStartOfDay().plusDays(1).minusMillis(1))));
     }
 
     @Test
@@ -169,13 +179,11 @@ public class AdminDiseaseGroupControllerIntegrationTest extends AbstractPublicSi
 
         // Act
         MockHttpServletRequestBuilder requestBuilder = post(url)
-                .param("batchStartDate", batchStartDate.toString())
-                .param("batchEndDate", batchEndDate.toString())
                 .param("onlyUseGoldStandardOccurrences", "true");
         this.mockMvc.perform(requestBuilder).andExpect(status().isOk());
 
         // Assert
-        verify(modelRunWorkflowService).prepareForAndRequestModelRunUsingGoldStandardOccurrences(eq(diseaseGroupId));
+        verify(modelRunWorkflowService).prepareForAndRequestModelRun(diseaseGroupId, DiseaseProcessType.MANUAL_GOLD_STANDARD, null, null);
     }
 
     @Test

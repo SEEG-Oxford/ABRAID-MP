@@ -21,12 +21,13 @@ public class GeoJsonDiseaseExtentFeaturePropertiesTest extends AbstractDiseaseEx
     public void constructorForGeoJsonDiseaseExtentFeaturePropertiesBindsParametersCorrectly() throws Exception {
         // Arrange
         String adminUnitName = "Admin Unit";
-        String diseaseExtentClassName = "foo";
+        String validatorDiseaseExtentClassName = "foo2";
 
         AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass = new AdminUnitDiseaseExtentClass(
                 createAdminUnitGlobal(101, adminUnitName),
                 new DiseaseGroup(),
-                new DiseaseExtentClass(diseaseExtentClassName),
+                new DiseaseExtentClass("Not Used"),
+                new DiseaseExtentClass(validatorDiseaseExtentClassName),
                 0);
 
         // Act
@@ -35,7 +36,7 @@ public class GeoJsonDiseaseExtentFeaturePropertiesTest extends AbstractDiseaseEx
 
         // Assert
         assertThat(result.getName()).isEqualTo(adminUnitName);
-        assertThat(result.getDiseaseExtentClass()).isEqualTo(diseaseExtentClassName);
+        assertThat(result.getDiseaseExtentClass()).isEqualTo(validatorDiseaseExtentClassName);
         assertThat(result.getOccurrenceCount()).isEqualTo(0);
         assertThat(result.needsReview()).isTrue();  // since the admin unit has never been reviewed
     }
@@ -49,6 +50,7 @@ public class GeoJsonDiseaseExtentFeaturePropertiesTest extends AbstractDiseaseEx
         AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass = new AdminUnitDiseaseExtentClass(
                 defaultAdminUnitGlobal(),
                 new DiseaseGroup(),
+                new DiseaseExtentClass("NotUSED"),
                 new DiseaseExtentClass(inputName),
                 0);
 
@@ -117,6 +119,7 @@ public class GeoJsonDiseaseExtentFeaturePropertiesTest extends AbstractDiseaseEx
         AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass = new AdminUnitDiseaseExtentClass(
                 new AdminUnitGlobal(),
                 mockDiseaseGroupWithComparisonDate(comparisonDate),
+                new DiseaseExtentClass("name"),
                 new DiseaseExtentClass("name"),
                 0
         );

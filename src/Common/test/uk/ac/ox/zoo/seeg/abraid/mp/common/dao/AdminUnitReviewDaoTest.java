@@ -110,6 +110,53 @@ public class AdminUnitReviewDaoTest extends AbstractCommonSpringIntegrationTests
     }
 
     @Test
+    public void getLastReviewDateByExpertIdAndDiseaseGroupIdAndGaulCodeReturnsCorrectDateForGlobal() {
+        // Arrange
+        int gaulCode = 24;
+        AdminUnitReview firstReview = new AdminUnitReview(expertDao.getById(1), gaulCode, null, diseaseGroupDao.getById(22), diseaseExtentClassDao.getByName(DiseaseExtentClass.POSSIBLE_ABSENCE));
+        adminUnitReviewDao.save(firstReview);
+        flushAndClear();
+        AdminUnitReview secondReview = new AdminUnitReview(expertDao.getById(1), gaulCode, null, diseaseGroupDao.getById(22), diseaseExtentClassDao.getByName(DiseaseExtentClass.POSSIBLE_ABSENCE));
+        adminUnitReviewDao.save(secondReview);
+        flushAndClear();
+
+        // Act
+        DateTime actual = adminUnitReviewDao.getLastReviewDateByExpertIdAndDiseaseGroupIdAndGaulCode(1, 22, gaulCode);
+
+        // Assert
+        assertThat(actual).isEqualTo(secondReview.getCreatedDate());
+    }
+
+    @Test
+    public void getLastReviewDateByExpertIdAndDiseaseGroupIdAndGaulCodeReturnsCorrectDateForTropical() {
+        // Arrange
+        int gaulCode = 24;
+        AdminUnitReview firstReview = new AdminUnitReview(expertDao.getById(1), null, gaulCode, diseaseGroupDao.getById(87), diseaseExtentClassDao.getByName(DiseaseExtentClass.POSSIBLE_ABSENCE));
+        adminUnitReviewDao.save(firstReview);
+        flushAndClear();
+        AdminUnitReview secondReview = new AdminUnitReview(expertDao.getById(1), null, gaulCode, diseaseGroupDao.getById(87), diseaseExtentClassDao.getByName(DiseaseExtentClass.POSSIBLE_ABSENCE));
+        adminUnitReviewDao.save(secondReview);
+        flushAndClear();
+
+        // Act
+        DateTime actual = adminUnitReviewDao.getLastReviewDateByExpertIdAndDiseaseGroupIdAndGaulCode(1, 87, gaulCode);
+
+        // Assert
+        assertThat(actual).isEqualTo(secondReview.getCreatedDate());
+    }
+
+    @Test
+    public void getLastReviewDateByExpertIdAndDiseaseGroupIdAndGaulCodeReturnsNullWhenNoReviews() {
+        // Arrange - no reviews in the database
+
+        // Act
+        DateTime actual = adminUnitReviewDao.getLastReviewDateByExpertIdAndDiseaseGroupIdAndGaulCode(1, 87, 24);
+
+        // Assert
+        assertThat(actual).isNull();
+    }
+
+    @Test
     public void getLastReviewDateByExpertIdReturnsCorrectDate() {
         // Arrange
         AdminUnitReview firstReview = new AdminUnitReview(expertDao.getById(1), 24, null, diseaseGroupDao.getById(87), diseaseExtentClassDao.getByName(DiseaseExtentClass.POSSIBLE_ABSENCE));

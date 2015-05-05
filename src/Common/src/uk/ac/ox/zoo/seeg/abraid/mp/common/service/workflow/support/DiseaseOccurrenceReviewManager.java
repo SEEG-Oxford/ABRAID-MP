@@ -3,7 +3,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReview;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceStatus;
@@ -26,13 +25,11 @@ public class DiseaseOccurrenceReviewManager {
     private static final Logger LOGGER = Logger.getLogger(DiseaseOccurrenceReviewManager.class);
     private static final String LOG_MESSAGE =
             "Removed %d disease occurrence(s) from validation (of which %d discarded); %d occurrence(s) now remaining";
-    private final int maxDaysOnValidator;
 
     private DiseaseService diseaseService;
 
-    public DiseaseOccurrenceReviewManager(DiseaseService diseaseService, int maxDaysOnValidator) {
+    public DiseaseOccurrenceReviewManager(DiseaseService diseaseService) {
         this.diseaseService = diseaseService;
-        this.maxDaysOnValidator = maxDaysOnValidator;
     }
 
     /**
@@ -41,10 +38,10 @@ public class DiseaseOccurrenceReviewManager {
      * has not actually received any reviews, set the status to DISCARDED_UNREVIEWED so that it is never sent to the
      * model or included in the disease extent. If we are during disease group set up, the occurrence should be removed
      * from DataValidator immediately, irrespective of time spent in review.
-     * @param diseaseGroupId The id of the disease group this model run preparation is for.
-     * @param modelRunPrepDate The official start time of the model run preparation tasks.
+     * @param diseaseGroupId The ID of the disease group this model run preparation is for.
+     * @param isAutomaticProcess If this is part of the automated daily process or for a manual model run.
      */
-    public void updateDiseaseOccurrenceStatus(int diseaseGroupId, DateTime modelRunPrepDate) {
+    public void updateDiseaseOccurrenceStatus(int diseaseGroupId, boolean isAutomaticProcess) {
         int numRemovedFromValidator = 0;
         int numDiscarded = 0;
 
@@ -53,8 +50,7 @@ public class DiseaseOccurrenceReviewManager {
 
         for (DiseaseOccurrence occurrence : occurrences) {
             DiseaseOccurrenceStatus newStatus = occurrence.getStatus();
-            if (duringDiseaseSetUp(occurrence.getDiseaseGroup()) ||
-                    occurrenceHasBeenInReviewForMoreThanMaximumNumberOfDays(occurrence, modelRunPrepDate)) {
+            if (!isAutomaticProcess || occurrenceHasBeenInReviewForMoreThanMaximumNumberOfDays(occurrence)) {
                 if (reviewedOccurrences.contains(occurrence)) {
                     newStatus = DiseaseOccurrenceStatus.READY;
                 } else {
@@ -73,10 +69,6 @@ public class DiseaseOccurrenceReviewManager {
         logResults(occurrences.size(), numRemovedFromValidator, numDiscarded);
     }
 
-    private boolean duringDiseaseSetUp(DiseaseGroup diseaseGroup) {
-        return diseaseGroup.getAutomaticModelRunsStartDate() == null;
-    }
-
     private Set<DiseaseOccurrence> getDiseaseOccurrencesInValidationWithReviews(int diseaseGroupId) {
         List<DiseaseOccurrenceReview> reviews =
                 diseaseService.getAllDiseaseOccurrenceReviewsForOccurrencesInValidation(diseaseGroupId);
@@ -89,20 +81,18 @@ public class DiseaseOccurrenceReviewManager {
      * the maximum number of days ago, comparing dates only, we deem it to be sufficiently reviewed and set the
      * status accordingly, so that it will no longer be shown on the DataValidator.
      * @param occurrence The disease occurrence.
-     * @param modelRunPrepDateTime The date (incl. time) of the current model run
      * @return Whether the occurrence has been in review for long enough to have its status changed from IN_REVIEW.
      */
-    private boolean occurrenceHasBeenInReviewForMoreThanMaximumNumberOfDays(DiseaseOccurrence occurrence,
-                                                              DateTime modelRunPrepDateTime) {
-        LocalDate comparisonDate = getComparisonDate(occurrence);
-        LocalDate modelRunPrepDate = modelRunPrepDateTime.toLocalDate();
-        return !comparisonDate.isAfter(modelRunPrepDate);
+    private boolean occurrenceHasBeenInReviewForMoreThanMaximumNumberOfDays(DiseaseOccurrence occurrence) {
+        LocalDate addedDate = getComparisonDate(occurrence);
+        LocalDate removalCutoff = diseaseService.subtractMaxDaysOnValidator(DateTime.now());
+        return !addedDate.isAfter(removalCutoff);
     }
 
     private LocalDate getComparisonDate(DiseaseOccurrence o) {
         LocalDate createdDate = o.getCreatedDate().toLocalDate();
         LocalDate automaticModelRunsStartDate = o.getDiseaseGroup().getAutomaticModelRunsStartDate().toLocalDate();
-        return getLatest(createdDate, automaticModelRunsStartDate).plusDays(maxDaysOnValidator);
+        return getLatest(createdDate, automaticModelRunsStartDate);
     }
 
     private LocalDate getLatest(LocalDate createdDate, LocalDate automaticModelRunsStartDate) {

@@ -46,11 +46,17 @@ define([
         };
 
         self.buildSubmissionData = function () {
-            return {
-                batchStartDate: formatDate(self.batchStartDate()),
-                batchEndDate: formatDate(self.batchEndDate()),
-                onlyUseGoldStandardOccurrences: self.onlyUseGoldStandardOccurrences()
-            };
+            if (self.onlyUseGoldStandardOccurrences()) {
+                return {
+                    onlyUseGoldStandardOccurrences: self.onlyUseGoldStandardOccurrences()
+                };
+            } else {
+                return {
+                    batchStartDate: formatDate(self.batchStartDate()),
+                    batchEndDate: formatDate(self.batchEndDate()),
+                    onlyUseGoldStandardOccurrences: self.onlyUseGoldStandardOccurrences()
+                };
+            }
         };
 
         // The 'Run Model then Batch Occurrences For Validation' button is disabled if:

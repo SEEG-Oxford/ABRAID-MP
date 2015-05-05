@@ -3,6 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.AlertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.GeometryService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 
 import java.util.List;
@@ -17,9 +18,10 @@ import static ch.lambdaj.Lambda.on;
  * Copyright (c) 2014 University of Oxford
  */
 public class HealthMapLookupData {
-    private AlertService alertService;
-    private LocationService locationService;
-    private DiseaseService diseaseService;
+    private final AlertService alertService;
+    private final LocationService locationService;
+    private final GeometryService geometryService;
+    private final DiseaseService diseaseService;
 
     private Map<Integer, HealthMapCountry> countryMap;
     private Map<Integer, HealthMapDisease> diseaseMap;
@@ -29,9 +31,10 @@ public class HealthMapLookupData {
     private Provenance healthMapProvenance;
 
     public HealthMapLookupData(AlertService alertService, LocationService locationService,
-                               DiseaseService diseaseService) {
+                               GeometryService geometryService, DiseaseService diseaseService) {
         this.alertService = alertService;
         this.locationService = locationService;
+        this.geometryService = geometryService;
         this.diseaseService = diseaseService;
     }
 
@@ -41,7 +44,7 @@ public class HealthMapLookupData {
      */
     public Map<Integer, HealthMapCountry> getCountryMap() {
         if (countryMap == null) {
-            List<HealthMapCountry> countries = locationService.getAllHealthMapCountries();
+            List<HealthMapCountry> countries = geometryService.getAllHealthMapCountries();
             countryMap = index(countries, on(HealthMapCountry.class).getId());
         }
         return countryMap;

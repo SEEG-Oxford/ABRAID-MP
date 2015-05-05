@@ -7,7 +7,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitQC;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Country;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapCountry;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LandSeaBorder;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.GeometryService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 
 import java.util.ArrayList;
@@ -25,16 +25,16 @@ import static org.mockito.Mockito.when;
  * Copyright (c) 2014 University of Oxford
  */
 public class QCLookupDataTest {
-    private LocationService locationService = mock(LocationService.class);
+    private GeometryService geometryService = mock(GeometryService.class);
 
     @Test
     public void getAdminUnits() {
         // Arrange
         List<AdminUnitQC> expectedAdminUnits = new ArrayList<>();
-        when(locationService.getAllAdminUnitQCs()).thenReturn(expectedAdminUnits);
+        when(geometryService.getAllAdminUnitQCs()).thenReturn(expectedAdminUnits);
 
         // Act
-        QCLookupData lookupData = new QCLookupData(locationService);
+        QCLookupData lookupData = new QCLookupData(geometryService);
         List<AdminUnitQC> actualAdminUnits = lookupData.getAdminUnits();
 
         // Assert
@@ -49,10 +49,10 @@ public class QCLookupDataTest {
                 new AdminUnitQC(3, '1', "b", 0, 0, 0),
                 new AdminUnitQC(10, '1', "c", 0, 0, 0)
         );
-        when(locationService.getAllAdminUnitQCs()).thenReturn(expectedAdminUnits);
+        when(geometryService.getAllAdminUnitQCs()).thenReturn(expectedAdminUnits);
 
         // Act
-        QCLookupData lookupData = new QCLookupData(locationService);
+        QCLookupData lookupData = new QCLookupData(geometryService);
         Map<Integer, AdminUnitQC> actualAdminUnits = lookupData.getAdminUnitsMap();
 
         // Assert
@@ -65,10 +65,10 @@ public class QCLookupDataTest {
     public void getCountryGeometryMap() {
         // Arrange
         List<Country> expectedCountries = new ArrayList<>(getCountries());
-        when(locationService.getAllCountries()).thenReturn(expectedCountries);
+        when(geometryService.getAllCountries()).thenReturn(expectedCountries);
 
         // Act
-        QCLookupData lookupData = new QCLookupData(locationService);
+        QCLookupData lookupData = new QCLookupData(geometryService);
         Map<Integer, MultiPolygon> actualCountries = lookupData.getCountryGeometryMap();
 
         // Assert
@@ -85,10 +85,10 @@ public class QCLookupDataTest {
     public void getCountryMap() {
         // Arrange
         List<Country> expectedCountries = new ArrayList<>(getCountries());
-        when(locationService.getAllCountries()).thenReturn(expectedCountries);
+        when(geometryService.getAllCountries()).thenReturn(expectedCountries);
 
         // Act
-        QCLookupData lookupData = new QCLookupData(locationService);
+        QCLookupData lookupData = new QCLookupData(geometryService);
         Map<Integer, Country> actualCountries = lookupData.getCountryMap();
 
         // Assert
@@ -105,10 +105,10 @@ public class QCLookupDataTest {
     public void getLandSeaBorders() {
         // Arrange
         MultiPolygon expectedMultiPolygon = GeometryUtils.createMultiPolygon(getTriangle(), getSquare());
-        when(locationService.getAllLandSeaBorders()).thenReturn(getLandSeaBorderList());
+        when(geometryService.getAllLandSeaBorders()).thenReturn(getLandSeaBorderList());
 
         // Act
-        QCLookupData lookupData = new QCLookupData(locationService);
+        QCLookupData lookupData = new QCLookupData(geometryService);
         MultiPolygon actualMultiPolygon = lookupData.getLandSeaBorders();
 
         // Assert
@@ -118,12 +118,12 @@ public class QCLookupDataTest {
     @Test
     public void getHealthMapCountryGeometryMap() {
         // Arrange
-        when(locationService.getAllHealthMapCountries()).thenReturn(getHealthMapCountries());
+        when(geometryService.getAllHealthMapCountries()).thenReturn(getHealthMapCountries());
         MultiPolygon expectedGeometry1 = GeometryUtils.createMultiPolygon(getTriangle());
         MultiPolygon expectedGeometry2 = GeometryUtils.createMultiPolygon(getSquare(), getFivePointedPolygon());
 
         // Act
-        QCLookupData lookupData = new QCLookupData(locationService);
+        QCLookupData lookupData = new QCLookupData(geometryService);
         Map<Integer, MultiPolygon> healthMapCountryGeometryMap = lookupData.getHealthMapCountryGeometryMap();
 
         // Assert

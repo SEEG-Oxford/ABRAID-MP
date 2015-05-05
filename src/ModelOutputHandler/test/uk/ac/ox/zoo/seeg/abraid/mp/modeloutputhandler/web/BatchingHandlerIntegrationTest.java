@@ -41,7 +41,7 @@ import static org.mockito.Mockito.when;
 })
 @WebAppConfiguration("file:ModelOutputHandler/web")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringIntegrationTests {
+public class BatchingHandlerIntegrationTest extends AbstractSpringIntegrationTests {
     private static final String LARGE_RASTER_FILENAME =
             "Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/service/workflow/support/testdata/test_raster_large_double.tif";
 
@@ -49,7 +49,7 @@ public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringInteg
     private ModelRunService modelRunService;
 
     @Autowired
-    private DiseaseOccurrenceHandler diseaseOccurrenceHandler;
+    private BatchingHandler batchingHandler;
 
     @Autowired
     private DiseaseService diseaseService;
@@ -77,7 +77,7 @@ public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringInteg
         when(machineWeightingPredictor.findMachineWeighting(any(DiseaseOccurrence.class))).thenReturn(null);
 
         // Act
-        diseaseOccurrenceHandler.handle(modelRun);
+        batchingHandler.handle(modelRun);
 
         // Assert
         List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesByDiseaseGroupId(diseaseGroupId);
@@ -117,7 +117,7 @@ public class DiseaseOccurrenceHandlerIntegrationTest extends AbstractSpringInteg
         ModelRun modelRun2 = createAndSaveTestModelRun(diseaseGroupId, batchStartDate, batchEndDate, null);
 
         // Act
-        diseaseOccurrenceHandler.handle(modelRun2);
+        batchingHandler.handle(modelRun2);
 
         // Assert
         List<DiseaseOccurrence> occurrences = diseaseService.getDiseaseOccurrencesByDiseaseGroupId(diseaseGroupId);
