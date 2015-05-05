@@ -133,7 +133,7 @@ public class DataValidationControllerIntegrationTest extends AbstractPublicSiteI
     @Test
     public void extentResourceAcceptsValidRequest() throws Exception {
         AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass = new AdminUnitDiseaseExtentClass(
-                createAdminUnitGlobal(), new DiseaseGroup(), new DiseaseExtentClass(DiseaseExtentClass.PRESENCE), 0);
+                createAdminUnitGlobal(), new DiseaseGroup(), new DiseaseExtentClass(DiseaseExtentClass.PRESENCE), new DiseaseExtentClass(DiseaseExtentClass.PRESENCE), 0);
         List<AdminUnitDiseaseExtentClass> map = Arrays.asList(adminUnitDiseaseExtentClass);
         Expert expert = mock(Expert.class);
         DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);

@@ -2,6 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
+import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 
@@ -16,11 +17,23 @@ public class AdminUnitDiseaseExtentClassDaoImpl extends AbstractDao<AdminUnitDis
     private static final String GLOBAL = "Global";
     private static final String TROPICAL = "Tropical";
     private static final String LATEST_OCCURRENCES_QUERY =
-            "select latestOccurrences from AdminUnitDiseaseExtentClass a " +
+            "select latestValidatorOccurrences from AdminUnitDiseaseExtentClass a " +
             "where a.diseaseGroup.id=:diseaseGroupId " +
             "and a.adminUnit%s.gaulCode=:gaulCode";
     public AdminUnitDiseaseExtentClassDaoImpl(SessionFactory sessionFactory) {
         super(sessionFactory);
+    }
+
+    /**
+     * Gets the latest disease extent class change date for the specified disease group.
+     * @param diseaseGroupId The ID of the disease group.
+     * @return The latest change date.
+     */
+    @Override
+    public DateTime getLatestDiseaseExtentClassChangeDateByDiseaseGroupId(Integer diseaseGroupId) {
+        Query query = getParameterisedNamedQuery("getLatestDiseaseExtentClassChangeDateByDiseaseGroupId",
+                "diseaseGroupId", diseaseGroupId);
+        return (DateTime) query.uniqueResult();
     }
 
     /**
@@ -33,7 +46,7 @@ public class AdminUnitDiseaseExtentClassDaoImpl extends AbstractDao<AdminUnitDis
      */
     @SuppressWarnings("unchecked")
     @Override
-    public List<DiseaseOccurrence> getLatestOccurrencesForAdminUnitDiseaseExtentClass(
+    public List<DiseaseOccurrence> getLatestValidatorOccurrencesForAdminUnitDiseaseExtentClass(
             Integer diseaseGroupId, boolean isGlobal, Integer gaulCode) {
         String queryString = String.format(LATEST_OCCURRENCES_QUERY, isGlobal ? GLOBAL : TROPICAL);
 

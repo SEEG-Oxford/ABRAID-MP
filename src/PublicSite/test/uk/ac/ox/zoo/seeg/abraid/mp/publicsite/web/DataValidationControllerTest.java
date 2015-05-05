@@ -976,8 +976,8 @@ public class DataValidationControllerTest {
         diseaseGroup = mockIfNull(diseaseGroup, DiseaseGroup.class);
 
         return Arrays.asList(
-                new AdminUnitDiseaseExtentClass(createAdminUnitGlobal(1), diseaseGroup, new DiseaseExtentClass(DiseaseExtentClass.PRESENCE), 0),
-                new AdminUnitDiseaseExtentClass(createAdminUnitGlobal(2), diseaseGroup, new DiseaseExtentClass(DiseaseExtentClass.PRESENCE), 0)
+                new AdminUnitDiseaseExtentClass(createAdminUnitGlobal(1), diseaseGroup, new DiseaseExtentClass(DiseaseExtentClass.PRESENCE), new DiseaseExtentClass(DiseaseExtentClass.POSSIBLE_PRESENCE), 0),
+                new AdminUnitDiseaseExtentClass(createAdminUnitGlobal(2), diseaseGroup, new DiseaseExtentClass(DiseaseExtentClass.PRESENCE), new DiseaseExtentClass(DiseaseExtentClass.PRESENCE), 0)
         );
     }
 

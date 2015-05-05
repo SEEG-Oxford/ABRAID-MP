@@ -1,12 +1,16 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 
+import org.apache.commons.math3.util.Pair;
 import org.joda.time.DateTime;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Service class for experts.
@@ -155,6 +159,29 @@ public class ExpertServiceImpl implements ExpertService {
     }
 
     /**
+     * Gets the reviews for the specified disease group, excluding repeat reviews (most recent only).
+     * @param diseaseGroupId The id of the disease group.
+     * @return A set of reviews.
+     */
+    @Override
+    public Collection<AdminUnitReview> getCurrentAdminUnitReviewsForDiseaseGroup(Integer diseaseGroupId) {
+        List<AdminUnitReview> allReviews = getAllAdminUnitReviewsForDiseaseGroup(diseaseGroupId);
+        Map<Pair<Integer, Integer>, AdminUnitReview> processedReviews = new HashMap<>();
+
+        for (AdminUnitReview review : allReviews) {
+            Pair<Integer, Integer> key = new Pair<>(
+                    review.getAdminUnitGlobalOrTropicalGaulCode(),
+                    review.getExpert().getId());
+
+            if (!processedReviews.containsKey(key) || reviewIsNewer(processedReviews.get(key), review)) {
+                processedReviews.put(key, review);
+            }
+        }
+
+        return processedReviews.values();
+    }
+
+    /**
      * Gets all reviews submitted by the specified expert, for the specified disease group.
      * @param expertId The id of the specified expert.
      * @param diseaseGroupId The id of the disease group.
@@ -163,6 +190,10 @@ public class ExpertServiceImpl implements ExpertService {
     @Override
     public List<AdminUnitReview> getAllAdminUnitReviewsForDiseaseGroup(Integer expertId, Integer diseaseGroupId) {
         return adminUnitReviewDao.getByExpertIdAndDiseaseGroupId(expertId, diseaseGroupId);
+    }
+
+    private static boolean reviewIsNewer(AdminUnitReview review, AdminUnitReview newReview) {
+        return review.getCreatedDate().isBefore(newReview.getCreatedDate());
     }
 
     /**

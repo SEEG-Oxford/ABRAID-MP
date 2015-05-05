@@ -29,8 +29,8 @@ public class JsonDiseaseGroupTest {
         diseaseGroup.setWeighting(0.1);
         diseaseGroup.setAutomaticModelRunsStartDate(DateTime.now());
         diseaseGroup.setMinNewLocationsTrigger(400);
-        diseaseGroup.setMinEnvironmentalSuitability(0.3);
-        diseaseGroup.setMinDistanceFromDiseaseExtent(2.0);
+        diseaseGroup.setMaxEnvironmentalSuitabilityForTriggering(0.3);
+        diseaseGroup.setMinDistanceFromDiseaseExtentForTriggering(2.0);
         diseaseGroup.setMinDataVolume(100);
         diseaseGroup.setMinDistinctCountries(5);
         diseaseGroup.setHighFrequencyThreshold(10);
@@ -53,8 +53,8 @@ public class JsonDiseaseGroupTest {
         assertThat(jsonDiseaseGroup.getWeighting()).isEqualTo(0.1);
         assertThat(jsonDiseaseGroup.isAutomaticModelRuns()).isEqualTo(true);
         assertThat(jsonDiseaseGroup.getMinNewLocations()).isEqualTo(400);
-        assertThat(jsonDiseaseGroup.getMinEnvironmentalSuitability()).isEqualTo(0.3);
-        assertThat(jsonDiseaseGroup.getMinDistanceFromDiseaseExtent()).isEqualTo(2.0);
+        assertThat(jsonDiseaseGroup.getMaxEnvironmentalSuitabilityForTriggering()).isEqualTo(0.3);
+        assertThat(jsonDiseaseGroup.getMinDistanceFromDiseaseExtentForTriggering()).isEqualTo(2.0);
         assertThat(jsonDiseaseGroup.getMinDataVolume()).isEqualTo(100);
         assertThat(jsonDiseaseGroup.getMinDistinctCountries()).isEqualTo(5);
         assertThat(jsonDiseaseGroup.getOccursInAfrica()).isTrue();

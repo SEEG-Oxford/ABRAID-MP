@@ -294,7 +294,7 @@ public class DataValidationController extends AbstractController {
         try {
             DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
             return new ResponseEntity<>(new GeoJsonDiseaseOccurrenceFeatureCollection(
-                    diseaseService.getLatestOccurrencesForAdminUnitDiseaseExtentClass(diseaseGroup, gaulCode)
+                    diseaseService.getLatestValidatorOccurrencesForAdminUnitDiseaseExtentClass(diseaseGroup, gaulCode)
             ), HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

@@ -23,8 +23,8 @@ define(["app/admin/diseasegroups/DiseaseGroupPayload"], function (DiseaseGroupPa
             };
             var modelRunParametersViewModel = {
                 minNewLocations: wrap(1),
-                minEnvironmentalSuitability: wrap(0.2),
-                minDistanceFromDiseaseExtent: wrap(-300),
+                maxEnvironmentalSuitabilityForTriggering: wrap(0.2),
+                minDistanceFromDiseaseExtentForTriggering: wrap(-300),
                 minDataVolume: wrap(2),
                 minDistinctCountries: wrap(3),
                 minHighFrequencyCountries: wrap(4),
@@ -51,8 +51,8 @@ define(["app/admin/diseasegroups/DiseaseGroupPayload"], function (DiseaseGroupPa
                 parentDiseaseGroup: { id: 2 },
                 validatorDiseaseGroup: { id: 3 },
                 minNewLocations: 1,
-                minEnvironmentalSuitability: 0.2,
-                minDistanceFromDiseaseExtent: -300,
+                maxEnvironmentalSuitabilityForTriggering: 0.2,
+                minDistanceFromDiseaseExtentForTriggering: -300,
                 minDataVolume: 2,
                 minDistinctCountries: 3,
                 minHighFrequencyCountries:  4,
@@ -90,8 +90,8 @@ define(["app/admin/diseasegroups/DiseaseGroupPayload"], function (DiseaseGroupPa
             };
             var modelRunParametersViewModel = {
                 minNewLocations: wrap(""),
-                minEnvironmentalSuitability: wrap(""),
-                minDistanceFromDiseaseExtent: wrap(""),
+                maxEnvironmentalSuitabilityForTriggering: wrap(""),
+                minDistanceFromDiseaseExtentForTriggering: wrap(""),
                 minDataVolume: wrap(""),
                 minDistinctCountries: wrap(""),
                 minHighFrequencyCountries: wrap(""),
@@ -118,8 +118,8 @@ define(["app/admin/diseasegroups/DiseaseGroupPayload"], function (DiseaseGroupPa
                 parentDiseaseGroup: { id: null },
                 validatorDiseaseGroup: { id: null },
                 minNewLocations: undefined,
-                minEnvironmentalSuitability: undefined,
-                minDistanceFromDiseaseExtent: undefined,
+                maxEnvironmentalSuitabilityForTriggering: undefined,
+                minDistanceFromDiseaseExtentForTriggering: undefined,
                 minDataVolume: undefined,
                 minDistinctCountries: undefined,
                 minHighFrequencyCountries:  undefined,

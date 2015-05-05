@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.*;
@@ -25,8 +26,11 @@ public class DiseaseServiceTest {
     private HealthMapSubDiseaseDao healthMapSubDiseaseDao;
     private ValidatorDiseaseGroupDao validatorDiseaseGroupDao;
     private AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao;
+    private ModelRunDao modelRunDao;
     private DiseaseExtentClassDao diseaseExtentClassDao;
     private NativeSQL nativeSQL;
+    private int maxDaysOnValidator;
+    private int daysBetweenModelRuns;
 
     @Before
     public void setUp() {
@@ -37,11 +41,14 @@ public class DiseaseServiceTest {
         healthMapSubDiseaseDao = mock(HealthMapSubDiseaseDao.class);
         validatorDiseaseGroupDao = mock(ValidatorDiseaseGroupDao.class);
         adminUnitDiseaseExtentClassDao = mock(AdminUnitDiseaseExtentClassDao.class);
+        modelRunDao = mock(ModelRunDao.class);
         diseaseExtentClassDao = mock(DiseaseExtentClassDao.class);
         nativeSQL = mock(NativeSQL.class);
+        maxDaysOnValidator = 5;
+        daysBetweenModelRuns = 6;
         diseaseService = new DiseaseServiceImpl(diseaseOccurrenceDao, diseaseOccurrenceReviewDao, diseaseGroupDao,
                 healthMapDiseaseDao, healthMapSubDiseaseDao, validatorDiseaseGroupDao, adminUnitDiseaseExtentClassDao,
-                diseaseExtentClassDao, nativeSQL);
+                modelRunDao, diseaseExtentClassDao, maxDaysOnValidator, daysBetweenModelRuns, nativeSQL);
     }
 
     @Test
@@ -391,6 +398,80 @@ public class DiseaseServiceTest {
     }
 
     @Test
+    public void getDistinctLocationsCountForTriggeringModelRun() {
+        // Arrange
+        int diseaseGroupId = 87;
+        DateTime cutoff = DateTime.now();
+        long expectedCount = 9;
+        double minDistanceFromDiseaseExtent = 3;
+        double maxEnvironmentalSuitability = 4;
+
+        DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
+        when(diseaseGroup.getId()).thenReturn(diseaseGroupId);
+        when(diseaseGroup.getMinDistanceFromDiseaseExtentForTriggering()).thenReturn(minDistanceFromDiseaseExtent);
+        when(diseaseGroup.getMaxEnvironmentalSuitabilityForTriggering()).thenReturn(maxEnvironmentalSuitability);
+        ModelRun lastModelRun = mock(ModelRun.class);
+        when(modelRunDao.getLastRequestedModelRun(diseaseGroup.getId())).thenReturn(lastModelRun);
+        List<DiseaseOccurrence> occurrences = createOccurrences();
+        when(lastModelRun.getInputDiseaseOccurrences()).thenReturn(occurrences);
+
+        when(diseaseOccurrenceDao.getDistinctLocationsCountForTriggeringModelRun(
+                anyInt(),
+                anySetOf(Integer.class),
+                any(DateTime.class),
+                any(DateTime.class),
+                anyDouble(),
+                anyDouble()
+        )).thenReturn(expectedCount);
+
+        // Act
+        long count = diseaseService.getDistinctLocationsCountForTriggeringModelRun(diseaseGroup, cutoff);
+
+        // Assert
+        verify(diseaseOccurrenceDao).getDistinctLocationsCountForTriggeringModelRun(
+                        eq(diseaseGroupId),
+                        eq(new HashSet<>(Arrays.asList(1, 2))),
+                        eq(cutoff),
+                        eq(cutoff.withTimeAtStartOfDay().minusDays(maxDaysOnValidator)),
+                        eq(maxEnvironmentalSuitability),
+                        eq(minDistanceFromDiseaseExtent));
+
+        assertThat(count).isEqualTo(expectedCount);
+    }
+
+    private List<DiseaseOccurrence> createOccurrences() {
+        DiseaseOccurrence o1 = createOccurrence(1);
+        DiseaseOccurrence o2 = createOccurrence(2);
+        DiseaseOccurrence o3 = createOccurrence(1);
+        return Arrays.asList(o1, o2, o3);
+    }
+
+    private DiseaseOccurrence createOccurrence(int id) {
+        DiseaseOccurrence occurrence = mock(DiseaseOccurrence.class);
+        Location location = mock(Location.class);
+        when(occurrence.getLocation()).thenReturn(location);
+        when(location.getId()).thenReturn(id);
+        return occurrence;
+    }
+
+    @Test
+    public void getLatestChangeDateForDiseaseExtentClassByDiseaseGroupId() {
+        // Arrange
+        int diseaseGroupId = 10;
+        DateTime expectedTime = DateTime.now().minusDays(3);
+
+        when(adminUnitDiseaseExtentClassDao.getLatestDiseaseExtentClassChangeDateByDiseaseGroupId(diseaseGroupId))
+                .thenReturn(expectedTime);
+
+        // Act
+        DateTime result =
+                diseaseService.getLatestDiseaseExtentClassChangeDateByDiseaseGroupId(diseaseGroupId);
+
+        // Assert
+        assertThat(result).isSameAs(expectedTime);
+    }
+
+    @Test
     public void getDiseaseExtentByDiseaseGroupIdReturnsTropicalExtentForUnspecifiedDisease() {
         // Arrange
         int diseaseGroupId = 10;
@@ -438,9 +519,12 @@ public class DiseaseServiceTest {
         // Arrange
         int diseaseGroupId = 87;
         boolean isGlobal = true;
+        DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
+        when(diseaseGroup.getId()).thenReturn(diseaseGroupId);
+        when(diseaseGroup.isGlobal()).thenReturn(isGlobal);
 
         // Act
-        diseaseService.updateAggregatedDiseaseExtent(diseaseGroupId, isGlobal);
+        diseaseService.updateAggregatedDiseaseExtent(diseaseGroup);
 
         // Assert
         verify(nativeSQL).updateAggregatedDiseaseExtent(eq(diseaseGroupId), eq(isGlobal));
@@ -541,5 +625,31 @@ public class DiseaseServiceTest {
 
         // Assert
         assertThat(expectedOccurrences).isSameAs(actualOccurrences);
+    }
+
+    @Test
+    public void subtractMaxDaysOnValidator() {
+        // Arrange
+        DateTime inputDateTime = new DateTime("2014-10-09T12:13:14");
+        LocalDate expectedResult = new LocalDate("2014-10-04"); // minus 5 days (maxDaysOnValidator field)
+
+        // Act
+        LocalDate actualResult = diseaseService.subtractMaxDaysOnValidator(inputDateTime);
+
+        // Assert
+        assertThat(actualResult).isEqualTo(expectedResult);
+    }
+
+    @Test
+    public void subtractDaysBetweenModelRuns() {
+        // Arrange
+        DateTime inputDateTime = new DateTime("2014-10-09T12:13:14");
+        LocalDate expectedResult = new LocalDate("2014-10-03"); // minus 6 (daysBetweenModelRuns field)
+
+        // Act
+        LocalDate actualResult = diseaseService.subtractDaysBetweenModelRuns(inputDateTime);
+
+        // Assert
+        assertThat(actualResult).isEqualTo(expectedResult);
     }
 }

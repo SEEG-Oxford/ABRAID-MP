@@ -11,8 +11,8 @@ define(["ko"], function (ko) {
 
         // Triggering a Model Run
         self.minNewLocations = ko.observable().extend({ digit: true, min: 0 });
-        self.minEnvironmentalSuitability = ko.observable().extend({ number: true, min: 0, max: 1 });
-        self.minDistanceFromDiseaseExtent = ko.observable().extend({ number: true });
+        self.maxEnvironmentalSuitabilityForTriggering = ko.observable().extend({ number: true, min: 0, max: 1 });
+        self.minDistanceFromDiseaseExtentForTriggering = ko.observable().extend({ number: true });
 
         // Machine Learning
         self.useMachineLearning = ko.observable();
@@ -57,8 +57,10 @@ define(["ko"], function (ko) {
         ko.postbox.subscribe(diseaseGroupSelectedEventName, function (diseaseGroup) {
             self.diseaseGroupId(ko.utils.normaliseInput(diseaseGroup.id));
             self.minNewLocations(ko.utils.normaliseInput(diseaseGroup.minNewLocations));
-            self.minEnvironmentalSuitability(ko.utils.normaliseInput(diseaseGroup.minEnvironmentalSuitability));
-            self.minDistanceFromDiseaseExtent(ko.utils.normaliseInput(diseaseGroup.minDistanceFromDiseaseExtent));
+            self.maxEnvironmentalSuitabilityForTriggering(
+                ko.utils.normaliseInput(diseaseGroup.maxEnvironmentalSuitabilityForTriggering));
+            self.minDistanceFromDiseaseExtentForTriggering(
+                ko.utils.normaliseInput(diseaseGroup.minDistanceFromDiseaseExtentForTriggering));
             self.minDataVolume(ko.utils.normaliseInput(diseaseGroup.minDataVolume));
             self.minDistinctCountries(ko.utils.normaliseInput(diseaseGroup.minDistinctCountries));
             self.minHighFrequencyCountries(ko.utils.normaliseInput(diseaseGroup.minHighFrequencyCountries));

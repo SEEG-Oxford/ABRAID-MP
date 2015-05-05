@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
+import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 
@@ -12,6 +13,13 @@ import java.util.List;
 public interface AdminUnitDiseaseExtentClassDao {
 
     /**
+     * Gets the latest disease extent class change date for the specified disease group.
+     * @param diseaseGroupId The ID of the disease group.
+     * @return The latest change date.
+     */
+    DateTime getLatestDiseaseExtentClassChangeDateByDiseaseGroupId(Integer diseaseGroupId);
+
+    /**
      * Gets the list of most recent disease occurrences on the admin unit disease extent class (defined by disease group
      * id and admin unit gaul code).
      * @param diseaseGroupId The id of the disease group the admin unit disease extent class represents.
@@ -19,7 +27,7 @@ public interface AdminUnitDiseaseExtentClassDao {
      * @param gaulCode The gaul code the admin unit disease extent class represents.
      * @return The list of latest disease occurrences for the given admin unit disease extent class.
      */
-    List<DiseaseOccurrence> getLatestOccurrencesForAdminUnitDiseaseExtentClass(
+    List<DiseaseOccurrence> getLatestValidatorOccurrencesForAdminUnitDiseaseExtentClass(
             Integer diseaseGroupId, boolean isGlobal, Integer gaulCode);
 
     /**

@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.List;
@@ -129,12 +130,11 @@ public interface DiseaseService {
 
     /**
      * Gets the number of distinct locations from the new disease occurrences for the specified disease group.
-     * @param diseaseGroupId The id of the disease group.
-     * @param startDate Occurrences must be newer than this date.
-     * @param endDate Occurrences must be older than this date, to ensure they have had ample time in validation.
+     * @param diseaseGroup The disease group.
+     * @param cutoffDateForOccurrences Occurrences must have become ready for use after this date.
      * @return The number of locations.
      */
-    long getDistinctLocationsCountForTriggeringModelRun(int diseaseGroupId, DateTime startDate, DateTime endDate);
+    long getDistinctLocationsCountForTriggeringModelRun(DiseaseGroup diseaseGroup, DateTime cutoffDateForOccurrences);
 
     /**
      * Gets the list of most recent disease occurrences on the admin unit disease extent class (defined by the disease
@@ -143,7 +143,7 @@ public interface DiseaseService {
      * @param gaulCode The gaul code the admin unit disease extent class represents.
      * @return The list of latest disease occurrences for the specified admin unit disease extent class.
      */
-    List<DiseaseOccurrence> getLatestOccurrencesForAdminUnitDiseaseExtentClass(DiseaseGroup diseaseGroup,
+    List<DiseaseOccurrence> getLatestValidatorOccurrencesForAdminUnitDiseaseExtentClass(DiseaseGroup diseaseGroup,
                                                                                Integer gaulCode);
 
     /**
@@ -152,6 +152,13 @@ public interface DiseaseService {
      * @return The disease extent.
      */
     List<AdminUnitDiseaseExtentClass> getDiseaseExtentByDiseaseGroupId(Integer diseaseGroupId);
+
+    /**
+     * Gets the latest disease extent class change date for the specified disease group.
+     * @param diseaseGroupId The ID of the disease group.
+     * @return The latest change date.
+     */
+    DateTime getLatestDiseaseExtentClassChangeDateByDiseaseGroupId(Integer diseaseGroupId);
 
     /**
      * Gets a disease extent class by name.
@@ -223,10 +230,9 @@ public interface DiseaseService {
 
     /**
      * Updates the aggregated disease extent that is stored in the disease_extent table, for the specified disease.
-     * @param diseaseGroupId The disease group ID.
-     * @param isGlobal True if the disease is global, false if tropical.
+     * @param diseaseGroup The disease group.
      */
-    void updateAggregatedDiseaseExtent(int diseaseGroupId, boolean isGlobal);
+    void updateAggregatedDiseaseExtent(DiseaseGroup diseaseGroup);
 
     /**
      * Gets statistics about the occurrences of the specified disease group.
@@ -274,4 +280,18 @@ public interface DiseaseService {
      * @return The number of occurrences that are eligible for being sent to the model.
      */
     long getNumberOfDiseaseOccurrencesEligibleForModelRun(int diseaseGroupId, DateTime startDate, DateTime endDate);
+
+    /**
+     * Returns the input date, with the max number of days on the validator subtracted.
+     * @param dateTime The input date.
+     * @return The input date minus the max number of days on the validator.
+     */
+    LocalDate subtractMaxDaysOnValidator(DateTime dateTime);
+
+    /**
+     * Returns the input date, with the number of days between scheduled model runs subtracted.
+     * @param dateTime The input date.
+     * @return The input date minus the number of days between scheduled model runs.
+     */
+    LocalDate subtractDaysBetweenModelRuns(DateTime dateTime);
 }

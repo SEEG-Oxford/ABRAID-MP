@@ -2,15 +2,15 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
+import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ModelRunDao;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceStatus;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunServiceImpl;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.DiseaseOccurrenceValidationService;
 
 import java.util.Arrays;
@@ -30,11 +30,15 @@ public class AutomaticModelRunsEnablerTest {
 
     @Before
     public void setUp() {
-        ModelRunService modelRunService = new ModelRunServiceImpl(mock(ModelRunDao.class), 7);
         diseaseService = mock(DiseaseService.class);
+        when(diseaseService.subtractDaysBetweenModelRuns(any(DateTime.class))).thenAnswer(new Answer<LocalDate>() {
+            @Override
+            public LocalDate answer(InvocationOnMock invocationOnMock) throws Throwable {
+                return ((DateTime) invocationOnMock.getArguments()[0]).toLocalDate().minusDays(7);
+            }
+        });
         diseaseOccurrenceValidationService = mock(DiseaseOccurrenceValidationService.class);
-        automaticModelRunsEnabler = new AutomaticModelRunsEnabler(diseaseService, diseaseOccurrenceValidationService,
-                modelRunService);
+        automaticModelRunsEnabler = new AutomaticModelRunsEnabler(diseaseService, diseaseOccurrenceValidationService);
 
         DateTimeUtils.setCurrentMillisFixed(DateTime.now().getMillis());
     }

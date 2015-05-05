@@ -3,6 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -91,6 +92,13 @@ public interface ExpertService {
      * @return A list of reviews.
      */
     List<AdminUnitReview> getAllAdminUnitReviewsForDiseaseGroup(Integer diseaseGroupId);
+
+    /**
+     * Gets the reviews for the specified disease group, excluding repeat reviews (most recent only).
+     * @param diseaseGroupId The id of the disease group.
+     * @return A set of reviews.
+     */
+    Collection<AdminUnitReview> getCurrentAdminUnitReviewsForDiseaseGroup(Integer diseaseGroupId);
 
     /**
      * Gets all reviews submitted by the specified expert, for the specified disease group.

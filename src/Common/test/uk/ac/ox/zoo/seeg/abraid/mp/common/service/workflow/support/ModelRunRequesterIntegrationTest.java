@@ -165,7 +165,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
     }
 
     private List<DiseaseOccurrence> selectOccurrencesForModelRun(int diseaseGroupId) {
-        ModelRunOccurrencesSelector selector = new ModelRunOccurrencesSelector(diseaseService, geometryService,
+        ModelRunOccurrencesSelectorHelper selector = new ModelRunOccurrencesSelectorHelper(diseaseService, geometryService,
                 emailService, diseaseGroupId, false);
         return selector.selectModelRunDiseaseOccurrences();
     }

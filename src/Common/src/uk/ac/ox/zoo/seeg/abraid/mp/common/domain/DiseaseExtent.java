@@ -1,9 +1,12 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
+import java.util.Collection;
 
 /**
  * Represents the parameters required to calculate the disease group's current extent.
@@ -46,6 +49,14 @@ public class DiseaseExtent {
     @OneToOne
     @JoinColumn(name = "disease_group_id")
     private DiseaseGroup diseaseGroup;
+
+    // List of disease occurrences used in the last update of the validator disease extent class.
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "disease_extent_disease_occurrence",
+            joinColumns = @JoinColumn(name = "disease_group_id"),
+            inverseJoinColumns = @JoinColumn(name = "disease_occurrence_id"))
+    @Fetch(FetchMode.SELECT)
+    private Collection<DiseaseOccurrence> lastValidatorExtentUpdateInputOccurrences;
 
     public DiseaseExtent() {
     }
@@ -117,6 +128,15 @@ public class DiseaseExtent {
 
     public void setHigherOccurrenceScore(Integer higherOccurrenceScore) {
         this.higherOccurrenceScore = higherOccurrenceScore;
+    }
+
+    public Collection<DiseaseOccurrence> getLastValidatorExtentUpdateInputOccurrences() {
+        return lastValidatorExtentUpdateInputOccurrences;
+    }
+
+    public void setLastValidatorExtentUpdateInputOccurrences(
+            Collection<DiseaseOccurrence> lastValidatorExtentUpdateInputOccurrences) {
+        this.lastValidatorExtentUpdateInputOccurrences = lastValidatorExtentUpdateInputOccurrences;
     }
 
     ///COVERAGE:OFF - generated code

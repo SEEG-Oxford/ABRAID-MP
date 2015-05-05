@@ -1,12 +1,15 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.*;
 
+import static ch.lambdaj.Lambda.extract;
+import static ch.lambdaj.Lambda.on;
 import static java.util.Map.Entry;
 
 /**
@@ -24,7 +27,10 @@ public class DiseaseServiceImpl implements DiseaseService {
     private ValidatorDiseaseGroupDao validatorDiseaseGroupDao;
     private AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao;
 
+    private ModelRunDao modelRunDao;
     private DiseaseExtentClassDao diseaseExtentClassDao;
+    private int maxDaysOnValidator;
+    private int daysBetweenModelRuns;
     private NativeSQL nativeSQL;
 
     public DiseaseServiceImpl(DiseaseOccurrenceDao diseaseOccurrenceDao,
@@ -34,7 +40,10 @@ public class DiseaseServiceImpl implements DiseaseService {
                               HealthMapSubDiseaseDao healthMapSubDiseaseDao,
                               ValidatorDiseaseGroupDao validatorDiseaseGroupDao,
                               AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao,
+                              ModelRunDao modelRunDao,
                               DiseaseExtentClassDao diseaseExtentClassDao,
+                              int maxDaysOnValidator,
+                              int daysBetweenModelRuns,
                               NativeSQL nativeSQL) {
         this.diseaseOccurrenceDao = diseaseOccurrenceDao;
         this.diseaseOccurrenceReviewDao = diseaseOccurrenceReviewDao;
@@ -43,7 +52,10 @@ public class DiseaseServiceImpl implements DiseaseService {
         this.healthMapSubDiseaseDao = healthMapSubDiseaseDao;
         this.validatorDiseaseGroupDao = validatorDiseaseGroupDao;
         this.adminUnitDiseaseExtentClassDao = adminUnitDiseaseExtentClassDao;
+        this.modelRunDao = modelRunDao;
         this.diseaseExtentClassDao = diseaseExtentClassDao;
+        this.maxDaysOnValidator = maxDaysOnValidator;
+        this.daysBetweenModelRuns = daysBetweenModelRuns;
         this.nativeSQL = nativeSQL;
     }
 
@@ -198,7 +210,7 @@ public class DiseaseServiceImpl implements DiseaseService {
             Integer diseaseGroupId, Double minimumValidationWeighting, DateTime minimumOccurrenceDate,
             boolean onlyUseGoldStandardOccurrences) {
         return diseaseOccurrenceDao.getDiseaseOccurrencesForDiseaseExtent(
-            diseaseGroupId, minimumValidationWeighting, minimumOccurrenceDate, onlyUseGoldStandardOccurrences);
+                diseaseGroupId, minimumValidationWeighting, minimumOccurrenceDate, onlyUseGoldStandardOccurrences);
     }
 
     /**
@@ -239,15 +251,38 @@ public class DiseaseServiceImpl implements DiseaseService {
 
     /**
      * Gets the number of distinct locations from the new disease occurrences for the specified disease group.
-     * @param diseaseGroupId The id of the disease group.
-     * @param startDate Occurrences must be newer than this date.
-     * @param endDate Occurrences must be older than this date, to ensure they have had ample time in validation.
+     * @param diseaseGroup The disease group.
+     * @param cutoffDateForOccurrences Occurrences must be newer than this date
+     *                  (or N days prior, if they went through manual validation).
      * @return The number of locations.
      */
     @Override
-    public long getDistinctLocationsCountForTriggeringModelRun(int diseaseGroupId,
-                                                               DateTime startDate, DateTime endDate) {
-        return diseaseOccurrenceDao.getDistinctLocationsCountForTriggeringModelRun(diseaseGroupId, startDate, endDate);
+    public long getDistinctLocationsCountForTriggeringModelRun(
+            DiseaseGroup diseaseGroup, DateTime cutoffDateForOccurrences) {
+        Double minDistanceFromDiseaseExtent = diseaseGroup.getMinDistanceFromDiseaseExtentForTriggering();
+        Double maxEnvironmentalSuitability = diseaseGroup.getMaxEnvironmentalSuitabilityForTriggering();
+        Set<Integer> locationIdsUsedInLastModelRun = getLocationIdsFromLastModelRun(diseaseGroup);
+
+        return diseaseOccurrenceDao.getDistinctLocationsCountForTriggeringModelRun(diseaseGroup.getId(),
+                locationIdsUsedInLastModelRun,
+                cutoffDateForOccurrences,
+                subtractMaxDaysOnValidator(cutoffDateForOccurrences).toDateTimeAtStartOfDay(),
+                maxEnvironmentalSuitability,
+                minDistanceFromDiseaseExtent);
+    }
+
+    private HashSet<Integer> getLocationIdsFromLastModelRun(DiseaseGroup diseaseGroup) {
+        ModelRun lastModelRun = modelRunDao.getLastRequestedModelRun(diseaseGroup.getId());
+        if (lastModelRun == null) {
+            return new HashSet<>();
+        } else {
+            return new HashSet<>(
+                // Note that if the last model run was non-automatic then the input occurrences will be empty (not
+                // stored). This means that for the first auto model run the trigger may fire slightly early. CM says
+                // that this is the correct behavior.
+                extract(lastModelRun.getInputDiseaseOccurrences(), on(DiseaseOccurrence.class).getLocation().getId())
+            );
+        }
     }
 
     /**
@@ -258,9 +293,9 @@ public class DiseaseServiceImpl implements DiseaseService {
      * @return The list of latest disease occurrences for the specified admin unit disease extent class.
      */
     @Override
-    public List<DiseaseOccurrence> getLatestOccurrencesForAdminUnitDiseaseExtentClass(DiseaseGroup diseaseGroup,
-                                                                                      Integer gaulCode) {
-        return adminUnitDiseaseExtentClassDao.getLatestOccurrencesForAdminUnitDiseaseExtentClass(
+    public List<DiseaseOccurrence> getLatestValidatorOccurrencesForAdminUnitDiseaseExtentClass(
+            DiseaseGroup diseaseGroup, Integer gaulCode) {
+        return adminUnitDiseaseExtentClassDao.getLatestValidatorOccurrencesForAdminUnitDiseaseExtentClass(
                 diseaseGroup.getId(), diseaseGroup.isGlobal(), gaulCode);
     }
 
@@ -278,6 +313,16 @@ public class DiseaseServiceImpl implements DiseaseService {
             return adminUnitDiseaseExtentClassDao.getAllTropicalAdminUnitDiseaseExtentClassesByDiseaseGroupId(
                     diseaseGroupId);
         }
+    }
+
+    /**
+     * Gets the latest disease extent class change date for the specified disease group.
+     * @param diseaseGroupId The ID of the disease group.
+     * @return The latest change date.
+     */
+    @Override
+    public DateTime getLatestDiseaseExtentClassChangeDateByDiseaseGroupId(Integer diseaseGroupId) {
+        return adminUnitDiseaseExtentClassDao.getLatestDiseaseExtentClassChangeDateByDiseaseGroupId(diseaseGroupId);
     }
 
     /**
@@ -393,12 +438,11 @@ public class DiseaseServiceImpl implements DiseaseService {
 
     /**
      * Updates the aggregated disease extent that is stored in the disease_extent table, for the specified disease.
-     * @param diseaseGroupId The disease group ID.
-     * @param isGlobal True if the disease is global, false if tropical.
+     * @param diseaseGroup The disease group.
      */
     @Override
-    public void updateAggregatedDiseaseExtent(int diseaseGroupId, boolean isGlobal) {
-        nativeSQL.updateAggregatedDiseaseExtent(diseaseGroupId, isGlobal);
+    public void updateAggregatedDiseaseExtent(DiseaseGroup diseaseGroup) {
+        nativeSQL.updateAggregatedDiseaseExtent(diseaseGroup.getId(), diseaseGroup.isGlobal());
     }
 
     /**
@@ -466,6 +510,26 @@ public class DiseaseServiceImpl implements DiseaseService {
                                                                  DateTime endDate) {
         return diseaseOccurrenceDao.getNumberOfOccurrencesEligibleForModelRun(diseaseGroupId, startDate,
                 endDate);
+    }
+
+    /**
+     * Returns the input date, with the number of days between scheduled model runs subtracted.
+     * @param dateTime The input date.
+     * @return The input date minus the number of days between scheduled model runs.
+     */
+    @Override
+    public LocalDate subtractMaxDaysOnValidator(DateTime dateTime) {
+        return dateTime.toLocalDate().minusDays(maxDaysOnValidator);
+    }
+
+    /**
+     * Returns the input date, with the number of days between scheduled model runs subtracted.
+     * @param dateTime The input date.
+     * @return The input date minus the number of days between scheduled model runs.
+     */
+    @Override
+    public LocalDate subtractDaysBetweenModelRuns(DateTime dateTime) {
+        return dateTime.toLocalDate().minusDays(daysBetweenModelRuns);
     }
 
     private boolean isDiseaseGroupGlobal(Integer diseaseGroupId) {

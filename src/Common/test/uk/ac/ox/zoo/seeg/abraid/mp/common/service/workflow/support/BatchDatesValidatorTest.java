@@ -35,12 +35,13 @@ public class BatchDatesValidatorTest {
         int diseaseGroupId = 87;
         DateTime batchEndDate = DateTime.now();
         mockHasBatchingEverCompleted(diseaseGroupId, false);
+        DiseaseGroup diseaseGroup = createDiseaseGroup(87);
 
         // Act
-        validator.validate(diseaseGroupId, null, batchEndDate);
+        catchException(validator).validate(diseaseGroup, null, batchEndDate);
 
         // Assert
-        verify(diseaseService, never()).getDiseaseGroupById(anyInt());
+        assertThat(caughtException()).isNull();
     }
 
     @Test
@@ -49,12 +50,13 @@ public class BatchDatesValidatorTest {
         int diseaseGroupId = 87;
         DateTime batchStartDate = DateTime.now();
         mockHasBatchingEverCompleted(diseaseGroupId, false);
+        DiseaseGroup diseaseGroup = createDiseaseGroup(87);
 
         // Act
-        validator.validate(diseaseGroupId, batchStartDate, null);
+        catchException(validator).validate(diseaseGroup, batchStartDate, null);
 
         // Assert
-        verify(diseaseService, never()).getDiseaseGroupById(anyInt());
+        assertThat(caughtException()).isNull();
     }
 
     @Test
@@ -64,12 +66,13 @@ public class BatchDatesValidatorTest {
         DateTime batchStartDate = DateTime.now().minusDays(1);
         DateTime batchEndDate = DateTime.now();
         mockHasBatchingEverCompleted(diseaseGroupId, true);
+        DiseaseGroup diseaseGroup = createDiseaseGroup(87);
 
         // Act
-        validator.validate(diseaseGroupId, batchStartDate, batchEndDate);
+        catchException(validator).validate(diseaseGroup, batchStartDate, batchEndDate);
 
         // Assert
-        verify(diseaseService, never()).getDiseaseGroupById(anyInt());
+        assertThat(caughtException()).isNull();
     }
 
     @Test
@@ -82,14 +85,15 @@ public class BatchDatesValidatorTest {
         long occurrenceCount = 400;
 
         mockHasBatchingEverCompleted(diseaseGroupId, false);
-        setUpDiseaseGroup(diseaseGroupId, minimumDataVolume);
+        DiseaseGroup diseaseGroup = createDiseaseGroup(87);
+        setMinDataVolume(diseaseGroup, minimumDataVolume);
         mockGetOccurrences(diseaseGroupId, batchStartDate, batchEndDate, occurrenceCount);
 
         // Act
-        validator.validate(diseaseGroupId, batchStartDate, batchEndDate);
+        catchException(validator).validate(diseaseGroup, batchStartDate, batchEndDate);
 
         // Assert
-        verify(diseaseService).getDiseaseGroupById(eq(diseaseGroupId));
+        assertThat(caughtException()).isNull();
     }
 
     @Test
@@ -102,11 +106,12 @@ public class BatchDatesValidatorTest {
         long occurrenceCount = 399;
 
         mockHasBatchingEverCompleted(diseaseGroupId, false);
-        setUpDiseaseGroup(diseaseGroupId, minimumDataVolume);
+        DiseaseGroup diseaseGroup = createDiseaseGroup(87);
+        setMinDataVolume(diseaseGroup, minimumDataVolume);
         mockGetOccurrences(diseaseGroupId, batchStartDate, batchEndDate, occurrenceCount);
 
         // Act
-        catchException(validator).validate(diseaseGroupId, batchStartDate, batchEndDate);
+        catchException(validator).validate(diseaseGroup, batchStartDate, batchEndDate);
 
         // Assert
         assertThat(caughtException()).isInstanceOf(ModelRunWorkflowException.class);
@@ -119,10 +124,12 @@ public class BatchDatesValidatorTest {
         when(modelRunService.hasBatchingEverCompleted(diseaseGroupId)).thenReturn(result);
     }
 
-    private void setUpDiseaseGroup(int diseaseGroupId, int minDataVolume) {
-        DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
+    private void setMinDataVolume(DiseaseGroup diseaseGroup, int minDataVolume) {
         diseaseGroup.setMinDataVolume(minDataVolume);
-        when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
+    }
+
+    private DiseaseGroup createDiseaseGroup(int diseaseGroupId) {
+        return new DiseaseGroup(diseaseGroupId);
     }
 
     private void mockGetOccurrences(int diseaseGroupId, DateTime batchStartDate, DateTime batchEndDate,

@@ -1,7 +1,9 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web;
 
+import org.apache.log4j.Logger;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
+import uk.ac.ox.zoo.seeg.abraid.mp.testutils.GeneralTestUtils;
 
 import static org.mockito.Mockito.*;
 
@@ -13,10 +15,8 @@ public class HandlersAsyncWrapperTest {
     @Test
     public void handlersAreCalledSuccessfully() throws Exception {
         // Arrange
-        DiseaseExtentGenerationHandler diseaseExtentGenerationHandler = mock(DiseaseExtentGenerationHandler.class);
-        DiseaseOccurrenceHandler diseaseOccurrenceHandler = mock(DiseaseOccurrenceHandler.class);
-        HandlersAsyncWrapper wrapper = new HandlersAsyncWrapper(diseaseExtentGenerationHandler,
-                diseaseOccurrenceHandler);
+        BatchingHandler batchingHandler = mock(BatchingHandler.class);
+        HandlersAsyncWrapper wrapper = new HandlersAsyncWrapper(batchingHandler);
 
         ModelRun modelRun = new ModelRun();
 
@@ -24,27 +24,25 @@ public class HandlersAsyncWrapperTest {
         wrapper.handle(modelRun).get();
 
         // Assert
-        verify(diseaseExtentGenerationHandler).handle(same(modelRun));
-        verify(diseaseOccurrenceHandler).handle(same(modelRun));
+        verify(batchingHandler).handle(same(modelRun));
     }
 
     @Test
     public void exceptionThrownByAHandlerIsCaught() throws Exception {
         // Arrange
-        DiseaseExtentGenerationHandler diseaseExtentGenerationHandler = mock(DiseaseExtentGenerationHandler.class);
-        DiseaseOccurrenceHandler diseaseOccurrenceHandler = mock(DiseaseOccurrenceHandler.class);
-        HandlersAsyncWrapper wrapper = new HandlersAsyncWrapper(diseaseExtentGenerationHandler,
-                diseaseOccurrenceHandler);
+        BatchingHandler batchingHandler = mock(BatchingHandler.class);
+        HandlersAsyncWrapper wrapper = new HandlersAsyncWrapper(batchingHandler);
+        Logger mockLogger = GeneralTestUtils.createMockLogger(wrapper);
 
         ModelRun modelRun = new ModelRun();
 
-        doThrow(new RuntimeException("Test message")).when(diseaseExtentGenerationHandler).handle(modelRun);
+        RuntimeException exception = new RuntimeException("Test message");
+        doThrow(exception).when(batchingHandler).handle(modelRun);
 
         // Act
         wrapper.handle(modelRun).get();
 
         // Assert
-        verify(diseaseExtentGenerationHandler).handle(same(modelRun));
-        verify(diseaseOccurrenceHandler, never()).handle(same(modelRun));
+        verify(mockLogger).error(exception);
     }
 }

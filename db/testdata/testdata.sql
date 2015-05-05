@@ -5,7 +5,7 @@
 -- Copyright (c) 2014 University of Oxford
 
 -- Firstly clear the disease_extent table, as it was already populated by data.sql
-TRUNCATE TABLE disease_extent;
+TRUNCATE TABLE disease_extent CASCADE;
 
 \copy expert (name, email, hashed_password, job_title, institution, is_administrator, is_seeg_member, has_seen_help_text, weighting, visibility_requested, visibility_approved) FROM 'expert.txt' (ENCODING utf8, NULL '')
 \copy location (id, name, geom, precision, geoname_id, resolution_weighting, healthmap_country_id, admin_unit_qc_gaul_code, admin_unit_global_gaul_code, admin_unit_tropical_gaul_code, country_gaul_code, has_passed_qc, model_eligible) FROM 'location.txt' (ENCODING utf8, NULL '')
@@ -13,7 +13,7 @@ TRUNCATE TABLE disease_extent;
 \copy disease_occurrence (id, disease_group_id, location_id, alert_id, status, occurrence_date, machine_weighting, validation_weighting, final_weighting, final_weighting_excl_spatial) FROM 'disease_occurrence.txt' (ENCODING utf8, NULL '')
 \copy disease_extent (disease_group_id, geom, min_validation_weighting, min_occurrences_for_presence, min_occurrences_for_possible_presence, max_months_ago_for_higher_occurrence_score, lower_occurrence_score, higher_occurrence_score) FROM 'disease_extent.txt' (ENCODING utf8, NULL '')
 \copy expert_validator_disease_group (expert_id, validator_disease_group_id) FROM 'expert_validator_disease_group.txt' (ENCODING utf8, NULL '')
-\copy admin_unit_disease_extent_class (disease_group_id, global_gaul_code, tropical_gaul_code, disease_extent_class, occurrence_count, class_changed_date) FROM 'admin_unit_disease_extent_class.txt' (ENCODING utf8, NULL '')
+\copy admin_unit_disease_extent_class (disease_group_id, global_gaul_code, tropical_gaul_code, disease_extent_class, validator_disease_extent_class, validator_occurrence_count, class_changed_date) FROM 'admin_unit_disease_extent_class.txt' (ENCODING utf8, NULL '')
 
 -- Some of the data above contains explicit values of serial primary keys, so that child tables can refer
 -- to known IDs. So now we need to reset the sequences of such primary keys.
