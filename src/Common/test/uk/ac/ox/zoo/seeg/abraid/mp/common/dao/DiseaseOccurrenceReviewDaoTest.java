@@ -152,6 +152,24 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractCommonSpringIntegrat
         assertThat(reviews).isEmpty();
     }
 
+    @Test
+    public void canSaveReviewWithNullResponse() {
+        // Arrange
+        DiseaseGroup diseaseGroup = diseaseGroupDao.getById(DISEASE_GROUP_ID_1);
+        Expert expert = createExpert("expert1@test.com", 0.6);
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(DiseaseOccurrenceStatus.READY, diseaseGroup);
+
+        DiseaseOccurrenceReview review = new DiseaseOccurrenceReview(expert, occurrence, null);
+
+        // Act
+        diseaseOccurrenceReviewDao.save(review);
+        flushAndClear();
+        List<DiseaseOccurrenceReview> all = diseaseOccurrenceReviewDao.getAll();
+
+        // Assert
+        assertThat(all).hasSize(1);
+    }
+
     private List<DiseaseOccurrenceReview> createTestReviews() {
         Expert expert1 = createExpert("expert1@test.com", 0.6);
         Expert expert2 = createExpert("expert2@test.com", 0.5);
