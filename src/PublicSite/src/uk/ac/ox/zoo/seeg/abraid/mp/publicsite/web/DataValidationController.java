@@ -189,7 +189,7 @@ public class DataValidationController extends AbstractController {
         Integer expertId = currentUserService.getCurrentUserId();
 
         // Basic validation
-        if (validatorDiseaseGroupId == null || occurrenceId == null || review == null) {
+        if (validatorDiseaseGroupId == null || occurrenceId == null) {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
 
@@ -199,7 +199,8 @@ public class DataValidationController extends AbstractController {
                 diseaseService.getValidatorDiseaseGroupById(validatorDiseaseGroupId);
         DiseaseOccurrenceReviewResponse diseaseOccurrenceReviewResponse =
                 DiseaseOccurrenceReviewResponse.parseFromString(review);
-        if (occurrence == null || validatorDiseaseGroup == null || diseaseOccurrenceReviewResponse == null) {
+        if (occurrence == null || validatorDiseaseGroup == null ||
+                (review != null && diseaseOccurrenceReviewResponse == null)) {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
 
