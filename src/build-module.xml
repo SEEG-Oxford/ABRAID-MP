@@ -591,7 +591,7 @@
 
   <target name="check.quality.js" depends="unit.test.js, check.style.js, check.test.style.js"/>
 
-  <target name="unit.test.js" depends="retrieve.libs, find.phantom">
+  <target name="unit.test.js" depends="retrieve.libs, find.phantom" unless="skip.tests">
     <echo>Running: ${phantom.executable}</echo>
     <exec executable="${phantom.executable}" resultproperty="js.test.result">
       <arg value="--ssl-protocol=any"/>
