@@ -60,8 +60,9 @@ public class WeightingsCalculator {
      * @param diseaseGroupId The id of the disease group.
      */
     public void updateDiseaseOccurrenceExpertWeightings(int diseaseGroupId) {
-        List<DiseaseOccurrenceReview> allReviews = diseaseService.getDiseaseOccurrenceReviewsForUpdatingWeightings(
-                diseaseGroupId, expertWeightingThreshold);
+        List<DiseaseOccurrenceReview> allReviews =
+                diseaseService.getDiseaseOccurrenceReviewsForOccurrencesInValidationForUpdatingWeightings(
+                    diseaseGroupId, expertWeightingThreshold);
         if (allReviews.isEmpty()) {
             logger.info(String.format(NOT_UPDATING_OCCURRENCE_EXPERT_WEIGHTINGS, expertWeightingThreshold));
         } else {

@@ -47,7 +47,7 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractCommonSpringIntegrat
         DiseaseOccurrenceReview firstReview = new DiseaseOccurrenceReview(expertDao.getById(1), diseaseOccurrenceDao.getById(272407), DiseaseOccurrenceReviewResponse.NO);
         diseaseOccurrenceReviewDao.save(firstReview);
         flushAndClear();
-        DiseaseOccurrenceReview secondReview = new DiseaseOccurrenceReview(expertDao.getById(1), diseaseOccurrenceDao.getById(272829), DiseaseOccurrenceReviewResponse.NO);
+        DiseaseOccurrenceReview secondReview = new DiseaseOccurrenceReview(expertDao.getById(1), diseaseOccurrenceDao.getById(272829), null);
         diseaseOccurrenceReviewDao.save(secondReview);
         flushAndClear();
 
@@ -85,7 +85,7 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractCommonSpringIntegrat
         // Arrange
         Expert expert = createExpert("expert@test.com");
         DiseaseOccurrence occurrence = createDiseaseOccurrence(DiseaseOccurrenceStatus.READY, createDiseaseGroup());
-        createDiseaseOccurrenceReview(expert, occurrence);
+        createDiseaseOccurrenceReview(expert, occurrence, null);
 
         // Act
         boolean result = diseaseOccurrenceReviewDao.doesDiseaseOccurrenceReviewExist(expert.getId(), occurrence.getId());
@@ -108,13 +108,14 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractCommonSpringIntegrat
     }
 
     @Test
-    public void getAllDiseaseOccurrenceReviewsForOccurrencesInValidationReturnsExpectedResult() {
+    public void getDiseaseOccurrenceReviewsForOccurrencesInValidationForUpdatingWeightingsReturnsExpectedResult() {
         // Arrange
         List<DiseaseOccurrenceReview> testReviews = createTestReviews();
+        double expertWeightingThreshold = 0.0;
 
         // Act
         List<DiseaseOccurrenceReview> reviews =
-                diseaseOccurrenceReviewDao.getAllDiseaseOccurrenceReviewsForOccurrencesInValidation(DISEASE_GROUP_ID_1);
+                diseaseOccurrenceReviewDao.getDiseaseOccurrenceReviewsForOccurrencesInValidationForUpdatingWeightings(DISEASE_GROUP_ID_1, expertWeightingThreshold);
 
         // Assert
         assertThat(reviews).hasSize(2);
@@ -123,14 +124,14 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractCommonSpringIntegrat
     }
 
     @Test
-    public void getDiseaseOccurrenceReviewsForUpdatingWeightingReturnsReviewsForOccurrencesInReviewByExpertsOverWeightingThreshold() {
+    public void getDiseaseOccurrenceReviewsForOccurrencesInValidationForUpdatingWeightingsReturnsReviewsForOccurrencesInReviewByExpertsOverWeightingThreshold() {
         // Arrange
         List<DiseaseOccurrenceReview> testReviews = createTestReviews();
         double expertWeightingThreshold = 0.6;
 
         // Act
         List<DiseaseOccurrenceReview> reviews =
-                diseaseOccurrenceReviewDao.getDiseaseOccurrenceReviewsForUpdatingWeightings(
+                diseaseOccurrenceReviewDao.getDiseaseOccurrenceReviewsForOccurrencesInValidationForUpdatingWeightings(
                         DISEASE_GROUP_ID_1, expertWeightingThreshold);
 
         // Assert
@@ -140,13 +141,13 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractCommonSpringIntegrat
     }
 
     @Test
-    public void getDiseaseOccurrenceReviewsForUpdatingWeightingReturnsEmptyListIfNoExpertsOverWeightingThreshold() {
+    public void getDiseaseOccurrenceReviewsForOccurrencesInValidationForUpdatingWeightingsReturnsEmptyListIfNoExpertsOverWeightingThreshold() {
         // Arrange
         createTestReviews();
 
         // Act
         List<DiseaseOccurrenceReview> reviews =
-                diseaseOccurrenceReviewDao.getDiseaseOccurrenceReviewsForUpdatingWeightings(DISEASE_GROUP_ID_1, 0.7);
+                diseaseOccurrenceReviewDao.getDiseaseOccurrenceReviewsForOccurrencesInValidationForUpdatingWeightings(DISEASE_GROUP_ID_1, 0.7);
 
         // Assert
         assertThat(reviews).isEmpty();
@@ -173,6 +174,7 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractCommonSpringIntegrat
     private List<DiseaseOccurrenceReview> createTestReviews() {
         Expert expert1 = createExpert("expert1@test.com", 0.6);
         Expert expert2 = createExpert("expert2@test.com", 0.5);
+        Expert expert3 = createExpert("expert3@test.com", 0.5);
 
         DiseaseGroup diseaseGroup1 = diseaseGroupDao.getById(DISEASE_GROUP_ID_1);
         DiseaseGroup diseaseGroup2 = diseaseGroupDao.getById(DISEASE_GROUP_ID_2);
@@ -181,15 +183,16 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractCommonSpringIntegrat
         DiseaseOccurrence occurrence2 = createDiseaseOccurrence(DiseaseOccurrenceStatus.IN_REVIEW, diseaseGroup1);
         DiseaseOccurrence occurrence3 = createDiseaseOccurrence(DiseaseOccurrenceStatus.IN_REVIEW, diseaseGroup2);
 
-        DiseaseOccurrenceReview occurrence1Expert1Review = createDiseaseOccurrenceReview(expert1, occurrence1);
-        DiseaseOccurrenceReview occurrence1Expert2Review = createDiseaseOccurrenceReview(expert2, occurrence1);
-        DiseaseOccurrenceReview occurrence2Expert1Review = createDiseaseOccurrenceReview(expert1, occurrence2);
-        DiseaseOccurrenceReview occurrence2Expert2Review = createDiseaseOccurrenceReview(expert2, occurrence2);
-        DiseaseOccurrenceReview occurrence3Expert1Review = createDiseaseOccurrenceReview(expert1, occurrence3);
-        DiseaseOccurrenceReview occurrence3Expert2Review = createDiseaseOccurrenceReview(expert2, occurrence3);
+        DiseaseOccurrenceReview occurrence1Expert1Review = createDiseaseOccurrenceReview(expert1, occurrence1, DiseaseOccurrenceReviewResponse.YES);
+        DiseaseOccurrenceReview occurrence1Expert2Review = createDiseaseOccurrenceReview(expert2, occurrence1, DiseaseOccurrenceReviewResponse.YES);
+        DiseaseOccurrenceReview occurrence2Expert1Review = createDiseaseOccurrenceReview(expert1, occurrence2, DiseaseOccurrenceReviewResponse.YES);
+        DiseaseOccurrenceReview occurrence2Expert2Review = createDiseaseOccurrenceReview(expert2, occurrence2, DiseaseOccurrenceReviewResponse.YES);
+        DiseaseOccurrenceReview occurrence3Expert1Review = createDiseaseOccurrenceReview(expert1, occurrence3,  DiseaseOccurrenceReviewResponse.YES);
+        DiseaseOccurrenceReview occurrence3Expert2Review = createDiseaseOccurrenceReview(expert2, occurrence3, DiseaseOccurrenceReviewResponse.YES);
+        DiseaseOccurrenceReview occurrence3Expert3Review = createDiseaseOccurrenceReview(expert3, occurrence3, null);
 
         return Arrays.asList(occurrence1Expert1Review, occurrence1Expert2Review, occurrence2Expert1Review,
-                occurrence2Expert2Review, occurrence3Expert1Review, occurrence3Expert2Review);
+                occurrence2Expert2Review, occurrence3Expert1Review, occurrence3Expert2Review, occurrence3Expert3Review);
     }
 
     private boolean containsById(List<DiseaseOccurrenceReview> reviews, DiseaseOccurrenceReview expectedReview) {
@@ -201,11 +204,11 @@ public class DiseaseOccurrenceReviewDaoTest extends AbstractCommonSpringIntegrat
         return false;
     }
 
-    private DiseaseOccurrenceReview createDiseaseOccurrenceReview(Expert expert, DiseaseOccurrence occurrence) {
+    private DiseaseOccurrenceReview createDiseaseOccurrenceReview(Expert expert, DiseaseOccurrence occurrence, DiseaseOccurrenceReviewResponse response) {
         DiseaseOccurrenceReview review = new DiseaseOccurrenceReview();
         review.setExpert(expert);
         review.setDiseaseOccurrence(occurrence);
-        review.setResponse(DiseaseOccurrenceReviewResponse.YES);
+        review.setResponse(response);
         diseaseOccurrenceReviewDao.save(review);
         return review;
     }
