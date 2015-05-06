@@ -159,6 +159,21 @@ define([
                 expect(jasmine.Ajax.requests.mostRecent().method).toBe("POST");
             });
 
+            it("POSTs to the specified URL, with no parameters, for null review", function () {
+                // Arrange
+                var diseaseId = 1;
+                ko.postbox.publish("layers-changed", { diseaseId: diseaseId });
+                var occurrenceId = vm.selectedPoint().id;
+                var expectedUrl = baseUrl + "datavalidation/diseases/" + diseaseId + "/occurrences/" + occurrenceId +
+                    "/validate";
+                // Act
+                vm.submitReview(null);
+                // Assert
+                expect(jasmine.Ajax.requests.mostRecent().url).toBe(expectedUrl);
+                expect(jasmine.Ajax.requests.mostRecent().params).toBeNull();
+                expect(jasmine.Ajax.requests.mostRecent().method).toBe("POST");
+            });
+
             it("when unsuccessful, displays an alert", function () {
                 // Arrange
                 var spy = jasmine.createSpy();
