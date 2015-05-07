@@ -497,6 +497,23 @@ define([
         clusterLayer.on("clusterclick", resetSelectedPoint);
         map.on("click", resetSelectedFeature);
 
+        function selectClosestAdminUnitInNeedOfReview(point) {
+            var candidateLayers = adminUnitsNeedReviewLayer.getLayers();
+            if (_.isEmpty(candidateLayers)) {
+                map.fitWorld();
+                ko.postbox.publish("no-features-to-review", true);
+            } else {
+                var closestLayer = _.min(candidateLayers, function (candidateLayer) {
+                    return candidateLayer.getBounds().getCenter().distanceTo(point);
+                });
+                ko.postbox.publish("admin-unit-selected", {
+                    id: closestLayer.feature.id,
+                    name: closestLayer.feature.properties.name,
+                    count: closestLayer.feature.properties.occurrenceCount
+                });
+            }
+        }
+
         ko.postbox.subscribe("layers-changed", function (data) {
             ko.postbox.publish("map-view-update-in-progress", true);
             validationTypeIsDiseaseOccurrenceLayer = (data.type === "disease occurrences");
@@ -525,8 +542,10 @@ define([
 
         ko.postbox.subscribe("admin-unit-reviewed", function (id) {
             var layer = adminUnitLayerMap[id];
+            var center = layer.getBounds().getCenter();
             adminUnitsNeedReviewLayer.removeLayer(layer);
             adminUnitsReviewedLayer.addData(layer.feature);
+            selectClosestAdminUnitInNeedOfReview(center);
         });
     };
 });
