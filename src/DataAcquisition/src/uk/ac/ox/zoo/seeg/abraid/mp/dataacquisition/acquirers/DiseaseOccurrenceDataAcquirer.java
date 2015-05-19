@@ -27,9 +27,9 @@ public class DiseaseOccurrenceDataAcquirer {
             "More than one location already exists at point (%f,%f) and with precision %s. Arbitrarily using " +
             "location ID %d.";
     private static final String OCCURRENCE_IS_TOO_OLD =
-            "Occurrence date for occurrence is older than the max allowable age.";
+            "Occurrence date for occurrence is older than the max allowable age";
     private static final String OCCURRENCE_IS_IN_THE_FUTURE =
-            "Occurrence date for occurrence is in the future.";
+            "Occurrence date for occurrence is in the future";
 
     private DiseaseService diseaseService;
     private LocationService locationService;

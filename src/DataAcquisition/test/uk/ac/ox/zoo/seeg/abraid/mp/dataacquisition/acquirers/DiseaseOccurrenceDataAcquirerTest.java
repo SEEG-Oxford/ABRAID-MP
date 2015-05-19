@@ -291,12 +291,30 @@ public class DiseaseOccurrenceDataAcquirerTest {
         catchException(acquirer).acquire(occurrence);
 
         // Assert
-        assertThat(caughtException()).hasMessage("Occurrence date for occurrence is older than the max allowable age.");
+        assertThat(caughtException()).hasMessage("Occurrence date for occurrence is older than the max allowable age");
         verify(diseaseService, never()).saveDiseaseOccurrence(any(DiseaseOccurrence.class));
     }
 
     @Test
-    public void acquireSavesOutdatedGoldStandardDiseaseOccurrence() {
+    public void acquireSavesOutdatedGoldStandardCSVDiseaseOccurrence() {
+        // Arrange
+        DiseaseOccurrence occurrence = createGoldStandardOccurrence();
+        occurrence.setOccurrenceDate(DateTime.now().minusYears(1).minusDays(1));
+        mockGetLocationsByPointAndPrecision(occurrence.getLocation().getGeom(), occurrence.getLocation().getPrecision(),
+                new ArrayList<Location>());
+        mockRunQC(occurrence.getLocation(), true);
+
+        // Act
+        boolean result = acquirer.acquire(occurrence);
+
+        // Assert
+        assertThat(occurrence.getLocation().hasPassedQc()).isTrue();
+        verify(postQcManager).runPostQCProcesses(same(occurrence.getLocation()));
+        verifySuccessfulSave(occurrence, true, result);
+    }
+
+    @Test
+    public void acquireSavesOutdatedNoGoldStandardCSVDiseaseOccurrence() {
         // Arrange
         DiseaseOccurrence occurrence = createGoldStandardOccurrence();
         occurrence.setOccurrenceDate(DateTime.now().minusYears(1).minusDays(1));
@@ -323,7 +341,7 @@ public class DiseaseOccurrenceDataAcquirerTest {
         catchException(acquirer).acquire(occurrence);
 
         // Assert
-        assertThat(caughtException()).hasMessage("Occurrence date for occurrence is in the future.");
+        assertThat(caughtException()).hasMessage("Occurrence date for occurrence is in the future");
         verify(diseaseService, never()).saveDiseaseOccurrence(any(DiseaseOccurrence.class));
     }
 
