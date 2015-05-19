@@ -368,7 +368,7 @@ public class DiseaseOccurrenceDataAcquirerTest {
         Location location = new Location(20, 10, LocationPrecision.ADMIN1);
         occurrence.setLocation(location);
         occurrence.setOccurrenceDate(DateTime.now());
-        setAlert(occurrence, false);
+        setAlert(occurrence, ProvenanceNames.HEALTHMAP);
         return occurrence;
     }
 
@@ -377,12 +377,20 @@ public class DiseaseOccurrenceDataAcquirerTest {
         Location location = new Location(20, 10, LocationPrecision.ADMIN1);
         occurrence.setLocation(location);
         occurrence.setOccurrenceDate(DateTime.now());
-        setAlert(occurrence, true);
+        setAlert(occurrence, ProvenanceNames.MANUAL_GOLD_STANDARD);
         return occurrence;
     }
 
-    private void setAlert(DiseaseOccurrence occurrence, boolean isGoldStandard) {
-        String provenanceName = isGoldStandard ? ProvenanceNames.MANUAL_GOLD_STANDARD : ProvenanceNames.MANUAL;
+    private DiseaseOccurrence createManualCSVOccurrence() {
+        DiseaseOccurrence occurrence = new DiseaseOccurrence();
+        Location location = new Location(20, 10, LocationPrecision.ADMIN1);
+        occurrence.setLocation(location);
+        occurrence.setOccurrenceDate(DateTime.now());
+        setAlert(occurrence, ProvenanceNames.MANUAL);
+        return occurrence;
+    }
+
+    private void setAlert(DiseaseOccurrence occurrence, String provenanceName) {
         Feed feed = new Feed("Manual data", new Provenance(provenanceName));
         Alert alert = new Alert();
         alert.setFeed(feed);
