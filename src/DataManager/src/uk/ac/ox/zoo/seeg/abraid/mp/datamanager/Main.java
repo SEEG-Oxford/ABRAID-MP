@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.datamanager;
 
 import org.apache.log4j.Logger;
+import org.joda.time.LocalDate;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
@@ -25,6 +26,8 @@ public class Main {
     private static final Logger LOGGER = Logger.getLogger(Main.class);
     private static final String STARTED_MESSAGE = "Data Manager version %s: started";
     private static final String FINISHED_MESSAGE = "Data Manager finished";
+    private static final String ERROR_FAILED_MESSAGE =
+            "The '%s' step of the daily ABRAID process for '%s' failed: '%s'";
 
     private final DiseaseService diseaseService;
     private final DataAcquisitionManager dataAcquisitionManager;
@@ -100,6 +103,13 @@ public class Main {
         System.out.println(message);
     }
 
+    private void logError(String step, Exception e) {
+        String message = String.format(
+                ERROR_FAILED_MESSAGE, step, LocalDate.now().toString("YYYY-MM-dd"), e.getMessage());
+        LOGGER.fatal(message);
+        System.out.println(message);
+    }
+
     private List<Integer> getDiseaseGroupIdsForAutomaticModelRuns() {
         List<Integer> diseaseGroupIdsForAutomaticModelRuns = diseaseService.getDiseaseGroupIdsForAutomaticModelRuns();
         // Return a mutable version of the list.
@@ -113,10 +123,10 @@ public class Main {
         try {
             diseaseProcessManager.updateExpertsWeightings();
         } catch (Exception e) { ///CHECKSTYLE:SUPPRESS EmptyBlock
-            // Ignore the exception, because it is thrown to roll back the transaction if the process step fails.
-            // Logging has already been done by this point.
+            // Exception is thrown to roll back the transaction if the process step fails.
+            // Logging has probably already been done by this point, but best to log it again for safety.
+            logError("update experts' scores", e);
         }
-
     }
 
     /**
@@ -128,8 +138,9 @@ public class Main {
             try {
                 diseaseProcessManager.processOccurrencesOnDataValidator(diseaseGroupId);
             } catch (Exception e) { ///CHECKSTYLE:SUPPRESS EmptyBlock
-                // Ignore the exception, because it is thrown to roll back the transaction per disease group if the
-                // process step fails. Logging has already been done by this point.
+                // Exception is thrown to roll back the transaction if the process step fails.
+                // Logging has probably already been done by this point, but best to log it again for safety.
+                logError("process occurrence on the validator", e);
             }
         }
     }
@@ -143,8 +154,9 @@ public class Main {
         try {
             dataAcquisitionManager.runDataAcquisition(fileNames);
         } catch (Exception e) { ///CHECKSTYLE:SUPPRESS EmptyBlock
-            // Ignore the exception, because it is thrown to roll back the transaction per disease group if the
-            // process step fails. Logging has already been done by this point.
+            // Exception is thrown to roll back the transaction if the process step fails.
+            // Logging has probably already been done by this point, but best to log it again for safety.
+            logError("acquire new data", e);
         }
     }
 
@@ -158,8 +170,9 @@ public class Main {
             try {
                 diseaseProcessManager.updateDiseaseExtents(diseaseGroupId);
             } catch (Exception e) { ///CHECKSTYLE:SUPPRESS EmptyBlock
-                // Catch the exception, because it is thrown to roll back the transaction per disease group if the
-                // process step fails. Logging has already been done by this point.
+                // Exception is thrown to roll back the transaction if the process step fails.
+                // Logging has probably already been done by this point, but best to log it again for safety.
+                logError(String.format("update disease extent for ID=%s (if required)", diseaseGroupId), e);
 
                 // If extent generation fails for a disease, we should not attempt a model run today for that disease
                 diseaseGroupIdsForAutomaticModelRuns.remove(diseaseGroupId);
@@ -176,8 +189,9 @@ public class Main {
             try {
                 diseaseProcessManager.requestModelRun(diseaseGroupId);
             } catch (Exception e) { ///CHECKSTYLE:SUPPRESS EmptyBlock
-                // Ignore the exception, because it is thrown to roll back the transaction per disease group if the
-                // process step fails. Logging has already been done by this point.
+                // Exception is thrown to roll back the transaction if the process step fails.
+                // Logging has probably already been done by this point, but best to log it again for safety.
+                logError(String.format("request model run for ID=%s (if required)", diseaseGroupId), e);
             }
         }
     }

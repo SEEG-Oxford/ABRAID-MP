@@ -6,6 +6,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Provenance;
 import org.apache.commons.io.FileUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParserException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.DataAcquisitionException;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.domain.HealthMapLocation;
 
 import java.io.File;
@@ -62,7 +63,7 @@ public class HealthMapDataAcquirer {
             return healthMapWebService.sendRequest(startDate, endDate);
         } catch (WebServiceClientException|JsonParserException e) {
             LOGGER.fatal(String.format(WEB_SERVICE_ERROR_MESSAGE, e.getMessage()), e);
-            return null;
+            throw new DataAcquisitionException(e.getMessage(), e);
         }
     }
 
@@ -72,14 +73,14 @@ public class HealthMapDataAcquirer {
             json = FileUtils.readFileToString(new File(jsonFileName), StandardCharsets.UTF_8);
         } catch (IOException e) {
             LOGGER.fatal(String.format(FILE_ERROR_MESSAGE, e.getMessage()), e);
-            return null;
+            throw new DataAcquisitionException(e.getMessage(), e);
         }
 
         try {
             return healthMapWebService.parseJson(json);
         } catch (JsonParserException e) {
             LOGGER.fatal(String.format(JSON_ERROR_MESSAGE, e.getMessage()), e);
-            return null;
+            throw new DataAcquisitionException(e.getMessage(), e);
         }
     }
 

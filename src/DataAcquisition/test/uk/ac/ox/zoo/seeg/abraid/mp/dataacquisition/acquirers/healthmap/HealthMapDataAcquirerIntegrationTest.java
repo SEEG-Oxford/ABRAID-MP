@@ -2,12 +2,18 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParserException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.DataAcquisitionException;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.domain.HealthMapLocation;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.googlecode.catchexception.CatchException.catchException;
+import static com.googlecode.catchexception.CatchException.caughtException;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 /**
@@ -42,10 +48,12 @@ public class HealthMapDataAcquirerIntegrationTest {
 
         // Act
         HealthMapDataAcquirer dataAcquisition = new HealthMapDataAcquirer(webService, dataConverter, lookupData);
-        dataAcquisition.acquireDataFromFile(fileName);
+        catchException(dataAcquisition).acquireDataFromFile(fileName);
 
         // Assert
         verify(dataConverter, never()).convert(eq(locations), eq((DateTime) null));
+        assertThat(caughtException()).isInstanceOf(DataAcquisitionException.class);
+        assertThat(caughtException().getCause()).isInstanceOf(JsonParserException.class);
     }
 
     @Test
@@ -56,9 +64,11 @@ public class HealthMapDataAcquirerIntegrationTest {
 
         // Act
         HealthMapDataAcquirer dataAcquisition = new HealthMapDataAcquirer(webService, dataConverter, lookupData);
-        dataAcquisition.acquireDataFromFile(fileName);
+        catchException(dataAcquisition).acquireDataFromFile(fileName);
 
         // Assert
         verify(dataConverter, never()).convert(eq(locations), eq((DateTime) null));
+        assertThat(caughtException()).isInstanceOf(DataAcquisitionException.class);
+        assertThat(caughtException().getCause()).isInstanceOf(IOException.class);
     }
 }
