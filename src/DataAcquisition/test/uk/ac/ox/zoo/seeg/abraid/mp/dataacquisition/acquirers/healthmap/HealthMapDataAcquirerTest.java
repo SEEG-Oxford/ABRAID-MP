@@ -5,11 +5,15 @@ import org.joda.time.DateTimeUtils;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Provenance;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.DataAcquisitionException;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.domain.HealthMapLocation;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.googlecode.catchexception.CatchException.catchException;
+import static com.googlecode.catchexception.CatchException.caughtException;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -186,11 +190,13 @@ public class HealthMapDataAcquirerTest {
 
         // Act
         HealthMapDataAcquirer dataAcquisition = new HealthMapDataAcquirer(webService, dataConverter, lookupData);
-        dataAcquisition.acquireDataFromWebService();
+        catchException(dataAcquisition).acquireDataFromWebService();
 
         // Assert
         //noinspection unchecked
         verify(dataConverter, never()).convert(anyList(), any(DateTime.class));
+        assertThat(caughtException()).isInstanceOf(DataAcquisitionException.class);
+        assertThat(caughtException().getCause()).isInstanceOf(WebServiceClientException.class);
     }
 
     private void fixCurrentDateTime() {
