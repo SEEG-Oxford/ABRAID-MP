@@ -21,7 +21,7 @@ public class HealthMapSubDiseaseDaoTest extends AbstractCommonSpringIntegrationT
     @Test
     public void getAllHealthMapSubDiseases() {
         List<HealthMapSubDisease> subDiseases = healthMapSubDiseaseDao.getAll();
-        assertThat(subDiseases).hasSize(22);
+        assertThat(subDiseases).hasSize(35);
     }
 
     @Test
