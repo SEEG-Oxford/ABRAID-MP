@@ -437,7 +437,7 @@ public class DataValidationControllerTest {
     }
 
     @Test
-    public void submitDiseaseOccurrenceReviewReturnsHttpNoContentForMissingReview() {
+    public void submitDiseaseOccurrenceReviewReturnsHttpNoContentForIDontKnowReview() {
         // Arrange - "I don't know"
         Integer validatorDiseaseGroupId = 2;
         Integer diseaseOccurrenceId = 3;
@@ -452,7 +452,7 @@ public class DataValidationControllerTest {
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
-        verify(expertService).saveDiseaseOccurrenceReview(1, 3, null);
+        verify(expertService).saveDiseaseOccurrenceReview(1, diseaseOccurrenceId, null);
     }
 
     @Test
@@ -848,18 +848,17 @@ public class DataValidationControllerTest {
     }
 
     @Test
-    public void submitAdminUnitReviewReturnsHttpNoContentForMissingReview() {
+    public void submitAdminUnitReviewReturnsHttpNoContentForIDontKnowReview() {
         // Arrange - I don't know
         boolean userIsSeeg = false;
         boolean hasModelRunPrepOccurredForDisease = true;
-        String review = "ABSENCE";
 
         Integer expertId = 1;
         Integer diseaseId = 2;
         Integer gaulCode = 3;
 
         wireUpExpert(expertId, userIsSeeg, false);
-        wireUpForExtentReview(diseaseId, gaulCode, review, hasModelRunPrepOccurredForDisease);
+        wireUpForExtentReview(diseaseId, gaulCode, "ABSENCE", hasModelRunPrepOccurredForDisease);
 
         DataValidationController target = createTarget();
 

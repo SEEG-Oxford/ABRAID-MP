@@ -41,7 +41,7 @@ public class DiseaseOccurrenceReviewManager {
      * model or included in the disease extent. If we are during disease group set up, the occurrence should be removed
      * from DataValidator immediately, irrespective of time spent in review.
      * Note: It is possible for an occurrence to end up with DISCARDED_UNREVIEWED while still having an expert
-     * weighting. This is the result of a reviewer(s) score falling below the threashold during the time an occurrence
+     * weighting. This is the result of a reviewer(s) score falling below the threshold during the time an occurrence
      * is on the validator.
      * @param diseaseGroupId The ID of the disease group this model run preparation is for.
      * @param isAutomaticProcess If this is part of the automated daily process or for a manual model run.
