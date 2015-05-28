@@ -27,7 +27,7 @@ import static org.hamcrest.collection.IsCollectionContaining.hasItem;
 public class RunConfigurationFactoryImpl implements RunConfigurationFactory {
     // This the max file name length (255) minus reserved space for a GUID (36), a datetime (19) and separators (2)
     private static final int MAX_DISEASE_NAME_LENGTH = 195;
-    public static final String RUNS_SUBDIRECTORY = "runs";
+    private static final String RUNS_SUBDIRECTORY = "runs";
 
     private final ConfigurationService configurationService;
 
