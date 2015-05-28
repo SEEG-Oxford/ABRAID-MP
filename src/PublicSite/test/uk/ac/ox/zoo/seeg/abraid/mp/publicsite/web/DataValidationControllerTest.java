@@ -437,8 +437,8 @@ public class DataValidationControllerTest {
     }
 
     @Test
-    public void submitDiseaseOccurrenceReviewReturnsHttpBadRequestForMissingReview() {
-        // Arrange
+    public void submitDiseaseOccurrenceReviewReturnsHttpNoContentForIDontKnowReview() {
+        // Arrange - "I don't know"
         Integer validatorDiseaseGroupId = 2;
         Integer diseaseOccurrenceId = 3;
 
@@ -451,8 +451,8 @@ public class DataValidationControllerTest {
         ResponseEntity result = target.submitDiseaseOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, null);
 
         // Assert
-        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        verify(expertService, never()).saveDiseaseOccurrenceReview(anyInt(), anyInt(), any(DiseaseOccurrenceReviewResponse.class));
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+        verify(expertService).saveDiseaseOccurrenceReview(1, diseaseOccurrenceId, null);
     }
 
     @Test
@@ -848,18 +848,17 @@ public class DataValidationControllerTest {
     }
 
     @Test
-    public void submitAdminUnitReviewReturnsHttpNoContentForMissingReview() {
+    public void submitAdminUnitReviewReturnsHttpNoContentForIDontKnowReview() {
         // Arrange - I don't know
         boolean userIsSeeg = false;
         boolean hasModelRunPrepOccurredForDisease = true;
-        String review = "ABSENCE";
 
         Integer expertId = 1;
         Integer diseaseId = 2;
         Integer gaulCode = 3;
 
         wireUpExpert(expertId, userIsSeeg, false);
-        wireUpForExtentReview(diseaseId, gaulCode, review, hasModelRunPrepOccurredForDisease);
+        wireUpForExtentReview(diseaseId, gaulCode, "ABSENCE", hasModelRunPrepOccurredForDisease);
 
         DataValidationController target = createTarget();
 

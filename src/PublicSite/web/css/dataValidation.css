@@ -209,9 +209,12 @@ html, body, #dataValidation {
 #reviewButtons .btn-group, #logIn .btn {
     width: 100%;
 }
-#reviewButtons .btn-group button {
-    width: 33%;
-    height: 50px;
+#reviewButtons.occurrence-buttons button {
+    width: 83px;
+}
+#reviewButtons.occurrence-buttons button#i-dont-know-occurrence-button {
+    width: 257px;
+    margin-top: 4px
 }
 #submitReviewSuccess button {
     width: 99%;

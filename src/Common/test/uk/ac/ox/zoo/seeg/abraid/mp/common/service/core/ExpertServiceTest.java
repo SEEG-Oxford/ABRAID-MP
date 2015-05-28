@@ -660,12 +660,45 @@ public class ExpertServiceTest {
 
     @Test
     public void saveDiseaseOccurrenceReview() {
-        DiseaseOccurrenceReview review = new DiseaseOccurrenceReview();
-        review.setExpert(new Expert());
-        review.setDiseaseOccurrence(new DiseaseOccurrence());
-        review.setResponse(DiseaseOccurrenceReviewResponse.YES);
-        diseaseOccurrenceReviewDao.save(review);
-        verify(diseaseOccurrenceReviewDao).save(eq(review));
+        //Arrange
+        Expert expert = new Expert();
+        when(expertDao.getById(1)).thenReturn(expert);
+        DiseaseOccurrence occurrence = new DiseaseOccurrence();
+        when(diseaseOccurrenceDao.getById(2)).thenReturn(occurrence);
+        DiseaseOccurrenceReviewResponse response = DiseaseOccurrenceReviewResponse.YES;
+        ArgumentCaptor<DiseaseOccurrenceReview> reviewArgumentCaptor =
+                ArgumentCaptor.forClass(DiseaseOccurrenceReview.class);
+        doNothing().when(diseaseOccurrenceReviewDao).save(reviewArgumentCaptor.capture());
+
+        // Act
+        expertService.saveDiseaseOccurrenceReview(1, 2, response);
+
+        //Assert
+        DiseaseOccurrenceReview value = reviewArgumentCaptor.getValue();
+        assertThat(value.getExpert()).isEqualTo(expert);
+        assertThat(value.getDiseaseOccurrence()).isEqualTo(occurrence);
+        assertThat(value.getResponse()).isEqualTo(response);
+    }
+
+    @Test
+    public void saveDiseaseOccurrenceReviewWithNullResponse() {
+        //Arrange
+        Expert expert = new Expert();
+        when(expertDao.getById(1)).thenReturn(expert);
+        DiseaseOccurrence occurrence = new DiseaseOccurrence();
+        when(diseaseOccurrenceDao.getById(2)).thenReturn(occurrence);
+        ArgumentCaptor<DiseaseOccurrenceReview> reviewArgumentCaptor =
+                ArgumentCaptor.forClass(DiseaseOccurrenceReview.class);
+        doNothing().when(diseaseOccurrenceReviewDao).save(reviewArgumentCaptor.capture());
+
+        // Act
+        expertService.saveDiseaseOccurrenceReview(1, 2, null);
+
+        //Assert
+        DiseaseOccurrenceReview value = reviewArgumentCaptor.getValue();
+        assertThat(value.getExpert()).isEqualTo(expert);
+        assertThat(value.getDiseaseOccurrence()).isEqualTo(occurrence);
+        assertThat(value.getResponse()).isNull();
     }
 
     @Test

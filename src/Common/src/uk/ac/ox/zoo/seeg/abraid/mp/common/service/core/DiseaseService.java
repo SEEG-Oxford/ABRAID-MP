@@ -180,21 +180,14 @@ public interface DiseaseService {
     List<DiseaseOccurrenceReview> getAllDiseaseOccurrenceReviews();
 
     /**
-     * Gets all reviews (for all time) for the disease occurrences which are in review.
-     * @param diseaseGroupId The ID of the disease group.
-     * @return A list of disease occurrence reviews.
-     */
-    List<DiseaseOccurrenceReview> getAllDiseaseOccurrenceReviewsForOccurrencesInValidation(Integer diseaseGroupId);
-
-    /**
      * Gets the reviews submitted by reliable experts (whose weighting is greater than the threshold) for the disease
-     * occurrences which are in review.
+     * occurrences which are in review.  "I don't know" response are excluded.
      * @param diseaseGroupId The ID of the disease group.
      * @param expertWeightingThreshold Reviews by experts with a weighting greater than this value will be considered.
      * @return A list of disease occurrence reviews.
      */
-    List<DiseaseOccurrenceReview> getDiseaseOccurrenceReviewsForUpdatingWeightings(Integer diseaseGroupId,
-                                                                                   Double expertWeightingThreshold);
+    List<DiseaseOccurrenceReview> getDiseaseOccurrenceReviewsForOccurrencesInValidationForUpdatingWeightings(
+            Integer diseaseGroupId, Double expertWeightingThreshold);
 
     /**
      * Determines whether the specified disease occurrence already exists in the database. This is true if an
