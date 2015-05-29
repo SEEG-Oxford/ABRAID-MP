@@ -47,7 +47,8 @@ public class RunConfigurationFactoryTest {
         // Assert
         assertThat(result.getRunName()).startsWith(expectedRunNameStart);
         assertThat(result.getRunName()).matches(expectedRunNameStart + UUID_REGEX);
-        assertThat(result.getBaseDir().getName()).isEqualTo("expectation1");
+        assertThat(result.getBaseDir().getParentFile().getName()).isEqualTo("expectation1");
+        assertThat(result.getBaseDir().getName()).isEqualTo("runs");
         assertCorrectCodeConfiguration(result.getCodeConfig());
         assertCorrectExecutionConfiguration(result.getExecutionConfig());
         assertCorrectCovariateConfiguration(result.getCovariateConfig());
