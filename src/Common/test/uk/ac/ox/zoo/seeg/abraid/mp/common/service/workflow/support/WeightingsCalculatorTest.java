@@ -300,6 +300,31 @@ public class WeightingsCalculatorTest {
     }
 
     @Test
+    public void updateExpertsWeightingsIgnoresIDontKnowResponses() {
+        // Arrange
+        Expert expert = new Expert();
+        Expert expert2 = new Expert();
+        ExpertService expertService = mock(ExpertService.class);
+        DiseaseService diseaseService = mock(DiseaseService.class);
+        DiseaseOccurrence diseaseOccurrence = new DiseaseOccurrence();
+        when(diseaseService.getAllDiseaseOccurrenceReviews()).thenReturn(Arrays.asList(
+                new DiseaseOccurrenceReview(expert, diseaseOccurrence, DiseaseOccurrenceReviewResponse.YES),
+                new DiseaseOccurrenceReview(expert2, diseaseOccurrence, null)
+        ));
+
+        WeightingsCalculator target = weightingsCalculator(diseaseService, expertService);
+
+        // Act
+        target.updateExpertsWeightings();
+
+        // Assert - No other reviews of occurrence, so the difference is 0.0 and the newWeighting = 1.0 - difference
+        verify(expertService).saveExpert(expert);
+        assertThat(expert.getWeighting()).isEqualTo(1.0);
+        verify(expertService, never()).saveExpert(expert2);
+        assertThat(expert2.getWeighting()).isEqualTo(0.0);
+    }
+
+    @Test
     public void updateExpertsWeightingsSavesExpectedValuesWhenAllExpertsProvideSameResponse() {
         // Arrange
         List<Expert> experts = Arrays.asList(new Expert(0), new Expert(1), new Expert(2));
