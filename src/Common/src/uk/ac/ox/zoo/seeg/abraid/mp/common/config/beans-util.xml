@@ -1,12 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-      Contains web-specific beans.
+      Contains misc util beans.
       Copyright (c) 2014 University of Oxford
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="
          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="gaulsToAdjust" class="org.springframework.util.StringUtils" factory-method="tokenizeToStringArray">
+        <constructor-arg type="java.lang.String" value="${gaul.codes.to.model.as.precise}"/>
+        <constructor-arg type="java.lang.String" value=" "/>
+    </bean>
+
+    <bean id="modelingLocationPrecisionAdjuster" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelingLocationPrecisionAdjuster" autowire="constructor" />
 
     <bean id="smtpConfig" class="uk.ac.ox.zoo.seeg.abraid.mp.common.config.SmtpConfiguration">
         <constructor-arg name="address" value="${email.smtp.host}" />

@@ -2,17 +2,22 @@ package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web;
 
 import com.vividsolutions.jts.geom.Point;
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelingLocationPrecisionAdjuster;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -21,13 +26,12 @@ import static org.mockito.Mockito.when;
  * Copyright (c) 2014 University of Oxford
  */
 public class ModelRunDetailsControllerTest {
-
     @Test
     public void getModelRunSummaryStatisticsReturnsBadRequestIfModelRunDoesNotExist() throws Exception {
         // Arrange
         String name = "modelRun1";
         ModelRunService modelRunService = mockModelRunService(name, null);
-        ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService);
+        ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService, createNoopAdjuster());
 
         // Act
         ResponseEntity response = controller.getModelRunSummaryStatistics(name);
@@ -45,7 +49,7 @@ public class ModelRunDetailsControllerTest {
         when(modelRun.getStatus()).thenReturn(ModelRunStatus.FAILED);
         ModelRunService modelRunService = mockModelRunService(name, modelRun);
 
-        ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService);
+        ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService, createNoopAdjuster());
 
         // Act
         ResponseEntity response = controller.getModelRunSummaryStatistics(name);
@@ -61,7 +65,7 @@ public class ModelRunDetailsControllerTest {
         ModelRun modelRun = mockCompletedModelRunWithStatistics(new ArrayList<SubmodelStatistic>());
         ModelRunService modelRunService = mockModelRunService(name, modelRun);
 
-        ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService);
+        ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService, createNoopAdjuster());
 
         // Act
         ResponseEntity response = controller.getModelRunSummaryStatistics(name);
@@ -81,7 +85,7 @@ public class ModelRunDetailsControllerTest {
                 new SubmodelStatistic(6.0, 7.0, 8.0, 9.0, 10.0)
         ));
         ModelRunService modelRunService = mockModelRunService(name, modelRun);
-        ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService);
+        ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService, createNoopAdjuster());
 
         // Act
         ResponseEntity response = controller.getModelRunSummaryStatistics(name);
@@ -97,7 +101,7 @@ public class ModelRunDetailsControllerTest {
         // Arrange
         String name = "modelRun5";
         ModelRunService modelRunService = mockModelRunService(name, null);
-        ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService);
+        ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService, createNoopAdjuster());
 
         // Act
         ResponseEntity response = controller.getCovariateInfluences(name);
@@ -114,7 +118,7 @@ public class ModelRunDetailsControllerTest {
         ModelRun modelRun = mock(ModelRun.class);
         when(modelRun.getStatus()).thenReturn(ModelRunStatus.IN_PROGRESS);
         ModelRunService modelRunService = mockModelRunService(name, modelRun);
-        ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService);
+        ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService, createNoopAdjuster());
 
         // Act
         ResponseEntity response = controller.getCovariateInfluences(name);
@@ -129,7 +133,7 @@ public class ModelRunDetailsControllerTest {
         String name = "modelRun7";
         ModelRun modelRun = mockCompletedModelRunWithCovariates(new ArrayList<CovariateInfluence>());
         ModelRunService modelRunService = mockModelRunService(name, modelRun);
-        ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService);
+        ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService, createNoopAdjuster());
 
         // Act
         ResponseEntity response = controller.getCovariateInfluences(name);
@@ -146,7 +150,7 @@ public class ModelRunDetailsControllerTest {
         CovariateInfluence covariateInfluence = new CovariateInfluence("Name", 12.3);
         ModelRun modelRun = mockCompletedModelRunWithCovariates(Arrays.asList(covariateInfluence));
         ModelRunService modelRunService = mockModelRunService(name, modelRun);
-        ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService);
+        ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService, createNoopAdjuster());
 
         // Act
         ResponseEntity response = controller.getCovariateInfluences(name);
@@ -165,7 +169,7 @@ public class ModelRunDetailsControllerTest {
         // Arrange
         String name = "modelRun5";
         ModelRunService modelRunService = mockModelRunService(name, null);
-        ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService);
+        ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService, createNoopAdjuster());
 
         // Act
         ResponseEntity response = controller.getEffectCurveCovariateInfluences(name);
@@ -182,7 +186,7 @@ public class ModelRunDetailsControllerTest {
         ModelRun modelRun = mock(ModelRun.class);
         when(modelRun.getStatus()).thenReturn(ModelRunStatus.IN_PROGRESS);
         ModelRunService modelRunService = mockModelRunService(name, modelRun);
-        ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService);
+        ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService, createNoopAdjuster());
 
         // Act
         ResponseEntity response = controller.getEffectCurveCovariateInfluences(name);
@@ -197,7 +201,7 @@ public class ModelRunDetailsControllerTest {
         String name = "modelRun7";
         ModelRun modelRun = mockCompletedModelRunWithEffectCurve(new ArrayList<EffectCurveCovariateInfluence>());
         ModelRunService modelRunService = mockModelRunService(name, modelRun);
-        ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService);
+        ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService, createNoopAdjuster());
 
         // Act
         ResponseEntity response = controller.getEffectCurveCovariateInfluences(name);
@@ -221,7 +225,7 @@ public class ModelRunDetailsControllerTest {
         covariateInfluence.setMeanInfluence(3.21);
         ModelRun modelRun = mockCompletedModelRunWithEffectCurve(Arrays.asList(covariateInfluence));
         ModelRunService modelRunService = mockModelRunService(name, modelRun);
-        ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService);
+        ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService, createNoopAdjuster());
 
         // Act
         ResponseEntity response = controller.getEffectCurveCovariateInfluences(name);
@@ -256,9 +260,12 @@ public class ModelRunDetailsControllerTest {
         when(occurrence.getAlert().getFeed().getProvenance()).thenReturn(mock(Provenance.class));
         when(occurrence.getAlert().getFeed().getProvenance().getName()).thenReturn("provenance");
 
+        ModelingLocationPrecisionAdjuster adjuster = mock(ModelingLocationPrecisionAdjuster.class);
+        when(adjuster.adjust(1, "1234")).thenReturn(5432);
+
         ModelRun modelRun = mockCompletedModelRunWithOccurrences(Arrays.asList(occurrence));
         ModelRunService modelRunService = mockModelRunService(name, modelRun);
-        ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService);
+        ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService, adjuster);
 
         // Act
         ResponseEntity response = controller.getInputDiseaseOccurrences(name);
@@ -270,7 +277,7 @@ public class ModelRunDetailsControllerTest {
         assertThat(body.getList().get(0).getLongitude()).isEqualTo(1.0);
         assertThat(body.getList().get(0).getLatitude()).isEqualTo(2.0);
         assertThat(body.getList().get(0).getWeight()).isEqualTo(3.0);
-        assertThat(body.getList().get(0).getAdmin()).isEqualTo(LocationPrecision.ADMIN1.getModelValue());
+        assertThat(body.getList().get(0).getAdmin()).isEqualTo(5432);
         assertThat(body.getList().get(0).getGaul()).isEqualTo("1234");
         assertThat(body.getList().get(0).getProvenance()).isEqualTo("provenance");
         assertThat(body.getList().get(0).getFeed()).isEqualTo("feed");
@@ -281,7 +288,7 @@ public class ModelRunDetailsControllerTest {
         // Arrange
         String name = "modelRun5";
         ModelRunService modelRunService = mockModelRunService(name, null);
-        ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService);
+        ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService, createNoopAdjuster());
 
         // Act
         ResponseEntity response = controller.getInputDiseaseOccurrences(name);
@@ -298,7 +305,7 @@ public class ModelRunDetailsControllerTest {
         ModelRun modelRun = mock(ModelRun.class);
         when(modelRun.getStatus()).thenReturn(ModelRunStatus.IN_PROGRESS);
         ModelRunService modelRunService = mockModelRunService(name, modelRun);
-        ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService);
+        ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService, createNoopAdjuster());
 
         // Act
         ResponseEntity response = controller.getInputDiseaseOccurrences(name);
@@ -313,7 +320,7 @@ public class ModelRunDetailsControllerTest {
         String name = "modelRun7";
         ModelRun modelRun = mockCompletedModelRunWithOccurrences(new ArrayList<DiseaseOccurrence>());
         ModelRunService modelRunService = mockModelRunService(name, modelRun);
-        ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService);
+        ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService, createNoopAdjuster());
 
         // Act
         ResponseEntity response = controller.getEffectCurveCovariateInfluences(name);
@@ -391,5 +398,16 @@ public class ModelRunDetailsControllerTest {
 
     private void assertSd(double sd) {
         assertThat(sd).isEqualTo(Math.sqrt(2));
+    }
+
+    private ModelingLocationPrecisionAdjuster createNoopAdjuster() {
+        ModelingLocationPrecisionAdjuster adjuster = mock(ModelingLocationPrecisionAdjuster.class);
+        when(adjuster.adjust(anyInt(), anyString())).thenAnswer(new Answer<Integer>() {
+            @Override
+            public Integer answer(InvocationOnMock invocationOnMock) throws Throwable {
+                return (Integer) invocationOnMock.getArguments()[0];
+            }
+        });
+        return adjuster;
     }
 }

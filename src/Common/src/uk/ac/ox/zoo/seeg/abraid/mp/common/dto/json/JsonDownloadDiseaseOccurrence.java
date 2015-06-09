@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelingLocationPrecisionAdjuster;
 
 /**
  * A DTO to represent a DiseaseOccurrence ready for download.
@@ -25,25 +27,36 @@ public class JsonDownloadDiseaseOccurrence extends JsonModellingDiseaseOccurrenc
     @JsonProperty("Url")
     private String url;
 
-    public JsonDownloadDiseaseOccurrence(double longitude, double latitude, double weight, int admin, String gaul,
+    public JsonDownloadDiseaseOccurrence(ModelingLocationPrecisionAdjuster precisionAdjuster,
+                                         double longitude, double latitude, double weight, int admin, String gaul,
                                          String date, String provenance, String feed, String url) {
-        super(longitude, latitude, weight, admin, gaul);
+        super(precisionAdjuster, longitude, latitude, weight, admin, gaul);
         setDate(date);
         setProvenance(provenance);
         setFeed(feed);
         setUrl(url);
     }
 
-    public JsonDownloadDiseaseOccurrence(DiseaseOccurrence inputDiseaseOccurrence) {
-        this(inputDiseaseOccurrence.getLocation().getGeom().getX(),
+    public JsonDownloadDiseaseOccurrence(ModelingLocationPrecisionAdjuster precisionAdjuster,
+                                         DiseaseOccurrence inputDiseaseOccurrence) {
+        this(precisionAdjuster,
+            inputDiseaseOccurrence.getLocation().getGeom().getX(),
             inputDiseaseOccurrence.getLocation().getGeom().getY(),
             inputDiseaseOccurrence.getFinalWeighting(),
             inputDiseaseOccurrence.getLocation().getPrecision().getModelValue(),
-            extractGaulString(inputDiseaseOccurrence.getLocation().getAdminUnitQCGaulCode()),
+            extractGaulString(extractGaulCode(inputDiseaseOccurrence)),
             extractDateString(inputDiseaseOccurrence.getOccurrenceDate()),
             inputDiseaseOccurrence.getAlert().getFeed().getProvenance().getName(),
             inputDiseaseOccurrence.getAlert().getFeed().getName(),
             inputDiseaseOccurrence.getAlert().getUrl());
+    }
+
+    private static Integer extractGaulCode(DiseaseOccurrence inputDiseaseOccurrence) {
+        if (inputDiseaseOccurrence.getLocation().getPrecision().equals(LocationPrecision.COUNTRY)) {
+            return inputDiseaseOccurrence.getLocation().getCountryGaulCode();
+        } else {
+            return inputDiseaseOccurrence.getLocation().getAdminUnitQCGaulCode();
+        }
     }
 
     private static String extractDateString(DateTime occurrenceDate) {

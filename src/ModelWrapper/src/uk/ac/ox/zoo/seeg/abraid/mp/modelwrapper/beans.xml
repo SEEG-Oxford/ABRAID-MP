@@ -25,7 +25,7 @@
     <bean id="scriptGenerator" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.FreemarkerScriptGenerator" />
     <bean id="processRunnerFactory" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.commonsexec.CommonsExecProcessRunnerFactory" />
     <bean id="sourceCodeManager" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.GitSourceCodeManager" autowire="constructor" />
-    <bean id="occurrenceDataWriter" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.data.OccurrenceDataWriterImpl" />
+    <bean id="occurrenceDataWriter" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.data.OccurrenceDataWriterImpl" autowire="constructor" />
     <bean id="extentDataWriter" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.data.ExtentDataWriterImpl" />
     <bean id="inputDataManager" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.data.InputDataManagerImpl" autowire="constructor" />
     <bean id="workspaceProvisioner" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.WorkspaceProvisionerImpl" autowire="constructor" />

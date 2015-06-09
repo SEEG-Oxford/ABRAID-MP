@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelingLocationPrecisionAdjuster;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 
 import java.util.ArrayList;
@@ -32,10 +33,13 @@ public class ModelRunDetailsController extends AbstractController {
     /** Base URL for Atlas model run details. */
     private static final String ATLAS_MODEL_RUN_DETAILS_URL = "/atlas/details/modelrun";
     private final ModelRunService modelRunService;
+    private ModelingLocationPrecisionAdjuster modelingLocationPrecisionAdjuster;
 
     @Autowired
-    public ModelRunDetailsController(ModelRunService modelRunService) {
+    public ModelRunDetailsController(ModelRunService modelRunService,
+                                     ModelingLocationPrecisionAdjuster modelingLocationPrecisionAdjuster) {
         this.modelRunService = modelRunService;
+        this.modelingLocationPrecisionAdjuster = modelingLocationPrecisionAdjuster;
     }
 
     /**
@@ -59,7 +63,6 @@ public class ModelRunDetailsController extends AbstractController {
             return new ResponseEntity<>(SubmodelStatistic.summarise(submodelStatistics), HttpStatus.OK);
         }
     }
-
 
     /**
      * Gets the list of covariate influences associated with a model run.
@@ -163,7 +166,7 @@ public class ModelRunDetailsController extends AbstractController {
         List<JsonDownloadDiseaseOccurrence> json = new ArrayList<>();
         if (!inputDiseaseOccurrences.isEmpty()) {
             for (DiseaseOccurrence inputDiseaseOccurrence : inputDiseaseOccurrences) {
-                json.add(new JsonDownloadDiseaseOccurrence(inputDiseaseOccurrence));
+                json.add(new JsonDownloadDiseaseOccurrence(modelingLocationPrecisionAdjuster, inputDiseaseOccurrence));
             }
         }
         return new WrappedList<>(json);
