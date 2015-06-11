@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelingLocationPrecisionAdjuster;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 
 import java.util.ArrayList;
@@ -33,13 +32,10 @@ public class ModelRunDetailsController extends AbstractController {
     /** Base URL for Atlas model run details. */
     private static final String ATLAS_MODEL_RUN_DETAILS_URL = "/atlas/details/modelrun";
     private final ModelRunService modelRunService;
-    private ModelingLocationPrecisionAdjuster modelingLocationPrecisionAdjuster;
 
     @Autowired
-    public ModelRunDetailsController(ModelRunService modelRunService,
-                                     ModelingLocationPrecisionAdjuster modelingLocationPrecisionAdjuster) {
+    public ModelRunDetailsController(ModelRunService modelRunService) {
         this.modelRunService = modelRunService;
-        this.modelingLocationPrecisionAdjuster = modelingLocationPrecisionAdjuster;
     }
 
     /**
@@ -105,42 +101,6 @@ public class ModelRunDetailsController extends AbstractController {
         }
     }
 
-    /**
-     * Gets the list of input disease occurrences associated with a model run.
-     * @param modelRunName The unique name of the model run.
-     * @return The DTO of input disease occurrences.
-     */
-    @RequestMapping(
-            value = ATLAS_MODEL_RUN_DETAILS_URL + "/{modelRunName}/inputoccurrences", method = RequestMethod.GET)
-    @Transactional
-    @ResponseBody
-    public ResponseEntity<WrappedList<JsonDownloadDiseaseOccurrence>> getInputDiseaseOccurrences(
-            @PathVariable String modelRunName) {
-        ModelRun modelRun = modelRunService.getModelRunByName(modelRunName);
-        if (modelRun == null || modelRun.getStatus() != ModelRunStatus.COMPLETED) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } else {
-            List<DiseaseOccurrence> inputDiseaseOccurrences = modelRun.getInputDiseaseOccurrences();
-            return new ResponseEntity<>(convertToJsonDiseaseOccurrenceDtos(inputDiseaseOccurrences), HttpStatus.OK);
-        }
-    }
-
-    private List<JsonCovariateInfluence> convertToJson(List<CovariateInfluence> covariateInfluences) {
-        List<JsonCovariateInfluence> json = new ArrayList<>();
-        if (!covariateInfluences.isEmpty()) {
-            Collections.sort(covariateInfluences, new Comparator<CovariateInfluence>() {
-                @Override
-                public int compare(CovariateInfluence o1, CovariateInfluence o2) {
-                    return o2.getMeanInfluence().compareTo(o1.getMeanInfluence());  // desc
-                }
-            });
-            for (CovariateInfluence covariateInfluence : covariateInfluences) {
-                json.add(new JsonCovariateInfluence(covariateInfluence));
-            }
-        }
-        return json;
-    }
-
     private WrappedList<JsonEffectCurveCovariateInfluence> convertToDto(
             List<EffectCurveCovariateInfluence> effectCurveCovariateInfluences) {
         List<JsonEffectCurveCovariateInfluence> dtos = new ArrayList<>();
@@ -161,15 +121,19 @@ public class ModelRunDetailsController extends AbstractController {
         return new WrappedList<>(dtos);
     }
 
-    private WrappedList<JsonDownloadDiseaseOccurrence> convertToJsonDiseaseOccurrenceDtos(
-            List<DiseaseOccurrence> inputDiseaseOccurrences) {
-        List<JsonDownloadDiseaseOccurrence> json = new ArrayList<>();
-        if (!inputDiseaseOccurrences.isEmpty()) {
-            for (DiseaseOccurrence inputDiseaseOccurrence : inputDiseaseOccurrences) {
-                json.add(new JsonDownloadDiseaseOccurrence(modelingLocationPrecisionAdjuster, inputDiseaseOccurrence));
+    private List<JsonCovariateInfluence> convertToJson(List<CovariateInfluence> covariateInfluences) {
+        List<JsonCovariateInfluence> json = new ArrayList<>();
+        if (!covariateInfluences.isEmpty()) {
+            Collections.sort(covariateInfluences, new Comparator<CovariateInfluence>() {
+                @Override
+                public int compare(CovariateInfluence o1, CovariateInfluence o2) {
+                    return o2.getMeanInfluence().compareTo(o1.getMeanInfluence());  // desc
+                }
+            });
+            for (CovariateInfluence covariateInfluence : covariateInfluences) {
+                json.add(new JsonCovariateInfluence(covariateInfluence));
             }
         }
-        return new WrappedList<>(json);
+        return json;
     }
-
 }
