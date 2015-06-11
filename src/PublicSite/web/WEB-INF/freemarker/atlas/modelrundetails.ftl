@@ -1,6 +1,6 @@
 <div class="leaflet-top leaflet-right" id="modelRunDetails" style="display: none" data-bind="visible: hasActiveLayer">
     <!-- ko with:downloadLinksViewModel -->
-    <div class="leaflet-bar leaflet-control" data-bind="preventBubble: true">
+    <div class="leaflet-bar leaflet-control" data-bind="visible: showPng, preventBubble: true">
         <a target="_blank" title="PNG" data-bind="attr: { href: png }">
             <i class="fa fa-lg fa-picture-o"></i>Download PNG image
         </a>
