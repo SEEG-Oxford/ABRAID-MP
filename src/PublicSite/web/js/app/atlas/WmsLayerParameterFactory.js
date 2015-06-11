@@ -7,34 +7,35 @@ define(["underscore"], function (_) {
     return function () {
         var self = this;
 
-        self.createLayerParametersForDisplay = function (name) {
-            var split = name.split("_");
-            var type = split[split.length - 1];
-            var isExtentLayer = type === "extent";
-            var style = "abraid_" + type;
-            var layerName = isExtentLayer ? "atlas_extent_layer"  : name;
+        self.createLayerParametersForDisplay = function (layer) {
+            var isExtentLayer = (layer.type === "extent");
+            var isOccurrenceLayer = (layer.type === "occurrences");
 
+            var layerName = layer.run.id + "_" + layer.type;
+            if (isExtentLayer) {
+                layerName = "atlas_extent_layer";
+            } else if (isOccurrenceLayer)  {
+                layerName = "base_layer";
+            }
 
             var params = {
                 layers: "abraid:" + layerName,
                 format: "image/png",
-                styles: style,
                 reuseTiles: true, // Enable Leaflet reuse of tiles within single page view
                 tiled: true // Enable GeoWebCaching reuse of tiles between all users/page views
             };
 
             if (isExtentLayer) {
-                var runName = name.substr(0, name.lastIndexOf("_"));
                 params = _(params).extend({
-                    cql_filter: "model_run_name='" + runName + "'" // jshint ignore:line
+                    cql_filter: "model_run_name='" + layer.run.id + "'" // jshint ignore:line
                 });
             }
 
             return params;
         };
 
-        self.createLayerParametersForDownload = function (name) {
-            var params = self.createLayerParametersForDisplay(name);
+        self.createLayerParametersForDownload = function (layer) {
+            var params = self.createLayerParametersForDisplay(layer);
             params = _(params).extend({
                 service: "WMS",
                 version: "1.1.0",

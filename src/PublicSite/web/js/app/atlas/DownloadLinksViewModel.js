@@ -13,7 +13,6 @@ define([
         var self = this;
 
         var activeLayer = ko.observable().subscribeTo("active-atlas-layer");
-        var activeRun = ko.observable().subscribeTo("selected-run");
 
         self.png = ko.computed(function () {
             var wmsParams = activeLayer() ?
@@ -21,17 +20,21 @@ define([
             return activeLayer() ? wmsUrl + "?" + $.param(wmsParams) : "#";
         }, self);
 
+        self.showPng = ko.computed(function () {
+            return activeLayer() ? activeLayer().run.automatic && activeLayer().type !== "occurrences" : false;
+        }, self);
+
         self.tif = ko.computed(function () {
-            return activeLayer() ? baseUrl + "atlas/results/" + activeLayer() + ".tif" : "#";
+            return activeLayer() ? baseUrl + "atlas/results/" + activeLayer().run.id + ".tif" : "#";
         }, self);
 
         self.occurrences = ko.computed(function () {
-            return activeRun() ?
-                baseUrl + "atlas/details/modelrun/" + activeRun().id + "/inputoccurrences.csv": "#";
+            return activeLayer() ?
+                baseUrl + "atlas/data/modelrun/" + activeLayer().run.id + "/inputoccurrences.csv": "#";
         }, self);
 
         self.showOccurrences = ko.computed(function () {
-            return activeRun() ? activeRun().automatic : false;
+            return activeLayer() ? activeLayer().run.automatic : false;
         }, self);
     };
 });
