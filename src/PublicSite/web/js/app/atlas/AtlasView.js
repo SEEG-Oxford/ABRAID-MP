@@ -73,7 +73,7 @@ define([
 
                 ko.postbox.publish(
                     "tracking-action-event",
-                    { "category": "atlas", "action": "layer-view", "label": layer }
+                    { "category": "atlas", "action": "layer-view", "label": layer.run.id + "_" + layer.type }
                 );
             }
         });

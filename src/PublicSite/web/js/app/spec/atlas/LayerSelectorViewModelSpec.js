@@ -9,9 +9,9 @@ define([
     "use strict";
 
     describe("The atlas 'layer selector' view model", function () {
-        var run2 = { date: "1995-10-09", id: "Model Run 2", covariates: "covariates2", statistics: "statistics2" };
-        var run1 = { date: "2014-10-13", id: "Model Run 1", covariates: "covariates1", statistics: "statistics1" };
-        var run3 = { date: "2036-12-18", id: "Model Run 3", covariates: "covariates3", statistics: "statistics3" };
+        var run2 = { date: "1995-10-09", id: "Model Run 2", startDate: "sd1", endDate: "ed1", automatic: false };
+        var run1 = { date: "2014-10-13", id: "Model Run 1", startDate: "sd2", endDate: "ed2", automatic: true };
+        var run3 = { date: "2036-12-18", id: "Model Run 3", startDate: "sd3", endDate: "ed3", automatic: true };
         var availableLayers = [
             {
                 disease: "Disease Group 2",
@@ -24,19 +24,20 @@ define([
         var meanType = { display: "disease risk", id: "mean" };
         var uncertaintyType = { display: "risk uncertainty", id: "uncertainty" };
         var extentType = { display: "disease extent", id: "extent" };
+        var occurrenceType = { display: "input occurrences", id: "occurrences" };
         var vm = {};
         beforeEach(function () {
             vm = new LayerSelectorViewModel(availableLayers, true);
         });
 
         describe("holds a field for the available layer types which", function () {
-            it("has two entries for non-seeg members", function () {
+            it("has three entries for non-seeg members", function () {
                 vm = new LayerSelectorViewModel(availableLayers, false);
-                expect(vm.types.length).toBe(2);
+                expect(vm.types.length).toBe(3);
             });
 
-            it("has three entries for seeg members", function () {
-                expect(vm.types.length).toBe(3);
+            it("has four entries for seeg members", function () {
+                expect(vm.types.length).toBe(4);
             });
 
             it("has an entry for mean", function () {
@@ -55,6 +56,10 @@ define([
             it("has an entry for extent", function () {
                 expect(vm.types).toContain(extentType);
             });
+
+            it("has an entry for occurrences", function () {
+                expect(vm.types).toContain(occurrenceType);
+            });
         });
 
         describe("holds a field for the selected layer type which", function () {
@@ -64,26 +69,6 @@ define([
 
             it("defaults to mean", function () {
                 expect(vm.selectedType()).toEqual(meanType);
-            });
-
-            it("publishes changes to its state as 'active-atlas-type'", function () {
-                var expectedValue = "";
-                var eventCount = 0;
-                ko.postbox.subscribe("active-atlas-type", function (payload) {
-                    expect(payload).toEqual(expectedValue);
-                    eventCount = eventCount + 1;
-                });
-
-                expectedValue = uncertaintyType.id;
-                vm.selectedType(vm.types[1]);
-                expectedValue = extentType.id;
-                vm.selectedType(vm.types[2]);
-                expectedValue = meanType.id;
-                vm.selectedType(vm.types[0]);
-
-                expect(eventCount).toBe(3);
-
-                ko.postbox._subscriptions["active-atlas-type"] = [];  // jshint ignore:line
             });
         });
 
@@ -145,8 +130,6 @@ define([
 
             it("defaults to the first run by date in the available layers for the current disease", function () {
                 expect(vm.selectedRun().id).toBe("Model Run 3");
-                expect(vm.selectedRun().covariates).toBe("covariates3");
-                expect(vm.selectedRun().statistics).toBe("statistics3");
             });
 
             it("defaults to a fake empty run if no available layers are provided", function () {
@@ -156,16 +139,6 @@ define([
                 expect(localVM.selectedRun().rangeStart).toBe("???");
                 expect(localVM.selectedRun().rangeEnd).toBe("???");
             });
-
-            it("publishes changes to its state as 'selected-run' event", function () {
-                ko.postbox.subscribe("selected-run", function (payload) {
-                    expect(payload).toEqual(run1);
-                });
-
-                vm.selectedRun(vm.runs()[1]);
-
-                ko.postbox._subscriptions["selected-run"] = [];  // jshint ignore:line
-            });
         });
 
         describe("holds a field for the selected layer which", function () {
@@ -173,21 +146,28 @@ define([
                 expect(vm.selectedLayer).toBeObservable();
             });
 
-            it("combines the selected run and layer type, with covariates and statistics", function () {
-                expect(vm.selectedLayer()).toBe(vm.selectedRun().id + "_" + vm.selectedType().id);
-                expect(vm.selectedLayer()).toBe("Model Run 3" + "_" + "mean");
+            it("combines the selected run and layer type", function () {
+                expect(vm.selectedLayer().run.id).toBe(vm.selectedRun().id);
+                expect(vm.selectedLayer().run.id).toBe("Model Run 3");
+                expect(vm.selectedLayer().type).toBe(vm.selectedType().id);
+                expect(vm.selectedLayer().type).toBe("mean");
+
             });
 
             it("responds to changes in the selected run", function () {
                 vm.selectedRun(vm.runs()[1]);
-                expect(vm.selectedLayer()).toBe(vm.selectedRun().id + "_" + vm.selectedType().id);
-                expect(vm.selectedLayer()).toBe("Model Run 1" + "_" + "mean");
+                expect(vm.selectedLayer().run.id).toBe(vm.selectedRun().id);
+                expect(vm.selectedLayer().run.id).toBe("Model Run 1");
+                expect(vm.selectedLayer().type).toBe(vm.selectedType().id);
+                expect(vm.selectedLayer().type).toBe("mean");
             });
 
             it("responds to changes in the selected layer type", function () {
                 vm.selectedType(vm.types[1]);
-                expect(vm.selectedLayer()).toBe(vm.selectedRun().id + "_" + vm.selectedType().id);
-                expect(vm.selectedLayer()).toBe("Model Run 3" + "_" + "uncertainty");
+                expect(vm.selectedLayer().run.id).toBe(vm.selectedRun().id);
+                expect(vm.selectedLayer().run.id).toBe("Model Run 3");
+                expect(vm.selectedLayer().type).toBe(vm.selectedType().id);
+                expect(vm.selectedLayer().type).toBe("uncertainty");
             });
 
             it("publishes changes to its state as 'active-atlas-layer'", function () {
@@ -198,11 +178,11 @@ define([
                     eventCount = eventCount + 1;
                 });
 
-                expectedValue = "Model Run 1" + "_" + "mean";
+                expectedValue = { type: "mean", run: run1};
                 vm.selectedRun(vm.runs()[1]);
-                expectedValue = "Model Run 1" + "_" + "uncertainty";
+                expectedValue = { type: "uncertainty", run: run1 };
                 vm.selectedType(vm.types[1]);
-                expectedValue = "Model Run 3" + "_" + "uncertainty";
+                expectedValue = { type: "uncertainty", run: run3 };
                 vm.selectedRun(vm.runs()[0]);
 
                 expect(eventCount).toBe(3);
@@ -218,7 +198,7 @@ define([
                     eventCount = eventCount + 1;
                 });
 
-                expectedValue = "Model Run 3" + "_" + "mean";
+                expectedValue = { type: "mean", run: run3 };
                 new LayerSelectorViewModel(availableLayers, true); // jshint ignore:line
 
                 expect(eventCount).toBe(1);

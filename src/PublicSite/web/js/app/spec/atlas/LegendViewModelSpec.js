@@ -18,7 +18,6 @@ define([
         afterEach(function () {
             // Clear postbox subscriptions (prevents test from bleeding into each other).
             ko.postbox._subscriptions["active-atlas-layer"] = [];  // jshint ignore:line
-            ko.postbox._subscriptions["selected-run"] = [];  // jshint ignore:line
         });
 
         describe("holds a field for the 'type' of legend to display, which", function () {
@@ -30,9 +29,9 @@ define([
                 expect(vm.type()).toBe(undefined);
             });
 
-            it("responds to the active-atlas-type event", function () {
+            it("responds to the active-atlas-layer event", function () {
                 var type = "mean";
-                ko.postbox.publish("active-atlas-type", type);
+                ko.postbox.publish("active-atlas-layer", { type: type, run: {} });
                 expect(vm.type()).toBe(type);
             });
         });
@@ -46,9 +45,9 @@ define([
                 expect(vm.startDate()).toBe("???");
             });
 
-            it("responds to the selected-run event", function () {
+            it("responds to the active-atlas-layer event", function () {
                 var date = "date";
-                ko.postbox.publish("selected-run", { "rangeStart": date });
+                ko.postbox.publish("active-atlas-layer", { type: "type", run: { "rangeStart": date }});
                 expect(vm.startDate()).toBe(date);
             });
         });
@@ -62,9 +61,9 @@ define([
                 expect(vm.endDate()).toBe("???");
             });
 
-            it("responds to the selected-run event", function () {
+            it("responds to the active-atlas-layer event", function () {
                 var date = "date";
-                ko.postbox.publish("selected-run", { "rangeEnd": date });
+                ko.postbox.publish("active-atlas-layer", { type: "type", run: { "rangeEnd": date }});
                 expect(vm.endDate()).toBe(date);
             });
         });
