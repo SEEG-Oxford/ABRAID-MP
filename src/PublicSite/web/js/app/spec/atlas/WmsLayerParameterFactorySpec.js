@@ -35,6 +35,12 @@ define([
                 expect(params.layers).toEqual("abraid:foo_uncertainty");
                 expect(params.cql_filter).toBeUndefined(); // jshint ignore:line
             });
+
+            it("returns the correct occurrences specific configuration", function () {
+                var params = vm.createLayerParametersForDisplay({ type: "occurrences", run: { id: "foo" } });
+                expect(params.layers).toEqual("abraid:base_layer");
+                expect(params.cql_filter).toBeUndefined(); // jshint ignore:line
+            });
         });
 
         describe("has a 'createLayerParametersForDownload' method, which", function () {
@@ -60,6 +66,10 @@ define([
 
                 paramsDisplay = vm.createLayerParametersForDisplay({ type: "extent", run: { id: "foo" } });
                 paramsDownload = vm.createLayerParametersForDownload({ type: "extent", run: { id: "foo" } });
+                expect(paramsDownload).toEqual(_(paramsDisplay).extend(extraDownloadParameters));
+
+                paramsDisplay = vm.createLayerParametersForDisplay({ type: "occurrences", run: { id: "foo" } });
+                paramsDownload = vm.createLayerParametersForDownload({ type: "occurrences", run: { id: "foo" } });
                 expect(paramsDownload).toEqual(_(paramsDisplay).extend(extraDownloadParameters));
             });
         });

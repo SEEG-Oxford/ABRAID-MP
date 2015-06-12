@@ -10,7 +10,7 @@ define([
     describe("The 'AtlasView", function () {
         var AtlasView;
         var leafletMock = {
-            map:  jasmine.createSpy("mapSpy").and.callFake(function () {
+            map: jasmine.createSpy("mapSpy").and.callFake(function () {
                 return {
                     fitWorld: jasmine.createSpy("fitWorld"),
                     addLayer: jasmine.createSpy("addLayer"),
@@ -22,22 +22,23 @@ define([
                     return "wms " + args.display;
                 })
             },
-            CRS : { EPSG4326 : "fake EPSG4326" }
+            CRS: { EPSG4326: "fake EPSG4326" }
         };
 
         var wmsLayerParameterFactoryMock = {
             createLayerParametersForDisplay: function (layer) {
-                return { "display" : layer.run.id + "_" + layer.type };
+                return { "display": layer.run.id + "_" + layer.type };
             }
         };
-        
+
         var geoJsonLayerFactoryMock = {
             showGeoJsonLayer: function (layer) {
                 return false;
             }
         };
-        
-        var alertMock = function () {};
+
+        var alertMock = function () {
+        };
 
         beforeEach(function (done) {
             // Clear postbox subscriptions (prevents test from bleeding into each other).
@@ -86,7 +87,10 @@ define([
                 expect(leafletMock.map.calls.first().args[1].attributionControl).toBe(false);
                 expect(leafletMock.map.calls.first().args[1].zoomControl).toBe(false);
                 expect(leafletMock.map.calls.first().args[1].zoomsliderControl).toBe(true);
-                expect(leafletMock.map.calls.first().args[1].maxBounds).toEqual([ [-60, -220], [85, 220] ]);
+                expect(leafletMock.map.calls.first().args[1].maxBounds).toEqual([
+                    [-60, -220],
+                    [85, 220]
+                ]);
                 expect(leafletMock.map.calls.first().args[1].maxZoom).toBe(7);
                 expect(leafletMock.map.calls.first().args[1].minZoom).toBe(3);
                 expect(leafletMock.map.calls.first().args[1].animate).toBe(true);

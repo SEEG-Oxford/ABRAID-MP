@@ -148,5 +148,38 @@ define([
                 expect(vm.showOccurrences()).toBe(true);
             });
         });
+
+        describe("holds a field to indicate if the png download link should be shown", function () {
+            it("is observable", function () {
+                expect(vm.showPng).toBeObservable();
+            });
+
+            it("is 'false' when there is no selected run", function () {
+                ko.postbox.publish("active-atlas-layer", undefined);
+                expect(vm.showPng()).toBe(false);
+            });
+
+            it("is 'false' when there is a occurrences layer selected", function () {
+                ko.postbox.publish("active-atlas-layer", { type: "occurrences", run: { id: "li", automatic: true } });
+                expect(vm.showPng()).toBe(false);
+            });
+
+            it("is 'true' when there is a non-occurrences layer selected", function () {
+                ko.postbox.publish("active-atlas-layer", { type: "ltype", run: { id: "li", automatic: true } });
+                expect(vm.showPng()).toBe(true);
+            });
+
+            it("updates to reflect the 'active-atlas-layer' through an event subscription", function () {
+                expect(vm.showPng()).toBe(false);
+                ko.postbox.publish("active-atlas-layer", { type: "occurrences", run: { id: "asdf", automatic: true } });
+                expect(vm.showPng()).toBe(false);
+                ko.postbox.publish("active-atlas-layer", { type: "l2type", run: { id: "wert", automatic: true } });
+                expect(vm.showPng()).toBe(true);
+                ko.postbox.publish("active-atlas-layer", undefined);
+                expect(vm.showPng()).toBe(false);
+                ko.postbox.publish("active-atlas-layer", { type: "occurrences", run: { id: "zxcv", automatic: true } });
+                expect(vm.showPng()).toBe(false);
+            });
+        });
     });
 });

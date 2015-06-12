@@ -21,7 +21,7 @@ define([
         }, self);
 
         self.showPng = ko.computed(function () {
-            return activeLayer() ? activeLayer().run.automatic && activeLayer().type !== "occurrences" : false;
+            return activeLayer() ? activeLayer().type !== "occurrences" : false;
         }, self);
 
         self.tif = ko.computed(function () {
