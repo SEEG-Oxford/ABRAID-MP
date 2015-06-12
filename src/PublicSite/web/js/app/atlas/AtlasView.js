@@ -11,7 +11,7 @@ define([
 ], function (L, ko, $) {
     "use strict";
 
-    return function (wmsUrl, wmsLayerParameterFactory, geoJsonLayerParameterFactory, alert) {
+    return function (wmsUrl, wmsLayerParameterFactory, geoJsonLayerFactory, alert) {
         var self = this;
 
         self.wmsUrl = wmsUrl;
@@ -53,11 +53,11 @@ define([
             self.resetView();
 
             if (layer) {
-                if (geoJsonLayerParameterFactory.showGeoJsonLayer(layer)) {
-                    self.geoJsonAjax = $.getJSON(geoJsonLayerParameterFactory.buildGeoJsonUrl(layer))
+                if (geoJsonLayerFactory.showGeoJsonLayer(layer)) {
+                    self.geoJsonAjax = $.getJSON(geoJsonLayerFactory.buildGeoJsonUrl(layer))
                         .done(function (featureCollection) {
                             self.currentGeoJsonLayer =
-                                geoJsonLayerParameterFactory.buildGeoJsonLayer(featureCollection, layer);
+                                geoJsonLayerFactory.buildGeoJsonLayer(featureCollection, layer);
                             self.map.addLayer(self.currentGeoJsonLayer);
                         }).fail(function () {
                             alert("Error fetching occurrences");

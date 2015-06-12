@@ -1,7 +1,7 @@
 /* A factory for generating the standard ABRAID WMS request/layer options for a given layer name.
  * Copyright (c) 2014 University of Oxford
  */
-define(["underscore", "leaflet", "moment"], function (_, L, moment) {
+define(["underscore", "L", "moment"], function (_, L, moment) {
     "use strict";
 
     return function (baseUrl) {
