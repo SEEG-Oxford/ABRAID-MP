@@ -41,6 +41,12 @@ echo "application.username=${db_props[jdbc.username]}" >> "database.properties"
 echo "application.password=${db_props[jdbc.password]}" >> "database.properties"
 echo "database.name=${db_props[jdbc.database.name]}" >> "database.properties"
 
+echo "[[ DB | Setting up backups ]]"
+export DATA_MANAGER_CRON_SCRIPT_PATH='/etc/cron.daily/abraid_db'
+declare -r DATA_MANAGER_CRON_SCRIPT_PATH
+echo -e "#\x21/bin/sh\n\nsudo rm /opt/abraid_db.backup\nsudo PGPASSWORD=${deploy_props[database.root.password]} pg_dump -U postgres -d abraid_mp -f /opt/abraid_db.backup -F custom -Z 9" > "$DB_SNAPSHOT_CRON_SCRIPT_PATH"
+chmod o+x "$DB_SNAPSHOT_CRON_SCRIPT_PATH"
+
 if [[ $(psql -U postgres -l | grep "${db_props[jdbc.database.name]}" | wc -l) -eq 1 ]]; then
   # If a database exists with the correct name - upgrade it
   echo "[[ DB | Performing database upgrade (db.log) ]]"
