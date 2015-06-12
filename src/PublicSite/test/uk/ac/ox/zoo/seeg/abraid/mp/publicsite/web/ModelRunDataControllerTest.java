@@ -1,16 +1,19 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web;
 
 import com.vividsolutions.jts.geom.Point;
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.GeoJsonDiseaseOccurrenceFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonDownloadDiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.WrappedList;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelingLocationPrecisionAdjuster;
+import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractDiseaseOccurrenceGeoJsonTests;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,7 +28,7 @@ import static org.mockito.Mockito.when;
 /**
  * Tests for ModelRunDataController.
  */
-public class ModelRunDataControllerTest {
+public class ModelRunDataControllerTest extends AbstractDiseaseOccurrenceGeoJsonTests {
     @Test
     public void getInputDiseaseOccurrencesReturnsExpectedJson() throws Exception {
         // Arrange
@@ -111,6 +114,75 @@ public class ModelRunDataControllerTest {
         WrappedList<JsonDownloadDiseaseOccurrence> body =
                 (WrappedList<JsonDownloadDiseaseOccurrence>) response.getBody();
         assertThat(body.getList()).isEmpty();
+    }
+
+    @Test
+    public void getInputDiseaseOccurrencesGeoJsonReturnsExpectedJson() throws Exception {
+        // Arrange
+        String name = "modelRun7";
+        ModelRun modelRun = mockCompletedModelRunWithOccurrences(Arrays.asList(defaultDiseaseOccurrence()));
+        ModelRunService modelRunService = mockModelRunService(name, modelRun);
+        ModelRunDataController controller = new ModelRunDataController(modelRunService, createNoopAdjuster());
+
+        // Act
+        ResponseEntity response = controller.getInputDiseaseOccurrencesGeoJson(name);
+
+        // Assert
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        GeoJsonDiseaseOccurrenceFeatureCollection body = (GeoJsonDiseaseOccurrenceFeatureCollection) response.getBody();
+        assertThat(body.getFeatures()).hasSize(1);
+        assertThat(body.getFeatures().get(0).getGeometry().getCoordinates().getLongitude()).isEqualTo(-1.0);
+        assertThat(body.getFeatures().get(0).getGeometry().getCoordinates().getLatitude()).isEqualTo(1.0);
+        assertThat(body.getFeatures().get(0).getProperties().getOccurrenceDate()).isEqualTo(DateTime.parse("1970-01-01T00:00:00.000Z"));
+    }
+
+    @Test
+    public void getInputDiseaseOccurrencesGeoJsonReturnsBadRequestIfModelDoesNotExist() throws Exception {
+        // Arrange
+        String name = "modelRun5";
+        ModelRunService modelRunService = mockModelRunService(name, null);
+        ModelRunDataController controller = new ModelRunDataController(modelRunService, createNoopAdjuster());
+
+        // Act
+        ResponseEntity response = controller.getInputDiseaseOccurrencesGeoJson(name);
+
+        // Assert
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void getInputDiseaseOccurrencesGeoJsonReturnsBadRequestIfModelIsNotComplete() throws Exception {
+        // Arrange
+        String name = "modelRun6";
+
+        ModelRun modelRun = mock(ModelRun.class);
+        when(modelRun.getStatus()).thenReturn(ModelRunStatus.IN_PROGRESS);
+        ModelRunService modelRunService = mockModelRunService(name, modelRun);
+        ModelRunDataController controller = new ModelRunDataController(modelRunService, createNoopAdjuster());
+
+        // Act
+        ResponseEntity response = controller.getInputDiseaseOccurrencesGeoJson(name);
+
+        // Assert
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void getInputDiseaseOccurrencesGeoJsonReturnsEmptyDTOIfNoInputDiseaseOccurrences() throws Exception {
+        // Arrange (eg manual run)
+        String name = "modelRun7";
+        ModelRun modelRun = mockCompletedModelRunWithOccurrences(new ArrayList<DiseaseOccurrence>());
+        ModelRunService modelRunService = mockModelRunService(name, modelRun);
+        ModelRunDataController controller = new ModelRunDataController(modelRunService, createNoopAdjuster());
+
+        // Act
+        ResponseEntity response = controller.getInputDiseaseOccurrencesGeoJson(name);
+
+        // Assert
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        GeoJsonDiseaseOccurrenceFeatureCollection body =
+                (GeoJsonDiseaseOccurrenceFeatureCollection) response.getBody();
+        assertThat(body.getFeatures()).isEmpty();
     }
 
     private ModelRunService mockModelRunService(String name, ModelRun modelRun) {
