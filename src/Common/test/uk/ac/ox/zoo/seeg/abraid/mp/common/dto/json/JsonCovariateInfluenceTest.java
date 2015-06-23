@@ -4,6 +4,9 @@ import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateInfluence;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -28,13 +31,16 @@ public class JsonCovariateInfluenceTest {
         when(covariateFile.getInfo()).thenReturn(info);
         when(covariateInfluence.getMeanInfluence()).thenReturn(meanInfluence);
         when(covariateInfluence.getCovariateFile()).thenReturn(covariateFile);
+        List<JsonEffectCurveCovariateInfluence> effectCurve = Arrays.asList(
+                mock(JsonEffectCurveCovariateInfluence.class), mock(JsonEffectCurveCovariateInfluence.class));
 
         // Act
-        JsonCovariateInfluence result = new JsonCovariateInfluence(covariateInfluence);
+        JsonCovariateInfluence result = new JsonCovariateInfluence(covariateInfluence, effectCurve);
 
         // Assert
         assertThat(result.getName()).isEqualTo(displayName);
         assertThat(result.getInfo()).isEqualTo(info);
         assertThat(result.getMeanInfluence()).isEqualTo(meanInfluence);
+        assertThat(result.getEffectCurve()).isEqualTo(effectCurve);
     }
 }

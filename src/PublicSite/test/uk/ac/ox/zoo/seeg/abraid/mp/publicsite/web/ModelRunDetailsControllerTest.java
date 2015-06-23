@@ -127,7 +127,7 @@ public class ModelRunDetailsControllerTest {
     public void getCovariateInfluencesReturnsEmptyJsonIfNoCovariateInfluences() throws Exception {
         // Arrange
         String name = "modelRun7";
-        ModelRun modelRun = mockCompletedModelRunWithCovariates(new ArrayList<CovariateInfluence>());
+        ModelRun modelRun = mockCompletedModelRunWithCovariates(new ArrayList<CovariateInfluence>(), new ArrayList<EffectCurveCovariateInfluence>());
         ModelRunService modelRunService = mockModelRunService(name, modelRun);
         ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService);
 
@@ -145,8 +145,15 @@ public class ModelRunDetailsControllerTest {
         String name = "modelRun7";
         CovariateFile covariateFile = mock(CovariateFile.class);
         when(covariateFile.getName()).thenReturn("Name");
+        when(covariateFile.getId()).thenReturn(4);
         CovariateInfluence covariateInfluence = new CovariateInfluence(covariateFile, 12.3);
-        ModelRun modelRun = mockCompletedModelRunWithCovariates(Arrays.asList(covariateInfluence));
+        EffectCurveCovariateInfluence effectCurveCovariateInfluence = new EffectCurveCovariateInfluence();
+        effectCurveCovariateInfluence.setCovariateFile(covariateFile);
+        effectCurveCovariateInfluence.setCovariateValue(3.21);
+        EffectCurveCovariateInfluence badEffectCurveCovariateInfluence = new EffectCurveCovariateInfluence();
+        badEffectCurveCovariateInfluence.setCovariateFile(mock(CovariateFile.class));
+        badEffectCurveCovariateInfluence.setCovariateValue(3.14);
+        ModelRun modelRun = mockCompletedModelRunWithCovariates(Arrays.asList(covariateInfluence), Arrays.asList(effectCurveCovariateInfluence, badEffectCurveCovariateInfluence));
         ModelRunService modelRunService = mockModelRunService(name, modelRun);
         ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService);
 
@@ -159,6 +166,8 @@ public class ModelRunDetailsControllerTest {
         assertThat(body).hasSize(1);
         assertThat(body.get(0).getName()).isEqualTo("Name");
         assertThat(body.get(0).getMeanInfluence()).isEqualTo(12.3);
+        assertThat(body.get(0).getEffectCurve()).hasSize(1);
+        assertThat(body.get(0).getEffectCurve().iterator().next().getCovariateValue()).isEqualTo(3.21);
 
     }
 
@@ -336,10 +345,11 @@ public class ModelRunDetailsControllerTest {
         return modelRun;
     }
 
-    private ModelRun mockCompletedModelRunWithCovariates(List<CovariateInfluence> covariateInfluences) {
+    private ModelRun mockCompletedModelRunWithCovariates(List<CovariateInfluence> covariateInfluences, List<EffectCurveCovariateInfluence> effectCurveCovariateInfluences) {
         ModelRun modelRun = mock(ModelRun.class);
         when(modelRun.getStatus()).thenReturn(ModelRunStatus.COMPLETED);
         when(modelRun.getCovariateInfluences()).thenReturn(covariateInfluences);
+        when(modelRun.getEffectCurveCovariateInfluences()).thenReturn(effectCurveCovariateInfluences);
         return modelRun;
     }
 

@@ -17,10 +17,10 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+
+import static ch.lambdaj.Lambda.*;
+import static org.hamcrest.CoreMatchers.equalTo;
 
 /**
  * Controller for accessing additional information about model runs.
@@ -79,7 +79,8 @@ public class ModelRunDetailsController extends AbstractController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } else {
             List<CovariateInfluence> covariateInfluences = modelRun.getCovariateInfluences();
-            return new ResponseEntity<>(convertToJson(covariateInfluences), HttpStatus.OK);
+            List<EffectCurveCovariateInfluence> effectCurves = modelRun.getEffectCurveCovariateInfluences();
+            return new ResponseEntity<>(convertToJson(covariateInfluences, effectCurves), HttpStatus.OK);
         }
     }
 
@@ -122,7 +123,8 @@ public class ModelRunDetailsController extends AbstractController {
         }
     }
 
-    private List<JsonCovariateInfluence> convertToJson(List<CovariateInfluence> covariateInfluences) {
+    private List<JsonCovariateInfluence> convertToJson(List<CovariateInfluence> covariateInfluences,
+                                                       List<EffectCurveCovariateInfluence> effectCurves) {
         List<JsonCovariateInfluence> json = new ArrayList<>();
         if (!covariateInfluences.isEmpty()) {
             Collections.sort(covariateInfluences, new Comparator<CovariateInfluence>() {
@@ -132,7 +134,11 @@ public class ModelRunDetailsController extends AbstractController {
                 }
             });
             for (CovariateInfluence covariateInfluence : covariateInfluences) {
-                json.add(new JsonCovariateInfluence(covariateInfluence));
+                List<EffectCurveCovariateInfluence> curve = filter(
+                        having(on(EffectCurveCovariateInfluence.class).getCovariateFile().getId(),
+                        equalTo(covariateInfluence.getCovariateFile().getId())),
+                        effectCurves);
+                json.add(new JsonCovariateInfluence(covariateInfluence, convertToDto(curve).getList()));
             }
         }
         return json;
