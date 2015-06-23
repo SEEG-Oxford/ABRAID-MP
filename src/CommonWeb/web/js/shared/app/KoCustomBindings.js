@@ -11,6 +11,16 @@ define([
 ], function ($, moment, ko) {
     "use strict";
 
+    ko.bindingHandlers.toggleClick = {
+        init: function (element, valueAccessor) {
+            var value = valueAccessor();
+
+            ko.utils.registerEventHandler(element, "click", function () {
+                value(!value());
+            });
+        }
+    };
+
     ko.bindingHandlers.numericText = {
         update: function (element, valueAccessor, allBindings) {
             var value = ko.utils.recursiveUnwrap(valueAccessor);
@@ -146,6 +156,24 @@ define([
 
             $(element).change(updateBinding);
             updateBinding();
+        }
+    };
+    
+    ko.bindingHandlers.slideLeft = {
+        init: function (element, valueAccessor) {
+            var distance = $(element).parent().css("width");
+            ko.utils.domData.set(element, "distance", distance);
+            if (ko.utils.recursiveUnwrap(valueAccessor)) {
+                $(element).css("margin-left", 0);
+            }
+        },
+        update: function (element, valueAccessor) {
+            if (ko.utils.recursiveUnwrap(valueAccessor)) {
+                $(element).animate({"margin-left": 0}, 500);
+            } else {
+                var distance = ko.utils.domData.get(element, "distance");
+                $(element).animate({"margin-left": "-" + distance}, 500);
+            }
         }
     };
 

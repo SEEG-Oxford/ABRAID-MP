@@ -23,15 +23,18 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
                  LegendViewModel, doc) {
         var wmsParamFactory = new WmsLayerParameterFactory();
         var geoJsonLayerFactory = new GeoJsonLayerFactory(baseUrl);
+        var covariateInfluencesViewModel = new CovariateInfluencesViewModel(baseUrl);
 
         ko.applyBindings(
             new ModelRunDetailsViewModel(
-                new CovariateInfluencesViewModel(baseUrl),
+                covariateInfluencesViewModel,
                 new DownloadLinksViewModel(baseUrl, data.wmsUrl, wmsParamFactory),
                 new StatisticsViewModel(baseUrl)
             ),
             doc.getElementById("modelRunDetails")
         );
+
+        ko.applyBindings(covariateInfluencesViewModel, doc.getElementById("plotModal"));
 
         ko.applyBindings(
             new LegendViewModel(),
