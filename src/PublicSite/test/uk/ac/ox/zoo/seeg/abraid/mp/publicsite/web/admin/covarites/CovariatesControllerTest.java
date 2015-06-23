@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.web.covariates;
+package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.covarites;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -9,11 +9,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonFileUploadResponse;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ConfigurationService;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateConfiguration;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateFile;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonDisease;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.CovariateService;
+import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.covariates.CovariatesController;
+import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.covariates.CovariatesControllerValidator;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,11 +36,11 @@ public class CovariatesControllerTest {
     @Test
     public void showCovariatesPageReturnsCorrectModelData() throws Exception {
         // Arrange
-        ConfigurationService configurationService = mock(ConfigurationService.class);
-        CovariatesController target = new CovariatesController(configurationService, null);
-        when(configurationService.getCovariateConfiguration()).thenReturn(new JsonCovariateConfiguration());
-        configurationService.getCovariateConfiguration().setFiles(new ArrayList<JsonCovariateFile>());
-        configurationService.getCovariateConfiguration().setDiseases(new ArrayList<JsonDisease>());
+        CovariateService covariateService = mock(CovariateService.class);
+        CovariatesController target = new CovariatesController(covariateService, null, new AbraidJsonObjectMapper());
+        when(covariateService.getCovariateConfiguration()).thenReturn(new JsonCovariateConfiguration());
+        covariateService.getCovariateConfiguration().setFiles(new ArrayList<JsonCovariateFile>());
+        covariateService.getCovariateConfiguration().setDiseases(new ArrayList<JsonDisease>());
         Model model = mock(Model.class);
 
         // Act
@@ -54,14 +53,14 @@ public class CovariatesControllerTest {
     @Test
     public void showCovariatesPageReturnsSortedDiseases() throws Exception {
         // Arrange
-        ConfigurationService configurationService = mock(ConfigurationService.class);
-        CovariatesController target = new CovariatesController(configurationService, null);
-        when(configurationService.getCovariateConfiguration()).thenReturn(new JsonCovariateConfiguration());
-        configurationService.getCovariateConfiguration().setFiles(new ArrayList<JsonCovariateFile>());
-        configurationService.getCovariateConfiguration().setDiseases(new ArrayList<JsonDisease>());
-        configurationService.getCovariateConfiguration().getDiseases().add(new JsonDisease(23, "aaa"));
-        configurationService.getCovariateConfiguration().getDiseases().add(new JsonDisease(24, "zzz"));
-        configurationService.getCovariateConfiguration().getDiseases().add(new JsonDisease(25, "ggg"));
+        CovariateService covariateService = mock(CovariateService.class);
+        CovariatesController target = new CovariatesController(covariateService, null, new AbraidJsonObjectMapper());
+        when(covariateService.getCovariateConfiguration()).thenReturn(new JsonCovariateConfiguration());
+        covariateService.getCovariateConfiguration().setFiles(new ArrayList<JsonCovariateFile>());
+        covariateService.getCovariateConfiguration().setDiseases(new ArrayList<JsonDisease>());
+        covariateService.getCovariateConfiguration().getDiseases().add(new JsonDisease(23, "aaa"));
+        covariateService.getCovariateConfiguration().getDiseases().add(new JsonDisease(24, "zzz"));
+        covariateService.getCovariateConfiguration().getDiseases().add(new JsonDisease(25, "ggg"));
 
         Model model = mock(Model.class);
 
@@ -75,11 +74,11 @@ public class CovariatesControllerTest {
     @Test
     public void showCovariatesPageReturnsCorrectTemplate() throws Exception {
         // Arrange
-        ConfigurationService configurationService = mock(ConfigurationService.class);
-        CovariatesController target = new CovariatesController(configurationService, null);
-        when(configurationService.getCovariateConfiguration()).thenReturn(new JsonCovariateConfiguration());
-        configurationService.getCovariateConfiguration().setFiles(new ArrayList<JsonCovariateFile>());
-        configurationService.getCovariateConfiguration().setDiseases(new ArrayList<JsonDisease>());
+        CovariateService covariateService = mock(CovariateService.class);
+        CovariatesController target = new CovariatesController(covariateService, null, new AbraidJsonObjectMapper());
+        when(covariateService.getCovariateConfiguration()).thenReturn(new JsonCovariateConfiguration());
+        covariateService.getCovariateConfiguration().setFiles(new ArrayList<JsonCovariateFile>());
+        covariateService.getCovariateConfiguration().setDiseases(new ArrayList<JsonDisease>());
         Model model = mock(Model.class);
 
         // Act
@@ -92,9 +91,9 @@ public class CovariatesControllerTest {
     @Test
     public void showCovariatesPageThrowsForInvalidCovariateConfig() throws Exception {
         // Arrange
-        ConfigurationService configurationService = mock(ConfigurationService.class);
-        CovariatesController target = new CovariatesController(configurationService, null);
-        when(configurationService.getCovariateConfiguration()).thenThrow(new IOException());
+        CovariateService covariateService = mock(CovariateService.class);
+        CovariatesController target = new CovariatesController(covariateService, null, new AbraidJsonObjectMapper());
+        when(covariateService.getCovariateConfiguration()).thenThrow(new IOException());
         Model model = mock(Model.class);
 
         // Act
@@ -109,8 +108,8 @@ public class CovariatesControllerTest {
     @Test
     public void updateCovariatesRejectsInvalidInputs() throws Exception {
         // Arrange
-        ConfigurationService configurationService = mock(ConfigurationService.class);
-        CovariatesController target = new CovariatesController(configurationService, null);
+        CovariateService covariateService = mock(CovariateService.class);
+        CovariatesController target = new CovariatesController(covariateService, null, new AbraidJsonObjectMapper());
         JsonCovariateConfiguration invalidConf = new JsonCovariateConfiguration();
 
         for (JsonCovariateConfiguration conf : Arrays.asList(invalidConf, null)) {
@@ -125,11 +124,11 @@ public class CovariatesControllerTest {
     @Test
     public void updateCovariatesThrowsIfConfigurationCanNotBeSaved() throws Exception {
         // Arrange
-        ConfigurationService configurationService = mock(ConfigurationService.class);
-        CovariatesController target = new CovariatesController(configurationService, null);
+        CovariateService covariateService = mock(CovariateService.class);
+        CovariatesController target = new CovariatesController(covariateService, null, new AbraidJsonObjectMapper());
         JsonCovariateConfiguration conf = mock(JsonCovariateConfiguration.class);
         when(conf.isValid()).thenReturn(true);
-        doThrow(new IOException()).when(configurationService).setCovariateConfiguration(conf);
+        doThrow(new IOException()).when(covariateService).setCovariateConfiguration(conf);
 
         // Act
         catchException(target).updateCovariates(conf);
@@ -143,8 +142,8 @@ public class CovariatesControllerTest {
     @Test
     public void updateCovariatesSavedConfiguration() throws Exception {
         // Arrange
-        ConfigurationService configurationService = mock(ConfigurationService.class);
-        CovariatesController target = new CovariatesController(configurationService, null);
+        CovariateService covariateService = mock(CovariateService.class);
+        CovariatesController target = new CovariatesController(covariateService, null, new AbraidJsonObjectMapper());
         JsonCovariateConfiguration conf = mock(JsonCovariateConfiguration.class);
         when(conf.isValid()).thenReturn(true);
 
@@ -152,7 +151,7 @@ public class CovariatesControllerTest {
         ResponseEntity result = target.updateCovariates(conf);
 
         // Assert
-        verify(configurationService).setCovariateConfiguration(conf);
+        verify(covariateService).setCovariateConfiguration(conf);
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 
@@ -169,11 +168,11 @@ public class CovariatesControllerTest {
         final JsonCovariateConfiguration expectedCovariateConf = mock(JsonCovariateConfiguration.class);
 
 
-        ConfigurationService configurationService = mock(ConfigurationService.class);
-        when(configurationService.getCovariateConfiguration()).thenReturn(expectedCovariateConf);
-        when(configurationService.getCovariateDirectory()).thenReturn(expectedCovariateDir);
+        CovariateService covariateService = mock(CovariateService.class);
+        when(covariateService.getCovariateConfiguration()).thenReturn(expectedCovariateConf);
+        when(covariateService.getCovariateDirectory()).thenReturn(expectedCovariateDir);
         CovariatesControllerValidator validator = mock(CovariatesControllerValidator.class);
-        CovariatesController target = new CovariatesController(configurationService, validator);
+        CovariatesController target = new CovariatesController(covariateService, validator, new AbraidJsonObjectMapper());
         when(validator.validateCovariateUpload(anyString(), anyString(), any(MultipartFile.class), anyString(), anyString(), any(JsonCovariateConfiguration.class)))
             .thenReturn(Arrays.asList("FAIL1", "FAIL2"));
 
@@ -202,11 +201,11 @@ public class CovariatesControllerTest {
         final String expectedPath = FilenameUtils.separatorsToUnix(expectedCovariateDir + "/" + expectedSubdirectory + "/" + expectedFileName);
         final JsonCovariateConfiguration expectedCovariateConf = mock(JsonCovariateConfiguration.class);
 
-        ConfigurationService configurationService = mock(ConfigurationService.class);
-        when(configurationService.getCovariateConfiguration()).thenReturn(expectedCovariateConf);
-        when(configurationService.getCovariateDirectory()).thenReturn(expectedCovariateDir);
+        CovariateService covariateService = mock(CovariateService.class);
+        when(covariateService.getCovariateConfiguration()).thenReturn(expectedCovariateConf);
+        when(covariateService.getCovariateDirectory()).thenReturn(expectedCovariateDir);
         CovariatesControllerValidator validator = mock(CovariatesControllerValidator.class);
-        CovariatesController target = new CovariatesController(configurationService, validator);
+        CovariatesController target = new CovariatesController(covariateService, validator, new AbraidJsonObjectMapper());
         when(validator.validateCovariateUpload(anyString(), anyString(), any(MultipartFile.class), anyString(), anyString(), any(JsonCovariateConfiguration.class)))
                 .thenReturn(new ArrayList<String>());
 
@@ -231,11 +230,11 @@ public class CovariatesControllerTest {
         final List<JsonCovariateFile> covariateFileList = new ArrayList<>();
         when(expectedCovariateConf.getFiles()).thenReturn(covariateFileList);
 
-        ConfigurationService configurationService = mock(ConfigurationService.class);
-        when(configurationService.getCovariateConfiguration()).thenReturn(expectedCovariateConf);
-        when(configurationService.getCovariateDirectory()).thenReturn(expectedCovariateDir);
+        CovariateService covariateService = mock(CovariateService.class);
+        when(covariateService.getCovariateConfiguration()).thenReturn(expectedCovariateConf);
+        when(covariateService.getCovariateDirectory()).thenReturn(expectedCovariateDir);
         CovariatesControllerValidator validator = mock(CovariatesControllerValidator.class);
-        CovariatesController target = new CovariatesController(configurationService, validator);
+        CovariatesController target = new CovariatesController(covariateService, validator, new AbraidJsonObjectMapper());
         when(validator.validateCovariateUpload(anyString(), anyString(), any(MultipartFile.class), anyString(), anyString(), any(JsonCovariateConfiguration.class)))
                 .thenReturn(new ArrayList<String>());
 
@@ -265,11 +264,11 @@ public class CovariatesControllerTest {
         final List<JsonCovariateFile> covariateFileList = new ArrayList<>();
         when(expectedCovariateConf.getFiles()).thenReturn(covariateFileList);
 
-        ConfigurationService configurationService = mock(ConfigurationService.class);
-        when(configurationService.getCovariateConfiguration()).thenReturn(expectedCovariateConf);
-        when(configurationService.getCovariateDirectory()).thenReturn(expectedCovariateDir);
+        CovariateService covariateService = mock(CovariateService.class);
+        when(covariateService.getCovariateConfiguration()).thenReturn(expectedCovariateConf);
+        when(covariateService.getCovariateDirectory()).thenReturn(expectedCovariateDir);
         CovariatesControllerValidator validator = mock(CovariatesControllerValidator.class);
-        CovariatesController target = new CovariatesController(configurationService, validator);
+        CovariatesController target = new CovariatesController(covariateService, validator, new AbraidJsonObjectMapper());
         when(validator.validateCovariateUpload(anyString(), anyString(), any(MultipartFile.class), anyString(), anyString(), any(JsonCovariateConfiguration.class)))
                 .thenReturn(new ArrayList<String>());
 
@@ -295,11 +294,11 @@ public class CovariatesControllerTest {
         final List<JsonCovariateFile> covariateFileList = new ArrayList<>();
         when(expectedCovariateConf.getFiles()).thenReturn(covariateFileList);
 
-        ConfigurationService configurationService = mock(ConfigurationService.class);
-        when(configurationService.getCovariateConfiguration()).thenReturn(expectedCovariateConf);
-        when(configurationService.getCovariateDirectory()).thenReturn(expectedCovariateDir);
+        CovariateService covariateService = mock(CovariateService.class);
+        when(covariateService.getCovariateConfiguration()).thenReturn(expectedCovariateConf);
+        when(covariateService.getCovariateDirectory()).thenReturn(expectedCovariateDir);
         CovariatesControllerValidator validator = mock(CovariatesControllerValidator.class);
-        CovariatesController target = new CovariatesController(configurationService, validator);
+        CovariatesController target = new CovariatesController(covariateService, validator, new AbraidJsonObjectMapper());
         when(validator.validateCovariateUpload(anyString(), anyString(), any(MultipartFile.class), anyString(), anyString(), any(JsonCovariateConfiguration.class)))
                 .thenReturn(new ArrayList<String>());
 

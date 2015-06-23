@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json;
+package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json;
 
 import org.junit.Test;
 

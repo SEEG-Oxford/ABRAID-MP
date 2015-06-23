@@ -1,9 +1,9 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.web.covariates;
+package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.covariates;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateConfiguration;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateFile;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateFile;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;

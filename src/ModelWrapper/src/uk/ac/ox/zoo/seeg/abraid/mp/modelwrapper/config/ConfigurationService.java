@@ -1,7 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config;
 
 import org.apache.commons.configuration.ConfigurationException;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateConfiguration;
 
 import java.io.IOException;
 

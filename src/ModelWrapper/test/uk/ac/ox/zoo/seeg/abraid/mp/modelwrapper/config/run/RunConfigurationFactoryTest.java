@@ -5,10 +5,10 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.LocalDateTime;
 import org.junit.Test;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateFile;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonDisease;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ConfigurationService;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateConfiguration;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateFile;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonDisease;
 
 import java.io.IOException;
 import java.util.ArrayList;

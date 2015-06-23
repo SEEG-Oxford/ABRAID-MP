@@ -4,10 +4,10 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonDisease;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.WrappedList;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ConfigurationService;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateConfiguration;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonDisease;
 
 import java.io.IOException;
 import java.util.ArrayList;

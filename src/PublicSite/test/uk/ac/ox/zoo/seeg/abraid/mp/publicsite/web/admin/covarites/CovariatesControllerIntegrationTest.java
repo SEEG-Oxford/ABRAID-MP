@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.web.covariates;
+package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.covarites;
 
 import freemarker.cache.FileTemplateLoader;
 import freemarker.cache.MultiTemplateLoader;
@@ -20,11 +20,11 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ConfigurationService;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateConfiguration;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateFile;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonDisease;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.web.BaseWebIntegrationTests;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateFile;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonDisease;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.CovariateService;
+import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.AbstractPublicSiteIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.SpringockitoWebContextLoader;
 
 import java.io.File;
@@ -42,13 +42,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Copyright (c) 2014 University of Oxford
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = SpringockitoWebContextLoader.class, locations = {
-        "file:ModelWrapper/web/WEB-INF/abraid-servlet-beans.xml",
-        "file:ModelWrapper/web/WEB-INF/applicationContext.xml"
-})
 @WebAppConfiguration("file:ModelWrapper/web")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class CovariatesControllerIntegrationTest extends BaseWebIntegrationTests {
+public class CovariatesControllerIntegrationTest extends AbstractPublicSiteIntegrationTests {
     private MockMvc mockMvc;
 
     @Autowired
@@ -56,7 +52,7 @@ public class CovariatesControllerIntegrationTest extends BaseWebIntegrationTests
 
     @ReplaceWithMock
     @Autowired
-    private ConfigurationService configurationService;
+    private CovariateService covariateService;
 
     @Autowired
     private FreeMarkerConfigurer freemarkerConfig;
@@ -79,9 +75,9 @@ public class CovariatesControllerIntegrationTest extends BaseWebIntegrationTests
     @Test
     public void covariatesPageReturnsCorrectContent() throws Exception {
         // Arrange
-        when(configurationService.getCovariateConfiguration()).thenReturn(new JsonCovariateConfiguration());
-        configurationService.getCovariateConfiguration().setFiles(new ArrayList<JsonCovariateFile>());
-        configurationService.getCovariateConfiguration().setDiseases(new ArrayList<JsonDisease>());
+        when(covariateService.getCovariateConfiguration()).thenReturn(new JsonCovariateConfiguration());
+        covariateService.getCovariateConfiguration().setFiles(new ArrayList<JsonCovariateFile>());
+        covariateService.getCovariateConfiguration().setDiseases(new ArrayList<JsonDisease>());
         String expectedJavaScript = "var initialData = {\"diseases\":[],\"files\":[]};";
 
         // Act
@@ -95,9 +91,9 @@ public class CovariatesControllerIntegrationTest extends BaseWebIntegrationTests
 
     @Test
     public void covariatesPageOnlyAcceptsGET() throws Exception {
-        when(configurationService.getCovariateConfiguration()).thenReturn(new JsonCovariateConfiguration());
-        configurationService.getCovariateConfiguration().setFiles(new ArrayList<JsonCovariateFile>());
-        configurationService.getCovariateConfiguration().setDiseases(new ArrayList<JsonDisease>());
+        when(covariateService.getCovariateConfiguration()).thenReturn(new JsonCovariateConfiguration());
+        covariateService.getCovariateConfiguration().setFiles(new ArrayList<JsonCovariateFile>());
+        covariateService.getCovariateConfiguration().setDiseases(new ArrayList<JsonDisease>());
 
         this.mockMvc.perform(get("/covariates")).andExpect(status().isOk());
         this.mockMvc.perform(post("/covariates")).andExpect(status().isMethodNotAllowed());

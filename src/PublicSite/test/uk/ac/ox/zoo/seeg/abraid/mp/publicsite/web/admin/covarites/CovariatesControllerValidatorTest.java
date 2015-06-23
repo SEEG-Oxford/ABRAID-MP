@@ -1,12 +1,13 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.web.covariates;
+package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.covarites;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.springframework.mock.web.MockMultipartFile;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateConfiguration;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateFile;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateFile;
+import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.covariates.CovariatesControllerValidator;
 
 import java.io.File;
 import java.nio.file.Paths;

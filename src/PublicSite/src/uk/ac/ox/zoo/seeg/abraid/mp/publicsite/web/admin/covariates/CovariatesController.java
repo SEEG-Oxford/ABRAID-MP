@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.web.covariates;
+package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.covariates;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FilenameUtils;
@@ -14,12 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonFileUploadResponse;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ConfigurationService;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.CovariateObjectMapper;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateConfiguration;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateFile;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonDisease;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.CovariateService;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -51,14 +47,17 @@ public class CovariatesController {
     private static final String ERROR_CREATE_SUBDIRECTORY = "Could not create subdirectory for new covariate file";
     private static final String LOG_NEW_COVARIATE = "New covariate uploaded (%s, %s).";
 
-    private final ConfigurationService configurationService;
+    private final CovariateService covariateService;
     private final CovariatesControllerValidator validator;
+    private final AbraidJsonObjectMapper objectMapper;
 
     @Autowired
-    public CovariatesController(ConfigurationService configurationService,
-                                CovariatesControllerValidator covariatesControllerValidator) {
-        this.configurationService = configurationService;
+    public CovariatesController(CovariateService covariateService,
+                                CovariatesControllerValidator covariatesControllerValidator,
+                                AbraidJsonObjectMapper objectMapper) {
+        this.covariateService = covariateService;
         this.validator = covariatesControllerValidator;
+        this.objectMapper = objectMapper;
     }
 
     /**
@@ -69,12 +68,10 @@ public class CovariatesController {
      */
     @RequestMapping(value = "/covariates", method = RequestMethod.GET)
     public String showCovariatesPage(Model model) throws IOException {
-        ObjectMapper jsonConverter = new CovariateObjectMapper();
-
         try {
-            JsonCovariateConfiguration covariateConfig = configurationService.getCovariateConfiguration();
+            JsonCovariateConfiguration covariateConfig = covariateService.getCovariateConfiguration();
             covariateConfig.setDiseases(with(covariateConfig.getDiseases()).sort(on(JsonDisease.class).getName()));
-            String covariateJson = jsonConverter.writeValueAsString(covariateConfig);
+            String covariateJson = objectMapper.writeValueAsString(covariateConfig);
             model.addAttribute("initialData", covariateJson);
             return "covariates";
         } catch (IOException e) {
@@ -98,7 +95,7 @@ public class CovariatesController {
         }
 
         try {
-            configurationService.setCovariateConfiguration(config);
+            covariateService.setCovariateConfiguration(config);
         } catch (IOException e) {
             LOGGER.error(LOG_COVARIATE_CONFIGURATION_UPDATE_FAILED); // Exception already logged at lower level
             throw new IOException(LOG_COVARIATE_CONFIGURATION_UPDATE_FAILED, e);
@@ -121,8 +118,8 @@ public class CovariatesController {
     @ResponseBody
     public ResponseEntity<JsonFileUploadResponse> addCovariateFile(
             String name, String subdirectory, MultipartFile file) throws IOException {
-        String covariateDirectory = configurationService.getCovariateDirectory();
-        JsonCovariateConfiguration covariateConfiguration = configurationService.getCovariateConfiguration();
+        String covariateDirectory = covariateService.getCovariateDirectory();
+        JsonCovariateConfiguration covariateConfiguration = covariateService.getCovariateConfiguration();
         String path = extractTargetPath(subdirectory, file, covariateDirectory);
 
         Collection<String> validationMessages = validator
@@ -151,7 +148,7 @@ public class CovariatesController {
                 false,
                 new ArrayList<Integer>()
         ));
-        configurationService.setCovariateConfiguration(config);
+        covariateService.setCovariateConfiguration(config);
 
         LOGGER.info(String.format(LOG_NEW_COVARIATE, name, relativePath));
     }

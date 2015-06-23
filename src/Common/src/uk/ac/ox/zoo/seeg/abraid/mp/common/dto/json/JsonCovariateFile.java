@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json;
+package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang.StringUtils;

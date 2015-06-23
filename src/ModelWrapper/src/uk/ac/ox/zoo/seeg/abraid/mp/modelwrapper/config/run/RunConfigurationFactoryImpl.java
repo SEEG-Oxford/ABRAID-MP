@@ -4,9 +4,9 @@ import ch.lambdaj.function.convert.Converter;
 import org.apache.commons.configuration.ConfigurationException;
 import org.hamcrest.Matcher;
 import org.joda.time.LocalDateTime;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ConfigurationService;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateConfiguration;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateFile;
 
 import java.io.File;
 import java.io.IOException;

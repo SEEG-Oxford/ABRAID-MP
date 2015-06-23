@@ -6,9 +6,9 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateConfiguration;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonCovariateFile;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.json.JsonDisease;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateFile;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonDisease;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSChecker;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSCheckerImpl;
 
