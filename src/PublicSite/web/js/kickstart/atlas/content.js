@@ -20,14 +20,17 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
     ], function (ko, AtlasView, CovariateInfluencesViewModel, DownloadLinksViewModel, LayerSelectorViewModel,
                  ModelRunDetailsViewModel, StatisticsViewModel, WmsLayerParameterFactory, LegendViewModel, doc) {
         var wmsParamFactory = new WmsLayerParameterFactory();
+        var covariateInfluencesViewModel = new CovariateInfluencesViewModel(baseUrl);
         ko.applyBindings(
             new ModelRunDetailsViewModel(
-                new CovariateInfluencesViewModel(baseUrl),
+                covariateInfluencesViewModel,
                 new DownloadLinksViewModel(baseUrl, data.wmsUrl, wmsParamFactory),
                 new StatisticsViewModel(baseUrl)
             ),
             doc.getElementById("modelRunDetails")
         );
+
+        ko.applyBindings(covariateInfluencesViewModel, doc.getElementById("plotModal"));
 
         ko.applyBindings(
             new LegendViewModel(),
