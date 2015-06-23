@@ -17,10 +17,10 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+
+import static ch.lambdaj.Lambda.*;
+import static org.hamcrest.CoreMatchers.equalTo;
 
 /**
  * Controller for accessing additional information about model runs.
@@ -78,7 +78,8 @@ public class ModelRunDetailsController extends AbstractController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } else {
             List<CovariateInfluence> covariateInfluences = modelRun.getCovariateInfluences();
-            return new ResponseEntity<>(convertToJson(covariateInfluences), HttpStatus.OK);
+            List<EffectCurveCovariateInfluence> effectCurves = modelRun.getEffectCurveCovariateInfluences();
+            return new ResponseEntity<>(convertToJson(covariateInfluences, effectCurves), HttpStatus.OK);
         }
     }
 
