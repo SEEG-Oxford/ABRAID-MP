@@ -26,6 +26,9 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
     private DiseaseGroupDao diseaseGroupDao;
 
     @Autowired
+    private CovariateFileDao covariateFileDao;
+
+    @Autowired
     private DiseaseOccurrenceDao diseaseOccurrenceDao;
 
     @Autowired
@@ -178,9 +181,9 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
         run = modelRunDao.getByName("name");
 
         List<CovariateInfluence> covariateInfluences = new ArrayList<>();
-        covariateInfluences.add(createCovariateInfluence("a", "A", run));
-        covariateInfluences.add(createCovariateInfluence("b", "B", run));
-        covariateInfluences.add(createCovariateInfluence("c", "C", run));
+        covariateInfluences.add(createCovariateInfluence(createCovariateFile(1), run));
+        covariateInfluences.add(createCovariateInfluence(createCovariateFile(2), run));
+        covariateInfluences.add(createCovariateInfluence(createCovariateFile(3), run));
         run.setCovariateInfluences(covariateInfluences);
         modelRunDao.save(run);
         flushAndClear();
@@ -201,9 +204,9 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
         run = modelRunDao.getByName("name");
 
         List<EffectCurveCovariateInfluence> effectCurveCovariateInfluences = new ArrayList<>();
-        effectCurveCovariateInfluences.add(createEffectCurveCovariateInfluence("a", "A", run));
-        effectCurveCovariateInfluences.add(createEffectCurveCovariateInfluence("b", "B", run));
-        effectCurveCovariateInfluences.add(createEffectCurveCovariateInfluence("c", "C", run));
+        effectCurveCovariateInfluences.add(createEffectCurveCovariateInfluence(createCovariateFile(1), run));
+        effectCurveCovariateInfluences.add(createEffectCurveCovariateInfluence(createCovariateFile(2), run));
+        effectCurveCovariateInfluences.add(createEffectCurveCovariateInfluence(createCovariateFile(3), run));
         run.setEffectCurveCovariateInfluences(effectCurveCovariateInfluences);
         modelRunDao.save(run);
         flushAndClear();
@@ -488,22 +491,20 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
         return submodelStatistic;
     }
 
-    private CovariateInfluence createCovariateInfluence(String filePath, String displayName, ModelRun modelRun) {
+    private CovariateInfluence createCovariateInfluence(CovariateFile covariateFile, ModelRun modelRun) {
         CovariateInfluence covariateInfluence = new CovariateInfluence();
         covariateInfluence.setModelRun(modelRun);
-        covariateInfluence.setCovariateFilePath(filePath);
-        covariateInfluence.setCovariateDisplayName(displayName);
+        covariateInfluence.setCovariateFile(covariateFile);
         covariateInfluence.setMeanInfluence(1.0);
         covariateInfluence.setLowerQuantile(2.0);
         covariateInfluence.setUpperQuantile(3.0);
         return covariateInfluence;
     }
 
-    private EffectCurveCovariateInfluence createEffectCurveCovariateInfluence(String filePath, String displayName, ModelRun modelRun) {
+    private EffectCurveCovariateInfluence createEffectCurveCovariateInfluence(CovariateFile covariateFile, ModelRun modelRun) {
         EffectCurveCovariateInfluence effectCurveCovariateInfluence = new EffectCurveCovariateInfluence();
         effectCurveCovariateInfluence.setModelRun(modelRun);
-        effectCurveCovariateInfluence.setCovariateFilePath(filePath);
-        effectCurveCovariateInfluence.setCovariateDisplayName(displayName);
+        effectCurveCovariateInfluence.setCovariateFile(covariateFile);
         effectCurveCovariateInfluence.setMeanInfluence(1.0);
         effectCurveCovariateInfluence.setLowerQuantile(2.0);
         effectCurveCovariateInfluence.setUpperQuantile(3.0);
@@ -521,5 +522,11 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
         modelRun.setStatus(status);
         modelRun.setResponseDate(new DateTime(responseDate));
         return modelRun;
+    }
+
+    private CovariateFile createCovariateFile(int idx) {
+        CovariateFile covariate = new CovariateFile("name" + idx, "file" + idx, false, "info" + idx);
+        covariateFileDao.save(covariate);
+        return covariate;
     }
 }
