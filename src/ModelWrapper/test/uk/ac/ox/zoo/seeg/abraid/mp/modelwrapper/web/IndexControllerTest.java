@@ -67,7 +67,6 @@ public class IndexControllerTest {
         verify(model).addAttribute("available_versions", expectedVersions);
         verify(model).addAttribute("r_path", expectedRPath);
         verify(model).addAttribute("run_duration", expectedDuration);
-        verify(model).addAttribute("covariate_directory", expectedCovariateDir);
     }
 
     @Test

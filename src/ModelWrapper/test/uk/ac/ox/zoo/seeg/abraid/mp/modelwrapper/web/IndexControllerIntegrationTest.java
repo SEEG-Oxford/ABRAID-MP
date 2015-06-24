@@ -96,8 +96,7 @@ public class IndexControllerIntegrationTest extends BaseWebIntegrationTests {
                 "version: \"foo2\"",
                 "availableVersions: [\"1\",\"2\",\"3\"]",
                 "rPath: \"foo3\"",
-                "runDuration: 123",
-                "covariateDirectory: \"foo4\"");
+                "runDuration: 123");
 
         // Act
         ResultActions sendRequest = this.mockMvc.perform(get("/"));
