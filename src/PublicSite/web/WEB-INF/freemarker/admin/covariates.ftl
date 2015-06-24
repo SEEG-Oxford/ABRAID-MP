@@ -1,8 +1,8 @@
 <#--
-    ModelWrapper's covariate list page, to add and edit covariate files.
+    Covariate list page, to add and edit covariate files.
     Copyright (c) 2014 University of Oxford
 -->
-<#import "shared/layout/common.ftl" as c/>
+<#import "../layout/common.ftl" as c/>
 <#import "shared/layout/form.ftl" as f/>
 <#import "shared/layout/table.ftl" as t/>
 <#import "shared/layout/panel.ftl" as p/>
@@ -46,7 +46,7 @@
     </script>
 </#assign>
 
-<@c.page title="ABRAID-MP ModelWrapper" mainjs="/js/kickstart/covariates" bootstrapData=bootstrapData templates=templates>
+<@c.page title="ABRAID-MP Administration: Covariates" mainjs="/js/kickstart/admin/covariates" bootstrapData=bootstrapData templates=templates>
 <div class="container">
     <@p.panel "add-covariate-body" "Add Covariate File" true>
         <p>Use the fields below to add new covariate files to the system.</p>

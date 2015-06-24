@@ -45,6 +45,7 @@
                     <li><a href="<@spring.url "/tools/uploadcsv/"/>">Upload CSV</a></li>
                     <li><a href="<@spring.url "/admin/diseases/"/>">Administration - Diseases</a></li>
                     <li><a href="<@spring.url "/admin/experts/"/>">Administration - Experts</a></li>
+                    <li><a href="<@spring.url "/admin/covariates/"/>">Administration - Covariates</a></li>
                 </ul>
             </li>
         </@security.authorize>

@@ -3,7 +3,7 @@
  */
 define([
     "ko",
-    "app/covariates/CovariatesListRowViewModel",
+    "app/admin/covariates/CovariatesListRowViewModel",
     "shared/app/BaseFormViewModel",
     "shared/app/BaseTableViewModel"
 ], function (ko, CovariatesListRowViewModel, BaseFormViewModel, BaseTableViewModel) {

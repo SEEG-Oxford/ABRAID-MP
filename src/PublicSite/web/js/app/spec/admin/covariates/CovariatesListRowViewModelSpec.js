@@ -1,7 +1,7 @@
 /* Tests for CovariatesListRowViewModel.
  * Copyright (c) 2014 University of Oxford
  */
-define([ "app/covariates/CovariatesListRowViewModel" ], function (CovariatesListRowViewModel) {
+define([ "app/admin/covariates/CovariatesListRowViewModel" ], function (CovariatesListRowViewModel) {
     "use strict";
 
     describe("The covariates list row view model", function () {

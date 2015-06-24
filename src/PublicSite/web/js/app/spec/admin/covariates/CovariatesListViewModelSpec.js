@@ -2,7 +2,7 @@
  * Copyright (c) 2014 University of Oxford
  */
 define([
-    "app/covariates/CovariatesListViewModel",
+    "app/admin/covariates/CovariatesListViewModel",
     "underscore"
 ], function (CovariatesListViewModel, _) {
     "use strict";

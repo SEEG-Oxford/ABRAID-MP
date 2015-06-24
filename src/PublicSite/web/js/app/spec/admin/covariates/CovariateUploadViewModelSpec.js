@@ -2,7 +2,7 @@
  * Copyright (c) 2014 University of Oxford
  */
 define([
-    "app/covariates/CovariateUploadViewModel",
+    "app/admin/covariates/CovariateUploadViewModel",
     "ko",
     "squire"
 ], function (CovariateUploadViewModel, ko, Squire) {
@@ -122,7 +122,7 @@ define([
                 });
                 injector.mock("shared/app/BaseFileFormViewModel", baseSpy);
 
-                injector.require(["app/covariates/CovariateUploadViewModel"],
+                injector.require(["app/admin/covariates/CovariateUploadViewModel"],
                     function (CovariateUploadViewModel) {
                         vm = new CovariateUploadViewModel("baseUrl", covariateListVM, refreshSpy);
                         expect(baseSpy.calls.argsFor(0)[0]).toBe("baseUrl");
