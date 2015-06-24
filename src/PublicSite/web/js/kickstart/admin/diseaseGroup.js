@@ -14,13 +14,11 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
         "app/admin/diseasegroups/DiseaseGroupSettingsViewModel",
         "app/admin/diseasegroups/ModelRunParametersViewModel",
         "app/admin/diseasegroups/DiseaseGroupSetupViewModel",
-        "app/admin/diseasegroups/SyncDiseasesViewModel",
         "domReady!",
         "shared/navbar",
         "analytics"
     ], function (ko, DiseaseExtentParametersViewModel, DiseaseGroupAdministrationViewModel, DiseaseGroupsListViewModel,
-                 DiseaseGroupSettingsViewModel, ModelRunParametersViewModel, DiseaseGroupSetupViewModel,
-                 SyncDiseasesViewModel, doc) {
+                 DiseaseGroupSettingsViewModel, ModelRunParametersViewModel, DiseaseGroupSetupViewModel, doc) {
 
         var diseaseGroupSelectedEventName = "disease-group-selected";
         var diseaseGroupSavedEventName = "disease-group-saved";
@@ -28,15 +26,7 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
         var diseaseGroupsListViewModel =
             new DiseaseGroupsListViewModel(diseaseGroups, diseaseGroupSelectedEventName);
 
-        var syncDiseasesViewModel =
-            new SyncDiseasesViewModel(baseUrl);
-
-        ko.applyBindings({
-                diseaseGroupsListViewModel: diseaseGroupsListViewModel,
-                syncDiseasesViewModel: syncDiseasesViewModel
-            },
-            doc.getElementById("disease-groups-list")
-        );
+        ko.applyBindings(diseaseGroupsListViewModel, doc.getElementById("disease-groups-list"));
 
         var refresh = function () {
             window.top.location.reload();

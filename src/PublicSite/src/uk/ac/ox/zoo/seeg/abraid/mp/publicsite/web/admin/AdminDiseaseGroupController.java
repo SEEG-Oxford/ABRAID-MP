@@ -1,6 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin;
 
-import ch.lambdaj.function.matcher.LambdaJMatcher;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
@@ -20,17 +19,15 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.ModelRunWorkflowService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.BatchDatesValidator;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunWorkflowException;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelWrapperWebServiceAsyncWrapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.*;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.Future;
 
-import static ch.lambdaj.Lambda.*;
+import static ch.lambdaj.Lambda.on;
+import static ch.lambdaj.Lambda.sort;
 import static org.springframework.util.StringUtils.hasText;
 
 /**
@@ -57,7 +54,6 @@ public class AdminDiseaseGroupController extends AbstractController {
     private ModelRunWorkflowService modelRunWorkflowService;
     private ModelRunService modelRunService;
     private DiseaseOccurrenceSpreadHelper helper;
-    private ModelWrapperWebServiceAsyncWrapper modelWrapperWebServiceAsyncWrapper;
     private BatchDatesValidator batchDatesValidator;
 
     private Comparator<String> caseInsensitiveComparator = new Comparator<String>() {
@@ -71,14 +67,12 @@ public class AdminDiseaseGroupController extends AbstractController {
     public AdminDiseaseGroupController(DiseaseService diseaseService, AbraidJsonObjectMapper objectMapper,
                                        ModelRunWorkflowService modelRunWorkflowService,
                                        ModelRunService modelRunService, DiseaseOccurrenceSpreadHelper helper,
-                                       BatchDatesValidator batchDatesValidator,
-                                       ModelWrapperWebServiceAsyncWrapper modelWrapperWebServiceAsyncWrapper) {
+                                       BatchDatesValidator batchDatesValidator) {
         this.diseaseService = diseaseService;
         this.objectMapper = objectMapper;
         this.modelRunWorkflowService = modelRunWorkflowService;
         this.modelRunService = modelRunService;
         this.helper = helper;
-        this.modelWrapperWebServiceAsyncWrapper = modelWrapperWebServiceAsyncWrapper;
         this.batchDatesValidator = batchDatesValidator;
     }
 
@@ -242,52 +236,11 @@ public class AdminDiseaseGroupController extends AbstractController {
         if ((diseaseGroup != null) && validInputs(settings)) {
             if (saveProperties(diseaseGroup, settings)) {
                 LOGGER.info(String.format(SAVE_DISEASE_GROUP_SUCCESS, diseaseGroupId, settings.getName()));
-                syncDiseaseGroupWithModelWrapper(diseaseGroup);
                 return new ResponseEntity(HttpStatus.NO_CONTENT);
             }
         }
         LOGGER.info(String.format(SAVE_DISEASE_GROUP_ERROR, diseaseGroupId, settings.getName()));
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
-    }
-
-    /**
-     * Synchronises all sufficiently configured diseases with each known ModelWrapper instance.
-     * @return 204 for success, otherwise 500.
-     * @throws java.lang.Exception if a problem is encountered communicating with the ModelWrapper instances.
-     */
-    @Secured({ "ROLE_ADMIN" })
-    @RequestMapping(value = ADMIN_DISEASE_GROUP_BASE_URL + "/sync", method = RequestMethod.POST)
-    public ResponseEntity syncAllDiseasesWithModelWrapper() throws Exception {
-        Collection<DiseaseGroup> diseaseGroups = diseaseService.getAllDiseaseGroups();
-        diseaseGroups = filter(new LambdaJMatcher<DiseaseGroup>() {
-            @Override
-            public boolean matches(Object o) {
-                return checkDiseaseIsSufficientlyConfiguredToSyncWithModelWrapper((DiseaseGroup) o);
-            }
-        }, diseaseGroups);
-
-        Future<Boolean> result = modelWrapperWebServiceAsyncWrapper.publishAllDiseases(diseaseGroups);
-
-        if (!result.get()) {
-            LOGGER.warn(FAILED_TO_SYNCHRONISE_DISEASE_GROUPS);
-            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
-    }
-
-    private void syncDiseaseGroupWithModelWrapper(DiseaseGroup diseaseGroup) {
-        if (checkDiseaseIsSufficientlyConfiguredToSyncWithModelWrapper(diseaseGroup)) {
-            modelWrapperWebServiceAsyncWrapper.publishSingleDisease(diseaseGroup);
-        }
-    }
-
-    private boolean checkDiseaseIsSufficientlyConfiguredToSyncWithModelWrapper(DiseaseGroup diseaseGroup) {
-        return
-            diseaseGroup.getPublicName() != null &&
-            diseaseGroup.getShortName() != null &&
-            diseaseGroup.getAbbreviation() != null &&
-            diseaseGroup.isGlobal() != null &&
-            diseaseGroup.getGroupType() != null;
     }
 
     /**
@@ -305,7 +258,6 @@ public class AdminDiseaseGroupController extends AbstractController {
             DiseaseGroup diseaseGroup = new DiseaseGroup();
             if (saveProperties(diseaseGroup, settings)) {
                 LOGGER.info(String.format(ADD_DISEASE_GROUP_SUCCESS, diseaseGroup.getId(), settings.getName()));
-                syncDiseaseGroupWithModelWrapper(diseaseGroup);
                 return new ResponseEntity(HttpStatus.NO_CONTENT);
             }
         }
