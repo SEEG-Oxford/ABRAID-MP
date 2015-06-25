@@ -18,7 +18,7 @@ public class JsonCovariateConfigurationTest {
     @Test
     public void bindsFieldsCorrectly() {
         // Arrange
-        List<JsonDisease> expectedDiseases = new ArrayList<>();
+        List<JsonModelDisease> expectedDiseases = new ArrayList<>();
         List<JsonCovariateFile> expectedFiles = new ArrayList<>();
 
         // Act
@@ -32,7 +32,7 @@ public class JsonCovariateConfigurationTest {
     @Test
     public void isValidForCorrectInputs() {
         // Arrange
-        List<JsonDisease> expectedDiseases = new ArrayList<>();
+        List<JsonModelDisease> expectedDiseases = new ArrayList<>();
         List<JsonCovariateFile> expectedFiles = new ArrayList<>();
 
         // Act
@@ -45,7 +45,7 @@ public class JsonCovariateConfigurationTest {
     @Test
     public void isNotValidForMissingDiseases() {
         // Arrange
-        List<JsonDisease> expectedDiseases = null;
+        List<JsonModelDisease> expectedDiseases = null;
         List<JsonCovariateFile> expectedFiles = new ArrayList<>();
 
         // Act
@@ -58,7 +58,7 @@ public class JsonCovariateConfigurationTest {
     @Test
     public void isNotValidForMissingFiles() {
         // Arrange
-        List<JsonDisease> expectedDiseases = new ArrayList<>();
+        List<JsonModelDisease> expectedDiseases = new ArrayList<>();
         List<JsonCovariateFile> expectedFiles = null;
 
         // Act
@@ -71,9 +71,9 @@ public class JsonCovariateConfigurationTest {
     @Test
     public void isNotValidForInvalidDiseases() {
         // Arrange
-        JsonDisease mockDisease = mock(JsonDisease.class);
+        JsonModelDisease mockDisease = mock(JsonModelDisease.class);
         when(mockDisease.isValid()).thenReturn(false);
-        List<JsonDisease> expectedDiseases = Arrays.asList(mockDisease);
+        List<JsonModelDisease> expectedDiseases = Arrays.asList(mockDisease);
         List<JsonCovariateFile> expectedFiles = new ArrayList<>();
 
         // Act
@@ -86,7 +86,7 @@ public class JsonCovariateConfigurationTest {
     @Test
     public void isNotValidForInvalidFiles() {
         // Arrange
-        List<JsonDisease> expectedDiseases = new ArrayList<>();
+        List<JsonModelDisease> expectedDiseases = new ArrayList<>();
         JsonCovariateFile mockFile = mock(JsonCovariateFile.class);
         when(mockFile.isValid()).thenReturn(false);
         List<JsonCovariateFile> expectedFiles = Arrays.asList(mockFile);
@@ -101,9 +101,9 @@ public class JsonCovariateConfigurationTest {
     @Test
     public void isNotValidForDuplicateDiseases() {
         // Arrange
-        JsonDisease mockDisease = mock(JsonDisease.class);
+        JsonModelDisease mockDisease = mock(JsonModelDisease.class);
         when(mockDisease.getId()).thenReturn(1);
-        List<JsonDisease> expectedDiseases = Arrays.asList(mockDisease, mockDisease);
+        List<JsonModelDisease> expectedDiseases = Arrays.asList(mockDisease, mockDisease);
         List<JsonCovariateFile> expectedFiles = new ArrayList<>();
 
         // Act
@@ -116,7 +116,7 @@ public class JsonCovariateConfigurationTest {
     @Test
     public void isNotValidForDuplicateFiles() {
         // Arrange
-        List<JsonDisease> expectedDiseases = new ArrayList<>();
+        List<JsonModelDisease> expectedDiseases = new ArrayList<>();
         JsonCovariateFile mockFile = mock(JsonCovariateFile.class);
         when(mockFile.getPath()).thenReturn("foo");
         List<JsonCovariateFile> expectedFiles = Arrays.asList(mockFile, mockFile);
@@ -131,7 +131,7 @@ public class JsonCovariateConfigurationTest {
     @Test
     public void isNotValidForBrokenDiseaseIdReferences() {
         // Arrange
-        List<JsonDisease> expectedDiseases = new ArrayList<>();
+        List<JsonModelDisease> expectedDiseases = new ArrayList<>();
         JsonCovariateFile mockFile = mock(JsonCovariateFile.class);
         when(mockFile.getEnabled()).thenReturn(Arrays.asList(1));
         List<JsonCovariateFile> expectedFiles = Arrays.asList(mockFile);

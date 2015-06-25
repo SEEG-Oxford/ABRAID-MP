@@ -130,3 +130,4 @@ public class JsonCovariateFile {
     ///COVERAGE:ON
     ///CHECKSTYLE:ON
 }
+

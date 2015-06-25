@@ -1,9 +1,12 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.covariates;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateConfiguration;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateFile;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.CovariateService;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -27,19 +30,21 @@ public class CovariatesControllerValidator {
     private static final String FAIL_FILE_ALREADY_EXISTS = "File already exists.";
     private static final String FAIL_TARGET_PATH_NOT_VALID = "Target path not valid.";
 
+    private final CovariateService covariateService;
+
+    @Autowired
+    public CovariatesControllerValidator(CovariateService covariateService) {
+        this.covariateService = covariateService;
+    }
+
     /**
      * Validate the user input from a covariate upload.
      * @param name Name of the covariate file.
      * @param subdirectory The directory to add the file to.
      * @param file The covariate file.
-     * @param targetPath The absolute path at which the file should be added.
-     * @param covariateDirectory The absolute path of the covariate directory.
-     * @param covariateConfiguration The current covariate config.
      * @return A set of validation failures.
      */
-    public Collection<String> validateCovariateUpload(String name, String subdirectory, MultipartFile file,
-                                                      String targetPath, String covariateDirectory,
-                                                      JsonCovariateConfiguration covariateConfiguration) {
+    public Collection<String> validateCovariateUpload(String name, String subdirectory, MultipartFile file, String targetPath) {
         List<String> messages = new ArrayList<>();
 
         if (file == null || file.isEmpty()) {
@@ -58,7 +63,7 @@ public class CovariatesControllerValidator {
             messages.add(FAIL_SUBDIRECTORY_NOT_VALID);
         }
 
-        if (!checkCovariateNameUniqueness(name, covariateConfiguration)) {
+        if (!checkCovariateNameUniqueness(name)) {
             messages.add(FAIL_NAME_NOT_UNIQUE);
         }
 
@@ -67,7 +72,7 @@ public class CovariatesControllerValidator {
                 messages.add(FAIL_FILE_ALREADY_EXISTS);
             }
 
-            if (!checkPathUnderCovariateDir(covariateDirectory, targetPath)) {
+            if (!checkPathUnderCovariateDir(covariateService.getCovariateDirectory(), targetPath)) {
                 messages.add(FAIL_TARGET_PATH_NOT_VALID);
             }
         }
@@ -83,8 +88,8 @@ public class CovariatesControllerValidator {
                 subdirectory.contains("//");
     }
 
-    private boolean checkCovariateNameUniqueness(String name, JsonCovariateConfiguration covariateConfiguration) {
-        return !extract(covariateConfiguration.getFiles(), on(JsonCovariateFile.class).getName()).contains(name);
+    private boolean checkCovariateNameUniqueness(String name) {
+        return !extract(covariateService.getAllCovariateFiles(), on(CovariateFile.class).getName()).contains(name);
     }
 
     private boolean checkPathUnderCovariateDir(String covariateDirectory, String path) {

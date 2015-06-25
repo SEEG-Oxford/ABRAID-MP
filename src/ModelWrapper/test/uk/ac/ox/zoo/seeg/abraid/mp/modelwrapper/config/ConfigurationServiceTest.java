@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateFile;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonDisease;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelDisease;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSChecker;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSCheckerImpl;
 
@@ -680,9 +680,9 @@ public class ConfigurationServiceTest {
     }
 
     private void sortConfig(JsonCovariateConfiguration conf) {
-        Collections.sort(conf.getDiseases(), new Comparator<JsonDisease>() {
+        Collections.sort(conf.getDiseases(), new Comparator<JsonModelDisease>() {
             @Override
-            public int compare(JsonDisease o1, JsonDisease o2) {
+            public int compare(JsonModelDisease o1, JsonModelDisease o2) {
                 return Integer.compare(o1.getId(), o2.getId());
             }
         });
@@ -852,8 +852,8 @@ public class ConfigurationServiceTest {
     private static JsonCovariateConfiguration createJsonCovariateConfig() {
         JsonCovariateConfiguration conf = new JsonCovariateConfiguration();
         conf.setDiseases(Arrays.asList(
-                new JsonDisease(64, "Cholera"),
-                new JsonDisease(22, "Ascariasis")
+                new JsonModelDisease(64, true, "Cholera", "chol"),
+                new JsonModelDisease(22, true, "Ascariasis", "asc")
         ));
         conf.setFiles(Arrays.asList(
                 new JsonCovariateFile("f2", "", null, true, new ArrayList<Integer>()),

@@ -3,9 +3,9 @@
     Copyright (c) 2014 University of Oxford
 -->
 <#import "../layout/common.ftl" as c/>
-<#import "shared/layout/form.ftl" as f/>
-<#import "shared/layout/table.ftl" as t/>
-<#import "shared/layout/panel.ftl" as p/>
+<#import "../shared/layout/form.ftl" as f/>
+<#import "../shared/layout/table.ftl" as t/>
+<#import "../shared/layout/panel.ftl" as p/>
 <#assign bootstrapData>
     <script type="text/javascript">
         // bootstrapped data for js viewmodels

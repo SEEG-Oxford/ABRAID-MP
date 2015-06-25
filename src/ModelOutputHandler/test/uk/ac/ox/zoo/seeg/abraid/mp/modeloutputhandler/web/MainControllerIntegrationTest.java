@@ -400,7 +400,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
             @Override
             public int compare(EffectCurveCovariateInfluence o1, EffectCurveCovariateInfluence o2) {
                 return new CompareToBuilder()
-                        .append(o1.getCovariateFilePath(), o2.getCovariateFilePath())
+                        .append(o1.getCovariateFile().getFile(), o2.getCovariateFile().getFile())
                         .append(o1.getCovariateValue(), o2.getCovariateValue())
                         .toComparison();
             }

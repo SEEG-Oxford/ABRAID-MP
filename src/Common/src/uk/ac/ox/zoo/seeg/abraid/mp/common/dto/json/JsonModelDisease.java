@@ -21,10 +21,14 @@ public class JsonModelDisease {
     }
 
     public JsonModelDisease(int id, boolean isGlobal, String name, String abbreviation) {
+        this(id, name);
         setGlobal(isGlobal);
+        setAbbreviation(abbreviation);
+    }
+
+    public JsonModelDisease(int id, String name) {
         setId(id);
         setName(name);
-        setAbbreviation(abbreviation);
     }
 
     public JsonModelDisease(DiseaseGroup diseaseGroup) {

@@ -411,34 +411,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     private void appendNewCovariateFiles(
             JsonCovariateConfiguration jsonCovariateConfiguration, String covariateDirectoryLocation) {
-        final Path covariateDirectoryPath = Paths.get(covariateDirectoryLocation);
-        File covariateDirectory = covariateDirectoryPath.toFile();
 
-        if (covariateDirectory.exists()) {
-            Collection<File> files = FileUtils.listFiles(covariateDirectory, null, true);
-            Collection<String> paths = convert(files, new Converter<File, String>() {
-                public String convert(File file) {
-                    Path subPath = covariateDirectoryPath.relativize(file.toPath());
-                    return FilenameUtils.separatorsToUnix(subPath.toString());
-                }
-            });
-
-            Collection<JsonCovariateFile> knownFiles = jsonCovariateConfiguration.getFiles();
-            Collection<String> knownPaths = extract(knownFiles, on(JsonCovariateFile.class).getPath());
-
-            paths.remove(COVARIATE_JSON_FILE);
-            paths.removeAll(knownPaths);
-
-            if (paths.size() != 0) {
-                LOGGER.info(String.format(LOG_ADDING_FILES_TO_COVARIATE_CONFIG, paths.size()));
-            }
-
-            knownFiles.addAll(convert(paths, new Converter<String, JsonCovariateFile>() {
-                public JsonCovariateFile convert(String path) {
-                    return new JsonCovariateFile(path, "", null, false, new ArrayList<Integer>());
-                }
-            }));
-        }
     }
 
     private String findDefaultR() throws ConfigurationException {

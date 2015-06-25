@@ -143,7 +143,9 @@ public class ModelRunDetailsControllerTest {
     public void getCovariateInfluencesReturnsExpectedJson() throws Exception {
         // Arrange
         String name = "modelRun7";
-        CovariateInfluence covariateInfluence = new CovariateInfluence("Name", 12.3);
+        CovariateFile covariateFile = mock(CovariateFile.class);
+        when(covariateFile.getName()).thenReturn("Name");
+        CovariateInfluence covariateInfluence = new CovariateInfluence(covariateFile, 12.3);
         ModelRun modelRun = mockCompletedModelRunWithCovariates(Arrays.asList(covariateInfluence));
         ModelRunService modelRunService = mockModelRunService(name, modelRun);
         ModelRunDetailsController controller = new ModelRunDetailsController(modelRunService);
@@ -214,7 +216,9 @@ public class ModelRunDetailsControllerTest {
         // Arrange
         String name = "modelRun7";
         EffectCurveCovariateInfluence covariateInfluence = new EffectCurveCovariateInfluence();
-        covariateInfluence.setCovariateDisplayName("Display name");
+        CovariateFile covariateFile = mock(CovariateFile.class);
+        when(covariateFile.getName()).thenReturn("Display name");
+        covariateInfluence.setCovariateFile(covariateFile);
         covariateInfluence.setCovariateValue(1.23);
         covariateInfluence.setLowerQuantile(2.3);
         covariateInfluence.setUpperQuantile(3.2);

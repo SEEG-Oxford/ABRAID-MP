@@ -15,6 +15,9 @@
 
     <!-- Core services -->
     <bean id="alertService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.AlertServiceImpl" autowire="constructor"/>
+    <bean id="covariateService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.CovariateServiceImpl" autowire="constructor">
+        <constructor-arg name="covariateDirectory" value="${abraid.base.dir}/covariates" />
+    </bean>
     <bean id="diseaseService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseServiceImpl" autowire="constructor">
         <constructor-arg name="maxDaysOnValidator" value="${max.days.for.occurrences.on.validator}" />
         <constructor-arg name="daysBetweenModelRuns" value="${days.between.model.runs}" />
@@ -52,9 +55,6 @@
 
     <!-- Web services -->
     <bean id="modelWrapperWebService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelWrapperWebService" autowire="constructor" />
-    <bean id="modelWrapperWebServiceAsyncWrapper" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelWrapperWebServiceAsyncWrapper" autowire="constructor" >
-        <constructor-arg name="modelWrapperUrlCollection" ref="modelWrapperUrls" />
-    </bean>
 
     <bean id="machineLearningWebService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.MachineLearningWebService" autowire="constructor">
         <constructor-arg name="rootUrl" value="${machinelearning.root.url}"/>

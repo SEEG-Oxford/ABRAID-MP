@@ -39,7 +39,7 @@ public class CovariateFile {
     @Column
     private String info;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "disease_group_covariate_file",
             joinColumns = @JoinColumn(name = "covariate_file_id"),
             inverseJoinColumns = @JoinColumn(name = "disease_group_id"))

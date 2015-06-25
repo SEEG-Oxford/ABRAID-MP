@@ -98,6 +98,7 @@
 
     <bean id="diseaseOccurrenceSpreadHelper" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.DiseaseOccurrenceSpreadHelper" autowire="constructor" />
 
+    <bean id="covariatesControllerHelper" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.covariates.CovariatesControllerHelper" autowire="constructor" />
     <bean id="covariatesControllerValidator" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.covariates.CovariatesControllerValidator" autowire="constructor" />
 
     <mvc:default-servlet-handler/>

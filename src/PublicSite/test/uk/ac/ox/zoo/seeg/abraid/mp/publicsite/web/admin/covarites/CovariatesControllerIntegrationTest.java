@@ -22,9 +22,10 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateFile;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonDisease;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelDisease;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.CovariateService;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.AbstractPublicSiteIntegrationTests;
+import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.covariates.CovariatesControllerHelper;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.SpringockitoWebContextLoader;
 
 import java.io.File;
@@ -52,7 +53,7 @@ public class CovariatesControllerIntegrationTest extends AbstractPublicSiteInteg
 
     @ReplaceWithMock
     @Autowired
-    private CovariateService covariateService;
+    private CovariatesControllerHelper covariatesControllerHelper;
 
     @Autowired
     private FreeMarkerConfigurer freemarkerConfig;
@@ -75,9 +76,9 @@ public class CovariatesControllerIntegrationTest extends AbstractPublicSiteInteg
     @Test
     public void covariatesPageReturnsCorrectContent() throws Exception {
         // Arrange
-        when(covariateService.getCovariateConfiguration()).thenReturn(new JsonCovariateConfiguration());
-        covariateService.getCovariateConfiguration().setFiles(new ArrayList<JsonCovariateFile>());
-        covariateService.getCovariateConfiguration().setDiseases(new ArrayList<JsonDisease>());
+        when(covariatesControllerHelper.getCovariateConfiguration()).thenReturn(new JsonCovariateConfiguration());
+        covariatesControllerHelper.getCovariateConfiguration().setFiles(new ArrayList<JsonCovariateFile>());
+        covariatesControllerHelper.getCovariateConfiguration().setDiseases(new ArrayList<JsonModelDisease>());
         String expectedJavaScript = "var initialData = {\"diseases\":[],\"files\":[]};";
 
         // Act
@@ -91,9 +92,9 @@ public class CovariatesControllerIntegrationTest extends AbstractPublicSiteInteg
 
     @Test
     public void covariatesPageOnlyAcceptsGET() throws Exception {
-        when(covariateService.getCovariateConfiguration()).thenReturn(new JsonCovariateConfiguration());
-        covariateService.getCovariateConfiguration().setFiles(new ArrayList<JsonCovariateFile>());
-        covariateService.getCovariateConfiguration().setDiseases(new ArrayList<JsonDisease>());
+        when(covariatesControllerHelper.getCovariateConfiguration()).thenReturn(new JsonCovariateConfiguration());
+        covariatesControllerHelper.getCovariateConfiguration().setFiles(new ArrayList<JsonCovariateFile>());
+        covariatesControllerHelper.getCovariateConfiguration().setDiseases(new ArrayList<JsonModelDisease>());
 
         this.mockMvc.perform(get("/covariates")).andExpect(status().isOk());
         this.mockMvc.perform(post("/covariates")).andExpect(status().isMethodNotAllowed());

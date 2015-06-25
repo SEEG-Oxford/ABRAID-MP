@@ -7,7 +7,7 @@ import org.joda.time.LocalDateTime;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateFile;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonDisease;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelDisease;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ConfigurationService;
 
 import java.io.IOException;
@@ -81,7 +81,7 @@ public class RunConfigurationFactoryTest {
 
     private void setupExpectedCovariateConfiguration(ConfigurationService configurationService) throws Exception {
         JsonCovariateConfiguration expectedCovariates = new JsonCovariateConfiguration(
-                new ArrayList<JsonDisease>(), Arrays.asList(
+                new ArrayList<JsonModelDisease>(), Arrays.asList(
                     new JsonCovariateFile("covariateFile", "covariateFileName", null, false, Arrays.asList(1))
         ));
         when(configurationService.getCovariateConfiguration()).thenReturn(expectedCovariates);
@@ -137,7 +137,7 @@ public class RunConfigurationFactoryTest {
         ConfigurationService configurationService = mock(ConfigurationService.class);
         setupMinimumConfig(configurationService);
         JsonCovariateConfiguration expectedCovariates =
-                new JsonCovariateConfiguration(new ArrayList<JsonDisease>(), Arrays.asList(
+                new JsonCovariateConfiguration(new ArrayList<JsonModelDisease>(), Arrays.asList(
                         new JsonCovariateFile("path1", "", "", false, Arrays.asList(1, 2, 3)),
                         new JsonCovariateFile("path2", "", "", true, Arrays.asList(1, 2, 3)),
                         new JsonCovariateFile("path3", "", "", false, Arrays.asList(2, 3)),
@@ -159,7 +159,7 @@ public class RunConfigurationFactoryTest {
         when(configurationService.getCacheDirectory()).thenReturn("");
         when(configurationService.getRExecutablePath()).thenReturn("");
         when(configurationService.getCovariateConfiguration()).thenReturn(
-                new JsonCovariateConfiguration(new ArrayList<JsonDisease>(), new ArrayList<JsonCovariateFile>()));
+                new JsonCovariateConfiguration(new ArrayList<JsonModelDisease>(), new ArrayList<JsonCovariateFile>()));
     }
 }
 

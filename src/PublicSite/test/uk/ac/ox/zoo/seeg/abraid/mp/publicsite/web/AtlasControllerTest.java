@@ -134,7 +134,12 @@ public class AtlasControllerTest {
         when(modelRun1.getName()).thenReturn("Model Run 1");
         when(modelRun2.getName()).thenReturn("Model Run 2");
         when(modelRun3.getName()).thenReturn("Model Run 3");
-        when(modelRun1.getCovariateInfluences()).thenReturn(Arrays.asList(new CovariateInfluence("Name", 20.2)));
+        CovariateInfluence covariateInfluence = mock(CovariateInfluence.class);
+        when(covariateInfluence.getMeanInfluence()).thenReturn(20.2);
+        CovariateFile covariateFile = mock(CovariateFile.class);
+        when(covariateInfluence.getCovariateFile()).thenReturn(covariateFile);
+        when(covariateFile.getName()).thenReturn("Name");
+        when(modelRun1.getCovariateInfluences()).thenReturn(Arrays.asList(covariateInfluence));
         when(modelRun2.getCovariateInfluences()).thenReturn(new ArrayList<CovariateInfluence>());
         when(modelRun3.getCovariateInfluences()).thenReturn(new ArrayList<CovariateInfluence>());
         when(modelRun1.getSubmodelStatistics()).thenReturn(Arrays.asList(new SubmodelStatistic(0.4, 0.5, 0.6, 0.7, 0.8)));

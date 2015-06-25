@@ -29,22 +29,22 @@ public class JsonCovariateConfiguration {
     private static final String LOG_FILES_ARE_DUPLICATED = "" +
             "Configuration validation failure: One or more files are duplicated.";
 
-    private List<JsonDisease> diseases;
+    private List<JsonModelDisease> diseases;
     private List<JsonCovariateFile> files;
 
     public JsonCovariateConfiguration() {
     }
 
-    public JsonCovariateConfiguration(List<JsonDisease> diseases, List<JsonCovariateFile> files) {
+    public JsonCovariateConfiguration(List<JsonModelDisease> diseases, List<JsonCovariateFile> files) {
         setFiles(files);
         setDiseases(diseases);
     }
 
-    public List<JsonDisease> getDiseases() {
+    public List<JsonModelDisease> getDiseases() {
         return diseases;
     }
 
-    public void setDiseases(List<JsonDisease> diseases) {
+    public void setDiseases(List<JsonModelDisease> diseases) {
         this.diseases = diseases;
     }
 
@@ -81,14 +81,14 @@ public class JsonCovariateConfiguration {
 
     private boolean checkDiseaseUniqueness() {
         // Check uniqueness of diseases
-        boolean valid = with(diseases).distinct(on(JsonDisease.class).getId()).size() == diseases.size();
+        boolean valid = with(diseases).distinct(on(JsonModelDisease.class).getId()).size() == diseases.size();
         LOGGER.assertLog(valid, LOG_DISEASES_ARE_DUPLICATED);
         return valid;
     }
 
     private boolean checkDiseaseReferenceIntegrity() {
         // Check integrity of disease references in file objects
-        Collection<Integer> diseaseIds = with(diseases).extract(on(JsonDisease.class).getId());
+        Collection<Integer> diseaseIds = with(diseases).extract(on(JsonModelDisease.class).getId());
         Collection<Integer> linkedDiseaseIds = flatten(with(files).extract(on(JsonCovariateFile.class).getEnabled()));
         boolean valid = with(linkedDiseaseIds).all(isIn(diseaseIds));
         LOGGER.assertLog(valid, LOG_UNKNOWN_DISEASE_ID_REFERENCED_BY_FILE);
@@ -104,7 +104,7 @@ public class JsonCovariateConfiguration {
     private boolean checkDiseaseSubItems() {
         // Check validity of disease sub items
         // Logs printed in sub items
-        return with(diseases).extract(on(JsonDisease.class).isValid()).all(equalTo(true));
+        return with(diseases).extract(on(JsonModelDisease.class).isValid()).all(equalTo(true));
     }
 
     private boolean checkFilesFieldForNull() {
