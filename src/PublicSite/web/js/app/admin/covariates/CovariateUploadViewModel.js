@@ -10,7 +10,7 @@ define([
     return function (baseUrl, covariatesListViewModel, refresh) {
         var self = this;
 
-        BaseFileFormViewModel.call(self, baseUrl, "covariates/add");
+        BaseFileFormViewModel.call(self, baseUrl, "admin/covariates/add");
         self.buildSubmissionData = function () {
             return {
                 name: self.name(),

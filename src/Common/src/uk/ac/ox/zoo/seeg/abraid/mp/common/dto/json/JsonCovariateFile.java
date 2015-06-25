@@ -1,24 +1,12 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-
 import java.util.List;
-
-import static ch.lambdaj.collection.LambdaCollections.with;
 
 /**
  * A Json DTO for covariate file configuration.
  * Copyright (c) 2014 University of Oxford
  */
 public class JsonCovariateFile {
-    private static final Logger LOGGER = Logger.getLogger(JsonCovariateFile.class);
-    private static final String LOG_PATH_NOT_SPECIFIED =
-            "Configuration validation failure (file): Path not specified.";
-    private static final String LOG_ENABLED_DISEASE_IDS_CONTAINS_DUPLICATES =
-            "Configuration validation failure (file): Enabled disease ids contains duplicates.";
-
     private String path;
     private String name;
     private String info;
@@ -74,30 +62,6 @@ public class JsonCovariateFile {
 
     public void setEnabled(List<Integer> enabled) {
         this.enabled = enabled;
-    }
-
-    /**
-     * Determines if the configuration object is valid.
-     * @return The validity.
-     */
-    @JsonIgnore
-    public boolean isValid() {
-        return
-                checkPathHasValue() &&
-                checkEnabledIdsAreUnique();
-    }
-
-    private boolean checkEnabledIdsAreUnique() {
-        boolean valid;
-        valid = with(enabled).distinct().size() == enabled.size();
-        LOGGER.assertLog(valid, LOG_ENABLED_DISEASE_IDS_CONTAINS_DUPLICATES);
-        return valid;
-    }
-
-    private boolean checkPathHasValue() {
-        boolean valid = StringUtils.isNotEmpty(path);
-        LOGGER.assertLog(valid, LOG_PATH_NOT_SPECIFIED);
-        return valid;
     }
 
     ///COVERAGE:OFF - generated code

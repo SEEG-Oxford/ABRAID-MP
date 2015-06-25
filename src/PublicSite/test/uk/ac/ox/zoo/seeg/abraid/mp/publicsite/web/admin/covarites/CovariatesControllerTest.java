@@ -118,40 +118,40 @@ public class CovariatesControllerTest {
             assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         }
     }
-
-    @Test
-    public void updateCovariatesThrowsIfConfigurationCanNotBeSaved() throws Exception {
-        // Arrange
-        CovariatesControllerHelper covariatesControllerHelper = mock(CovariatesControllerHelper.class);
-        CovariatesController target = new CovariatesController(covariatesControllerHelper, null, new AbraidJsonObjectMapper());
-        JsonCovariateConfiguration conf = mock(JsonCovariateConfiguration.class);
-        when(conf.isValid()).thenReturn(true);
-        doThrow(new IOException()).when(covariatesControllerHelper).setCovariateConfiguration(conf);
-
-        // Act
-        catchException(target).updateCovariates(conf);
-
-        // Assert
-        assertThat(caughtException())
-                .isInstanceOf(IOException.class)
-                .hasMessage("Covariate configuration update failed.");
-    }
-
-    @Test
-    public void updateCovariatesSavedConfiguration() throws Exception {
-        // Arrange
-        CovariatesControllerHelper covariatesControllerHelper = mock(CovariatesControllerHelper.class);
-        CovariatesController target = new CovariatesController(covariatesControllerHelper, null, new AbraidJsonObjectMapper());
-        JsonCovariateConfiguration conf = mock(JsonCovariateConfiguration.class);
-        when(conf.isValid()).thenReturn(true);
-
-        // Act
-        ResponseEntity result = target.updateCovariates(conf);
-
-        // Assert
-        verify(covariatesControllerHelper).setCovariateConfiguration(conf);
-        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
-    }
+//
+//    @Test
+//    public void updateCovariatesThrowsIfConfigurationCanNotBeSaved() throws Exception {
+//        // Arrange
+//        CovariatesControllerHelper covariatesControllerHelper = mock(CovariatesControllerHelper.class);
+//        CovariatesController target = new CovariatesController(covariatesControllerHelper, null, new AbraidJsonObjectMapper());
+//        JsonCovariateConfiguration conf = mock(JsonCovariateConfiguration.class);
+//        when(conf.isValid()).thenReturn(true);
+//        doThrow(new IOException()).when(covariatesControllerHelper).setCovariateConfiguration(conf);
+//
+//        // Act
+//        catchException(target).updateCovariates(conf);
+//
+//        // Assert
+//        assertThat(caughtException())
+//                .isInstanceOf(IOException.class)
+//                .hasMessage("Covariate configuration update failed.");
+//    }
+//
+//    @Test
+//    public void updateCovariatesSavedConfiguration() throws Exception {
+//        // Arrange
+//        CovariatesControllerHelper covariatesControllerHelper = mock(CovariatesControllerHelper.class);
+//        CovariatesController target = new CovariatesController(covariatesControllerHelper, null, new AbraidJsonObjectMapper());
+//        JsonCovariateConfiguration conf = mock(JsonCovariateConfiguration.class);
+//        when(conf.isValid()).thenReturn(true);
+//
+//        // Act
+//        ResponseEntity result = target.updateCovariates(conf);
+//
+//        // Assert
+//        verify(covariatesControllerHelper).setCovariateConfiguration(conf);
+//        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+//    }
 
     @Test
     public void addCovariateFileValidatesItsInputsCorrectly() throws Exception {

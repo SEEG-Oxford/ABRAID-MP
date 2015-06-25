@@ -86,10 +86,12 @@ public class CovariatesController {
     @Secured({ "ROLE_ADMIN" })
     @RequestMapping(value = "/admin/covariates/config",
                     method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity updateCovariates(@RequestBody JsonCovariateConfiguration config) throws IOException  {
-        if (config == null || !config.isValid()) {
+    public ResponseEntity<Collection<String>> updateCovariates(@RequestBody JsonCovariateConfiguration config)
+            throws IOException  {
+        Collection<String> validationMessages = validator.validateCovariateConfiguration(config);
+        if (config == null || !validationMessages.isEmpty()) {
             LOGGER.warn(LOG_INVALID_REQUEST_TO_UPDATE_COVARIATES);
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(validationMessages, HttpStatus.BAD_REQUEST);
         }
 
         try {
@@ -100,7 +102,7 @@ public class CovariatesController {
         }
 
         LOGGER.info(LOG_COVARIATE_CONFIGURATION_UPDATED_SUCCESSFULLY);
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     /**

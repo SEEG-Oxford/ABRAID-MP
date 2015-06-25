@@ -4,7 +4,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Collection;
 
 /**
  * Represents a covariate file.
@@ -19,7 +19,7 @@ import java.util.List;
         ),
         @NamedQuery(
                 name = "getCovariateFilesByDiseaseGroup",
-                query = "from CovariateFile c join c.enabledDiseaseGroups d where d.id=:diseaseGroupId"
+                query = "from CovariateFile c join c.enabledDiseaseGroups d where d.id=:diseaseGroupId and c.hide=false"
         )
 })
 public class CovariateFile {
@@ -44,7 +44,7 @@ public class CovariateFile {
             joinColumns = @JoinColumn(name = "covariate_file_id"),
             inverseJoinColumns = @JoinColumn(name = "disease_group_id"))
     @Fetch(FetchMode.SELECT)
-    private List<DiseaseGroup> enabledDiseaseGroups;
+    private Collection<DiseaseGroup> enabledDiseaseGroups;
 
     public CovariateFile() {
     }
@@ -96,11 +96,11 @@ public class CovariateFile {
         this.info = info;
     }
 
-    public List<DiseaseGroup> getEnabledDiseaseGroups() {
+    public Collection<DiseaseGroup> getEnabledDiseaseGroups() {
         return enabledDiseaseGroups;
     }
 
-    public void setEnabledDiseaseGroups(List<DiseaseGroup> enabledDiseaseGroups) {
+    public void setEnabledDiseaseGroups(Collection<DiseaseGroup> enabledDiseaseGroups) {
         this.enabledDiseaseGroups = enabledDiseaseGroups;
     }
 

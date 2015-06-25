@@ -17,7 +17,7 @@ define([
 
         self.hasUnsavedChanges = ko.observable(false);
 
-        BaseFormViewModel.call(self, true, true, baseUrl, "covariates/config");
+        BaseFormViewModel.call(self, true, true, baseUrl, "admin/covariates/config");
 
         BaseTableViewModel.call(self, initialValue.files, "path", false, [ "name", "path" ], function (file) {
             return new CovariatesListRowViewModel(self, file, self.selectedDisease().id);
@@ -25,7 +25,6 @@ define([
 
         self.buildSubmissionData = function () {
             return {
-                diseases: self.diseases(),
                 files: self.entries()
             };
         };

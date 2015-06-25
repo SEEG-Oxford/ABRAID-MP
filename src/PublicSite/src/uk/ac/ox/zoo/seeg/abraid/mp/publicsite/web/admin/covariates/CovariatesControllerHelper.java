@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
-import java.util.List;
+import java.util.Map;
 
 import static ch.lambdaj.Lambda.*;
 
@@ -66,13 +66,49 @@ public class CovariatesControllerHelper {
 
     @Transactional(rollbackFor = Exception.class)
     public  void setCovariateConfiguration(JsonCovariateConfiguration config) throws IOException {
+        Map<String, CovariateFile> allCovariateFiles =
+                index(covariateService.getAllCovariateFiles(), on(CovariateFile.class).getFile());
+        final Map<Integer, DiseaseGroup> allDiseaseGroups =
+                index(diseaseService.getAllDiseaseGroups(), on(DiseaseGroup.class).getId());
+
+        for (JsonCovariateFile jsonFile : config.getFiles()) {
+            boolean changed = false;
+            CovariateFile dbFile = allCovariateFiles.get(jsonFile.getPath());
+            if (!dbFile.getName().equals(jsonFile.getName())) {
+                dbFile.setName(jsonFile.getName());
+                changed = true;
+            }
+
+            if (!dbFile.getInfo().equals(jsonFile.getInfo())) {
+                dbFile.setInfo(jsonFile.getInfo());
+                changed = true;
+            }
+
+            if (!dbFile.getHide().equals(jsonFile.getHide())) {
+                dbFile.setHide(jsonFile.getHide());
+                changed = true;
+            }
+
+            Collection<DiseaseGroup> enabledDiseases = convert(jsonFile.getEnabled(), new Converter<Integer, DiseaseGroup>() {
+                @Override
+                public DiseaseGroup convert(Integer diseaseGroupId) {
+                    return allDiseaseGroups.get(diseaseGroupId);
+                }
+            });
+
+            if (!dbFile.getEnabledDiseaseGroups().equals(enabledDiseases)) {
+                dbFile.setEnabledDiseaseGroups(enabledDiseases);
+                changed = true;
+            }
+
+            if (changed) {
+                covariateService.saveCovariateFile(dbFile);
+            }
+        }
     }
 
     public void saveNewCovariateFile(String name, String path, MultipartFile file) throws IOException {
-        String covariateDirectory = covariateService.getCovariateDirectory();
         writeCovariateFileToDisk(file, path);
-
-        // Add the entry in the covariate config
         addCovariateToDatabase(name, path);
     }
 
@@ -105,10 +141,6 @@ public class CovariatesControllerHelper {
             Collection<String> knownPaths = extract(knownFiles, on(CovariateFile.class).getFile());
 
             paths.removeAll(knownPaths);
-
-            if (paths.size() != 0) {
-                LOGGER.info(String.format(LOG_ADDING_FILES_TO_COVARIATE_CONFIG, paths.size()));
-            }
 
             for (String path : paths) {
                 addCovariateToDatabase("", path);
