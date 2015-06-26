@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * Integration test for the covariates controller.
- * Copyright (c) 2014 University of Oxford
+ * Copyright (c) 2015 University of Oxford
  */
 @ContextConfiguration(loader = SpringockitoWebContextLoader.class, locations = {
         "file:PublicSite/web/WEB-INF/abraid-servlet-beans.xml",
