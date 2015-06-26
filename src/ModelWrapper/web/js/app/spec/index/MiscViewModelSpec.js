@@ -43,7 +43,7 @@ define([
                 // Act
                 var vm = new MiscViewModel({
                     rPath: "expectedInitialRPath",
-                    runDuration: "expectedInitialRunDuration",
+                    runDuration: "expectedInitialRunDuration"
                 }, "expectedBaseUrl");
 
                 // Assert

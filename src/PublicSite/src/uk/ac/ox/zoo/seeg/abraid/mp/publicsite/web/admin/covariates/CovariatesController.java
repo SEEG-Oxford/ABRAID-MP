@@ -96,7 +96,7 @@ public class CovariatesController {
 
         try {
             covariatesControllerHelper.setCovariateConfiguration(config);
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOGGER.error(LOG_COVARIATE_CONFIGURATION_UPDATE_FAILED); // Exception already logged at lower level
             throw new IOException(LOG_COVARIATE_CONFIGURATION_UPDATE_FAILED, e);
         }

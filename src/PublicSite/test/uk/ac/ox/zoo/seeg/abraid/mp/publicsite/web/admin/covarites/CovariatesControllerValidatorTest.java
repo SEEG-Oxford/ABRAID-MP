@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.covarites;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
@@ -7,6 +8,7 @@ import org.junit.rules.TemporaryFolder;
  * Tests for CovariatesControllerValidator.
  * Copyright (c) 2014 University of Oxford
  */
+@Ignore
 public class CovariatesControllerValidatorTest {
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder(); ///CHECKSTYLE:SUPPRESS VisibilityModifier

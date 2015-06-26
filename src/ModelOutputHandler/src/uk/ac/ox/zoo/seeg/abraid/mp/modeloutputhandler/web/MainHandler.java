@@ -212,7 +212,8 @@ public class MainHandler {
                                 CovariateFile covariate =
                                         covariateService.getCovariateFileByPath(csv.getCovariateFilePath());
                                 if (covariate == null) {
-                                    throw new RuntimeException(UNKNOWN_COVARIATE_FILE_REFERENCED);
+                                    throw new RuntimeException(String.format(
+                                            UNKNOWN_COVARIATE_FILE_REFERENCED, csv.getCovariateFilePath()));
                                 }
                                 return new CovariateInfluence(covariate, csv, modelRun);
                             }
@@ -239,7 +240,8 @@ public class MainHandler {
                                 CovariateFile covariate =
                                         covariateService.getCovariateFileByPath(csv.getCovariateFilePath());
                                 if (covariate == null) {
-                                    throw new RuntimeException(UNKNOWN_COVARIATE_FILE_REFERENCED);
+                                    throw new RuntimeException(String.format(
+                                            UNKNOWN_COVARIATE_FILE_REFERENCED, csv.getCovariateFilePath()));
                                 }
                                 return new EffectCurveCovariateInfluence(covariate, csv, modelRun);
                             }

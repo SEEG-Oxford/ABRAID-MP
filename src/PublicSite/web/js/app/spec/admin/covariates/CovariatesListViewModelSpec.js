@@ -160,8 +160,8 @@ define([
                 vm.submit();
 
                 var request = jasmine.Ajax.requests.mostRecent();
-                expect(request.url).toBe("raboof" + "covariates/config");
-                expect(request.params).toEqual(JSON.stringify({ "diseases": "foo", "files": "bar" }));
+                expect(request.url).toBe("raboof" + "admin/covariates/config");
+                expect(request.params).toEqual(JSON.stringify({ "files": "bar" }));
                 expect(request.method).toBe("POST");
                 expect(request.requestHeaders["Content-Type"]).toBe("application/json");
                 request.response({ status: 204 });

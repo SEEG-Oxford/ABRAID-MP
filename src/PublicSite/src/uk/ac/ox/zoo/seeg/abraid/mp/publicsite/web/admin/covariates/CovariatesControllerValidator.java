@@ -54,9 +54,11 @@ public class CovariatesControllerValidator {
      * @param name Name of the covariate file.
      * @param subdirectory The directory to add the file to.
      * @param file The covariate file.
+     * @param targetPath The location to store the file.
      * @return A set of validation failures.
      */
-    public Collection<String> validateCovariateUpload(String name, String subdirectory, MultipartFile file, String targetPath) {
+    public Collection<String> validateCovariateUpload(
+            String name, String subdirectory, MultipartFile file, String targetPath) {
         List<String> messages = new ArrayList<>();
 
         if (file == null || file.isEmpty()) {
@@ -114,8 +116,9 @@ public class CovariatesControllerValidator {
     }
 
     /**
-     * Determines if the configuration object is valid.
-     * @return The validity.
+     * Validate the user input from a covariate configuration change.
+     * @param config The new configuration.
+     * @return A set of validation failures.
      */
     public Collection<String> validateCovariateConfiguration(JsonCovariateConfiguration config) {
         List<String> messages = new ArrayList<>();
@@ -143,10 +146,10 @@ public class CovariatesControllerValidator {
     }
 
     private boolean checkFilePaths(JsonCovariateConfiguration config) {
-        LambdaList<String> knownFiles =
-                with(covariateService.getAllCovariateFiles()).extract(on(CovariateFile.class).getFile());
-        LambdaList<String> configFiles =
-                with(config.getFiles()).extract(on(JsonCovariateFile.class).getPath());
+        LambdaList<String> knownFiles = with(covariateService.getAllCovariateFiles())
+                .extract(on(CovariateFile.class).getFile()).sort(on(String.class));
+        LambdaList<String> configFiles = with(config.getFiles())
+                .extract(on(JsonCovariateFile.class).getPath()).sort(on(String.class));
         return knownFiles.equals(configFiles);
     }
 

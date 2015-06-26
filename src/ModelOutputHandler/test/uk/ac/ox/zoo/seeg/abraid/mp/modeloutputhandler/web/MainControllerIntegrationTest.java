@@ -385,8 +385,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
             }
         });
 
-        assertThat(extractProperty("covariateFilePath").from(database)).isEqualTo(extractProperty("covariateFilePath").from(file));
-        assertThat(extractProperty("covariateDisplayName").from(database)).isEqualTo(extractProperty("covariateDisplayName").from(file));
+        assertThat(extractProperty("file").from(extractProperty("covariateFile").from(database))).isEqualTo(extractProperty("covariateFilePath").from(file));
         assertThat(extractProperty("meanInfluence").from(database)).isEqualTo(extractProperty("meanInfluence").from(file));
         assertThat(extractProperty("upperQuantile").from(database)).isEqualTo(extractProperty("upperQuantile").from(file));
         assertThat(extractProperty("lowerQuantile").from(database)).isEqualTo(extractProperty("lowerQuantile").from(file));
@@ -416,8 +415,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
             }
         });
 
-        assertThat(extractProperty("covariateFilePath").from(database)).isEqualTo(extractProperty("covariateFilePath").from(file));
-        assertThat(extractProperty("covariateDisplayName").from(database)).isEqualTo(extractProperty("covariateDisplayName").from(file));
+        assertThat(extractProperty("file").from(extractProperty("covariateFile").from(database))).isEqualTo(extractProperty("covariateFilePath").from(file));
         assertThat(extractProperty("covariateValue").from(database)).isEqualTo(extractProperty("covariateValue").from(file));
         assertThat(extractProperty("meanInfluence").from(database)).isEqualTo(extractProperty("meanInfluence").from(file));
         assertThat(extractProperty("upperQuantile").from(database)).isEqualTo(extractProperty("upperQuantile").from(file));

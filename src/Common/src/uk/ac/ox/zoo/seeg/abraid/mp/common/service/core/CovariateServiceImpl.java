@@ -21,28 +21,50 @@ public class CovariateServiceImpl implements CovariateService {
         this.covariateFileDao = covariateFileDao;
     }
 
+    /**
+     * Gets the directory in which covariate files are stored.
+     * @return The covariate directory.
+     */
+    @Override
+    public String getCovariateDirectory() {
+        return covariateDirectory;
+    }
+
+    /**
+     * Gets all covariate files.
+     * @return All covariate files.
+     */
     @Override
     public List<CovariateFile> getAllCovariateFiles() {
         return covariateFileDao.getAll();
     }
 
+    /**
+     * Gets all of covariate files for a given disease group.
+     * @param diseaseGroup The disease group.
+     * @return All covariate files.
+     */
     @Override
     public List<CovariateFile> getCovariateFilesByDiseaseGroup(DiseaseGroup diseaseGroup) {
         return covariateFileDao.getCovariateFilesByDiseaseGroup(diseaseGroup);
     }
 
+    /**
+     * Gets a covariate file by path.
+     * @param path The path.
+     * @return The covariate file with the specified path, or null if not found.
+     */
     @Override
     public CovariateFile getCovariateFileByPath(String path) {
         return covariateFileDao.getByFilePath(path);
     }
 
+    /**
+     * Saves the specified covariate file.
+     * @param covariateFile The covariate file to save.
+     */
     @Override
     public void saveCovariateFile(CovariateFile covariateFile) {
         covariateFileDao.save(covariateFile);
-    }
-
-    @Override
-    public String getCovariateDirectory() {
-        return covariateDirectory;
     }
 }

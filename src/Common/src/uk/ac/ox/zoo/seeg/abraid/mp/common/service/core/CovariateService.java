@@ -36,5 +36,9 @@ public interface CovariateService {
      */
     void saveCovariateFile(CovariateFile covariateFile);
 
+    /**
+     * Gets the directory in which covariate files are stored.
+     * @return The covariate directory.
+     */
     String getCovariateDirectory();
 }

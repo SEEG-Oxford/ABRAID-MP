@@ -1,24 +1,16 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config;
 
-import ch.lambdaj.function.convert.Converter;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.FileConfiguration;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateConfiguration;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSChecker;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collection;
-
-import static ch.lambdaj.Lambda.*;
 
 /**
  * Service class for configuration data.
@@ -336,33 +328,6 @@ public class ConfigurationServiceImpl implements ConfigurationService {
      */
     @Override
     public JsonCovariateConfiguration getCovariateConfiguration() throws IOException {
-        String covariateDirectory = getCovariateDirectory();
-        Path configPath = Paths.get(covariateDirectory, COVARIATE_JSON_FILE);
-        File configFile = configPath.toFile();
-
-//        ObjectMapper jsonConverter = new CovariateObjectMapper();
-//        JsonCovariateConfiguration jsonCovariateConfiguration;
-//        try {
-//            if (configFile.exists()) {
-//                jsonCovariateConfiguration =
-//                        jsonConverter.readValue(configFile, JsonCovariateConfiguration.class);
-//            } else {
-//                LOGGER.info(String.format(LOG_USING_DEFAULT_COVARIATE_CONFIG, defaultCovariateConfig.toString()));
-//                jsonCovariateConfiguration =
-//                        jsonConverter.readValue(defaultCovariateConfig, JsonCovariateConfiguration.class);
-//            }
-//        } catch (IOException e) {
-//            LOGGER.error(LOG_COULD_NOT_READ_COVARIATE_CONFIG, e);
-//            throw new IOException(LOG_COULD_NOT_READ_COVARIATE_CONFIG, e);
-//        }
-//
-//        appendNewCovariateFiles(jsonCovariateConfiguration, covariateDirectory);
-//
-//        if (!jsonCovariateConfiguration.isValid()) {
-//            LOGGER.error(LOG_INVALID_COVARIATE_CONFIG);
-//            throw new IOException(LOG_INVALID_COVARIATE_CONFIG);
-//        }
-//        return jsonCovariateConfiguration;
         return null;
     }
 
@@ -373,45 +338,11 @@ public class ConfigurationServiceImpl implements ConfigurationService {
      */
     @Override
     public void setCovariateConfiguration(JsonCovariateConfiguration config) throws IOException {
-        String covariateDirectoryLocation = getCovariateDirectory();
-        File covariateDirectory = Paths.get(covariateDirectoryLocation).toFile();
-        if (!covariateDirectory.isDirectory() && !covariateDirectory.mkdirs()) {
-            LOGGER.error(String.format(LOG_COVARIATE_DIR_CREATION_FAIL, covariateDirectoryLocation));
-            throw new IOException(String.format(LOG_COVARIATE_DIR_CREATION_FAIL, covariateDirectoryLocation));
-        }
-
-        Path configPath = Paths.get(covariateDirectoryLocation, COVARIATE_JSON_FILE);
-        File configFile = configPath.toFile();
-//
-//        ObjectMapper jsonConverter = new CovariateObjectMapper();
-//        jsonConverter.configure(SerializationFeature.INDENT_OUTPUT, true);
-//
-//        if (configFile.exists() && !configFile.delete()) {
-//            LOGGER.error(String.format(LOG_OLD_COVARIATE_CONFIG_REMOVAL_FAIL, configFile.toString()));
-//            throw new IOException(String.format(LOG_OLD_COVARIATE_CONFIG_REMOVAL_FAIL, configFile.toString()));
-//        }
-//
-//        try {
-//            // Ensure sort order
-//            config.setDiseases(with(config.getDiseases()).sort(on(JsonDisease.class).getId()));
-//            config.setFiles(with(config.getFiles()).sort(on(JsonCovariateFile.class).getPath()));
-//
-//            // Save
-//            jsonConverter.writeValue(configFile, config);
-//        } catch (IOException e) {
-//            LOGGER.error(String.format(LOG_WRITING_COVARIATE_CONFIG_FAIL, configFile.toString()), e);
-//            throw new IOException(String.format(LOG_WRITING_COVARIATE_CONFIG_FAIL, configFile.toString()), e);
-//        }
     }
 
     @Override
     public String getModelOutputHandlerRootUrl() {
         return basicProperties.getString(MODEL_OUTPUT_HANDLER_ROOT_URL_KEY);
-    }
-
-    private void appendNewCovariateFiles(
-            JsonCovariateConfiguration jsonCovariateConfiguration, String covariateDirectoryLocation) {
-
     }
 
     private String findDefaultR() throws ConfigurationException {

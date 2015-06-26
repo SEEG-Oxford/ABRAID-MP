@@ -10,11 +10,13 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelDisease;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSChecker;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSCheckerImpl;
 
 import java.io.*;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
@@ -608,225 +610,225 @@ public class ConfigurationServiceTest {
         // Assert
         assertThat(result).isEqualTo(expectedValue);
     }
+//
+//    @Test
+//    public void getCovariateDirectoryReturnsCorrectDefault() throws Exception {
+//        // Arrange
+//        File testFile = testFolder.newFile();
+//        writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
+//        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, new OSCheckerImpl());
+//
+//        // Act
+//        String result = target.getCovariateDirectory();
+//
+//        // Assert
+//        assertThat(new File(result).getParentFile().getAbsolutePath()).isEqualTo(target.getCacheDirectory());
+//        assertThat(new File(result).getName()).isEqualTo("covariates");
+//    }
+//
+//    @Test
+//    public void getCovariateDirectoryReturnsCorrectValue() throws Exception {
+//        // Arrange
+//        File testFile = testFolder.newFile();
+//        String expectedValue = "foo";
+//        writeStandardSimplePropertiesWithExtra(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4", "covariate.dir", expectedValue);
+//        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, mock(OSChecker.class));
+//
+//        // Act
+//        String result = target.getCovariateDirectory();
+//
+//        // Assert
+//        assertThat(result).isEqualTo(expectedValue);
+//    }
+//
+//    @Test
+//    public void setCovariateDirectoryUpdatesFile() throws Exception {
+//        // Arrange
+//        File testFile = testFolder.newFile();
+//        writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
+//        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, null);
+//
+//        String expectedValue = "bar";
+//
+//        // Act
+//        target.setCovariateDirectory(expectedValue);
+//
+//        // Assert
+//        assertThat(FileUtils.readFileToString(testFile)).contains("covariate.dir = " + expectedValue);
+//    }
 
-    @Test
-    public void getCovariateDirectoryReturnsCorrectDefault() throws Exception {
-        // Arrange
-        File testFile = testFolder.newFile();
-        writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, new OSCheckerImpl());
+//    @Test
+//    public void getCovariateConfigurationReturnsCorrectObject() throws Exception {
+//        // Arrange
+//        File testFile = testFolder.newFile();
+//        File covariateDir = testFolder.newFolder();
+//        writeStandardSimplePropertiesWithExtra(testFile,
+//                "initialValue1", "initialValue2", "initialValue3", "initialValue4",
+//                "covariate.dir", covariateDir.toString());
+//
+//        File confFile = Paths.get(covariateDir.toString(), "abraid.json").toFile();
+//        FileUtils.writeStringToFile(confFile, TEST_COVARIATE_JSON);
+//
+//        JsonCovariateConfiguration conf = createJsonCovariateConfig();
+//        sortConfig(conf);
+//
+//        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, mock(OSChecker.class));
+//
+//        // Act
+//        JsonCovariateConfiguration result = target.getCovariateConfiguration();
+//
+//        // Assert
+//        assertThat(result).isEqualTo(conf);
+//    }
 
-        // Act
-        String result = target.getCovariateDirectory();
-
-        // Assert
-        assertThat(new File(result).getParentFile().getAbsolutePath()).isEqualTo(target.getCacheDirectory());
-        assertThat(new File(result).getName()).isEqualTo("covariates");
-    }
-
-    @Test
-    public void getCovariateDirectoryReturnsCorrectValue() throws Exception {
-        // Arrange
-        File testFile = testFolder.newFile();
-        String expectedValue = "foo";
-        writeStandardSimplePropertiesWithExtra(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4", "covariate.dir", expectedValue);
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, mock(OSChecker.class));
-
-        // Act
-        String result = target.getCovariateDirectory();
-
-        // Assert
-        assertThat(result).isEqualTo(expectedValue);
-    }
-
-    @Test
-    public void setCovariateDirectoryUpdatesFile() throws Exception {
-        // Arrange
-        File testFile = testFolder.newFile();
-        writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2", "initialValue3", "initialValue4");
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, null);
-
-        String expectedValue = "bar";
-
-        // Act
-        target.setCovariateDirectory(expectedValue);
-
-        // Assert
-        assertThat(FileUtils.readFileToString(testFile)).contains("covariate.dir = " + expectedValue);
-    }
-
-    @Test
-    public void getCovariateConfigurationReturnsCorrectObject() throws Exception {
-        // Arrange
-        File testFile = testFolder.newFile();
-        File covariateDir = testFolder.newFolder();
-        writeStandardSimplePropertiesWithExtra(testFile,
-                "initialValue1", "initialValue2", "initialValue3", "initialValue4",
-                "covariate.dir", covariateDir.toString());
-
-        File confFile = Paths.get(covariateDir.toString(), "abraid.json").toFile();
-        FileUtils.writeStringToFile(confFile, TEST_COVARIATE_JSON);
-
-        JsonCovariateConfiguration conf = createJsonCovariateConfig();
-        sortConfig(conf);
-
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, mock(OSChecker.class));
-
-        // Act
-        JsonCovariateConfiguration result = target.getCovariateConfiguration();
-
-        // Assert
-        assertThat(result).isEqualTo(conf);
-    }
-
-    private void sortConfig(JsonCovariateConfiguration conf) {
-        Collections.sort(conf.getDiseases(), new Comparator<JsonModelDisease>() {
-            @Override
-            public int compare(JsonModelDisease o1, JsonModelDisease o2) {
-                return Integer.compare(o1.getId(), o2.getId());
-            }
-        });
-
-        Collections.sort(conf.getFiles(), new Comparator<JsonCovariateFile>() {
-            @Override
-            public int compare(JsonCovariateFile o1, JsonCovariateFile o2) {
-                return o1.getPath().compareTo(o2.getPath());
-            }
-        });
-    }
-
-    @Test
-    public void getCovariateConfigurationReturnsCorrectFallbackObject() throws Exception {
-        // Arrange
-        File testFile = testFolder.newFile();
-        File covariateDir = testFolder.newFolder();
-        writeStandardSimplePropertiesWithExtra(testFile,
-                "initialValue1", "initialValue2", "initialValue3", "initialValue4",
-                "covariate.dir", "nonsense");
-
-        File confFile = Paths.get(covariateDir.toString(), "abraid.json").toFile();
-        FileUtils.writeStringToFile(confFile, TEST_COVARIATE_JSON);
-
-        JsonCovariateConfiguration conf = createJsonCovariateConfig();
-        sortConfig(conf);
-
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, confFile, mock(OSChecker.class));
-
-        // Act
-        JsonCovariateConfiguration result = target.getCovariateConfiguration();
-
-        // Assert
-        assertThat(result).isEqualTo(conf);
-    }
-
-    @Test
-    public void getCovariateConfigurationAddsNewFilesCorrectly() throws Exception {
-        // Arrange
-        File testFile = testFolder.newFile();
-        File covariateDir = testFolder.newFolder();
-        File covariateConfFile = testFolder.newFile();
-        writeStandardSimplePropertiesWithExtra(testFile,
-                "initialValue1", "initialValue2", "initialValue3", "initialValue4",
-                "covariate.dir", covariateDir.toString());
-
-        FileUtils.writeStringToFile(covariateConfFile, TEST_COVARIATE_JSON);
-
-        FileUtils.writeStringToFile(Paths.get(covariateDir.toString(), "1").toFile(), "foo");
-        FileUtils.writeStringToFile(Paths.get(covariateDir.toString(), "2").toFile(), "foo");
-        FileUtils.writeStringToFile(Paths.get(covariateDir.toString(), "3").toFile(), "foo");
-
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, covariateConfFile, mock(OSChecker.class));
-
-        // Act
-        JsonCovariateConfiguration result = target.getCovariateConfiguration();
-
-        // Assert
-        assertThat(result.getFiles().size()).isEqualTo(2 + 3);
-    }
-
-    @Test
-    public void getCovariateConfigurationThrowsIfFilesNotReadable() throws Exception {
-        // Arrange
-        File testFile = testFolder.newFile();
-        writeStandardSimplePropertiesWithExtra(testFile,
-                "initialValue1", "initialValue2", "initialValue3", "initialValue4",
-                "covariate.dir", "nonsense");
-
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, new File("nonsense"), mock(OSChecker.class));
-
-        // Act
-        catchException(target).getCovariateConfiguration();
-
-        // Assert
-        assertThat(caughtException())
-                .isInstanceOf(IOException.class)
-                .hasMessage("Failed to read and parse covariate config file from disk.");
-    }
-
-    @Test
-    public void getCovariateConfigurationThrowsIfConfigurationNoValid() throws Exception {
-        // Arrange
-        File testFile = testFolder.newFile();
-        File covariateConfFile = testFolder.newFile();
-        writeStandardSimplePropertiesWithExtra(testFile,
-                "initialValue1", "initialValue2", "initialValue3", "initialValue4",
-                "covariate.dir", "nonsense");
-
-        FileUtils.writeStringToFile(covariateConfFile, "{}");
-
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, covariateConfFile, mock(OSChecker.class));
-
-        // Act
-        catchException(target).getCovariateConfiguration();
-
-        // Assert
-        assertThat(caughtException())
-                .isInstanceOf(IOException.class)
-                .hasMessage("Covariate config file on disk is not valid.");
-    }
-
-    @Test
-    public void setCovariateConfigurationWritesFile() throws Exception {
-        // Arrange
-        File testFile = testFolder.newFile();
-        File covariateDir = testFolder.newFolder();
-        writeStandardSimplePropertiesWithExtra(testFile,
-                "initialValue1", "initialValue2", "initialValue3", "initialValue4",
-                "covariate.dir", covariateDir.toString());
-
-        JsonCovariateConfiguration conf = createJsonCovariateConfig();
-
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, mock(OSChecker.class));
-
-        // Act
-        target.setCovariateConfiguration(conf);
-        String result = FileUtils.readFileToString(Paths.get(covariateDir.toString(), "abraid.json").toFile());
-        // In abraid.json the covariates files are sorted by path, and diseases by id. In "conf" they are not sorted.
-
-        // Assert
-        assertThat(result.replaceAll("[\\r\\n]+", "")).isEqualTo(TEST_COVARIATE_JSON.replaceAll("[\\r\\n]+", ""));
-    }
-
-    @Test
-    public void setCovariateConfigurationThrowsIfDirectoryCanNotBeCreated() throws Exception {
-        // Arrange
-        File testFile = testFolder.newFile();
-        File notADir = testFolder.newFile();
-        writeStandardSimplePropertiesWithExtra(testFile,
-                "initialValue1", "initialValue2", "initialValue3", "initialValue4",
-                "covariate.dir", notADir.toString());
-
-        JsonCovariateConfiguration conf = createJsonCovariateConfig();
-        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, mock(OSChecker.class));
-
-        // Act
-        catchException(target).setCovariateConfiguration(conf);
-
-        // Assert
-        assertThat(caughtException())
-                .isInstanceOf(IOException.class)
-                .hasMessageStartingWith("Cannot store covariate config.");
-    }
+//    private void sortConfig(JsonCovariateConfiguration conf) {
+//        Collections.sort(conf.getDiseases(), new Comparator<JsonModelDisease>() {
+//            @Override
+//            public int compare(JsonModelDisease o1, JsonModelDisease o2) {
+//                return Integer.compare(o1.getId(), o2.getId());
+//            }
+//        });
+//
+//        Collections.sort(conf.getFiles(), new Comparator<JsonCovariateFile>() {
+//            @Override
+//            public int compare(JsonCovariateFile o1, JsonCovariateFile o2) {
+//                return o1.getPath().compareTo(o2.getPath());
+//            }
+//        });
+//    }
+//
+//    @Test
+//    public void getCovariateConfigurationReturnsCorrectFallbackObject() throws Exception {
+//        // Arrange
+//        File testFile = testFolder.newFile();
+//        File covariateDir = testFolder.newFolder();
+//        writeStandardSimplePropertiesWithExtra(testFile,
+//                "initialValue1", "initialValue2", "initialValue3", "initialValue4",
+//                "covariate.dir", "nonsense");
+//
+//        File confFile = Paths.get(covariateDir.toString(), "abraid.json").toFile();
+//        FileUtils.writeStringToFile(confFile, TEST_COVARIATE_JSON);
+//
+//        JsonCovariateConfiguration conf = createJsonCovariateConfig();
+//        sortConfig(conf);
+//
+//        ConfigurationService target = new ConfigurationServiceImpl(testFile, confFile, mock(OSChecker.class));
+//
+//        // Act
+//        JsonCovariateConfiguration result = target.getCovariateConfiguration();
+//
+//        // Assert
+//        assertThat(result).isEqualTo(conf);
+//    }
+//
+//    @Test
+////    public void getCovariateConfigurationAddsNewFilesCorrectly() throws Exception {
+//        // Arrange
+//        File testFile = testFolder.newFile();
+//        File covariateDir = testFolder.newFolder();
+//        File covariateConfFile = testFolder.newFile();
+//        writeStandardSimplePropertiesWithExtra(testFile,
+//                "initialValue1", "initialValue2", "initialValue3", "initialValue4",
+//                "covariate.dir", covariateDir.toString());
+//
+//        FileUtils.writeStringToFile(covariateConfFile, TEST_COVARIATE_JSON);
+//
+//        FileUtils.writeStringToFile(Paths.get(covariateDir.toString(), "1").toFile(), "foo");
+//        FileUtils.writeStringToFile(Paths.get(covariateDir.toString(), "2").toFile(), "foo");
+//        FileUtils.writeStringToFile(Paths.get(covariateDir.toString(), "3").toFile(), "foo");
+//
+//        ConfigurationService target = new ConfigurationServiceImpl(testFile, covariateConfFile, mock(OSChecker.class));
+//
+//        // Act
+//        JsonCovariateConfiguration result = target.getCovariateConfiguration();
+//
+//        // Assert
+//        assertThat(result.getFiles().size()).isEqualTo(2 + 3);
+//    }
+//
+////    @Test
+//    public void getCovariateConfigurationThrowsIfFilesNotReadable() throws Exception {
+//        // Arrange
+//        File testFile = testFolder.newFile();
+//        writeStandardSimplePropertiesWithExtra(testFile,
+//                "initialValue1", "initialValue2", "initialValue3", "initialValue4",
+//                "covariate.dir", "nonsense");
+//
+//        ConfigurationService target = new ConfigurationServiceImpl(testFile, new File("nonsense"), mock(OSChecker.class));
+//
+//        // Act
+//        catchException(target).getCovariateConfiguration();
+//
+//        // Assert
+//        assertThat(caughtException())
+//                .isInstanceOf(IOException.class)
+//                .hasMessage("Failed to read and parse covariate config file from disk.");
+//    }
+//
+//    @Test
+//    public void getCovariateConfigurationThrowsIfConfigurationNoValid() throws Exception {
+//        // Arrange
+//        File testFile = testFolder.newFile();
+//        File covariateConfFile = testFolder.newFile();
+//        writeStandardSimplePropertiesWithExtra(testFile,
+//                "initialValue1", "initialValue2", "initialValue3", "initialValue4",
+//                "covariate.dir", "nonsense");
+//
+//        FileUtils.writeStringToFile(covariateConfFile, "{}");
+//
+//        ConfigurationService target = new ConfigurationServiceImpl(testFile, covariateConfFile, mock(OSChecker.class));
+//
+//        // Act
+//        catchException(target).getCovariateConfiguration();
+//
+//        // Assert
+//        assertThat(caughtException())
+//                .isInstanceOf(IOException.class)
+//                .hasMessage("Covariate config file on disk is not valid.");
+//    }
+//
+////    @Test
+////    public void setCovariateConfigurationWritesFile() throws Exception {
+////        // Arrange
+////        File testFile = testFolder.newFile();
+////        File covariateDir = testFolder.newFolder();
+////        writeStandardSimplePropertiesWithExtra(testFile,
+////                "initialValue1", "initialValue2", "initialValue3", "initialValue4",
+////                "covariate.dir", covariateDir.toString());
+////
+////        JsonCovariateConfiguration conf = createJsonCovariateConfig();
+////
+////        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, mock(OSChecker.class));
+////
+////        // Act
+////        target.setCovariateConfiguration(conf);
+////        String result = FileUtils.readFileToString(Paths.get(covariateDir.toString(), "abraid.json").toFile());
+////        // In abraid.json the covariates files are sorted by path, and diseases by id. In "conf" they are not sorted.
+////
+////        // Assert
+////        assertThat(result.replaceAll("[\\r\\n]+", "")).isEqualTo(TEST_COVARIATE_JSON.replaceAll("[\\r\\n]+", ""));
+////    }
+//
+//    @Test
+//    public void setCovariateConfigurationThrowsIfDirectoryCanNotBeCreated() throws Exception {
+//        // Arrange
+//        File testFile = testFolder.newFile();
+//        File notADir = testFolder.newFile();
+//        writeStandardSimplePropertiesWithExtra(testFile,
+//                "initialValue1", "initialValue2", "initialValue3", "initialValue4",
+//                "covariate.dir", notADir.toString());
+//
+//        JsonCovariateConfiguration conf = createJsonCovariateConfig();
+//        ConfigurationService target = new ConfigurationServiceImpl(testFile, null, mock(OSChecker.class));
+//
+//        // Act
+//        catchException(target).setCovariateConfiguration(conf);
+//
+//        // Assert
+//        assertThat(caughtException())
+//                .isInstanceOf(IOException.class)
+//                .hasMessageStartingWith("Cannot store covariate config.");
+//    }
 
     @Test
     public void getModelOutputHandlerRootUrlReturnsCorrectValue() throws Exception {

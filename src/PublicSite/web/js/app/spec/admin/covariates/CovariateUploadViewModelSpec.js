@@ -126,7 +126,7 @@ define([
                     function (CovariateUploadViewModel) {
                         vm = new CovariateUploadViewModel("baseUrl", covariateListVM, refreshSpy);
                         expect(baseSpy.calls.argsFor(0)[0]).toBe("baseUrl");
-                        expect(baseSpy.calls.argsFor(0)[1]).toBe("covariates/add");
+                        expect(baseSpy.calls.argsFor(0)[1]).toBe("admin/covariates/add");
                         done();
                     }
                 );

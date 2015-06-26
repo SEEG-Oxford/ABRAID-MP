@@ -83,7 +83,7 @@ public class CovariatesControllerTest {
         String result = target.showCovariatesPage(model);
 
         // Assert
-        assertThat(result).isEqualTo("covariates");
+        assertThat(result).isEqualTo("admin/covariates");
     }
 
     @Test
@@ -107,9 +107,11 @@ public class CovariatesControllerTest {
     public void updateCovariatesRejectsInvalidInputs() throws Exception {
         // Arrange
         CovariatesControllerHelper covariatesControllerHelper = mock(CovariatesControllerHelper.class);
-        CovariatesController target = new CovariatesController(covariatesControllerHelper, null, new AbraidJsonObjectMapper());
+        CovariatesControllerValidator covariatesControllerValidator = mock(CovariatesControllerValidator.class);
+        CovariatesController target = new CovariatesController(covariatesControllerHelper, covariatesControllerValidator, new AbraidJsonObjectMapper());
         JsonCovariateConfiguration invalidConf = new JsonCovariateConfiguration();
 
+        when(covariatesControllerValidator.validateCovariateConfiguration(any(JsonCovariateConfiguration.class))).thenReturn(Arrays.asList("FAIL1", "FAIL2"));
         for (JsonCovariateConfiguration conf : Arrays.asList(invalidConf, null)) {
             // Act
             ResponseEntity result = target.updateCovariates(conf);
@@ -278,6 +280,167 @@ public class CovariatesControllerTest {
 //        assertThat(covariateFileList.get(0).getPath()).isEqualTo("one/two/dir/file.ext");
 //    }
 
+    //    @Test
+//    public void isValidForCorrectInputs() {
+//        // Arrange
+//        String path = "path";
+//        String name = "name";
+//        String info = "info";
+//        boolean hide = true;
+//        List<Integer> enabled = new ArrayList<>();
+//
+//        // Act
+//        JsonCovariateFile result = new JsonCovariateFile(path, name, info, hide, enabled);
+//
+//        // Assert
+//        assertThat(result.isValid()).isTrue();
+//    }
+//
+//    @Test
+//    public void isNotValidForMissingPath() {
+//        // Arrange
+//        String path = "";
+//        String name = "name";
+//        String info = "info";
+//        boolean hide = true;
+//        List<Integer> enabled = new ArrayList<>();
+//
+//        // Act
+//        JsonCovariateFile result = new JsonCovariateFile(path, name, info, hide, enabled);
+//
+//        // Assert
+//        assertThat(result.isValid()).isFalse();
+//    }
+//
+//    @Test
+//    public void isNotValidForDuplicateEnabledId() {
+//        // Arrange
+//        String path = "path";
+//        String name = "name";
+//        String info = "info";
+//        boolean hide = true;
+//        List<Integer> enabled = Arrays.asList(1, 1);
+//
+//        // Act
+//        JsonCovariateFile result = new JsonCovariateFile(path, name, info, hide, enabled);
+//
+//        // Assert
+//        assertThat(result.isValid()).isFalse();
+//    }
+
+    //    @Test
+//    public void isValidForCorrectInputs() {
+//        // Arrange
+//        List<JsonModelDisease> expectedDiseases = new ArrayList<>();
+//        List<JsonCovariateFile> expectedFiles = new ArrayList<>();
+//
+//        // Act
+//        JsonCovariateConfiguration result = new JsonCovariateConfiguration(expectedDiseases, expectedFiles);
+//
+//        // Assert
+//        assertThat(result.isValid()).isTrue();
+//    }
+//
+//    @Test
+//    public void isNotValidForMissingDiseases() {
+//        // Arrange
+//        List<JsonModelDisease> expectedDiseases = null;
+//        List<JsonCovariateFile> expectedFiles = new ArrayList<>();
+//
+//        // Act
+//        JsonCovariateConfiguration result = new JsonCovariateConfiguration(expectedDiseases, expectedFiles);
+//
+//        // Assert
+//        assertThat(result.isValid()).isFalse();
+//    }
+//
+//    @Test
+//    public void isNotValidForMissingFiles() {
+//        // Arrange
+//        List<JsonModelDisease> expectedDiseases = new ArrayList<>();
+//        List<JsonCovariateFile> expectedFiles = null;
+//
+//        // Act
+//        JsonCovariateConfiguration result = new JsonCovariateConfiguration(expectedDiseases, expectedFiles);
+//
+//        // Assert
+//        assertThat(result.isValid()).isFalse();
+//    }
+//
+//    @Test
+//    public void isNotValidForInvalidDiseases() {
+//        // Arrange
+//        JsonModelDisease mockDisease = mock(JsonModelDisease.class);
+//        when(mockDisease.isValid()).thenReturn(false);
+//        List<JsonModelDisease> expectedDiseases = Arrays.asList(mockDisease);
+//        List<JsonCovariateFile> expectedFiles = new ArrayList<>();
+//
+//        // Act
+//        JsonCovariateConfiguration result = new JsonCovariateConfiguration(expectedDiseases, expectedFiles);
+//
+//        // Assert
+//        assertThat(result.isValid()).isFalse();
+//    }
+//
+//    @Test
+//    public void isNotValidForInvalidFiles() {
+//        // Arrange
+//        List<JsonModelDisease> expectedDiseases = new ArrayList<>();
+//        JsonCovariateFile mockFile = mock(JsonCovariateFile.class);
+//        when(mockFile.isValid()).thenReturn(false);
+//        List<JsonCovariateFile> expectedFiles = Arrays.asList(mockFile);
+//
+//        // Act
+//        JsonCovariateConfiguration result = new JsonCovariateConfiguration(expectedDiseases, expectedFiles);
+//
+//        // Assert
+//        assertThat(result.isValid()).isFalse();
+//    }
+//
+//    @Test
+//    public void isNotValidForDuplicateDiseases() {
+//        // Arrange
+//        JsonModelDisease mockDisease = mock(JsonModelDisease.class);
+//        when(mockDisease.getId()).thenReturn(1);
+//        List<JsonModelDisease> expectedDiseases = Arrays.asList(mockDisease, mockDisease);
+//        List<JsonCovariateFile> expectedFiles = new ArrayList<>();
+//
+//        // Act
+//        JsonCovariateConfiguration result = new JsonCovariateConfiguration(expectedDiseases, expectedFiles);
+//
+//        // Assert
+//        assertThat(result.isValid()).isFalse();
+//    }
+//
+//    @Test
+//    public void isNotValidForDuplicateFiles() {
+//        // Arrange
+//        List<JsonModelDisease> expectedDiseases = new ArrayList<>();
+//        JsonCovariateFile mockFile = mock(JsonCovariateFile.class);
+//        when(mockFile.getPath()).thenReturn("foo");
+//        List<JsonCovariateFile> expectedFiles = Arrays.asList(mockFile, mockFile);
+//
+//        // Act
+//        JsonCovariateConfiguration result = new JsonCovariateConfiguration(expectedDiseases, expectedFiles);
+//
+//        // Assert
+//        assertThat(result.isValid()).isFalse();
+//    }
+//
+//    @Test
+//    public void isNotValidForBrokenDiseaseIdReferences() {
+//        // Arrange
+//        List<JsonModelDisease> expectedDiseases = new ArrayList<>();
+//        JsonCovariateFile mockFile = mock(JsonCovariateFile.class);
+//        when(mockFile.getEnabled()).thenReturn(Arrays.asList(1));
+//        List<JsonCovariateFile> expectedFiles = Arrays.asList(mockFile);
+//
+//        // Act
+//        JsonCovariateConfiguration result = new JsonCovariateConfiguration(expectedDiseases, expectedFiles);
+//
+//        // Assert
+//        assertThat(result.isValid()).isFalse();
+//    }
     @Test
     public void addCovariateFileReturnsAnAppropriateStatusForSuccess() throws Exception {
         // Arrange
@@ -287,12 +450,9 @@ public class CovariatesControllerTest {
         when(expectedFile.getBytes()).thenReturn("Test content".getBytes());
         final String expectedName = "name";
         final String expectedSubdirectory = "dir";
-        final JsonCovariateConfiguration expectedCovariateConf = mock(JsonCovariateConfiguration.class);
         final List<JsonCovariateFile> covariateFileList = new ArrayList<>();
-        when(expectedCovariateConf.getFiles()).thenReturn(covariateFileList);
 
         CovariatesControllerHelper covariatesControllerHelper = mock(CovariatesControllerHelper.class);
-        when(covariatesControllerHelper.getCovariateConfiguration()).thenReturn(expectedCovariateConf);
         when(covariatesControllerHelper.extractTargetPath(expectedSubdirectory, expectedFile)).thenReturn("xyz");
         CovariatesControllerValidator validator = mock(CovariatesControllerValidator.class);
         CovariatesController target = new CovariatesController(covariatesControllerHelper, validator, new AbraidJsonObjectMapper());
@@ -303,7 +463,6 @@ public class CovariatesControllerTest {
         ResponseEntity<JsonFileUploadResponse> result = target.addCovariateFile(expectedName, expectedSubdirectory, expectedFile);
 
         // Assert
-        assertThat(covariateFileList).hasSize(1);
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(result.getBody().getStatus()).isEqualTo("SUCCESS");
         assertThat(result.getBody().getMessages()).hasSize(0);

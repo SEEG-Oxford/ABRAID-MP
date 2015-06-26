@@ -15,8 +15,7 @@
         };
         var initialMiscData = {
             rPath: "${r_path?js_string}",
-            runDuration: ${run_duration?c},
-            covariateDirectory: "${covariate_directory?js_string}"
+            runDuration: ${run_duration?c}
         };
     </script>
 </#assign>
