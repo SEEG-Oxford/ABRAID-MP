@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.covarites;
+package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.covariates;
 
 import org.apache.commons.io.FilenameUtils;
 import org.junit.Rule;
@@ -9,9 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.*;
-import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.covariates.CovariatesController;
-import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.covariates.CovariatesControllerHelper;
-import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.covariates.CovariatesControllerValidator;
 
 import java.io.IOException;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.covarites;
+package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.covariates;
 
 import freemarker.cache.FileTemplateLoader;
 import freemarker.cache.MultiTemplateLoader;
@@ -18,7 +18,6 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.AbstractAuthenticatingTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.AbstractPublicSiteIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.PublicSiteUser;
-import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.covariates.CovariatesControllerHelper;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.SpringockitoWebContextLoader;
 
 import java.io.File;

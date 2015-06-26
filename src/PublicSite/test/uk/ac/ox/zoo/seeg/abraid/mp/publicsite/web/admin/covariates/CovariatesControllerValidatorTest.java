@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.covarites;
+package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.covariates;
 
 import org.junit.Ignore;
 import org.junit.Rule;
