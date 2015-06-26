@@ -89,7 +89,6 @@ public class IndexControllerIntegrationTest extends BaseWebIntegrationTests {
         when(configurationService.getModelRepositoryVersion()).thenReturn("foo2");
         when(configurationService.getRExecutablePath()).thenReturn("foo3");
         when(configurationService.getMaxModelRunDuration()).thenReturn(123);
-        when(configurationService.getCovariateDirectory()).thenReturn("foo4");
         when(sourceCodeManager.getAvailableVersions()).thenReturn(Arrays.asList("1", "2", "3"));
         List<String> expectedJavaScript = Arrays.asList(
                 "url: \"foo1\"",
@@ -115,7 +114,6 @@ public class IndexControllerIntegrationTest extends BaseWebIntegrationTests {
         when(configurationService.getModelRepositoryVersion()).thenReturn("");
         when(configurationService.getRExecutablePath()).thenReturn("");
         when(configurationService.getMaxModelRunDuration()).thenReturn(0);
-        when(configurationService.getCovariateDirectory()).thenReturn("");
         when(sourceCodeManager.getAvailableVersions()).thenReturn(new ArrayList<String>());
 
         this.mockMvc.perform(get("/")).andExpect(status().isOk());

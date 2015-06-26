@@ -4,11 +4,9 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.FileConfiguration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.log4j.Logger;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSChecker;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -30,26 +28,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             "Updating R path configuration: %s";
     private static final String LOG_UPDATING_RUN_DURATION =
             "Updating max run duration configuration: %s";
-    private static final String LOG_UPDATING_COVARIATE_DIR =
-            "Updating covariate dir configuration: %s";
-    private static final String LOG_ADDING_FILES_TO_COVARIATE_CONFIG =
-            "Adding %s files to the covariate config.";
-    private static final String LOG_COVARIATE_DIR_CREATION_FAIL =
-            "Cannot store covariate config. The directory does not exist and could not be created. At: %s";
-    private static final String LOG_OLD_COVARIATE_CONFIG_REMOVAL_FAIL =
-            "Removing old covariate config failed. At: %s";
-    private static final String LOG_WRITING_COVARIATE_CONFIG_FAIL =
-            "Writing new covariate config failed. At: %s";
-    private static final String LOG_USING_DEFAULT_COVARIATE_CONFIG =
-            "Custom covariate config file does not yet exist. Using default file: %s.";
-    private static final String LOG_INVALID_COVARIATE_CONFIG =
-            "Covariate config file on disk is not valid.";
-    private static final String LOG_COULD_NOT_READ_COVARIATE_CONFIG =
-            "Failed to read and parse covariate config file from disk.";
 
     private static final String DEFAULT_LINUX_CACHE_DIR = "/var/lib/abraid/modelwrapper";
     private static final String DEFAULT_WINDOWS_CACHE_DIR = System.getenv("LOCALAPPDATA") + "\\abraid\\modelwrapper";
-    private static final String DEFAULT_COVARIATE_SUB_DIR = "covariates";
     private static final String DEFAULT_LINUX_R_PATH = "/usr/bin/R";
     private static final String DEFAULT_WINDOWS_R_PATH = System.getenv("R_HOME") + "\\bin\\x64\\R.exe";
     private static final String DEFAULT_RASTER_SUBDIR = "rasters";
@@ -74,24 +55,19 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     private static final String ADMIN0_RASTER_KEY = "raster.file.admin0";
     private static final String ADMIN1_RASTER_KEY = "raster.file.admin1";
     private static final String ADMIN2_RASTER_KEY = "raster.file.admin2";
-    private static final String COVARIATE_DIRECTORY_KEY = "covariate.dir";
     private static final String MAX_CPU_KEY = "model.max.cpu";
     private static final String DRY_RUN_FLAG_KEY = "model.dry.run";
     private static final String MODEL_VERBOSE_FLAG_KEY = "model.verbose";
     private static final String MODEL_OUTPUT_HANDLER_ROOT_URL_KEY = "model.output.handler.root.url";
 
-    private static final String COVARIATE_JSON_FILE = "abraid.json";
-
     private final FileConfiguration basicProperties;
-    private final File defaultCovariateConfig;
     private final OSChecker osChecker;
 
-    public ConfigurationServiceImpl(File basicProperties, File defaultCovariateConfig, OSChecker osChecker)
+    public ConfigurationServiceImpl(File basicProperties, OSChecker osChecker)
             throws ConfigurationException {
         LOGGER.info(String.format(LOG_LOADING_CONFIGURATION_FILE, basicProperties.toString()));
         this.basicProperties = new PropertiesConfiguration(basicProperties);
         this.basicProperties.setAutoSave(true);
-        this.defaultCovariateConfig = defaultCovariateConfig;
         this.osChecker = osChecker;
     }
 
@@ -298,46 +274,6 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     @Override
     public boolean getDryRunFlag() {
         return basicProperties.getBoolean(DRY_RUN_FLAG_KEY, DEFAULT_DRY_RUN_FLAG);
-    }
-
-    /**
-     * Gets the current directory for covariate files.
-     * @return The directory for covariate files.
-     */
-    @Override
-    public String getCovariateDirectory() {
-        Path defaultDirPath = Paths.get(getCacheDirectory(), DEFAULT_COVARIATE_SUB_DIR);
-        String defaultDir = defaultDirPath.toFile().getAbsolutePath();
-        return basicProperties.getString(COVARIATE_DIRECTORY_KEY, defaultDir);
-    }
-
-    /**
-     * Sets the current directory for covariate files.
-     * @param path The directory for covariate files.
-     */
-    @Override
-    public void setCovariateDirectory(String path) {
-        LOGGER.info(String.format(LOG_UPDATING_COVARIATE_DIR, path));
-        basicProperties.setProperty(COVARIATE_DIRECTORY_KEY, path);
-    }
-
-    /**
-     * Gets the current covariate configuration.
-     * @return The covariate configuration.
-     * @throws java.io.IOException thrown if the configuration json file cannot be parsed correctly.
-     */
-    @Override
-    public JsonCovariateConfiguration getCovariateConfiguration() throws IOException {
-        return null;
-    }
-
-    /**
-     * Sets the current covariate configuration.
-     * @param config The covariate configuration.
-     * @throws java.io.IOException thrown if the configuration json file cannot be written correctly.
-     */
-    @Override
-    public void setCovariateConfiguration(JsonCovariateConfiguration config) throws IOException {
     }
 
     @Override

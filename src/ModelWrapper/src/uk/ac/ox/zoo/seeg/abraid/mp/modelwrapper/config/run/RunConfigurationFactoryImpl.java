@@ -1,24 +1,13 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run;
 
-import ch.lambdaj.function.convert.Converter;
 import org.apache.commons.configuration.ConfigurationException;
-import org.hamcrest.Matcher;
 import org.joda.time.LocalDateTime;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateConfiguration;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ConfigurationService;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.Collection;
-import java.util.Map;
 import java.util.UUID;
-
-import static ch.lambdaj.Lambda.*;
-import static ch.lambdaj.collection.LambdaCollections.with;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.collection.IsCollectionContaining.hasItem;
 
 /**
  * Provides a factory method for RunConfigurations.
@@ -90,9 +79,10 @@ public class RunConfigurationFactoryImpl implements RunConfigurationFactory {
     }
 
     private CovariateRunConfiguration buildCovariateConfig(int diseaseId) throws ConfigurationException, IOException {
-        return new CovariateRunConfiguration(
-                configurationService.getCovariateDirectory(),
-                buildCovariateFileList(diseaseId));
+        return null;
+//        return new CovariateRunConfiguration(
+//                configurationService.getCovariateDirectory(),
+//                buildCovariateFileList(diseaseId));
     }
 
     private AdminUnitRunConfiguration buildAdminUnitConfig(boolean diseaseGlobal) {
@@ -105,21 +95,21 @@ public class RunConfigurationFactoryImpl implements RunConfigurationFactory {
                 configurationService.getGlobalRasterFile());
     }
 
-    private Map<String, String> buildCovariateFileList(int diseaseId) throws IOException {
-        JsonCovariateConfiguration covariateConfig = configurationService.getCovariateConfiguration();
-
-        Collection<JsonCovariateFile> files = covariateConfig.getFiles();
-        files = filter(having(on(JsonCovariateFile.class).getHide(), equalTo(false)), files);
-        files = filter(having(on(JsonCovariateFile.class).getEnabled(), (Matcher) hasItem(diseaseId)), files);
-
-        return with(files)
-                .index(on(JsonCovariateFile.class).getPath())
-                .convertValues(on(JsonCovariateFile.class).getName())
-                .convertValues(new Converter<String, String>() {
-                    @Override
-                    public String convert(String input) {
-                        return input == null ? "" : input;
-                    }
-                });
-    }
+//    private Map<String, String> buildCovariateFileList(int diseaseId) throws IOException {
+//        JsonCovariateConfiguration covariateConfig = configurationService.getCovariateConfiguration();
+//
+//        Collection<JsonCovariateFile> files = covariateConfig.getFiles();
+//        files = filter(having(on(JsonCovariateFile.class).getHide(), equalTo(false)), files);
+//        files = filter(having(on(JsonCovariateFile.class).getEnabled(), (Matcher) hasItem(diseaseId)), files);
+//
+//        return with(files)
+//                .index(on(JsonCovariateFile.class).getPath())
+//                .convertValues(on(JsonCovariateFile.class).getName())
+//                .convertValues(new Converter<String, String>() {
+//                    @Override
+//                    public String convert(String input) {
+//                        return input == null ? "" : input;
+//                    }
+//                });
+//    }
 }

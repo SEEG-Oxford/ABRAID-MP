@@ -53,7 +53,6 @@ public class IndexControllerTest {
         when(sourceCodeManager.getAvailableVersions()).thenReturn(expectedVersions);
         when(configurationService.getMaxModelRunDuration()).thenReturn(expectedDuration);
         when(configurationService.getRExecutablePath()).thenReturn(expectedRPath);
-        when(configurationService.getCovariateDirectory()).thenReturn(expectedCovariateDir);
 
         Model model = mock(Model.class);
         IndexController target = new IndexController(configurationService, sourceCodeManager);

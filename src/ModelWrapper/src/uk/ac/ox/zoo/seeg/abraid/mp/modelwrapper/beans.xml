@@ -17,7 +17,6 @@
 
     <bean id="configurationService" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ConfigurationServiceImpl">
         <constructor-arg name="basicProperties" value="${modelwrapper.managed.properties.file}" />
-        <constructor-arg name="defaultCovariateConfig" value="WEB-INF/defaultCovariateConfig.json" />
         <constructor-arg name="osChecker" ref="osChecker" />
     </bean>
 
