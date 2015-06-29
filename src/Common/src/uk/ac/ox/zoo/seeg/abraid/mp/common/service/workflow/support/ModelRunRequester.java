@@ -7,10 +7,9 @@ import org.joda.time.DateTime;
 import org.springframework.util.StringUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelRunResponse;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.CovariateService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParserException;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
 
 import java.net.URI;
 import java.util.*;
@@ -24,6 +23,7 @@ import static ch.lambdaj.Lambda.*;
  */
 public class ModelRunRequester {
     private ModelWrapperWebService modelWrapperWebService;
+    private CovariateService covariateService;
     private DiseaseService diseaseService;
     private ModelRunService modelRunService;
 
@@ -34,10 +34,12 @@ public class ModelRunRequester {
     private static final String NO_OCCURRENCES_MESSAGE = "Cannot request a model run because there are no occurrences";
     private List<URI> modelWrapperUrlCollection;
 
-    public ModelRunRequester(ModelWrapperWebService modelWrapperWebService, DiseaseService diseaseService,
-                             ModelRunService modelRunService, String[] modelWrapperUrlCollection) {
+    public ModelRunRequester(ModelWrapperWebService modelWrapperWebService, CovariateService covariateService,
+                             DiseaseService diseaseService, ModelRunService modelRunService,
+                             String[] modelWrapperUrlCollection) {
         this.modelWrapperWebService = modelWrapperWebService;
         this.diseaseService = diseaseService;
+        this.covariateService = covariateService;
         this.modelRunService = modelRunService;
         this.modelWrapperUrlCollection = convert(modelWrapperUrlCollection, new Converter<String, URI>() {
             @Override
@@ -66,6 +68,8 @@ public class ModelRunRequester {
             Collection<AdminUnitDiseaseExtentClass> diseaseExtent =
                     diseaseService.getDiseaseExtentByDiseaseGroupId(diseaseGroupId);
             Map<Integer, Integer> diseaseExtentMap = extractDiseaseExtentMap(diseaseExtent);
+            Collection<CovariateFile> covariateFiles = covariateService.getCovariateFilesByDiseaseGroup(diseaseGroup);
+            String covariateDir = covariateService.getCovariateDirectory();
             DateTime requestDate = DateTime.now();
 
             try {
@@ -74,9 +78,9 @@ public class ModelRunRequester {
                 ModelRun modelRun = createPreliminaryModelRun(diseaseGroup, requestDate, modelWrapperUrl,
                         batchStartDate, batchEndDate, occurrencesForModelRun, diseaseExtent);
                 JsonModelRunResponse response = modelWrapperWebService.startRun(modelWrapperUrl, diseaseGroup,
-                        occurrencesForModelRun, diseaseExtentMap);
+                        occurrencesForModelRun, diseaseExtentMap, covariateFiles, covariateDir);
                 handleModelRunResponse(response, modelRun);
-            } catch (WebServiceClientException|JsonParserException e) {
+            } catch (Exception e) {
                 String message = String.format(WEB_SERVICE_ERROR_MESSAGE, e.getMessage());
                 LOGGER.error(message);
                 throw new ModelRunWorkflowException(message, e);

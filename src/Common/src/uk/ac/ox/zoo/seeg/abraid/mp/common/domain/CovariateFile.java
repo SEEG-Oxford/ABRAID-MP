@@ -19,7 +19,9 @@ import java.util.Collection;
         ),
         @NamedQuery(
                 name = "getCovariateFilesByDiseaseGroup",
-                query = "from CovariateFile c join c.enabledDiseaseGroups d where d.id=:diseaseGroupId and c.hide=false"
+                query = "select c from CovariateFile c " +
+                        "join c.enabledDiseaseGroups d " +
+                        "where d.id=:diseaseGroupId and c.hide=false"
         )
 })
 public class CovariateFile {
