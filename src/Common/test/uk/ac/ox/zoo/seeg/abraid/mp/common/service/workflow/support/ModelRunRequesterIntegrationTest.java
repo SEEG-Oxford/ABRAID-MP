@@ -21,9 +21,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.util.StringUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ModelRunDao;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.CovariateService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.GeometryService;
@@ -64,6 +66,10 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
 
     @Autowired
     private GeometryService geometryService;
+
+    @ReplaceWithMock
+    @Autowired
+    protected CovariateService covariateService;
 
     @ReplaceWithMock
     @Autowired
@@ -127,6 +133,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         diseaseGroup.setMinDataVolume(27);
         diseaseGroup.setOccursInAfrica(null);
+        when(covariateService.getCovariateFilesByDiseaseGroup(diseaseGroup)).thenReturn(new ArrayList<CovariateFile>());
     }
 
     @Test

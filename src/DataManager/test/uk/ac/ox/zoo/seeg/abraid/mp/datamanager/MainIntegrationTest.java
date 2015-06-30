@@ -30,6 +30,7 @@ import static org.assertj.core.api.Assertions.offset;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.startsWith;
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.contains;
 import static org.mockito.Mockito.eq;
@@ -82,6 +83,7 @@ public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTest
         int diseaseGroupId = 87;
         mockHealthMapRequest();
         mockGeoNamesRequests();
+        mockCovariateList();
         mockModelWrapperRequest();
         mockMachineWeightingPredictorRequest();
         createAndSaveTestModelRun(diseaseGroupId);
@@ -122,6 +124,7 @@ public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTest
                 "DataManager/test/uk/ac/ox/zoo/seeg/abraid/mp/datamanager/healthmap_json1.txt",
                 "DataManager/test/uk/ac/ox/zoo/seeg/abraid/mp/datamanager/healthmap_json2.txt"
         };
+        mockCovariateList();
         mockGeoNamesRequests();
         mockModelWrapperRequest();
         setDiseaseGroupParametersToEnsureHelperReturnsOccurrences(87);
@@ -141,6 +144,7 @@ public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTest
         // Arrange
         mockHealthMapRequest();
         mockGeoNamesRequests();
+        mockCovariateList();
         setDiseaseGroupParametersToEnsureHelperReturnsOccurrences(87);
         when(webServiceClient.makePostRequestWithBinary(startsWith(MODELWRAPPER_URL_PREFIX), any(byte[].class)))
                 .thenThrow(new ModelRunWorkflowException("Test message"));
@@ -200,7 +204,7 @@ public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTest
                 argThat(new DiseaseGroupIdMatcher(87)),
                 argThat(new ListSizeMatcher<DiseaseOccurrence>(27)),
                 argThat(new MapSizeMatcher<Integer, Integer>(451)),
-                argThat(new ListSizeMatcher<CovariateFile>(8)),
+                argThat(new ListSizeMatcher<CovariateFile>(0)),
                 eq(System.getProperty("user.home") + "/AppData/Local/abraid/covariates"));
         verify(webServiceClient, atLeastOnce()).makePostRequestWithBinary(
                 startsWith(MODELWRAPPER_URL_PREFIX), any(byte[].class));
@@ -226,6 +230,11 @@ public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTest
 
     private boolean getIsRollbackOnly() {
         return transactionManager.getTransaction(null).isRollbackOnly();
+    }
+
+    private void mockCovariateList() {
+        when(covariateFileDao.getCovariateFilesByDiseaseGroup(any(DiseaseGroup.class)))
+                .thenReturn(new ArrayList<CovariateFile>());
     }
 
     private void mockHealthMapRequest() {
