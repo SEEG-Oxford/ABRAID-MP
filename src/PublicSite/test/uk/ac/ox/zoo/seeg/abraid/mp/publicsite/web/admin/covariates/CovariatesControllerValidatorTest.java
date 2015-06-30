@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
  * Tests for CovariatesControllerValidator.
  * Copyright (c) 2015 University of Oxford
  */
-public class CovariatesControllerValidatorTest extends BaseCovariatesControllerTest {
+public class CovariatesControllerValidatorTest extends BaseCovariatesControllerTests {
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder(); ///CHECKSTYLE:SUPPRESS VisibilityModifier
 
@@ -226,7 +226,7 @@ public class CovariatesControllerValidatorTest extends BaseCovariatesControllerT
         config.getFiles().add(createMockJsonCovariateFile("Wrong", "foo", true, new ArrayList<Integer>()));
 
         // Act
-        Collection < String > result = target.validateCovariateConfiguration(config);
+        Collection<String> result = target.validateCovariateConfiguration(config);
 
         // Assert
         assertThat(result).contains("Unexpected file listed or missing.");
@@ -242,7 +242,7 @@ public class CovariatesControllerValidatorTest extends BaseCovariatesControllerT
         covariateService.getAllCovariateFiles().add(createMockCovariateFile("Missing", "foo", true, new ArrayList<DiseaseGroup>()));
 
         // Act
-        Collection < String > result = target.validateCovariateConfiguration(config);
+        Collection<String> result = target.validateCovariateConfiguration(config);
 
         // Assert
         assertThat(result).contains("Unexpected file listed or missing.");
@@ -258,7 +258,7 @@ public class CovariatesControllerValidatorTest extends BaseCovariatesControllerT
         config.getFiles().get(0).getEnabled().add(22);
 
         // Act
-        Collection < String > result = target.validateCovariateConfiguration(config);
+        Collection<String> result = target.validateCovariateConfiguration(config);
 
         // Assert
         assertThat(result).contains("Enabled disease ids contains duplicates.");
@@ -274,11 +274,9 @@ public class CovariatesControllerValidatorTest extends BaseCovariatesControllerT
         config.getFiles().get(0).getEnabled().add(23);
 
         // Act
-        Collection < String > result = target.validateCovariateConfiguration(config);
+        Collection<String> result = target.validateCovariateConfiguration(config);
 
         // Assert
         assertThat(result).contains("One or more files specify usage for an unknown disease id.");
     }
-
-
 }

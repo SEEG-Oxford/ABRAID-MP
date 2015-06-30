@@ -66,7 +66,8 @@ public class ModelRunController extends AbstractController {
      * @param data The run data to model (metadata & covariates).
      * @return 204 for success, 400 for invalid parameters or 500 if server cannot start model run.
      */
-    @RequestMapping(value = "/api/model/run", method = RequestMethod.POST, consumes = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @RequestMapping(value = "/api/model/run",
+            method = RequestMethod.POST, consumes = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
     public ResponseEntity<JsonModelRunResponse> startRun(@RequestBody byte[] data) {
         if (data == null) {
@@ -127,7 +128,8 @@ public class ModelRunController extends AbstractController {
 
     private JsonModelRun readMetadata(File tempDir) throws IOException {
         File file = Paths.get(tempDir.toString(), "metadata.json").toFile();
-        return objectMapper.readValue(file, JsonModelRun.class);
+        String json = FileUtils.readFileToString(file);
+        return objectMapper.readValue(json, JsonModelRun.class);
     }
 
     private File saveRequestBodyToTemporaryFile(byte[] modelRunZip) throws IOException, ZipException {

@@ -16,10 +16,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * foo
+ * Test utils for covariate controller tests.
  * Copyright (c) 2014 University of Oxford
  */
-public class BaseCovariatesControllerTest {
+public class BaseCovariatesControllerTests {
     protected JsonCovariateConfiguration createValidMockConfig() {
         JsonCovariateConfiguration mock = mock(JsonCovariateConfiguration.class);
         List<JsonCovariateFile> jsonCovariateFiles = new ArrayList<>();

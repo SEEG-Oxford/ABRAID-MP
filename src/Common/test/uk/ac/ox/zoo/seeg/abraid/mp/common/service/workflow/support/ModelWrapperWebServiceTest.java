@@ -1,7 +1,13 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 
+import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
+import net.lingala.zip4j.model.ZipParameters;
+import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelRunResponse;
@@ -9,16 +15,17 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParserException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.nio.file.Files;
+import java.util.*;
 
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -28,10 +35,13 @@ import static org.mockito.Mockito.when;
  * Copyright (c) 2014 University of Oxford
  */
 public class ModelWrapperWebServiceTest {
+    @Rule
+    public TemporaryFolder testFolder = new TemporaryFolder(); ///CHECKSTYLE:SUPPRESS VisibilityModifier
+
     private static final URI ROOT_URL = URI.create("http://localhost:8080/ModelWrapper");
 
     @Test
-    public void startRunWithTypicalParameters() {
+    public void startRunWithTypicalParameters() throws IOException, ZipException {
         // Arrange
         String expectedUrl = "http://localhost:8080/ModelWrapper/model/run";
         String modelRunName = "foo_2014-04-24-10-50-27_cd0efc75-42d3-4d96-94b4-287e28fbcdac";
@@ -44,31 +54,31 @@ public class ModelWrapperWebServiceTest {
         JsonModelRunResponse expectedResponse = new JsonModelRunResponse(modelRunName, null);
 
         // Act
-        JsonModelRunResponse actualResponse = webService.startRun(ROOT_URL, diseaseGroup, diseaseOccurrences, extentWeightings);
+        JsonModelRunResponse actualResponse = webService.startRun(ROOT_URL, diseaseGroup, diseaseOccurrences, extentWeightings, new ArrayList<CovariateFile>(), "");
 
         // Assert
         assertThat(actualResponse).isEqualTo(expectedResponse);
     }
 
     @Test
-    public void startRunPropagatesWebServiceClientException() {
+    public void startRunPropagatesWebServiceClientException() throws IOException, ZipException {
         // Arrange
         WebServiceClient client = mock(WebServiceClient.class);
-        when(client.makePostRequestWithJSON(anyString(), anyString())).thenThrow(new WebServiceClientException(""));
+        when(client.makePostRequestWithBinary(anyString(), any(byte[].class))).thenThrow(new WebServiceClientException(""));
         ModelWrapperWebService webService = getModelWrapperWebService(client);
         DiseaseGroup diseaseGroup = getDiseaseGroup();
         List<DiseaseOccurrence> diseaseOccurrences = getDiseaseOccurrences(diseaseGroup);
         Map<Integer, Integer> extentWeightings = getExtentWeightings();
 
         // Act
-        catchException(webService).startRun(ROOT_URL, diseaseGroup, diseaseOccurrences, extentWeightings);
+        catchException(webService).startRun(ROOT_URL, diseaseGroup, diseaseOccurrences, extentWeightings, new ArrayList<CovariateFile>(), "");
 
         // Assert
         assertThat(caughtException()).isInstanceOf(WebServiceClientException.class);
     }
 
     @Test
-    public void startRunWithInvalidResponseJSONThrowsException() {
+    public void startRunWithInvalidResponseJSONThrowsException() throws IOException, ZipException {
         // Arrange
         String url = "http://localhost:8080/ModelWrapper/model/run";
         String requestJson = getStartRunRequestJson();
@@ -79,15 +89,16 @@ public class ModelWrapperWebServiceTest {
         Map<Integer, Integer> extentWeightings = getExtentWeightings();
 
         // Act
-        catchException(webService).startRun(ROOT_URL, diseaseGroup, diseaseOccurrences, extentWeightings);
+        catchException(webService).startRun(ROOT_URL, diseaseGroup, diseaseOccurrences, extentWeightings, new ArrayList<CovariateFile>(), "");
 
         // Assert
         assertThat(caughtException()).isInstanceOf(JsonParserException.class);
     }
 
-    private ModelWrapperWebService getModelWrapperWebService(String url, String requestJson, String responseJson) {
+    private ModelWrapperWebService getModelWrapperWebService(String url, String requestJson, String responseJson) throws IOException, ZipException {
         WebServiceClient client = mock(WebServiceClient.class);
-        when(client.makePostRequestWithJSON(url, requestJson)).thenReturn(responseJson);
+
+        when(client.makePostRequestWithBinary(url, fakeZipData(requestJson))).thenReturn(responseJson);
         return getModelWrapperWebService(client);
     }
 
@@ -138,5 +149,15 @@ public class ModelWrapperWebServiceTest {
         String jsonFormat = "{\"disease\":{%s},\"occurrences\":{%s,%s,\"features\":[{%s},{%s},{%s}]},\"extentWeightings\":{%s}}";
         return String.format(jsonFormat, disease, occurrencesType, occurrencesCrs, occurrence1, occurrence2,
                 occurrence3, extentWeightings);
+    }
+
+    private byte[] fakeZipData(String json) throws IOException, ZipException {
+        File file = testFolder.newFile();
+        Files.delete(file.toPath());
+        ZipFile zipFile = new ZipFile(file);
+        File metadata = testFolder.newFile("metadata.json");
+        FileUtils.writeStringToFile(metadata, json);
+        zipFile.addFile(metadata, new ZipParameters());
+        return FileUtils.readFileToByteArray(file);
     }
 }

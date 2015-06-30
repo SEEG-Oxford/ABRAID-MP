@@ -5,10 +5,13 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.ArgumentCaptor;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.GeoJsonDiseaseOccurrenceFeatureCollection;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.AdminUnitRunConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.CodeRunConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.ExecutionRunConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.RunConfiguration;
 
 import java.io.File;
-import java.util.HashMap;
+import java.io.IOException;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -93,7 +96,7 @@ public class ModelRunnerTest {
         File expectedBase = new File("base");
         int expectedTimeout = 10;
         RunConfiguration config =
-                new RunConfiguration(null, expectedBase, null, new ExecutionRunConfiguration(expectedR, expectedTimeout, 1, false, true), null, null);
+                new RunConfiguration(null, expectedBase, null, null, new ExecutionRunConfiguration(expectedR, expectedTimeout, 1, false, true), null);
 
         // Act
         target.runModel(config, null, null, null);
@@ -118,12 +121,11 @@ public class ModelRunnerTest {
         assertThat(fileArgs.get(key)).isEqualTo(expectedScript);
     }
 
-    private RunConfiguration createBasicRunConfiguration() {
+    private RunConfiguration createBasicRunConfiguration() throws IOException {
         return new RunConfiguration(
-                "foo", testFolder.getRoot(),
+                "foo", testFolder.newFolder(), testFolder.newFolder(),
                 new CodeRunConfiguration("", ""),
                 new ExecutionRunConfiguration(new File(""), 60000, 1, false, false),
-                new CovariateRunConfiguration("", new HashMap<String, String>()),
                 new AdminUnitRunConfiguration(true, "", "", "", "", ""));
     }
 }

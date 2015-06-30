@@ -4,12 +4,14 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.AdminUnitRunConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.CodeRunConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.ExecutionRunConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.RunConfiguration;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.HashMap;
 
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
@@ -96,12 +98,11 @@ public class FreemarkerScriptGeneratorTest {
         assertThat(result).isInstanceOf(IOException.class);
     }
 
-    private RunConfiguration createBasicRunConfiguration(String runName) {
+    private RunConfiguration createBasicRunConfiguration(String runName) throws IOException {
         return new RunConfiguration(
-                StringUtils.isNotEmpty(runName) ? runName : "foo", testFolder.getRoot(),
+                StringUtils.isNotEmpty(runName) ? runName : "foo", testFolder.newFolder(), testFolder.newFolder(),
                 new CodeRunConfiguration("", ""),
                 new ExecutionRunConfiguration(new File(""), 60000, 1, false, false),
-                new CovariateRunConfiguration("", new HashMap<String, String>()),
                 new AdminUnitRunConfiguration(true, "", "", "", "", ""));
     }
 }

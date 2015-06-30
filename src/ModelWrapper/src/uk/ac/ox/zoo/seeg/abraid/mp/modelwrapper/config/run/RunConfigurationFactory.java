@@ -12,10 +12,9 @@ import java.io.IOException;
 public interface RunConfigurationFactory {
     /**
      * Creates a new RunConfiguration using the current defaults.
-     * @param diseaseId The disease id
+     * @param tempDataDir The directory where extra model run data (e.g. covariates are stored), before provisioning.
      * @param diseaseGlobal If the disease is global
      * @param diseaseAbbreviation The disease abbreviation
-     * @param tempDataDir
      * @return The new RunConfiguration
      * @throws ConfigurationException When the R executable cannot be found.
      * @throws IOException When the covariate configuration cannot be read.

@@ -26,7 +26,7 @@ public class RunConfigurationFactoryImpl implements RunConfigurationFactory {
 
     /**
      * Creates a new RunConfiguration using the current defaults.
-     * @param diseaseId The disease id
+     * @param tempDataDir The directory where extra model run data (e.g. covariates are stored), before provisioning.
      * @param diseaseGlobal If the disease is global
      * @param diseaseAbbreviation The disease abbreviation
      * @return The new RunConfiguration

@@ -4,7 +4,9 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.lang.RandomStringUtils;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.LocalDateTime;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ConfigurationService;
 
 import java.io.IOException;
@@ -18,6 +20,9 @@ import static org.mockito.Mockito.when;
  * Copyright (c) 2014 University of Oxford
  */
 public class RunConfigurationFactoryTest {
+    @Rule
+    public TemporaryFolder testFolder = new TemporaryFolder(); ///CHECKSTYLE:SUPPRESS VisibilityModifier
+
     private static final String UUID_REGEX = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
 
     @Test
@@ -36,7 +41,7 @@ public class RunConfigurationFactoryTest {
         String expectedRunNameStart = "foo_" + LocalDateTime.now().toString("yyyy-MM-dd-HH-mm-ss") + "_";
 
         // Act
-        RunConfiguration result = target.createDefaultConfiguration(1, true, "foo");
+        RunConfiguration result = target.createDefaultConfiguration(testFolder.getRoot(), true, "foo");
 
         // Assert
         assertThat(result.getRunName()).startsWith(expectedRunNameStart);
@@ -45,7 +50,6 @@ public class RunConfigurationFactoryTest {
         assertThat(result.getBaseDir().getName()).isEqualTo("runs");
         assertCorrectCodeConfiguration(result.getCodeConfig());
         assertCorrectExecutionConfiguration(result.getExecutionConfig());
-        assertCorrectCovariateConfiguration(result.getCovariateConfig());
         assertCorrectAdminUnitConfiguration(result.getAdminUnitConfig());
     }
 
@@ -73,11 +77,6 @@ public class RunConfigurationFactoryTest {
         assertThat(result.getDryRunFlag()).isEqualTo(true);
     }
 
-    private void assertCorrectCovariateConfiguration(CovariateRunConfiguration result) {
-        assertThat(result.getCovariateFiles()).hasSize(1);
-        assertThat(result.getCovariateFiles()).containsKey("covariateDir/covariateFile");
-        assertThat(result.getCovariateFiles()).containsValue("covariateFileName");
-    }
 
     private void setupExpectedAdminUnitConfiguration(ConfigurationService configurationService) {
         when(configurationService.getGlobalRasterFile()).thenReturn("globalRaster");
@@ -109,7 +108,7 @@ public class RunConfigurationFactoryTest {
                 longName.substring(0, 195) + "_" + LocalDateTime.now().toString("yyyy-MM-dd-HH-mm-ss") + "_";
 
         // Act
-        RunConfiguration result = target.createDefaultConfiguration(1, true, longName);
+        RunConfiguration result = target.createDefaultConfiguration(testFolder.getRoot(), true, longName);
 
         // Assert
         assertThat(result.getRunName()).startsWith(expectedRunNameStart);

@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
  * Tests for CovariatesControllerHelper.
  * Copyright (c) 2015 University of Oxford
  */
-public class CovariatesControllerHelperTest extends BaseCovariatesControllerTest {
+public class CovariatesControllerHelperTest extends BaseCovariatesControllerTests {
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder(); ///CHECKSTYLE:SUPPRESS VisibilityModifier
 
@@ -38,7 +38,7 @@ public class CovariatesControllerHelperTest extends BaseCovariatesControllerTest
         String result = target.extractTargetPath("subdir/as", new MockMultipartFile("fn.g", "ofn.g", "application/octet-stream", new byte[0]));
 
         // Assert
-        assertThat(result).isEqualTo(FilenameUtils.separatorsToUnix(testFolder.getRoot().getAbsolutePath())+"/subdir/as/ofn.g");
+        assertThat(result).isEqualTo(FilenameUtils.separatorsToUnix(testFolder.getRoot().getAbsolutePath()) + "/subdir/as/ofn.g");
     }
 
     @Test

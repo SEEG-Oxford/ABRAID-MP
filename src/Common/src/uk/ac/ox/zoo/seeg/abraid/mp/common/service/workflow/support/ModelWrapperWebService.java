@@ -50,10 +50,13 @@ public class ModelWrapperWebService {
      * @param occurrences The disease occurrences for this model run.
      * @param diseaseExtent Ths disease extent for this model run, expressed as a mapping between GAUL codes
      *                      and extent class weightings.
-     * @param covariateFiles
+     * @param covariateFiles The covariate files for modeling the specified disease group.
+     * @param covariateDirectory The directory where the covariate files are stored.
      * @return The model run name, or null if the run did not start successfully.
      * @throws WebServiceClientException If the web service call fails.
      * @throws JsonParserException If the web service's JSON response cannot be parsed.
+     * @throws IOException If the covariate file can not be found.
+     * @throws ZipException If the model run zip can not be built.
      */
     public JsonModelRunResponse startRun(URI modelWrapperUrl, DiseaseGroup diseaseGroup,
                                          List<DiseaseOccurrence> occurrences, Map<Integer, Integer> diseaseExtent,
@@ -94,7 +97,9 @@ public class ModelWrapperWebService {
         }
     }
 
-    private byte[] createModelRunZip(JsonModelRun metadata, Collection<CovariateFile> covariateFiles, String covariateDirectory) throws IOException, ZipException {
+    private byte[] createModelRunZip(JsonModelRun metadata,
+                                     Collection<CovariateFile> covariateFiles, String covariateDirectory)
+            throws IOException, ZipException {
         Path tmpDir = null;
         Path tmpZip = null;
         try {

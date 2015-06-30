@@ -1,8 +1,15 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 
+import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
+import net.lingala.zip4j.model.FileHeader;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.kubek2k.springockito.annotations.ReplaceWithMock;
 import org.kubek2k.springockito.annotations.SpringockitoContextLoader;
 import org.kubek2k.springockito.annotations.WrapWithSpy;
@@ -23,6 +30,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.GeometryService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -34,6 +42,7 @@ import java.util.regex.Pattern;
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
@@ -47,6 +56,9 @@ import static org.mockito.Mockito.when;
                       locations = "classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/beans.xml")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegrationTests {
+    @Rule
+    public TemporaryFolder testFolder = new TemporaryFolder(); ///CHECKSTYLE:SUPPRESS VisibilityModifier
+
     @Autowired
     private DiseaseService diseaseService;
 
@@ -171,10 +183,15 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
     }
 
     private void mockPostRequest(final String responseJson) {
-        when(webServiceClient.makePostRequestWithJSON(eq(URL), anyString())).thenAnswer(new Answer<Object>() {
+        when(webServiceClient.makePostRequestWithBinary(eq(URL), any(byte[].class))).thenAnswer(new Answer<Object>() {
             @Override
-            public Object answer(InvocationOnMock invocationOnMock) throws IOException {
-                String requestJson = (String) invocationOnMock.getArguments()[1];
+            public Object answer(InvocationOnMock invocationOnMock) throws IOException, ZipException {
+                byte[] data = (byte[]) invocationOnMock.getArguments()[1];
+                File file = testFolder.newFile();
+                FileUtils.writeByteArrayToFile(file, data);
+                ZipFile zipFile = new ZipFile(file);
+                FileHeader header = zipFile.getFileHeader("metadata.json");
+                String requestJson = IOUtils.toString(zipFile.getInputStream(header));
                 assertRequestJson(requestJson);
                 return responseJson;
             }

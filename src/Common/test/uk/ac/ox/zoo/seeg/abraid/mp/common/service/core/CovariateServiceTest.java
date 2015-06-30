@@ -6,6 +6,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,7 +41,7 @@ public class CovariateServiceTest {
         CovariateService target = new CovariateServiceImpl("covariateDirectory", covariateFileDao);
 
         // Act
-        List<CovariateFile> result = target.getAllCovariateFiles();
+        Collection<CovariateFile> result = target.getAllCovariateFiles();
 
         // Assert
         assertThat(result).isSameAs(expectation);
@@ -57,7 +58,7 @@ public class CovariateServiceTest {
         CovariateService target = new CovariateServiceImpl("covariateDirectory", covariateFileDao);
 
         // Act
-        List<CovariateFile> result = target.getCovariateFilesByDiseaseGroup(diseaseGroup);
+        Collection<CovariateFile> result = target.getCovariateFilesByDiseaseGroup(diseaseGroup);
 
         // Assert
         assertThat(result).isSameAs(expectation);
