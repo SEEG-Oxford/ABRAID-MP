@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.GeoJsonDiseaseOccurrenceFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.RunConfiguration;
@@ -75,6 +76,9 @@ public class WorkspaceProvisionerImpl implements WorkspaceProvisioner {
         }
 
         // Copy input data
+        File covariates = Paths.get(configuration.getTempDataDir().toString(), "covariates").toFile();
+        File destFile = Paths.get(workingDirectory.getAbsolutePath(), "covariates").toFile();
+        FileUtils.copyDirectory(covariates, destFile);
         inputDataManager.writeOccurrenceData(occurrenceData, dataDirectory);
         inputDataManager.writeExtentData(extentWeightings, configuration.getAdminUnitConfig(), dataDirectory);
 

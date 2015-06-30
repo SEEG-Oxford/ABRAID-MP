@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model;
 
+import org.apache.commons.io.FileUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.GeoJsonDiseaseOccurrenceFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.RunConfiguration;
 
@@ -44,7 +45,14 @@ public class ModelRunnerImpl implements ModelRunner {
                                         ModelStatusReporter modelStatusReporter)
             throws ProcessException, IOException {
         // Provision workspace
-        File scriptFile = workspaceProvisioner.provisionWorkspace(configuration, occurrenceData, extentWeightings);
+        File scriptFile = null;
+        try {
+            scriptFile = workspaceProvisioner.provisionWorkspace(configuration, occurrenceData, extentWeightings);
+        } finally {
+            if (configuration.getTempDataDir() != null && configuration.getTempDataDir().exists()) {
+                FileUtils.deleteDirectory(configuration.getTempDataDir());
+            }
+        }
 
         // Run model
         HashMap<String, File> fileArguments = new HashMap<>();

@@ -34,15 +34,15 @@ public class RunConfigurationFactoryImpl implements RunConfigurationFactory {
      * @throws IOException When the covariate configuration cannot be read.
      */
     @Override
-    public RunConfiguration createDefaultConfiguration(int diseaseId, boolean diseaseGlobal,
+    public RunConfiguration createDefaultConfiguration(File tempDataDir, boolean diseaseGlobal,
                                                        String diseaseAbbreviation)
             throws ConfigurationException, IOException {
         return new RunConfiguration(
                 buildRunName(diseaseAbbreviation),
                 buildBaseDir(),
+                tempDataDir,
                 buildCodeConfig(),
                 buildExecutionConfig(),
-                buildCovariateConfig(diseaseId),
                 buildAdminUnitConfig(diseaseGlobal));
     }
 
@@ -76,13 +76,6 @@ public class RunConfigurationFactoryImpl implements RunConfigurationFactory {
                 configurationService.getModelVerboseFlag(),
                 configurationService.getDryRunFlag()
         );
-    }
-
-    private CovariateRunConfiguration buildCovariateConfig(int diseaseId) throws ConfigurationException, IOException {
-        return null;
-//        return new CovariateRunConfiguration(
-//                configurationService.getCovariateDirectory(),
-//                buildCovariateFileList(diseaseId));
     }
 
     private AdminUnitRunConfiguration buildAdminUnitConfig(boolean diseaseGlobal) {

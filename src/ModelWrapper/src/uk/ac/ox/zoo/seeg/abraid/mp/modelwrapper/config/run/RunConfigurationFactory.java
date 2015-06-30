@@ -2,6 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run;
 
 import org.apache.commons.configuration.ConfigurationException;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -14,11 +15,12 @@ public interface RunConfigurationFactory {
      * @param diseaseId The disease id
      * @param diseaseGlobal If the disease is global
      * @param diseaseAbbreviation The disease abbreviation
+     * @param tempDataDir
      * @return The new RunConfiguration
      * @throws ConfigurationException When the R executable cannot be found.
      * @throws IOException When the covariate configuration cannot be read.
      */
-    RunConfiguration createDefaultConfiguration(int diseaseId, boolean diseaseGlobal,
+    RunConfiguration createDefaultConfiguration(File tempDataDir, boolean diseaseGlobal,
                                                 String diseaseAbbreviation)
             throws ConfigurationException, IOException;
 }
