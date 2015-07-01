@@ -63,6 +63,7 @@ public class MainHandler {
             "Deleted outdated 'full' raster file '%s'";
 
     private static final Charset UTF8 = StandardCharsets.UTF_8;
+    private static final String COVARIATE_DIR = "covariates/";
 
     private final ModelRunService modelRunService;
     private final CovariateService covariateService;
@@ -209,12 +210,7 @@ public class MainHandler {
                         .convert(new Converter<CsvCovariateInfluence, CovariateInfluence>() {
                             @Override
                             public CovariateInfluence convert(CsvCovariateInfluence csv) {
-                                CovariateFile covariate =
-                                        covariateService.getCovariateFileByPath(csv.getCovariateFilePath());
-                                if (covariate == null) {
-                                    throw new RuntimeException(String.format(
-                                            UNKNOWN_COVARIATE_FILE_REFERENCED, csv.getCovariateFilePath()));
-                                }
+                                CovariateFile covariate = findCovariateFile(csv.getCovariateFilePath());
                                 return new CovariateInfluence(covariate, csv, modelRun);
                             }
                         });
@@ -224,6 +220,17 @@ public class MainHandler {
                 throw new IOException(String.format(LOG_COULD_NOT_SAVE, RELATIVE_INFLUENCE_CSV, modelRun.getName()), e);
             }
         }
+    }
+
+    private CovariateFile findCovariateFile(String covariateFilePath) {
+        String path = (covariateFilePath.startsWith(COVARIATE_DIR)) ?
+                covariateFilePath.replaceFirst(COVARIATE_DIR, "") : covariateFilePath;
+        CovariateFile covariateFile = covariateService.getCovariateFileByPath(path);
+        if (covariateFile == null) {
+            throw new RuntimeException(String.format(
+                    UNKNOWN_COVARIATE_FILE_REFERENCED, covariateFilePath));
+        }
+        return covariateFile;
     }
 
     private void handleEffectCurvesFile(final ModelRun modelRun, byte[] file) throws IOException {
@@ -237,12 +244,7 @@ public class MainHandler {
                         .convert(new Converter<CsvEffectCurveCovariateInfluence, EffectCurveCovariateInfluence>() {
                             @Override
                             public EffectCurveCovariateInfluence convert(CsvEffectCurveCovariateInfluence csv) {
-                                CovariateFile covariate =
-                                        covariateService.getCovariateFileByPath(csv.getCovariateFilePath());
-                                if (covariate == null) {
-                                    throw new RuntimeException(String.format(
-                                            UNKNOWN_COVARIATE_FILE_REFERENCED, csv.getCovariateFilePath()));
-                                }
+                                CovariateFile covariate = findCovariateFile(csv.getCovariateFilePath());
                                 return new EffectCurveCovariateInfluence(covariate, csv, modelRun);
                             }
                         });

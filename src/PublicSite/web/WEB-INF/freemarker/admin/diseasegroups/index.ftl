@@ -22,7 +22,9 @@
     #disease-group-settings label, #model-run-parameters label, #disease-extent-parameters label {
         text-align: left;
     }
-
+    #disease-groups-list {
+        padding-bottom: 15px;
+    }
     @media (min-width: 730px) {
         #disease-groups-list .right-buttons {
             float: right;

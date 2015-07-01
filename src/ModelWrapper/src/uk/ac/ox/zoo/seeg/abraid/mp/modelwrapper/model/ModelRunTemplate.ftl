@@ -144,10 +144,10 @@ attempt_model_run <- function() {
             '1,2,3,4,5,6,7,8,9,10'))
         create_dry_run_csv("influence", "results/relative_influence.csv", c(
             '"","file_path","mean","2.5%","97.5%"',
-            '"X","upr_u.tif","1","2","3"'))
+            '"X","covariates/upr_u.tif","1","2","3"'))
         create_dry_run_csv("effect", "results/effect_curves.csv", c(
             '"","file_path","covariate","mean","2.5%","97.5%"',
-            '"1","upr_u.tif","0","-3","-5","0.3"'))
+            '"1","covariates/upr_u.tif","0","-3","-5","0.3"'))
     }
     </#if>
 
