@@ -172,9 +172,9 @@ public class WorkspaceProvisionerTest {
         Collection<File> files = FileUtils.listFiles(covDir, null, true);
         Collection<File> expectedFiles = FileUtils.listFiles(tempCovDir, null, true);
         assertThat(files).hasSameSizeAs(expectedFiles);
-        assertThat(Iterables.get(files, 0).toPath().relativize(covDir.toPath())).isEqualTo(Iterables.get(expectedFiles, 0).toPath().relativize(tempCovDir.toPath()));
-        assertThat(Iterables.get(files, 1).toPath().relativize(covDir.toPath())).isEqualTo(Iterables.get(expectedFiles, 1).toPath().relativize(tempCovDir.toPath()));
-        assertThat(Iterables.get(files, 2).toPath().relativize(covDir.toPath())).isEqualTo(Iterables.get(expectedFiles, 2).toPath().relativize(tempCovDir.toPath()));
+        assertThat(covDir.toPath().relativize(Iterables.get(files, 0).toPath())).isEqualTo(tempCovDir.toPath().relativize(Iterables.get(expectedFiles, 0).toPath()));
+        assertThat(covDir.toPath().relativize(Iterables.get(files, 1).toPath())).isEqualTo(tempCovDir.toPath().relativize(Iterables.get(expectedFiles, 1).toPath()));
+        assertThat(covDir.toPath().relativize(Iterables.get(files, 2).toPath())).isEqualTo(tempCovDir.toPath().relativize(Iterables.get(expectedFiles, 2).toPath()));
     }
 
     @Test
