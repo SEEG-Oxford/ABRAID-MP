@@ -41,7 +41,7 @@ dirAsk "$REMOTE_USER@${deploy_props[covariate.source]}/" "$ABRAID_SUPPORT_PATH/c
 echo "[[ DM | Ensuring correct file permissions ]]"
 permissionFix "abraid:abraid" "$ABRAID_SUPPORT_PATH/datamanager/"
 chmod +x "$ABRAID_SUPPORT_PATH/datamanager/datamanager.sh"
-permissionFix "tomcat7:tomcat7" "$ABRAID_SUPPORT_PATH/covariate/"
+permissionFix "tomcat7:tomcat7" "$ABRAID_SUPPORT_PATH/covariates/"
 
 echo "[[ DM | Done ]]"
 cd "../config/deploy/"

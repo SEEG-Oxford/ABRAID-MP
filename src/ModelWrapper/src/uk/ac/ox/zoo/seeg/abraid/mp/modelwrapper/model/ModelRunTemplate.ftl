@@ -165,7 +165,6 @@ attempt_model_run <- function() {
             admin1_path,
             admin2_path,
             covariate_paths,
-            covariate_names,
             rep(FALSE, length(covariate_paths)),
             verbose,
             max_cpus,
