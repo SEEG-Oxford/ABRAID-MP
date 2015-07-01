@@ -7,6 +7,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.mockito.ArgumentCaptor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.*;
@@ -21,6 +22,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.web.api.ModelRunController;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -74,7 +76,17 @@ public class ModelRunControllerTest {
         ResponseEntity result = target.startRun(fakeData());
 
         // Assert
+        // start model correctly
         verify(mockRunner).startModel(eq(mockConf), eq(occurrence), eq(extent), any(ModelStatusReporter.class));
+        // extracted covariates correctly
+        ArgumentCaptor<File> captor = ArgumentCaptor.forClass(File.class);
+        verify(mockFactory).createDefaultConfiguration(captor.capture(), eq(true), eq("foo"));
+        String tempDir = captor.capture().getAbsolutePath();
+        assertThat(Paths.get(tempDir, "covariates", "a").toFile()).exists();
+        assertThat(Paths.get(tempDir, "covariates", "a").toFile()).hasContent("c1");
+        assertThat(Paths.get(tempDir, "covariates", "c", "b").toFile()).exists();
+        assertThat(Paths.get(tempDir, "covariates", "a").toFile()).hasContent("c2");
+        // give correct result
         assertResponseEntity(result, runName, null, HttpStatus.OK);
     }
 
@@ -112,9 +124,16 @@ public class ModelRunControllerTest {
         File file = testFolder.newFile();
         Files.delete(file.toPath());
         ZipFile zipFile = new ZipFile(file);
-        File metadata = testFolder.newFile("metadata.json");
+        File dir = testFolder.newFolder();
+        File metadata = Paths.get(dir.getAbsolutePath(), "metadata.json").toFile();
         FileUtils.writeStringToFile(metadata, "metadata");
-        zipFile.addFile(metadata, new ZipParameters());
+        File c1 = Paths.get(dir.getAbsolutePath(), "covariates", "a").toFile();
+        File c2 = Paths.get(dir.getAbsolutePath(), "covariates", "c", "b").toFile();
+        FileUtils.writeStringToFile(c1, "c1");
+        FileUtils.writeStringToFile(c2, "c2");
+        ZipParameters zipParameters = new ZipParameters();
+        zipParameters.setIncludeRootFolder(false);
+        zipFile.createZipFileFromFolder(dir, zipParameters, false, 0);
         return FileUtils.readFileToByteArray(file);
     }
 }

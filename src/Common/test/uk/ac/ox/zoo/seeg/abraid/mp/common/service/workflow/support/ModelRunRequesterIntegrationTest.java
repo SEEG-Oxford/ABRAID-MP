@@ -1,10 +1,9 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 
+import jersey.repackaged.com.google.common.collect.Iterables;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
-import net.lingala.zip4j.model.FileHeader;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.junit.Rule;
@@ -35,8 +34,10 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -44,9 +45,8 @@ import java.util.regex.Pattern;
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
@@ -92,16 +92,16 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
     private static final String URL = "http://api:key-to-access-model-wrapper@localhost:8080/modelwrapper/api/model/run";
 
     @Test
-    public void requestModelRunSucceedsWithBatching() {
+    public void requestModelRunSucceedsWithBatching() throws IOException {
         requestModelRunSucceeds(DateTime.now(), DateTime.now().plusDays(2));
     }
 
     @Test
-    public void requestModelRunSucceedsWithoutBatching() {
+    public void requestModelRunSucceedsWithoutBatching() throws IOException {
         requestModelRunSucceeds(null, null);
     }
 
-    private void requestModelRunSucceeds(DateTime batchStartDate, DateTime batchEndDate) {
+    private void requestModelRunSucceeds(DateTime batchStartDate, DateTime batchEndDate) throws IOException {
         // Arrange
         int diseaseGroupId = 87;
         setDiseaseGroupParametersToEnsureSelectorReturnsOccurrences(diseaseGroupId);
@@ -129,15 +129,30 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
         assertThat(modelRun.getOccurrenceDataRangeEndDate().isEqual(DateTime.parse("2014-02-27T08:06:46.000Z"))).isTrue();
     }
 
-    private void setDiseaseGroupParametersToEnsureSelectorReturnsOccurrences(int diseaseGroupId) {
+    private void setDiseaseGroupParametersToEnsureSelectorReturnsOccurrences(int diseaseGroupId) throws IOException {
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         diseaseGroup.setMinDataVolume(27);
         diseaseGroup.setOccursInAfrica(null);
-        when(covariateService.getCovariateFilesByDiseaseGroup(diseaseGroup)).thenReturn(new ArrayList<CovariateFile>());
+        List<CovariateFile> covariateFiles = Arrays.asList(
+                createMockCovariateFile("a"),
+                createMockCovariateFile("b"),
+                createMockCovariateFile("c/d")
+        );
+        createMockCovariateFile("e");
+        when(covariateService.getCovariateFilesByDiseaseGroup(diseaseGroup)).thenReturn(covariateFiles);
+        when(covariateService.getCovariateDirectory()).thenReturn(testFolder.getRoot().getAbsolutePath());
+    }
+
+    private CovariateFile createMockCovariateFile(String path) throws IOException {
+        CovariateFile covariateFile = mock(CovariateFile.class);
+        when(covariateFile.getFile()).thenReturn(path);
+        File file = Paths.get(testFolder.getRoot().getAbsolutePath(), path).toFile();
+        FileUtils.writeStringToFile(file, path);
+        return covariateFile;
     }
 
     @Test
-    public void requestModelRunWithErrorReturnedByModelThrowsException() {
+    public void requestModelRunWithErrorReturnedByModelThrowsException() throws IOException {
         // Arrange
         int diseaseGroupId = 87;
         setDiseaseGroupParametersToEnsureSelectorReturnsOccurrences(diseaseGroupId);
@@ -153,7 +168,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
     }
 
     @Test
-    public void requestModelRunWithWebClientExceptionThrowsException() {
+    public void requestModelRunWithWebClientExceptionThrowsException() throws IOException {
         // Arrange
         int diseaseGroupId = 87;
         setDiseaseGroupParametersToEnsureSelectorReturnsOccurrences(diseaseGroupId);
@@ -197,9 +212,11 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
                 File file = testFolder.newFile();
                 FileUtils.writeByteArrayToFile(file, data);
                 ZipFile zipFile = new ZipFile(file);
-                FileHeader header = zipFile.getFileHeader("metadata.json");
-                String requestJson = IOUtils.toString(zipFile.getInputStream(header));
-                assertRequestJson(requestJson);
+                File unzipped = testFolder.newFile();
+                unzipped.delete();
+                zipFile.extractAll(unzipped.getAbsolutePath());
+                assertRequestJson(FileUtils.readFileToString(Paths.get(unzipped.getAbsolutePath(), "metadata.json").toFile()));
+                assertRequestCovariates(Paths.get(unzipped.getAbsolutePath(), "covariates").toFile());
                 return responseJson;
             }
         });
@@ -220,6 +237,17 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
 
         List<String> splitExtent = getSplitExtent(matcher.group(4));
         assertSplitExtent(splitExtent);
+    }
+
+    private void assertRequestCovariates(File covariatesDir) {
+        Collection<File> files = FileUtils.listFiles(covariatesDir, null, true);
+        assertThat(files).hasSize(3);
+        assertThat(Iterables.get(files, 0).getAbsolutePath()).isEqualTo(Paths.get(covariatesDir.getAbsolutePath(), "a").toString());
+        assertThat(Iterables.get(files, 0)).hasContent("a");
+        assertThat(Iterables.get(files, 1).getAbsolutePath()).isEqualTo(Paths.get(covariatesDir.getAbsolutePath(), "b").toString());
+        assertThat(Iterables.get(files, 1)).hasContent("b");
+        assertThat(Iterables.get(files, 2).getAbsolutePath()).isEqualTo(Paths.get(covariatesDir.getAbsolutePath(), "c", "d").toString());
+        assertThat(Iterables.get(files, 2)).hasContent("c/d");
     }
 
     private List<String> getSplitFeatures(String features) {

@@ -80,7 +80,7 @@ public class ModelRunControllerIntegrationTest extends BaseWebIntegrationTests {
     }
 
     @Test
-    public void canTriggerNewRunWithJsonContent() throws Exception {
+    public void canTriggerNewRunWithValidContent() throws Exception {
         String runName = "foo_2014-04-24-10-50-27_cd0efc75-42d3-4d96-94b4-287e28fbcdac";
         setUpExpectedRunName(runName);
 

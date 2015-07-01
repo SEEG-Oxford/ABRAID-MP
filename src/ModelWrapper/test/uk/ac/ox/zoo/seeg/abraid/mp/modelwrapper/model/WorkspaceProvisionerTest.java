@@ -1,5 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model;
 
+import jersey.repackaged.com.google.common.collect.Iterables;
+import org.apache.commons.io.FileUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -14,6 +16,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.data.InputDataManager;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Collection;
 
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
@@ -132,6 +135,64 @@ public class WorkspaceProvisionerTest {
 
         // Act
         catchException(target).provisionWorkspace(conf, null, null);
+        Exception result = caughtException();
+
+        // Assert
+        assertThat(result).isInstanceOf(IOException.class);
+    }
+
+    @Test
+    public void provisionWorkspaceShouldCopyCovariates() throws Exception {
+        // Arrange
+        ScriptGenerator scriptGenerator = new FreemarkerScriptGenerator();
+        WorkspaceProvisioner target = new WorkspaceProvisionerImpl(scriptGenerator, mock(SourceCodeManager.class), mock(InputDataManager.class));
+        File expectedBasePath = testFolder.newFolder();
+        File tempDir = testFolder.newFolder();
+        String expectedRunName = "bar";
+        RunConfiguration config = new RunConfiguration(
+                expectedRunName, expectedBasePath, tempDir,
+                new CodeRunConfiguration("", ""),
+                new ExecutionRunConfiguration(new File(""), 60000, 1, false, false),
+                new AdminUnitRunConfiguration(true, "", "", "", "", ""));
+        File tempCovDir = Paths.get(tempDir.getAbsolutePath(), "covariates").toFile();
+        tempCovDir.mkdir();
+        Paths.get(tempCovDir.getAbsolutePath(), "sub").toFile().mkdir();
+        FileUtils.writeStringToFile(Paths.get(tempCovDir.getAbsolutePath(), "a").toFile(), "Abc");
+        FileUtils.writeStringToFile(Paths.get(tempCovDir.getAbsolutePath(), "b").toFile(), "aBc");
+        FileUtils.writeStringToFile(Paths.get(tempCovDir.getAbsolutePath(), "sub", "c").toFile(), "abC");
+
+        // Act
+        File script = target.provisionWorkspace(config, null, null);
+        File result = script.getParentFile();
+
+        // Assert
+        File covDir = Paths.get(result.getAbsolutePath(), "covariates").toFile();
+        assertThat(covDir).exists();
+        assertThat(covDir).isDirectory();
+        Collection<File> files = FileUtils.listFiles(covDir, null, true);
+        Collection<File> expectedFiles = FileUtils.listFiles(tempCovDir, null, true);
+        assertThat(files).hasSameSizeAs(expectedFiles);
+        assertThat(Iterables.get(files, 0).toPath().relativize(covDir.toPath())).isEqualTo(Iterables.get(expectedFiles, 0).toPath().relativize(tempCovDir.toPath()));
+        assertThat(Iterables.get(files, 1).toPath().relativize(covDir.toPath())).isEqualTo(Iterables.get(expectedFiles, 1).toPath().relativize(tempCovDir.toPath()));
+        assertThat(Iterables.get(files, 2).toPath().relativize(covDir.toPath())).isEqualTo(Iterables.get(expectedFiles, 2).toPath().relativize(tempCovDir.toPath()));
+    }
+
+    @Test
+    public void provisionWorkspaceShouldThrowIfCovariatesCanNotBeCopied() throws Exception {
+        ScriptGenerator scriptGenerator = new FreemarkerScriptGenerator();
+        WorkspaceProvisioner target = new WorkspaceProvisionerImpl(scriptGenerator, mock(SourceCodeManager.class), mock(InputDataManager.class));
+        File expectedBasePath = testFolder.newFolder();
+        File tempDir = testFolder.newFolder();
+        String expectedRunName = "bar";
+        RunConfiguration config = new RunConfiguration(
+                expectedRunName, expectedBasePath, tempDir,
+                new CodeRunConfiguration("", ""),
+                new ExecutionRunConfiguration(new File(""), 60000, 1, false, false),
+                new AdminUnitRunConfiguration(true, "", "", "", "", ""));
+        File tempCovDir = Paths.get(tempDir.getAbsolutePath(), "covariates").toFile();
+
+        // Act
+        catchException(target).provisionWorkspace(config, null, null);
         Exception result = caughtException();
 
         // Assert
