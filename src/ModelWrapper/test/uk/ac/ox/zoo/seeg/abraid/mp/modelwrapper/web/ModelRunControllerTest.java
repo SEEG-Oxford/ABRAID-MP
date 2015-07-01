@@ -81,11 +81,11 @@ public class ModelRunControllerTest {
         // extracted covariates correctly
         ArgumentCaptor<File> captor = ArgumentCaptor.forClass(File.class);
         verify(mockFactory).createDefaultConfiguration(captor.capture(), eq(true), eq("foo"));
-        String tempDir = captor.capture().getAbsolutePath();
+        String tempDir = captor.getValue().getAbsolutePath();
         assertThat(Paths.get(tempDir, "covariates", "a").toFile()).exists();
         assertThat(Paths.get(tempDir, "covariates", "a").toFile()).hasContent("c1");
         assertThat(Paths.get(tempDir, "covariates", "c", "b").toFile()).exists();
-        assertThat(Paths.get(tempDir, "covariates", "a").toFile()).hasContent("c2");
+        assertThat(Paths.get(tempDir, "covariates", "c", "b").toFile()).hasContent("c2");
         // give correct result
         assertResponseEntity(result, runName, null, HttpStatus.OK);
     }
