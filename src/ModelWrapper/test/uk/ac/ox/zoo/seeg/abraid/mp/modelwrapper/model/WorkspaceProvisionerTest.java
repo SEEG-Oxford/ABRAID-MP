@@ -16,7 +16,9 @@ import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.data.InputDataManager;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
@@ -171,10 +173,19 @@ public class WorkspaceProvisionerTest {
         assertThat(covDir).isDirectory();
         Collection<File> files = FileUtils.listFiles(covDir, null, true);
         Collection<File> expectedFiles = FileUtils.listFiles(tempCovDir, null, true);
+
+
+        List<String> actual = Arrays.asList(
+                covDir.toPath().relativize(Iterables.get(files, 0).toPath()).toString(),
+                covDir.toPath().relativize(Iterables.get(files, 1).toPath()).toString(),
+                covDir.toPath().relativize(Iterables.get(files, 2).toPath()).toString());
+        List<String> expected = Arrays.asList(
+                tempCovDir.toPath().relativize(Iterables.get(expectedFiles, 0).toPath()).toString(),
+                tempCovDir.toPath().relativize(Iterables.get(expectedFiles, 1).toPath()).toString(),
+                tempCovDir.toPath().relativize(Iterables.get(expectedFiles, 2).toPath()).toString());
+
         assertThat(files).hasSameSizeAs(expectedFiles);
-        assertThat(covDir.toPath().relativize(Iterables.get(files, 0).toPath())).isEqualTo(tempCovDir.toPath().relativize(Iterables.get(expectedFiles, 0).toPath()));
-        assertThat(covDir.toPath().relativize(Iterables.get(files, 1).toPath())).isEqualTo(tempCovDir.toPath().relativize(Iterables.get(expectedFiles, 1).toPath()));
-        assertThat(covDir.toPath().relativize(Iterables.get(files, 2).toPath())).isEqualTo(tempCovDir.toPath().relativize(Iterables.get(expectedFiles, 2).toPath()));
+        assertThat(actual).containsAll(expected);
     }
 
     @Test
