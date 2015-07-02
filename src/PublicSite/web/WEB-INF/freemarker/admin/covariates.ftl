@@ -24,13 +24,17 @@
             <td><input type="text" data-bind="formValue: path, attr: { title: path }" readonly="true" class="transparent-input" ></td>
             <td><input type="checkbox" data-bind="formChecked: state"></td>
             <td>
+                <button class="btn btn-default fa fa-lg fa-info-circle" style="float: right" data-bind="style: { color: info() ? '#3c763d' : '#31708f' }, popover: { title: 'Info text', trigger: 'click', placement: 'bottom', template: 'info-text-template'}, click: function(data, event) { event.preventDefault(); }, bootstrapDisable: $parent.isSubmitting()"></button>
+            </td>
+            <td>
                 <button class="btn btn-default fa fa-lg fa-trash-o" style="float: right" data-bind="popover: { title: 'Delete file?', trigger: 'focus', placement: 'bottom', template: 'file-list-delete-template'}, click: function(data, event) { event.preventDefault(); }, bootstrapDisable: $parent.isSubmitting()"></button>
-                <span data-bind="if: info">
-                    <i class="fa fa-lg fa-info-circle text-info" data-bind="tooltip: { title: info, placement: 'bottom' }"></i>&nbsp;
-                </span>
             </td>
         </tr>
     </@t.tableTemplates>
+    <script type="text/html" id="info-text-template">
+        <textarea rows="8" cols="30" maxlength="500" placeholder="Not specified" autofocus="true" style="resize: none;" data-bind="value: info">
+        </textarea>
+    </script>
     <script type="text/html" id="file-list-delete-template">
         <p>This file is currently used in <span data-bind="text: usageCount"></span> <span data-bind="text: usageCount() === 1 ? 'disease' : 'diseases'"></span>. Are you sure you want to delete it?</p><br>
         <p style="text-align:center;">
@@ -54,7 +58,7 @@
             <@f.formGroupBasic "file-name" "Name" "name" "glyphicon glyphicon-pencil" />
             <@f.formGroupBasic "file-dir" "Subdirectory" "subdirectory" "glyphicon glyphicon-folder-open" />
             <@f.formGroupFile "file-picker" "File" "file" />
-            <div class="hidden" data-bind="css: { hidden: false }">
+            <div class="hidden" data-bind="css: { hidden: false }" style="min-height: 32px; margin: 10px 0">
                 <div class="alert alert-danger" data-bind="visible: unsavedWarning"><p>The lower section of this page has unsaved changes. Please save these first (or refresh).</p></div>
                 <div class="alert alert-warning" data-bind="visible: subdirectory.isValid() && file.isValid() && !uploadPath.isValid() && uploadPath()"><p data-bind="text: 'A file already exists at the target path (./' + uploadPath() + '). Either change the subdirectory or rename the file and try again.'"></p></div>
                 <div class="alert alert-info" data-bind="visible: subdirectory.isValid() && file.isValid() && uploadPath.isValid() && uploadPath()"><p data-bind="text: 'File will be uploaded to ./' + uploadPath()"></p></div>
@@ -72,7 +76,8 @@
                     { name: 'name', display: 'Name' },
                     { name: 'path', display: 'Path' },
                     { name: 'state', display: 'Use for current disease' },
-                    { name: 'info', display: '+' }
+                    { name: 'info', display: '+' },
+                    { name: '', display: '' }
                 ]
             </@t.tableBody>
         </@f.form>
