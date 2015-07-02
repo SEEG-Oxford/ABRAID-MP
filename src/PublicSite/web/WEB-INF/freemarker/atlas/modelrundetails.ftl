@@ -28,21 +28,24 @@
                         <!-- ko with:covariateInfluencesViewModel -->
                         <h5>Covariate Influences</h5>
                         <div data-bind="if: covariateInfluences">
+                            <script type="text/html" id="covariateHelp"><span data-bind="text: info"></span></script>
                             <table class="table table-condensed" id="covariates">
-                            <thead>
-                            <tr>
-                                <th>Rank</th>
-                                <th>Name</th>
-                                <th>Mean Influence</th>
-                            </tr>
-                            </thead>
-                            <tbody data-bind="foreach: covariateInfluences">
-                            <tr>
-                                <td data-bind="text: $index() + 1"></td>
-                                <td data-bind="text: name"></td>
-                                <td data-bind="numericText: meanInfluence"></td>
-                            </tr>
-                            </tbody>
+                                <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Rank</th>
+                                    <th>Name</th>
+                                    <th>Mean Influence</th>
+                                </tr>
+                                </thead>
+                                <tbody data-bind="foreach: covariateInfluences">
+                                    <tr>
+                                        <td><span data-bind="popover: {template: 'covariateHelp', title: name, trigger: 'hover', placement: 'bottom'}"><i class="fa fa-info-circle"></i></span></td>
+                                        <td data-bind="text: $index() + 1"></td>
+                                        <td data-bind="text: name"></td>
+                                        <td data-bind="numericText: meanInfluence"></td>
+                                    </tr>
+                                </tbody>
                             </table>
                         </div>
                         <!-- /ko -->

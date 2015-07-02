@@ -18,12 +18,14 @@ public class JsonCovariateInfluenceTest {
         // Arrange
         String name = "dir/upr_p.tif";
         String displayName = "GRUMP peri-urban surface";
+        String info = "some info";
         double meanInfluence = 45.94;
 
         CovariateInfluence covariateInfluence = mock(CovariateInfluence.class);
         CovariateFile covariateFile = mock(CovariateFile.class);
         when(covariateFile.getFile()).thenReturn(name);
         when(covariateFile.getName()).thenReturn(displayName);
+        when(covariateFile.getInfo()).thenReturn(info);
         when(covariateInfluence.getMeanInfluence()).thenReturn(meanInfluence);
         when(covariateInfluence.getCovariateFile()).thenReturn(covariateFile);
 
@@ -32,6 +34,7 @@ public class JsonCovariateInfluenceTest {
 
         // Assert
         assertThat(result.getName()).isEqualTo(displayName);
+        assertThat(result.getInfo()).isEqualTo(info);
         assertThat(result.getMeanInfluence()).isEqualTo(meanInfluence);
     }
 }
