@@ -77,6 +77,7 @@ public class CovariatesControllerHelperImpl implements CovariatesControllerHelpe
                                 covariateFile.getName(),
                                 covariateFile.getInfo(),
                                 covariateFile.getHide(),
+                                covariateFile.getDiscrete(),
                                 extract(covariateFile.getEnabledDiseaseGroups(), on(DiseaseGroup.class).getId())
                         );
                     }
@@ -132,18 +133,19 @@ public class CovariatesControllerHelperImpl implements CovariatesControllerHelpe
         }
     }
 
-
     /**
      * Persist a single new covariate file to the filesystem and database.
      * @param name The display name for the covariate.
+     * @param isDiscrete True if this covariate contains discrete values
      * @param path The location to store the covariate.
      * @param file The covariate.
      * @throws IOException Thrown if the covariate director can not be writen to.
      */
     @Override
-    public void saveNewCovariateFile(String name, String path, MultipartFile file) throws IOException {
+    public void saveNewCovariateFile(String name, boolean isDiscrete, String path, MultipartFile file)
+            throws IOException {
         writeCovariateFileToDisk(file, path);
-        addCovariateToDatabase(name, extractRelativePath(path));
+        addCovariateToDatabase(name, isDiscrete, extractRelativePath(path));
     }
 
     private void checkForNewCovariateFilesOnDisk() throws IOException {
@@ -165,21 +167,22 @@ public class CovariatesControllerHelperImpl implements CovariatesControllerHelpe
             paths.removeAll(knownPaths);
 
             for (String path : paths) {
-                addCovariateToDatabase("", path);
+                addCovariateToDatabase("", false, path);
             }
         }
     }
 
-    private void addCovariateToDatabase(String name, String path) throws IOException {
+    private void addCovariateToDatabase(String name, boolean isDiscrete, String path) throws IOException {
         covariateService.saveCovariateFile(new CovariateFile(
                 name,
                 path,
                 false,
+                isDiscrete,
                 ""
         ));
     }
 
-    private void writeCovariateFileToDisk(MultipartFile file, String path) throws IOException {
+    private File writeCovariateFileToDisk(MultipartFile file, String path) throws IOException {
         // Create directory
         createDirectoryForCovariate(path);
 
@@ -187,6 +190,7 @@ public class CovariatesControllerHelperImpl implements CovariatesControllerHelpe
         BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
         stream.write(file.getBytes());
         stream.close();
+        return serverFile;
     }
 
     private void createDirectoryForCovariate(String path) throws IOException {

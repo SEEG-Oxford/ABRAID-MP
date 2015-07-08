@@ -403,6 +403,9 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
         List<EffectCurveCovariateInfluence> database = run.getEffectCurveCovariateInfluences();
         List<CsvEffectCurveCovariateInfluence> file = CsvEffectCurveCovariateInfluence.readFromCSV(FileUtils.readFileToString(new File(TEST_DATA_PATH, path)));
 
+        // Discrete covariates only store min and max effect curve entries, this means that row 5 of the csv should not be kept
+        file.remove(4);
+
         Collections.sort(database, new Comparator<EffectCurveCovariateInfluence>() {
             @Override
             public int compare(EffectCurveCovariateInfluence o1, EffectCurveCovariateInfluence o2) {

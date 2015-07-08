@@ -16,9 +16,7 @@ import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests for CovariatesControllerHelper.
@@ -75,7 +73,7 @@ public class CovariatesControllerHelperTest extends BaseCovariatesControllerTest
         target.getCovariateConfiguration();
 
         // Assert
-        verify(covariateService).saveCovariateFile(eq(new CovariateFile("", file.getName(), false, "")));
+        verify(covariateService).saveCovariateFile(eq(new CovariateFile("", file.getName(), false, false, "")));
     }
 
     @Test
@@ -86,6 +84,7 @@ public class CovariatesControllerHelperTest extends BaseCovariatesControllerTest
         JsonCovariateConfiguration config = createValidMockConfig();
         when(config.getFiles().get(0).getName()).thenReturn("new Name");
         when(config.getFiles().get(0).getHide()).thenReturn(true);
+        when(config.getFiles().get(0).getDiscrete()).thenReturn(true);
         when(config.getFiles().get(2).getEnabled()).thenReturn(Arrays.asList(22, 60));
         when(config.getFiles().get(2).getInfo()).thenReturn("new");
         CovariatesControllerHelper target = new CovariatesControllerHelperImpl(covariateService, diseaseService);
@@ -97,6 +96,7 @@ public class CovariatesControllerHelperTest extends BaseCovariatesControllerTest
         CovariateFile c1 = covariateService.getAllCovariateFiles().get(0);
         verify(c1).setName("new Name");
         verify(c1).setHide(true);
+        verify(c1, never()).setDiscrete(true); // Read only
         verify(covariateService).saveCovariateFile(c1);
         CovariateFile c2 = covariateService.getAllCovariateFiles().get(2);
         verify(c2).setEnabledDiseaseGroups(eq(diseaseService.getAllDiseaseGroups()));
@@ -115,11 +115,11 @@ public class CovariatesControllerHelperTest extends BaseCovariatesControllerTest
         byte[] bytes = FileUtils.readFileToByteArray(refFile);
 
         // Act
-        target.saveNewCovariateFile("name", covariateService.getCovariateDirectory() + "/asd/fas", new MockMultipartFile("foo", "oof", "application/octet-stream", bytes));
+        target.saveNewCovariateFile("name", true, covariateService.getCovariateDirectory() + "/asd/fas", new MockMultipartFile("foo", "oof", "application/octet-stream", bytes));
 
         // Assert
         assertThat(new File(covariateService.getCovariateDirectory() + "/asd/fas")).hasContentEqualTo(refFile);
-        verify(covariateService).saveCovariateFile(eq(new CovariateFile("name", "asd/fas", false, "")));
+        verify(covariateService).saveCovariateFile(eq(new CovariateFile("name", "asd/fas", false, true, "")));
     }
 
     @Test
@@ -133,10 +133,10 @@ public class CovariatesControllerHelperTest extends BaseCovariatesControllerTest
         byte[] bytes = FileUtils.readFileToByteArray(refFile);
 
         // Act
-        target.saveNewCovariateFile("name", covariateService.getCovariateDirectory() + "/asd/fas", new MockMultipartFile("foo", "oof", "application/octet-stream", bytes));
+        target.saveNewCovariateFile("name", true, covariateService.getCovariateDirectory() + "/asd/fas", new MockMultipartFile("foo", "oof", "application/octet-stream", bytes));
 
         // Assert
         assertThat(new File(covariateService.getCovariateDirectory() + "/asd/fas")).hasContentEqualTo(refFile);
-        verify(covariateService).saveCovariateFile(eq(new CovariateFile("name", "asd/fas", false, "")));
+        verify(covariateService).saveCovariateFile(eq(new CovariateFile("name", "asd/fas", false, true, "")));
     }
 }

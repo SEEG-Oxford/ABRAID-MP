@@ -53,7 +53,7 @@ public class CovariateFileDaoTest extends AbstractCommonSpringIntegrationTests {
     @Test
     public void saveAndReload() {
         // Arrange
-        CovariateFile covariateFile = new CovariateFile("NAME", "FILE", true, "INFO");
+        CovariateFile covariateFile = new CovariateFile("NAME", "FILE", true, true, "INFO");
         Collection<DiseaseGroup> enabledDiseaseGroups = Arrays.asList(diseaseGroupDao.getById(87), diseaseGroupDao.getById(60));
         covariateFile.setEnabledDiseaseGroups(enabledDiseaseGroups);
 

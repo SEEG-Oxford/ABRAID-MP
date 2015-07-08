@@ -34,9 +34,10 @@ public interface CovariatesControllerHelper {
     /**
      * Persist a single new covariate file to the filesystem and database.
      * @param name The display name for the covariate.
+     * @param isDiscrete True if this covariate contains discrete values.
      * @param path The location to store the covariate.
      * @param file The covariate.
      * @throws IOException Thrown if the covariate director can not be writen to.
      */
-    void saveNewCovariateFile(String name, String path, MultipartFile file) throws IOException;
+    void saveNewCovariateFile(String name, boolean isDiscrete, String path, MultipartFile file) throws IOException;
 }

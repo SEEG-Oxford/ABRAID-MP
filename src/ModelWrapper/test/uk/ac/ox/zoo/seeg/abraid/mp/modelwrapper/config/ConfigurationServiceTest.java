@@ -6,15 +6,10 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateConfiguration;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateFile;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelDisease;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSChecker;
 
 import java.io.*;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -608,18 +603,5 @@ public class ConfigurationServiceTest {
 
         // Assert
         assertThat(result).isEqualTo("http://api:password@localhost:8080/modeloutputhandler");
-    }
-
-    private static JsonCovariateConfiguration createJsonCovariateConfig() {
-        JsonCovariateConfiguration conf = new JsonCovariateConfiguration();
-        conf.setDiseases(Arrays.asList(
-                new JsonModelDisease(64, true, "Cholera", "chol"),
-                new JsonModelDisease(22, true, "Ascariasis", "asc")
-        ));
-        conf.setFiles(Arrays.asList(
-                new JsonCovariateFile("f2", "", null, true, new ArrayList<Integer>()),
-                new JsonCovariateFile("f1", "a", null, false, Arrays.asList(22))
-        ));
-        return conf;
     }
 }
