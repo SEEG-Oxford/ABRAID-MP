@@ -38,6 +38,9 @@ public class CovariateFile {
     @Column(nullable = false)
     private Boolean hide;
 
+    @Column(nullable = false)
+    private Boolean discrete;
+
     @Column
     private String info;
 
@@ -51,10 +54,11 @@ public class CovariateFile {
     public CovariateFile() {
     }
 
-    public CovariateFile(String name, String file, Boolean hide, String info) {
+    public CovariateFile(String name, String file, Boolean hide, Boolean discrete, String info) {
         setName(name);
         setFile(file);
         setHide(hide);
+        setDiscrete(discrete);
         setInfo(info);
     }
 
@@ -90,6 +94,14 @@ public class CovariateFile {
         this.hide = hide;
     }
 
+    public Boolean getDiscrete() {
+        return discrete;
+    }
+
+    public void setDiscrete(Boolean discrete) {
+        this.discrete = discrete;
+    }
+
     public String getInfo() {
         return info;
     }
@@ -117,6 +129,7 @@ public class CovariateFile {
 
         if (file != null ? !file.equals(that.file) : that.file != null) return false;
         if (hide != null ? !hide.equals(that.hide) : that.hide != null) return false;
+        if (discrete != null ? !discrete.equals(that.discrete) : that.discrete != null) return false;
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (info != null ? !info.equals(that.info) : that.info != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
@@ -130,6 +143,7 @@ public class CovariateFile {
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (file != null ? file.hashCode() : 0);
         result = 31 * result + (hide != null ? hide.hashCode() : 0);
+        result = 31 * result + (discrete != null ? discrete.hashCode() : 0);
         result = 31 * result + (info != null ? info.hashCode() : 0);
         return result;
     }

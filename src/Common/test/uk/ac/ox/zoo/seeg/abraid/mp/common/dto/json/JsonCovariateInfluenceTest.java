@@ -23,12 +23,14 @@ public class JsonCovariateInfluenceTest {
         String displayName = "GRUMP peri-urban surface";
         String info = "some info";
         double meanInfluence = 45.94;
+        boolean discrete = true;
 
         CovariateInfluence covariateInfluence = mock(CovariateInfluence.class);
         CovariateFile covariateFile = mock(CovariateFile.class);
         when(covariateFile.getFile()).thenReturn(name);
         when(covariateFile.getName()).thenReturn(displayName);
         when(covariateFile.getInfo()).thenReturn(info);
+        when(covariateFile.getDiscrete()).thenReturn(discrete);
         when(covariateInfluence.getMeanInfluence()).thenReturn(meanInfluence);
         when(covariateInfluence.getCovariateFile()).thenReturn(covariateFile);
         List<JsonEffectCurveCovariateInfluence> effectCurve = Arrays.asList(
@@ -42,5 +44,6 @@ public class JsonCovariateInfluenceTest {
         assertThat(result.getInfo()).isEqualTo(info);
         assertThat(result.getMeanInfluence()).isEqualTo(meanInfluence);
         assertThat(result.getEffectCurve()).isEqualTo(effectCurve);
+        assertThat(result.getDiscrete()).isEqualTo(discrete);
     }
 }

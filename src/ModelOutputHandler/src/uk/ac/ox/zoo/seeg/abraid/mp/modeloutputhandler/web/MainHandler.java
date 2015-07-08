@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web;
 
 import ch.lambdaj.function.convert.Converter;
+import ch.lambdaj.group.Group;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.io.ZipInputStream;
@@ -28,10 +29,15 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static ch.lambdaj.Lambda.group;
+import static ch.lambdaj.Lambda.on;
+import static ch.lambdaj.Lambda.sort;
 import static ch.lambdaj.collection.LambdaCollections.with;
+import static ch.lambdaj.group.Groups.by;
 
 /**
  * Main model output handler.
@@ -248,7 +254,25 @@ public class MainHandler {
                                 return new EffectCurveCovariateInfluence(covariate, csv, modelRun);
                             }
                         });
-                modelRun.setEffectCurveCovariateInfluences(effectCurveCovariateInfluences);
+
+                Group<EffectCurveCovariateInfluence> byFile = group(effectCurveCovariateInfluences,
+                            by(on(EffectCurveCovariateInfluence.class).getCovariateFile()));
+
+                List<EffectCurveCovariateInfluence> filteredEffectCurveCovariateInfluences = new ArrayList<>();
+                for (String key : byFile.keySet()) {
+                    List<EffectCurveCovariateInfluence> singleCurve =
+                            sort(byFile.find(key), on(EffectCurveCovariateInfluence.class).getCovariateValue());
+                    if (singleCurve.get(0).getCovariateFile().getDiscrete()) {
+                        // Only keep first and last
+                        filteredEffectCurveCovariateInfluences.add(singleCurve.get(0));
+                        filteredEffectCurveCovariateInfluences.add(singleCurve.get(singleCurve.size() - 1));
+                    } else {
+                        // Keep all
+                        filteredEffectCurveCovariateInfluences.addAll(singleCurve);
+                    }
+                }
+
+                modelRun.setEffectCurveCovariateInfluences(filteredEffectCurveCovariateInfluences);
                 modelRunService.saveModelRun(modelRun);
             } catch (Exception e) {
                 throw new IOException(String.format(LOG_COULD_NOT_SAVE, EFFECT_CURVES_CSV, modelRun.getName()), e);

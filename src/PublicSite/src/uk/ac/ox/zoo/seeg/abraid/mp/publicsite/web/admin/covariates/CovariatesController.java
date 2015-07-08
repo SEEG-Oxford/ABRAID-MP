@@ -108,6 +108,7 @@ public class CovariatesController {
     /**
      * Handles the submission of the covariate file upload form.
      * @param name The name of the added covariate.
+     * @param discrete True if this covariate contains discrete values
      * @param subdirectory The subdirectory to add the new file to.
      * @param file The new covariate file.
      * @return A response entity with JsonFileUploadResponse for compatibility with iframe based upload.
@@ -118,7 +119,7 @@ public class CovariatesController {
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseBody
     public ResponseEntity<JsonFileUploadResponse> addCovariateFile(
-            String name, String subdirectory, MultipartFile file) throws IOException {
+            String name, boolean discrete, String subdirectory, MultipartFile file) throws IOException {
         String targetPath = covariatesControllerHelper.extractTargetPath(subdirectory, file);
         Collection<String> validationMessages = validator
                 .validateCovariateUpload(name, subdirectory, file, targetPath);
@@ -127,7 +128,7 @@ public class CovariatesController {
             return new ResponseEntity<>(new JsonFileUploadResponse(false, validationMessages), HttpStatus.BAD_REQUEST);
         } else {
             // Create the file on server
-            covariatesControllerHelper.saveNewCovariateFile(name, targetPath, file);
+            covariatesControllerHelper.saveNewCovariateFile(name, discrete, targetPath, file);
             LOGGER.info(String.format(LOG_NEW_COVARIATE, name, targetPath));
 
             return new ResponseEntity<>(new JsonFileUploadResponse(true, validationMessages), HttpStatus.OK);

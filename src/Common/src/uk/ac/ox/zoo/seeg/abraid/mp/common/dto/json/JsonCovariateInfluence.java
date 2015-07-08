@@ -11,12 +11,14 @@ import java.util.List;
  */
 public class JsonCovariateInfluence extends AbstractJsonCovariateInfluence {
     private String info;
+    private boolean discrete;
     private List<JsonEffectCurveCovariateInfluence> effectCurve;
 
     public JsonCovariateInfluence(CovariateInfluence covariateInfluence,
                                   List<JsonEffectCurveCovariateInfluence> effectCurve) {
         super(covariateInfluence);
         this.info = covariateInfluence.getCovariateFile().getInfo();
+        this.discrete = covariateInfluence.getCovariateFile().getDiscrete();
         this.effectCurve = effectCurve;
     }
 
@@ -26,5 +28,9 @@ public class JsonCovariateInfluence extends AbstractJsonCovariateInfluence {
 
     public Collection<JsonEffectCurveCovariateInfluence> getEffectCurve() {
         return effectCurve;
+    }
+
+    public boolean getDiscrete() {
+        return discrete;
     }
 }

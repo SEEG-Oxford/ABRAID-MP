@@ -146,6 +146,7 @@ public class ModelRunDetailsControllerTest {
         CovariateFile covariateFile = mock(CovariateFile.class);
         when(covariateFile.getName()).thenReturn("Name");
         when(covariateFile.getId()).thenReturn(4);
+        when(covariateFile.getDiscrete()).thenReturn(true);
         CovariateInfluence covariateInfluence = new CovariateInfluence(covariateFile, 12.3);
         EffectCurveCovariateInfluence effectCurveCovariateInfluence = new EffectCurveCovariateInfluence();
         effectCurveCovariateInfluence.setCovariateFile(covariateFile);
@@ -165,6 +166,7 @@ public class ModelRunDetailsControllerTest {
         List<JsonCovariateInfluence> body = (List<JsonCovariateInfluence>) response.getBody();
         assertThat(body).hasSize(1);
         assertThat(body.get(0).getName()).isEqualTo("Name");
+        assertThat(body.get(0).getDiscrete()).isEqualTo(true);
         assertThat(body.get(0).getMeanInfluence()).isEqualTo(12.3);
         assertThat(body.get(0).getEffectCurve()).hasSize(1);
         assertThat(body.get(0).getEffectCurve().iterator().next().getCovariateValue()).isEqualTo(3.21);

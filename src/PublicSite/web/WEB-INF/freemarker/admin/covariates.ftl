@@ -22,6 +22,7 @@
                 </span>
             </td>
             <td><input type="text" data-bind="formValue: path, attr: { title: path }" readonly="true" class="transparent-input" ></td>
+            <td><input type="checkbox" data-bind="checked: discrete, bootstrapDisable: true"></td>
             <td><input type="checkbox" data-bind="formChecked: state"></td>
             <td>
                 <button class="btn btn-default fa fa-lg fa-info-circle" style="float: right" data-bind="style: { color: info() ? '#3c763d' : '#31708f' }, popover: { title: 'Info text', trigger: 'click', placement: 'bottom', template: 'info-text-template'}, click: function(data, event) { event.preventDefault(); }, bootstrapDisable: $parent.isSubmitting()"></button>
@@ -57,6 +58,10 @@
         <@f.form "add-covariate-form" "Upload" "Uploading...">
             <@f.formGroupBasic "file-name" "Name" "name" "glyphicon glyphicon-pencil" />
             <@f.formGroupBasic "file-dir" "Subdirectory" "subdirectory" "glyphicon glyphicon-folder-open" />
+            <p>
+                <label for="file-discrete">Is Discrete?: </label>
+                <input id="file-discrete" type="checkbox" style="line-height: 20px; margin: 0 0 5px 0; vertical-align: middle " data-bind="formChecked: discrete" autocomplete="off">
+            </p>
             <@f.formGroupFile "file-picker" "File" "file" />
             <div class="hidden" data-bind="css: { hidden: false }" style="min-height: 32px; margin: 10px 0">
                 <div class="alert alert-danger" data-bind="visible: unsavedWarning"><p>The lower section of this page has unsaved changes. Please save these first (or refresh).</p></div>
@@ -75,11 +80,13 @@
                 [
                     { name: 'name', display: 'Name' },
                     { name: 'path', display: 'Path' },
+                    { name: 'discrete', display: 'Is discrete*' },
                     { name: 'state', display: 'Use for current disease' },
                     { name: 'info', display: '+' },
                     { name: '', display: '' }
                 ]
             </@t.tableBody>
+            <p>* Currently only 2-value binary discrete covariates are supported.</p>
         </@f.form>
     </@p.panel>
 </div>
