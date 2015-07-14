@@ -27,6 +27,7 @@
             "domReady": cdn + "require-domReady/2.0.1/domReady.min",
             "leaflet": cdn + "leaflet/0.7.2/leaflet",
             "jquery.cookie": cdn + "jquery-cookie/1.4.1/jquery.cookie.min",
+            "d3": cdn + "d3/3.5.5/d3.min",
 
             // Local
             "leaflet-markercluster": basePath + "lib/leaflet.markercluster",
@@ -39,6 +40,8 @@
             "knockout-postbox": basePath + "lib/knockout-postbox",
             "jquery.iframe-transport": basePath + "lib/jquery.iframe-transport",
             "jquery.cookiecuttr": basePath + "lib/jquery.cookiecuttr",
+            "c3": basePath + "lib/c3",
+            "c3.extensions": basePath + "lib/c3.extensions",
 
             // Shared - makes sure that shared files can load even when not working on deployed artifacts
             "ko": basePath + "ko",
