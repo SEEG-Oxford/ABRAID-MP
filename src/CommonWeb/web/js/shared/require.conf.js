@@ -54,6 +54,7 @@
             "shared/app/KoCustomRules": basePath + "app/KoCustomRules",
             "shared/app/KoCustomBindings": basePath + "app/KoCustomBindings",
             "shared/app/KoCustomUtils": basePath + "app/KoCustomUtils",
+            "shared/app/PlotHelper": basePath + "app/PlotHelper",
             "squire": basePath + "app/spec/lib/squire"
         },
         shim: {

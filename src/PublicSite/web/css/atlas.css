@@ -149,3 +149,24 @@ html, body {
 .modal-content {
     width: 700px;
 }
+.modal-body {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+#plotModal .c3-title {
+    font-weight: bold;
+}
+#histogram .c3-bar {
+    stroke-width: 1px;
+}
+.c3-region {
+    fill: #000000;
+}
+#plotModal .c3-axis-y-label {
+    font-weight: bold;
+    font-size: 12px;
+}
+#plotModal .c3-axis-x-label {
+    font-weight: bold;
+    font-size: 12px;
+}

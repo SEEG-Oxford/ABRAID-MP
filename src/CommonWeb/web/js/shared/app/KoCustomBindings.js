@@ -6,9 +6,12 @@ define([
     "jquery",
     "moment",
     "knockout",
+    "shared/app/PlotHelper",
+    "c3",
+    "c3.extensions",
     "shared/app/KoCustomUtils",
     "flipclock"
-], function ($, moment, ko) {
+], function ($, moment, ko, PlotHelper, c3) {
     "use strict";
 
     ko.bindingHandlers.toggleClick = {
@@ -178,12 +181,42 @@ define([
     };
 
     // Plotting
+    var addPlot = function (element, options) {
+        options.bindto = element;
+        var chart = c3.generate(options);
+        chart.flush();
+        chart.flush(); // workaround for y axis rendering bug
+        ko.utils.domData.set(element, "chart", chart);
+    };
+
+    var getPlotOptions = function (covariate, isLarge, isHistogram, ymin, ymax) {
+        var isDiscrete = covariate.discrete;
+        var data = PlotHelper.prepareData(covariate.effectCurve, covariate.valuesHistogram, isDiscrete);
+        return PlotHelper
+            .createPlotOptions(data, covariate.name, isDiscrete, isLarge, isHistogram, ymin, ymax);
+    };
+
+    var removePlot = function (element) {
+        var chart = ko.utils.domData.get(element, "chart");
+        if (chart) {
+            chart = chart.destroy();
+            ko.utils.domData.clear(element);
+        }
+    };
+
     ko.bindingHandlers.smallEffectPlot = {
         init: function (element) {
             element.style.width = 264;
             element.style.height = 198;
         },
-        update: function () {
+        update: function (element, valueAccessor) {
+            var value = ko.utils.recursiveUnwrap(valueAccessor);
+            removePlot(element);
+
+            if (value.covariate) {
+                var options = getPlotOptions(value.covariate, false, false, value.min, value.max);
+                addPlot(element, options);
+            }
         }
     };
 
@@ -192,7 +225,14 @@ define([
             element.style.width = 668;
             element.style.height = 453;
         },
-        update: function () {
+        update: function (element, valueAccessor) {
+            var value = ko.utils.recursiveUnwrap(valueAccessor);
+            removePlot(element);
+
+            if (value) {
+                var options = getPlotOptions(value, true, false);
+                addPlot(element, options);
+            }
         }
     };
 
@@ -201,12 +241,27 @@ define([
             element.style.width = 668;
             element.style.height = 300;
         },
-        update: function () {
+        update: function (element, valueAccessor) {
+            var value = ko.utils.recursiveUnwrap(valueAccessor);
+            removePlot(element);
+            if (value) {
+                var options = getPlotOptions(value, true, true);
+                addPlot(element, options);
+            }
         }
     };
 
     ko.bindingHandlers.savePlot = {
-        init: function () {
+        init: function (element, valueAccessor) {
+            ko.applyBindingAccessorsToNode(element, {
+                click: function () {
+                    return function () {
+                        var value = ko.utils.recursiveUnwrap(valueAccessor);
+                        var chart = ko.utils.domData.get($("#" + value.id)[0], "chart");
+                        chart.save(value.name);
+                    };
+                }
+            });
         }
     };
     
