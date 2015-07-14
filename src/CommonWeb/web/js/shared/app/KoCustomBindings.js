@@ -149,6 +149,39 @@ define([
         }
     };
 
+    // Plotting
+    ko.bindingHandlers.smallEffectPlot = {
+        init: function (element) {
+            element.style.width = 264;
+            element.style.height = 198;
+        },
+        update: function () {
+        }
+    };
+
+    ko.bindingHandlers.largeEffectPlot = {
+        init: function (element) {
+            element.style.width = 668;
+            element.style.height = 453;
+        },
+        update: function () {
+        }
+    };
+
+    ko.bindingHandlers.covariateHistogramPlot = {
+        init: function (element) {
+            element.style.width = 668;
+            element.style.height = 300;
+        },
+        update: function () {
+        }
+    };
+
+    ko.bindingHandlers.savePlot = {
+        init: function () {
+        }
+    };
+    
     // Prevent mouse events from bubbling up to higher DOM elements (argument = include click event)
     ko.bindingHandlers.preventBubble = {
         init: function (element, valueAccessor) {
