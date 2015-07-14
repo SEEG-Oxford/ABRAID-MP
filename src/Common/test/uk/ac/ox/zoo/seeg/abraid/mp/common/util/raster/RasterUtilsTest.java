@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.common.util;
+package uk.ac.ox.zoo.seeg.abraid.mp.common.util.raster;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import org.apache.commons.io.FileUtils;
@@ -7,6 +7,7 @@ import org.geotools.geometry.jts.JTS;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 
 import javax.media.jai.PlanarImage;
 import java.awt.image.Raster;
@@ -25,7 +26,7 @@ import static org.mockito.Mockito.*;
  * Copyright (c) 2015 University of Oxford
  */
 public class RasterUtilsTest {
-    private static final String TEST_DATA_PATH = "Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/util";
+    private static final String TEST_DATA_PATH = "Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/util/raster";
 
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder(); ///CHECKSTYLE:SUPPRESS VisibilityModifier
@@ -41,7 +42,7 @@ public class RasterUtilsTest {
         File outputFile = testFolder.newFile();
 
         // Act
-        RasterUtils.transformRaster(rasterFile, outputFile, new File[] {refFile}, new RasterTransformation() {
+        RasterUtils.transformRaster(rasterFile, outputFile, new File[]{refFile}, new RasterTransformation() {
             @Override
             public void transform(WritableRaster raster, Raster[] referenceRasters) {
                 for (int i = 0; i < raster.getWidth(); i++) {
@@ -140,7 +141,7 @@ public class RasterUtilsTest {
     @Test
     public void loadRasterThrowsForWrongFile() throws Exception {
         // Arrange
-        final File rasterFile = new File(TEST_DATA_PATH, "file1_iso-8859-1.txt");
+        final File rasterFile = new File(TEST_DATA_PATH, "../file1_iso-8859-1.txt");
 
         // Act
         Callable callable = new Callable() {

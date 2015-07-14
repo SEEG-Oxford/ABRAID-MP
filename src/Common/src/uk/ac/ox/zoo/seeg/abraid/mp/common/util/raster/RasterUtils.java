@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.common.util;
+package uk.ac.ox.zoo.seeg.abraid.mp.common.util.raster;
 
 import org.apache.log4j.Logger;
 import org.geotools.coverage.GridSampleDimension;
@@ -15,6 +15,7 @@ import org.geotools.resources.image.ImageUtilities;
 import org.opengis.coverage.grid.GridCoverageWriter;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.ParameterValue;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 
 import javax.media.jai.PlanarImage;
 import java.awt.image.Raster;
