@@ -35,15 +35,18 @@ public class JsonCovariateInfluenceTest {
         when(covariateInfluence.getCovariateFile()).thenReturn(covariateFile);
         List<JsonEffectCurveCovariateInfluence> effectCurve = Arrays.asList(
                 mock(JsonEffectCurveCovariateInfluence.class), mock(JsonEffectCurveCovariateInfluence.class));
+        List<JsonCovariateValueBin> histogram = Arrays.asList(
+                mock(JsonCovariateValueBin.class), mock(JsonCovariateValueBin.class));
 
         // Act
-        JsonCovariateInfluence result = new JsonCovariateInfluence(covariateInfluence, effectCurve);
+        JsonCovariateInfluence result = new JsonCovariateInfluence(covariateInfluence, histogram, effectCurve);
 
         // Assert
         assertThat(result.getName()).isEqualTo(displayName);
         assertThat(result.getInfo()).isEqualTo(info);
         assertThat(result.getMeanInfluence()).isEqualTo(meanInfluence);
         assertThat(result.getEffectCurve()).isEqualTo(effectCurve);
+        assertThat(result.getValuesHistogram()).isEqualTo(histogram);
         assertThat(result.getDiscrete()).isEqualTo(discrete);
     }
 }
