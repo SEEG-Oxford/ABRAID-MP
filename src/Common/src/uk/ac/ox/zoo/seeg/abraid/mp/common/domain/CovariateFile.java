@@ -51,6 +51,10 @@ public class CovariateFile {
     @Fetch(FetchMode.SELECT)
     private Collection<DiseaseGroup> enabledDiseaseGroups;
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "covariateFile")
+    @Fetch(FetchMode.SELECT)
+    private Collection<CovariateValueBin> covariateValueHistogramData;
+
     public CovariateFile() {
     }
 
@@ -116,6 +120,14 @@ public class CovariateFile {
 
     public void setEnabledDiseaseGroups(Collection<DiseaseGroup> enabledDiseaseGroups) {
         this.enabledDiseaseGroups = enabledDiseaseGroups;
+    }
+
+    public Collection<CovariateValueBin> getCovariateValueHistogramData() {
+        return covariateValueHistogramData;
+    }
+
+    public void setCovariateValueHistogramData(Collection<CovariateValueBin> covariateValueHistogramData) {
+        this.covariateValueHistogramData = covariateValueHistogramData;
     }
 
     ///COVERAGE:OFF - generated code
