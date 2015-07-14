@@ -12,7 +12,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.util.RasterUtils;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.util.raster.RasterUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.RasterFilePathFactory;
 
 import java.io.File;
