@@ -115,6 +115,40 @@ public final class RasterUtils {
         }
     }
 
+     /**
+     * Applies a summation operation to a raster file.
+     * @param rasterFile The file location of the raster.
+     * @param collator The summary operation to to be performed.
+     * @param <TResult> The data type of the summary result.
+     * @return The summary result.
+     * @throws IOException thrown if unable to complete the operation.
+     */
+    public static <TResult> TResult summarizeRaster(File rasterFile, RasterSummaryCollator<TResult> collator)
+            throws IOException {
+        GridCoverage2D raster = null;
+
+        try {
+            // Load source raster
+            LOGGER.info(LOG_LOADING_SOURCE_RASTER);
+            raster = loadRaster(rasterFile);
+            // Extract raw data from the source raster
+            WritableRaster rasterData = (WritableRaster) raster.getRenderedImage().getData();
+
+            for (int i = 0; i < rasterData.getWidth(); i++) {
+                for (int j = 0; j < rasterData.getHeight(); j++) {
+                    double rasterValue = rasterData.getSampleDouble(i, j, 0);
+                    if (rasterValue != RasterUtils.NO_DATA_VALUE) {
+                        collator.addValue(rasterValue);
+                    }
+                }
+            }
+
+            return collator.getSummary();
+        } finally {
+            disposeRaster(raster);
+        }
+    }
+
     /**
      * Load a raster file from a given location. This function assumes WGS84 GeoTiff files.
      * NOTE: All loaded rasters must subsequently be disposed using RasterUtils.disposeRaster.
