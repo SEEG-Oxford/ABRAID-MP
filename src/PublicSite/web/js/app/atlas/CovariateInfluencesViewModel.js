@@ -5,8 +5,9 @@
  */
 define([
     "ko",
-    "jquery"
-], function (ko, $) {
+    "jquery",
+    "underscore"
+], function (ko, $, _) {
     "use strict";
 
     return function (baseUrl) {
@@ -19,6 +20,36 @@ define([
                 baseUrl + "atlas/details/modelrun/" + activeRun().id + "/effectcurves.csv" :
                 "#";
         }, self);
+
+        self.covariateInfluencesToPlot = ko.computed(function () {
+            var covariates = self.covariateInfluences();
+            if (covariates) {
+                return _(covariates).filter(function (covariate) {
+                    return covariate.meanInfluence > (100.0 / covariates.length);
+                });
+            } else {
+                return [];
+            }
+        });
+        self.maxEffectCurveValue = ko.computed(function () {
+            var covariates = self.covariateInfluencesToPlot();
+            if (covariates) {
+                return _(covariates).chain().pluck("effectCurve").flatten().pluck("upperQuantile").max().value();
+            } else {
+                return undefined;
+            }
+        });
+
+        self.minEffectCurveValue = ko.computed(function () {
+            var covariates = self.covariateInfluencesToPlot();
+            if (covariates) {
+                return _(covariates).chain().pluck("effectCurve").flatten().pluck("lowerQuantile").min().value();
+            } else {
+                return undefined;
+            }
+        });
+
+        self.activeCurve = ko.observable();
 
         var ajax;
         ko.postbox.subscribe("active-atlas-layer", function (layer) {
