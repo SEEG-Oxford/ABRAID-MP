@@ -1,18 +1,23 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.covariates;
 
 import ch.lambdaj.function.convert.Converter;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.math.DoubleRange;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateFile;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateValueBin;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelDisease;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.CovariateService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.util.raster.BinningRasterSummaryCollator;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.util.raster.RangeRasterSummaryCollator;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.util.raster.RasterUtils;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.util.raster.ValuesRasterSummaryCollator;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -20,7 +25,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import static ch.lambdaj.Lambda.*;
@@ -34,6 +41,7 @@ public class CovariatesControllerHelperImpl implements CovariatesControllerHelpe
     private final CovariateService covariateService;
     private final DiseaseService diseaseService;
     private static final String ERROR_CREATE_SUBDIRECTORY = "Could not create subdirectory for new covariate file";
+    private static final int NUMBER_OF_HISTOGRAM_BINS = 10;
 
     @Autowired
     public CovariatesControllerHelperImpl(CovariateService covariateService, DiseaseService diseaseService) {
@@ -61,7 +69,6 @@ public class CovariatesControllerHelperImpl implements CovariatesControllerHelpe
      */
     @Override
     public JsonCovariateConfiguration getCovariateConfiguration() throws IOException {
-        checkForNewCovariateFilesOnDisk();
         return new JsonCovariateConfiguration(
                 convert(diseaseService.getAllDiseaseGroups(), new Converter<DiseaseGroup, JsonModelDisease>() {
                     @Override
@@ -144,42 +151,29 @@ public class CovariatesControllerHelperImpl implements CovariatesControllerHelpe
     @Override
     public void saveNewCovariateFile(String name, boolean isDiscrete, String path, MultipartFile file)
             throws IOException {
-        writeCovariateFileToDisk(file, path);
-        addCovariateToDatabase(name, isDiscrete, extractRelativePath(path));
+        File rasterFile = writeCovariateFileToDisk(file, path);
+        Map<DoubleRange, Integer> binnedCovariateValueData = generateCovariateValuesHistogram(rasterFile, isDiscrete);
+        addCovariateToDatabase(name, isDiscrete, extractRelativePath(path), binnedCovariateValueData);
     }
 
-    private void checkForNewCovariateFilesOnDisk() throws IOException {
-        final Path covariateDirectoryPath = Paths.get(covariateService.getCovariateDirectory());
-        File covariateDirectory = covariateDirectoryPath.toFile();
-
-        if (covariateDirectory.exists()) {
-            Collection<File> files = FileUtils.listFiles(covariateDirectory, null, true);
-            Collection<String> paths = convert(files, new Converter<File, String>() {
-                public String convert(File file) {
-                    Path subPath = covariateDirectoryPath.relativize(file.toPath());
-                    return FilenameUtils.separatorsToUnix(subPath.toString());
-                }
-            });
-
-            Collection<CovariateFile> knownFiles = covariateService.getAllCovariateFiles();
-            Collection<String> knownPaths = extract(knownFiles, on(CovariateFile.class).getFile());
-
-            paths.removeAll(knownPaths);
-
-            for (String path : paths) {
-                addCovariateToDatabase("", false, path);
-            }
-        }
-    }
-
-    private void addCovariateToDatabase(String name, boolean isDiscrete, String path) throws IOException {
-        covariateService.saveCovariateFile(new CovariateFile(
+    private void addCovariateToDatabase(String name, boolean isDiscrete, String path,
+                                        Map<DoubleRange, Integer> binnedCovariateValueData) throws IOException {
+        CovariateFile covariateFile = new CovariateFile(
                 name,
                 path,
                 false,
                 isDiscrete,
                 ""
-        ));
+        );
+
+        List<CovariateValueBin> bins = new ArrayList<>();
+        for (Map.Entry<DoubleRange, Integer> bin : binnedCovariateValueData.entrySet()) {
+            bins.add(new CovariateValueBin(covariateFile,
+                    bin.getKey().getMinimumDouble(), bin.getKey().getMaximumDouble(), bin.getValue()));
+        }
+        covariateFile.setCovariateValueHistogramData(bins);
+
+        covariateService.saveCovariateFile(covariateFile);
     }
 
     private File writeCovariateFileToDisk(MultipartFile file, String path) throws IOException {
@@ -191,6 +185,34 @@ public class CovariatesControllerHelperImpl implements CovariatesControllerHelpe
         stream.write(file.getBytes());
         stream.close();
         return serverFile;
+    }
+
+    private Map<DoubleRange, Integer> generateCovariateValuesHistogram(File rasterFile, boolean isDiscrete)
+            throws IOException {
+        // Find bins
+        List<DoubleRange> histogramBins = new ArrayList<>();
+        if (isDiscrete) {
+            Collection<Double> values = RasterUtils.summarizeRaster(rasterFile, new ValuesRasterSummaryCollator());
+
+            for (Double value : values)  {
+                histogramBins.add(new DoubleRange(value, value));
+            }
+        } else {
+            DoubleRange range = RasterUtils.summarizeRaster(rasterFile, new RangeRasterSummaryCollator());
+
+            double min = range.getMinimumDouble();
+            double max = range.getMaximumDouble();
+            double size = (max - min) / ((double) NUMBER_OF_HISTOGRAM_BINS);
+            for (int i = 1; i <= NUMBER_OF_HISTOGRAM_BINS; i++) {
+                histogramBins.add(new DoubleRange(
+                        min + ((i - 1) * size),
+                        (i == NUMBER_OF_HISTOGRAM_BINS) ? max : (min + (i * size)))
+                );
+            }
+        }
+
+        // Count
+        return RasterUtils.summarizeRaster(rasterFile, new BinningRasterSummaryCollator(histogramBins));
     }
 
     private void createDirectoryForCovariate(String path) throws IOException {
