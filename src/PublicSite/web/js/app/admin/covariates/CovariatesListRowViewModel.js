@@ -19,7 +19,11 @@ define(["ko", "underscore"], function (ko, _) {
         });
         self.mouseOver = ko.observable(false);
         self.path = "./" + parentFile.path;
-        self.info = parentFile.info;
+        self.info = ko.observable(parentFile.info);
+        self.info.subscribe(function (value) {
+            parentFile.info = value;
+            parentViewModel.hasUnsavedChanges(true);
+        });
         self.usageCount = ko.observable(parentFile.enabled.length);
         self.state = ko.observable(_(parentFile.enabled).contains(activeDiseaseId));
         self.state.subscribe(function (value) {

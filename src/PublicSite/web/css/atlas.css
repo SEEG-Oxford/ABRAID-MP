@@ -27,16 +27,20 @@ html, body {
     min-width: 575px;
 }
 #covariatesAndStatistics h5,
-#covariates td:first-child {
-    text-align: center;
-}
 #covariates td:nth-child(2) {
+    text-align: center;
+}
+#covariates td:nth-child(3) {
     min-width: 120px;
 }
-#covariates td:nth-child(3),
-#covariates th:nth-child(3) {
+#covariates td:nth-child(4),
+#covariates th:nth-child(5) {
     min-width: 120px;
     text-align: center;
+}
+#covariates .popover .popover-content {
+    text-align: justify;
+    font-size: 13px;
 }
 #statistics td:nth-child(3),
 #statistics th:nth-child(3) {
