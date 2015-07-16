@@ -36,7 +36,7 @@ public class PasswordResetRequestDaoTest extends AbstractCommonSpringIntegration
     }
 
     @Test
-    public void saveAndReloadCountryPasswordResetRequest() {
+    public void saveAndReloadPasswordResetRequest() {
         PasswordResetRequest request = createPasswordResetRequest("helena.patching@zoo.ox.ac.uk", "hashedKey1");
         request = passwordResetRequestDao.getById(request.getId());
         assertThat(request.getExpert().getEmail()).isEqualTo("helena.patching@zoo.ox.ac.uk");
