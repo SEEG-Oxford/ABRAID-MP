@@ -68,4 +68,20 @@
             </tr>
         </table>
     </div>
+    <div class="legend leaflet-bar leaflet-control" style="display: none" data-bind="visible: type() == 'occurrences'">
+        <table>
+            <tr>
+                <td class="key discreteKey">
+                    <i style="background:#0F2540"></i><span>Less than 12 months old</span><br>
+                    <i style="background:#4B6584"></i><span>Less than 34 months old</span><br>
+                    <i style="background:#87A5C8"></i><span>Less than 68 months old</span><br>
+                    <i style="background:#A6C5EA"></i><span>More than 68 months old</span><br>
+                </td>
+                <td class="legendText">
+                    <p>Input data range for current map</p>
+                    <p data-bind="text: startDate() + '&nbsp;&rarr;&nbsp;' + endDate()"></p>
+                </td>
+            </tr>
+        </table>
+    </div>
 </div>

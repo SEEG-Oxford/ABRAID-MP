@@ -16,23 +16,25 @@ define([
         self.covariateInfluences = ko.observable();
         self.effectCurvesLink = ko.computed(function () {
             return activeRun() ?
-                baseUrl + "atlas/details/modelrun/" + activeRun() + "/effectcurves.csv" :
+                baseUrl + "atlas/details/modelrun/" + activeRun().id + "/effectcurves.csv" :
                 "#";
         }, self);
 
         var ajax;
-        ko.postbox.subscribe("selected-run", function (run) {
+        ko.postbox.subscribe("active-atlas-layer", function (layer) {
             activeRun(undefined);
             self.covariateInfluences(undefined);
 
-            if (run && run.id) {
-                activeRun(run.id);
+            if (layer) {
+                activeRun(layer.run);
                 if (ajax) {
                     ajax.abort();
                 }
-                ajax = $.getJSON(baseUrl + "atlas/details/modelrun/" + run.id + "/covariates")
+                ajax = $.getJSON(baseUrl + "atlas/details/modelrun/" + layer.run.id + "/covariates")
                     .done(function (data) {
                         self.covariateInfluences(data);
+                    }).always(function () {
+                        ajax = undefined;
                     });
             }
         });
