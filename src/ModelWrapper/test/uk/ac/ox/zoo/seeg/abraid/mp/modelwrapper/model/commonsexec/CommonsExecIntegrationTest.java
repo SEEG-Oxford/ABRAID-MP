@@ -151,6 +151,7 @@ public class CommonsExecIntegrationTest {
     public void shouldBeAbleToDoDryRunOfModel() throws Exception {
         // Arrange
         final File baseDir = testDir.newFolder();
+        Files.createDirectory(Paths.get(baseDir.getAbsolutePath(), "covariates"));
         final RunConfiguration config = new RunConfiguration(
                 "foo", baseDir, testDir.newFolder(),
                 new CodeRunConfiguration("", ""),
