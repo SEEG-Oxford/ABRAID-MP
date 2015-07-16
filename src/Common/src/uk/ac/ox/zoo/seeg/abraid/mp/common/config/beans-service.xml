@@ -38,7 +38,9 @@
         <constructor-arg name="expertWeightingThreshold" value="${expert.weighting.threshold}" />
         <constructor-arg name="validationWeightingThreshold" value="${validation.weighting.threshold}" />
     </bean>
-    <bean id="diseaseOccurrenceReviewManager" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.DiseaseOccurrenceReviewManager" autowire="constructor"/>
+    <bean id="diseaseOccurrenceReviewManager" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.DiseaseOccurrenceReviewManager" autowire="constructor">
+        <constructor-arg name="expertWeightingThreshold" value="${expert.weighting.threshold}" />
+    </bean>
     <bean id="modelRunRequester" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunRequester" autowire="constructor">
         <constructor-arg name="modelWrapperUrlCollection" ref="modelWrapperUrls" />
     </bean>

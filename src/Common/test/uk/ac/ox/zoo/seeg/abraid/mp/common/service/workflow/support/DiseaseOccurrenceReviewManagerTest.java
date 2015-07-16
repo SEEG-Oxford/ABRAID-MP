@@ -21,6 +21,7 @@ import static org.mockito.Mockito.*;
 public class DiseaseOccurrenceReviewManagerTest {
 
     private static final int DISEASE_GROUP_ID = 1;
+    private double expertWeightingThreshold = 0.5;
 
     @Test
     public void updateDiseaseOccurrenceStatusRemainsInReviewWhenMoreThanMaxDaysHasNotElapsedSinceCreatedDate() {
@@ -191,7 +192,7 @@ public class DiseaseOccurrenceReviewManagerTest {
                              DiseaseOccurrenceStatus expectedStatus, int maxDays) {
         // Arrange
         DiseaseService diseaseService = mockDiseaseService(occurrence, hasBeenReviewed, maxDays);
-        DiseaseOccurrenceReviewManager target = new DiseaseOccurrenceReviewManager(diseaseService);
+        DiseaseOccurrenceReviewManager target = new DiseaseOccurrenceReviewManager(diseaseService, expertWeightingThreshold);
 
         // Act
         target.updateDiseaseOccurrenceStatus(DISEASE_GROUP_ID, isAutomaticProcess);
@@ -210,7 +211,7 @@ public class DiseaseOccurrenceReviewManagerTest {
         if (hasBeenReviewed) {
             reviews.add(new DiseaseOccurrenceReview(mock(Expert.class), occurrence, DiseaseOccurrenceReviewResponse.UNSURE));
         }
-        when(diseaseService.getAllDiseaseOccurrenceReviewsForOccurrencesInValidation(DISEASE_GROUP_ID)).thenReturn(reviews);
+        when(diseaseService.getDiseaseOccurrenceReviewsForOccurrencesInValidationForUpdatingWeightings(DISEASE_GROUP_ID, expertWeightingThreshold)).thenReturn(reviews);
         when(diseaseService.subtractMaxDaysOnValidator(any(DateTime.class))).thenAnswer(new Answer<LocalDate>() {
             @Override
             public LocalDate answer(InvocationOnMock invocationOnMock) throws Throwable {

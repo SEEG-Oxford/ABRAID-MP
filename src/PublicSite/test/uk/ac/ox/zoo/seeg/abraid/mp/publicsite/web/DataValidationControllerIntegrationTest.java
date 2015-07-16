@@ -231,6 +231,15 @@ public class DataValidationControllerIntegrationTest extends AbstractPublicSiteI
     }
 
     @Test
+    public void submitReviewAcceptsValidIDontKnowRequest() throws Exception {
+        when(expertService.doesDiseaseOccurrenceReviewExist(anyInt(), anyInt())).thenReturn(false);
+
+        this.mockMvc.perform(
+                post(DataValidationController.DATA_VALIDATION_BASE_URL + "/diseases/1/occurrences/1/validate"))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
     public void submitReviewOnlyAcceptsPOST() throws Exception {
         when(expertService.doesDiseaseOccurrenceReviewExist(anyInt(), anyInt())).thenReturn(false);
 

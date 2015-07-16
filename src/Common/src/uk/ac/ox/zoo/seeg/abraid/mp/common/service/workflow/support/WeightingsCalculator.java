@@ -2,17 +2,14 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 
 import ch.lambdaj.function.convert.Converter;
 import org.apache.log4j.Logger;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceReview;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceStatus;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 
 import java.util.*;
 
 import static ch.lambdaj.Lambda.*;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 /**
@@ -60,8 +57,9 @@ public class WeightingsCalculator {
      * @param diseaseGroupId The id of the disease group.
      */
     public void updateDiseaseOccurrenceExpertWeightings(int diseaseGroupId) {
-        List<DiseaseOccurrenceReview> allReviews = diseaseService.getDiseaseOccurrenceReviewsForUpdatingWeightings(
-                diseaseGroupId, expertWeightingThreshold);
+        List<DiseaseOccurrenceReview> allReviews =
+                diseaseService.getDiseaseOccurrenceReviewsForOccurrencesInValidationForUpdatingWeightings(
+                    diseaseGroupId, expertWeightingThreshold);
         if (allReviews.isEmpty()) {
             logger.info(String.format(NOT_UPDATING_OCCURRENCE_EXPERT_WEIGHTINGS, expertWeightingThreshold));
         } else {
@@ -182,11 +180,13 @@ public class WeightingsCalculator {
      */
     public void updateExpertsWeightings() {
         List<DiseaseOccurrenceReview> allReviews = diseaseService.getAllDiseaseOccurrenceReviews();
-        if (allReviews.size() == 0) {
+        List<DiseaseOccurrenceReview> reviews = filter(
+                having(on(DiseaseOccurrenceReview.class).getResponse(), notNullValue()), allReviews);
+        if (reviews.size() == 0) {
             logger.info(NOT_UPDATING_WEIGHTINGS_OF_EXPERTS);
         } else {
-            logger.info(String.format(RECALCULATING_WEIGHTINGS_OF_EXPERTS, allReviews.size()));
-            updateExpertsWeightings(allReviews);
+            logger.info(String.format(RECALCULATING_WEIGHTINGS_OF_EXPERTS, reviews.size()));
+            updateExpertsWeightings(reviews);
         }
     }
 

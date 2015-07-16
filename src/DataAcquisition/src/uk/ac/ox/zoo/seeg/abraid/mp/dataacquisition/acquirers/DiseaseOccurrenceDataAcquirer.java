@@ -27,9 +27,9 @@ public class DiseaseOccurrenceDataAcquirer {
             "More than one location already exists at point (%f,%f) and with precision %s. Arbitrarily using " +
             "location ID %d.";
     private static final String OCCURRENCE_IS_TOO_OLD =
-            "Occurrence date for occurrence is older than the max allowable age.";
+            "Occurrence date for occurrence is older than the max allowable age";
     private static final String OCCURRENCE_IS_IN_THE_FUTURE =
-            "Occurrence date for occurrence is in the future.";
+            "Occurrence date for occurrence is in the future";
 
     private DiseaseService diseaseService;
     private LocationService locationService;
@@ -75,7 +75,7 @@ public class DiseaseOccurrenceDataAcquirer {
     }
 
     private void rejectOccurrenceIfOccurrenceDateInvalid(DiseaseOccurrence occurrence) {
-        if (!occurrenceIsGoldStandard(occurrence) && occurrenceIsTooOld(occurrence)) {
+        if (!occurrenceIsCSV(occurrence) && occurrenceIsTooOld(occurrence)) {
             throw new DataAcquisitionException(OCCURRENCE_IS_TOO_OLD);
         } else if (occurrenceIsInTheFuture(occurrence)) {
             throw new DataAcquisitionException(OCCURRENCE_IS_IN_THE_FUTURE);
@@ -93,8 +93,9 @@ public class DiseaseOccurrenceDataAcquirer {
                 .isAfter(DateTime.now().withTimeAtStartOfDay());
     }
 
-    private boolean occurrenceIsGoldStandard(DiseaseOccurrence occurrence) {
-        return occurrence.getAlert().getFeed().getProvenance().getName().equals(ProvenanceNames.MANUAL_GOLD_STANDARD);
+    private boolean occurrenceIsCSV(DiseaseOccurrence occurrence) {
+        final String provenceName = occurrence.getAlert().getFeed().getProvenance().getName();
+        return provenceName.equals(ProvenanceNames.MANUAL_GOLD_STANDARD) || provenceName.equals(ProvenanceNames.MANUAL);
     }
 
     // Returns the converted location, or null if the location could not be converted further

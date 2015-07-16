@@ -23,12 +23,11 @@ import javax.persistence.*;
                 "and diseaseOccurrence.id=:diseaseOccurrenceId"
     ),
     @NamedQuery(
-        name = "getAllDiseaseOccurrenceReviewsForOccurrencesInValidation",
-        query = DiseaseOccurrenceReview.QUERY
-    ),
-    @NamedQuery(
-        name = "getDiseaseOccurrenceReviewsForUpdatingWeightings",
-        query = DiseaseOccurrenceReview.QUERY +
+        name = "getDiseaseOccurrenceReviewsForOccurrencesInValidationForUpdatingWeightings",
+        query = "from DiseaseOccurrenceReview " +
+                "where diseaseOccurrence.diseaseGroup.id=:diseaseGroupId " +
+                "and diseaseOccurrence.status='IN_REVIEW' " +
+                "and response is not null " +
                 "and expert.weighting >= :expertWeightingThreshold"
     ),
     @NamedQuery(
@@ -39,14 +38,6 @@ import javax.persistence.*;
 @Entity
 @Table(name = "disease_occurrence_review")
 public class DiseaseOccurrenceReview {
-    /**
-     * An HQL fragment used for disease occurrence review queries.
-     */
-    public static final String QUERY =
-            "from DiseaseOccurrenceReview " +
-                "where diseaseOccurrence.diseaseGroup.id=:diseaseGroupId " +
-                "and diseaseOccurrence.status='IN_REVIEW'";
-
     // The id of the review.
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

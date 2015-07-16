@@ -56,12 +56,12 @@
                         }
 
                         if (includeConsole) {
+                            var resultString = "";
                             var ConsoleReporter = jasmineRequire.ConsoleReporter();
                             var options = {
-                                print: function () {
-                                    console.log.apply(console, arguments);
-                                },
+                                print: function (msg) { resultString = resultString + msg; },
                                 onComplete: function(state) {
+                                    console.log(resultString);
                                     // Stash these so we can get them elsewhere
                                     window.coverage = includeCoverage ? document.getElementById("blanket-main").lastChild.childNodes[1].innerHTML : "NOT RUN!"; // Ugly
                                     window.exitCode = state ? 0 : 1;

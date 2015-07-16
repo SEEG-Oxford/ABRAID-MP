@@ -57,7 +57,8 @@ define([
             var url = baseUrl + "datavalidation/diseases/" + diseaseId + "/occurrences/" + occurrenceId +
                 "/validate";
             self.submitting(true);
-            $.post(url, { review: review })
+            var data = (review === null) ? {} : { review: review };
+            $.post(url, data)
                 .done(function () {
                     // Status 2xx
                     // Display a success alert, remove the point from the map and side panel, increment the counter
