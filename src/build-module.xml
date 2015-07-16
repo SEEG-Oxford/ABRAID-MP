@@ -195,14 +195,16 @@
   <property name="ivy.home" value="${home.dir}/.ant" />
   <property name="ivy.jar.dir" value="${ivy.home}/lib" />
   <property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar" />
+  <property name="manual.cache.dir" value="${ivy.home}/manual" />
 
   <target name="download.ivy">
     <mkdir dir="${ivy.jar.dir}"/>
     <!-- download Ivy from web site so that it can be used even without any special installation -->
-    <get src="http://repo2.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar" dest="${ivy.jar.file}" usetimestamp="true"/>
+    <get skipexisting="true" src="http://repo2.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar" dest="${ivy.jar.file}" usetimestamp="true"/>
   </target>
 
   <target name="create.lib.dirs">
+    <mkdir dir="${manual.cache.dir}"/>
     <mkdir dir="${lib.dir}" />
     <mkdir dir="${lib.local.external.dir}" />
     <mkdir dir="${lib.local.analysis.dir}" />
@@ -229,7 +231,9 @@
   <!-- Get JaCoCo manually -->
   <property name="jacoco.version" value="0.6.2.201301080920" />
 
-  <target name="retrieve.jacoco" depends="check.jacoco, resolve.jacoco" />
+  <target name="retrieve.jacoco" depends="check.jacoco" if="needs-jacoco">
+    <antcall target="resolve.jacoco" />
+  </target>
 
   <target name="check.jacoco">
     <condition property="needs-jacoco">
@@ -239,23 +243,35 @@
     </condition>
   </target>
 
-  <target name="resolve.jacoco" if="needs-jacoco">
-    <get skipexisting="true" src="http://mchr3k-eclipse.appspot.com/files/jacoco-${jacoco.version}.zip" dest="${lib.local.analysis.dir}/jacoco-${jacoco.version}.zip" />
-    <unzip src="${lib.local.analysis.dir}/jacoco-${jacoco.version}.zip" dest="${lib.local.analysis.dir}">
+  <target name="resolve.jacoco">
+    <get skipexisting="true" src="http://mchr3k-eclipse.appspot.com/files/jacoco-${jacoco.version}.zip" dest="${manual.cache.dir}/jacoco-${jacoco.version}.zip" />
+    <unzip src="${manual.cache.dir}/jacoco-${jacoco.version}.zip" dest="${lib.local.analysis.dir}">
       <patternset>
         <include name="lib/jacocoant.jar"/>
       </patternset>
       <mapper type="flatten"/>
     </unzip>
     <move file="${lib.local.analysis.dir}/jacocoant.jar" tofile="${lib.local.analysis.dir}/jacocoant-${jacoco.version}.jar"/>
-    <delete file="${lib.local.analysis.dir}/jacoco-${jacoco.version}.zip"/>
   </target>
 
   <!-- JSHint manually -->
   <property name="jshint.version" value="2.5.0" />
 
-  <target name="retrieve.jshint">
-    <get skipexisting="true" src="https://raw.githubusercontent.com/jshint/jshint/${jshint.version}/dist/jshint.js" dest="${lib.local.analysis.dir}/jshint-${jshint.version}.js"/>
+  <target name="check.jshint">
+    <condition property="needs-jshint">
+      <not>
+        <available file="${lib.local.analysis.dir}/jshint-${jshint.version}.js"/>
+      </not>
+    </condition>
+  </target>
+
+  <target name="retrieve.jshint" depends="check.jshint" if="needs-jshint">
+     <antcall target="resolve.jshint" />
+  </target>
+
+  <target name="resolve.jshint">
+    <get skipexisting="true" src="https://raw.githubusercontent.com/jshint/jshint/${jshint.version}/dist/jshint.js" dest="${manual.cache.dir}/jshint-${jshint.version}.js"/>
+    <copy file="${manual.cache.dir}/jshint-${jshint.version}.js" tofile="${lib.local.analysis.dir}/jshint-${jshint.version}.js" />
   </target>
 
   <!-- Get Phantom manually -->
@@ -301,7 +317,8 @@
   </target>
 
   <target name="download.phantom" depends="determine.phantom.os.properties">
-    <get skipexisting="true" src="http://bitbucket.org/ariya/phantomjs/downloads/${phantom.package.name}.${phantom.package.extension}" dest="${lib.local.analysis.dir}/${phantom.package.name}.${phantom.package.extension}" />
+    <get skipexisting="true" src="http://bitbucket.org/ariya/phantomjs/downloads/${phantom.package.name}.${phantom.package.extension}" dest="${manual.cache.dir}/${phantom.package.name}.${phantom.package.extension}" />
+    <copy file="${manual.cache.dir}/${phantom.package.name}.${phantom.package.extension}" tofile="${lib.local.analysis.dir}/${phantom.package.name}.${phantom.package.extension}" />
   </target>
 
   <target name="unzip.phantom" unless="phantom-is-tar">

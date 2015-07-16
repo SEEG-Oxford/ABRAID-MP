@@ -12,13 +12,13 @@ define([
         var vm;
         beforeEach(function () {
             // Clear postbox subscriptions (prevents test from bleeding into each other).
-            ko.postbox._subscriptions["selected-run"] = [];  // jshint ignore:line
+            ko.postbox._subscriptions["active-atlas-layer"] = [];  // jshint ignore:line
             vm = new CovariateInfluencesViewModel(baseUrl);
         });
 
         afterEach(function () {
             // Clear postbox subscriptions (prevents test from bleeding into each other).
-            ko.postbox._subscriptions["selected-run"] = [];  // jshint ignore:line
+            ko.postbox._subscriptions["active-atlas-layer"] = [];  // jshint ignore:line
         });
 
         describe("holds the effect curve covariate influences link which", function () {
@@ -35,7 +35,7 @@ define([
                 var modelRunId = "abc";
                 var expected = baseUrl + "atlas/details/modelrun/" + modelRunId + "/effectcurves.csv";
                 // Act
-                ko.postbox.publish("selected-run", { id: modelRunId });
+                ko.postbox.publish("active-atlas-layer", { run: { id: modelRunId } });
                 // Assert
                 expect(vm.effectCurvesLink()).toEqual(expected);
             });
@@ -53,11 +53,11 @@ define([
             describe("is updated", function () {
                 var modelRunId = "modelRunId";
 
-                it("with a GET request when the 'selected-run' event is fired", function () {
+                it("with a GET request when the 'active-atlas-layer' event is fired", function () {
                     // Arrange
                     var expectedUrl = "/atlas/details/modelrun/" + modelRunId + "/covariates";
                     // Act
-                    ko.postbox.publish("selected-run", { id: modelRunId });
+                    ko.postbox.publish("active-atlas-layer", { run: { id: modelRunId } });
                     // Assert
                     expect(jasmine.Ajax.requests.mostRecent().url).toBe(expectedUrl);
                     expect(jasmine.Ajax.requests.mostRecent().method).toBe("GET");
@@ -67,7 +67,7 @@ define([
                     // Arrange
                     var expectation = [1, 2, 3];
                     // Act
-                    ko.postbox.publish("selected-run", { id: modelRunId });
+                    ko.postbox.publish("active-atlas-layer", { run: { id: modelRunId } });
                     jasmine.Ajax.requests.mostRecent().response({
                         "status": 200,
                         "contentType": "application/json",
@@ -79,7 +79,7 @@ define([
 
                 it("when unsuccessful, to empty", function () {
                     // Act
-                    ko.postbox.publish("selected-run", { id: modelRunId });
+                    ko.postbox.publish("active-atlas-layer", { run: { id: modelRunId } });
                     jasmine.Ajax.requests.mostRecent().response({ status: 400 });
                     // Assert
                     expect(vm.covariateInfluences()).toBeUndefined();

@@ -4,26 +4,22 @@ language:
   - java
 jdk:
   - openjdk7
-# - oraclejdk7
 services:
   - postgresql
+sudo: false
 addons:
   postgresql: "9.3"
-# Note: caching is not yet enabled for travis-ci.org. When it is this should cache our dependencies.
-# Note: need to be careful that the ivy-published version of common doesn't cache
-#cache:
-#  apt: true
-#  directories:
-#  - .ant/lib
-#  - .ivy2/cache
-before_install:
-  - sudo apt-get -y -q update
-install:
-  - sudo apt-get -y -q install r-base devscripts
+  apt:
+    packages:
+      - r-base
+      - devscripts
+cache:
+#  apt: true # apt caching is not yet availible on travis for open source projects
+  directories:
+    - $HOME/.ant/lib
+    - $HOME/.ant/manual
+    - $HOME/.ivy2/cache
 before_script:
-# Note: We no longer use rasters in the database.
-# - sudo sh -c 'echo "POSTGIS_GDAL_ENABLED_DRIVERS=GTiff" >> /etc/postgresql/9.3/main/environment'
-  - sudo service postgresql restart
   - git config core.fileMode false
   - chmod +x .travis.*.sh
 script:

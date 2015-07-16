@@ -15,15 +15,17 @@ define([
         self.statistics = ko.observable(undefined);
 
         var ajax;
-        ko.postbox.subscribe("selected-run", function (run) {
+        ko.postbox.subscribe("active-atlas-layer", function (layer) {
             self.statistics(undefined);
-            if (run && run.id) {
+            if (layer) {
                 if (ajax) {
                     ajax.abort();
                 }
-                ajax = $.getJSON(baseUrl + "atlas/details/modelrun/" + run.id + "/statistics")
+                ajax = $.getJSON(baseUrl + "atlas/details/modelrun/" + layer.run.id + "/statistics")
                     .done(function (data) {
                         self.statistics(data);
+                    }).always(function () {
+                        ajax = undefined;
                     });
             }
         });

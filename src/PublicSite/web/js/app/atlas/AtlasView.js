@@ -6,11 +6,12 @@
  */
 define([
     "L",
-    "ko"
-], function (L, ko) {
+    "ko",
+    "jquery"
+], function (L, ko, $) {
     "use strict";
 
-    return function (wmsUrl, wmsLayerParameterFactory) {
+    return function (wmsUrl, wmsLayerParameterFactory, geoJsonLayerFactory, alert) {
         var self = this;
 
         self.wmsUrl = wmsUrl;
@@ -29,23 +30,50 @@ define([
 
         self.map.fitWorld();
 
-        self.currentLayer = undefined;
+        self.currentWmsLayer = undefined;
+        self.currentGeoJsonLayer = undefined;
+        self.geoJsonAjax = undefined;
 
-        ko.postbox.subscribe("active-atlas-layer", function (layer) {
-            if (self.currentLayer) {
-                self.map.removeLayer(self.currentLayer);
-                self.currentLayer = undefined;
+        self.resetView = function () {
+            if (self.currentWmsLayer) {
+                self.map.removeLayer(self.currentWmsLayer);
+                self.currentWmsLayer = undefined;
             }
 
+            if (self.currentGeoJsonLayer) {
+                self.map.removeLayer(self.currentGeoJsonLayer);
+                self.currentGeoJsonLayer = undefined;
+            }
+            if (self.geoJsonAjax) {
+                self.geoJsonAjax.abort();
+            }
+        };
+
+        ko.postbox.subscribe("active-atlas-layer", function (layer) {
+            self.resetView();
+
             if (layer) {
-                self.currentLayer = L.tileLayer.wms(self.wmsUrl,
+                if (geoJsonLayerFactory.showGeoJsonLayer(layer)) {
+                    self.geoJsonAjax = $.getJSON(geoJsonLayerFactory.buildGeoJsonUrl(layer))
+                        .done(function (featureCollection) {
+                            self.currentGeoJsonLayer =
+                                geoJsonLayerFactory.buildGeoJsonLayer(featureCollection, layer);
+                            self.map.addLayer(self.currentGeoJsonLayer);
+                        }).fail(function () {
+                            alert("Error fetching occurrences");
+                        }).always(function () {
+                            self.geoJsonAjax = undefined;
+                        });
+                }
+
+                self.currentWmsLayer = L.tileLayer.wms(self.wmsUrl,
                     wmsLayerParameterFactory.createLayerParametersForDisplay(layer));
 
-                self.map.addLayer(self.currentLayer);
+                self.map.addLayer(self.currentWmsLayer);
 
                 ko.postbox.publish(
                     "tracking-action-event",
-                    { "category": "atlas", "action": "layer-view", "label": layer }
+                    { "category": "atlas", "action": "layer-view", "label": layer.run.id + "_" + layer.type }
                 );
             }
         });

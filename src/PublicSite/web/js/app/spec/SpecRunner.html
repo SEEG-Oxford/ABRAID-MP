@@ -33,6 +33,7 @@
             "app/spec/atlas/AtlasViewSpec",
             "app/spec/atlas/CovariateInfluencesViewModelSpec",
             "app/spec/atlas/DownloadLinksViewModelSpec",
+            "app/spec/atlas/GeoJsonLayerFactorySpec",
             "app/spec/atlas/LayerSelectorViewModelSpec",
             "app/spec/atlas/LegendViewModelSpec",
             "app/spec/atlas/StatisticsViewModelSpec",
@@ -86,12 +87,12 @@
                     }
 
                     if (includeConsole) {
+                        var resultString = "";
                         var ConsoleReporter = jasmineRequire.ConsoleReporter();
                         var options = {
-                            print: function () {
-                                console.log.apply(console, arguments);
-                            },
+                            print: function (msg) { resultString = resultString + msg; },
                             onComplete: function(state) {
+                                console.log(resultString);
                                 // Stash these so we can get them elsewhere
                                 window.coverage = includeCoverage ? document.getElementById("blanket-main").lastChild.childNodes[1].innerHTML : "NOT RUN!"; // Ugly
                                 window.exitCode = state ? 0 : 1;

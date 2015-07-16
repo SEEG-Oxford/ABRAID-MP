@@ -1,7 +1,7 @@
 /* Apply KO bindings for the atlas page.
  * Copyright (c) 2014 University of Oxford
  */
-/*global require:false, baseUrl:false, data:false */
+/*global require:false, baseUrl:false, data:false, alert:false */
 require([baseUrl + "js/shared/require.conf.js"], function () {
     "use strict";
 
@@ -14,12 +14,16 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
         "app/atlas/ModelRunDetailsViewModel",
         "app/atlas/StatisticsViewModel",
         "app/atlas/WmsLayerParameterFactory",
+        "app/atlas/GeoJsonLayerFactory",
         "app/atlas/LegendViewModel",
         "domReady!",
         "analytics"
     ], function (ko, AtlasView, CovariateInfluencesViewModel, DownloadLinksViewModel, LayerSelectorViewModel,
-                 ModelRunDetailsViewModel, StatisticsViewModel, WmsLayerParameterFactory, LegendViewModel, doc) {
+                 ModelRunDetailsViewModel, StatisticsViewModel, WmsLayerParameterFactory, GeoJsonLayerFactory,
+                 LegendViewModel, doc) {
         var wmsParamFactory = new WmsLayerParameterFactory();
+        var geoJsonLayerFactory = new GeoJsonLayerFactory(baseUrl);
+
         ko.applyBindings(
             new ModelRunDetailsViewModel(
                 new CovariateInfluencesViewModel(baseUrl),
@@ -34,7 +38,7 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
             doc.getElementById("legend")
         );
 
-        var map = new AtlasView(data.wmsUrl, wmsParamFactory); // jshint ignore:line
+        var map = new AtlasView(data.wmsUrl, wmsParamFactory, geoJsonLayerFactory, alert); // jshint ignore:line
 
         // NB. ViewModels subscribing to events published by LayerSelector must be defined first.
         ko.applyBindings(

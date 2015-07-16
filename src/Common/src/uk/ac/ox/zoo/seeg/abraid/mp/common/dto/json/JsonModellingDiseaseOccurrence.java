@@ -3,6 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.apache.commons.lang.ObjectUtils;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelingLocationPrecisionAdjuster;
 
 /**
  * A DTO to represent a DiseaseOccurrence in an R compatible form (NA instead of null).
@@ -28,16 +29,19 @@ public class JsonModellingDiseaseOccurrence {
     @JsonProperty("GAUL")
     private String gaul;
 
-    public JsonModellingDiseaseOccurrence(double longitude, double latitude, double weight, int admin, String gaul) {
+    public JsonModellingDiseaseOccurrence(ModelingLocationPrecisionAdjuster precisionAdjuster,
+                                          double longitude, double latitude, double weight, int admin, String gaul) {
         setLongitude(longitude);
         setLatitude(latitude);
         setWeight(weight);
-        setAdmin(admin);
+        setAdmin(precisionAdjuster.adjust(admin, gaul));
         setGaul(gaul);
     }
 
-    public JsonModellingDiseaseOccurrence(GeoJsonDiseaseOccurrenceFeature occurrence) {
-        this(occurrence.getGeometry().getCoordinates().getLongitude(),
+    public JsonModellingDiseaseOccurrence(ModelingLocationPrecisionAdjuster precisionAdjuster,
+                                          GeoJsonDiseaseOccurrenceFeature occurrence) {
+        this(precisionAdjuster,
+            occurrence.getGeometry().getCoordinates().getLongitude(),
             occurrence.getGeometry().getCoordinates().getLatitude(),
             occurrence.getProperties().getWeighting(),
             occurrence.getProperties().getLocationPrecision().getModelValue(),
