@@ -13,13 +13,11 @@ addons:
     packages:
       - r-base
       - devscripts
-# Note: caching is not yet enabled for travis-ci.org. When it is this should cache our dependencies.
-# Note: need to be careful that the ivy-published version of common doesn't cache
-#cache:
-#  apt: true
-#  directories:
-#  - .ant/lib
-#  - .ivy2/cache
+cache:
+#  apt: true # apt caching is not yet availible on travis for open source projects
+  directories:
+    - .ant/lib
+    - .ivy2/cache
 before_script:
   - git config core.fileMode false
   - chmod +x .travis.*.sh
