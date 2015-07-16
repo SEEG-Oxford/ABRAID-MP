@@ -92,9 +92,30 @@ define([ "app/admin/covariates/CovariatesListRowViewModel" ], function (Covariat
         });
 
         describe("holds an info field which", function () {
-            it("has the same value as the parent file", function () {
-                vm = new CovariatesListRowViewModel({}, { enabled: [], info: "foobar" }, 0);
-                expect(vm.info).toBe("foobar");
+            var parentFile = {};
+            var parentVM = {};
+            beforeEach(function () {
+                parentFile = { info: "foo", enabled: [] };
+                parentVM = { hasUnsavedChanges: jasmine.createSpy() };
+                vm = new CovariatesListRowViewModel(parentVM, parentFile, 0);
+            });
+
+            it("is an observable", function () {
+                expect(vm.info).toBeObservable();
+            });
+
+            it("has the same initial value as the parent file object", function () {
+                expect(vm.info()).toBe(parentFile.info);
+            });
+
+            it("updates the parent file object when set", function () {
+                vm.info("raboof");
+                expect(parentFile.info).toBe("raboof");
+            });
+
+            it("marks the parent view model as modified when set", function () {
+                vm.info("raboof");
+                expect(parentVM.hasUnsavedChanges).toHaveBeenCalledWith(true);
             });
         });
 
