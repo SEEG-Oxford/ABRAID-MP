@@ -16,9 +16,9 @@ addons:
 cache:
 #  apt: true # apt caching is not yet availible on travis for open source projects
   directories:
-    - .ant/lib
-    - .ant/manual
-    - .ivy2/cache
+    - $HOME/.ant/lib
+    - $HOME/.ant/manual
+    - $HOME/.ivy2/cache
 before_script:
   - git config core.fileMode false
   - chmod +x .travis.*.sh
