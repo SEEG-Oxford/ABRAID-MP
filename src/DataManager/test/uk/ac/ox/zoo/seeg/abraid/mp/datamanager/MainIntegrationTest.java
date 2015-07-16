@@ -2,6 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.datamanager;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Polygon;
+import net.lingala.zip4j.exception.ZipException;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.junit.Before;
@@ -20,6 +21,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunWorkf
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.util.*;
 
@@ -28,6 +30,7 @@ import static org.assertj.core.api.Assertions.offset;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.startsWith;
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.contains;
 import static org.mockito.Mockito.eq;
@@ -80,6 +83,7 @@ public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTest
         int diseaseGroupId = 87;
         mockHealthMapRequest();
         mockGeoNamesRequests();
+        mockCovariateList();
         mockModelWrapperRequest();
         mockMachineWeightingPredictorRequest();
         createAndSaveTestModelRun(diseaseGroupId);
@@ -114,12 +118,13 @@ public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTest
     }
 
     @Test
-    public void mainMethodAcquiresDataFromFiles() {
+    public void mainMethodAcquiresDataFromFiles() throws IOException, ZipException {
         // Arrange
         String[] fileNames = {
                 "DataManager/test/uk/ac/ox/zoo/seeg/abraid/mp/datamanager/healthmap_json1.txt",
                 "DataManager/test/uk/ac/ox/zoo/seeg/abraid/mp/datamanager/healthmap_json2.txt"
         };
+        mockCovariateList();
         mockGeoNamesRequests();
         mockModelWrapperRequest();
         setDiseaseGroupParametersToEnsureHelperReturnsOccurrences(87);
@@ -139,8 +144,9 @@ public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTest
         // Arrange
         mockHealthMapRequest();
         mockGeoNamesRequests();
+        mockCovariateList();
         setDiseaseGroupParametersToEnsureHelperReturnsOccurrences(87);
-        when(webServiceClient.makePostRequestWithJSON(startsWith(MODELWRAPPER_URL_PREFIX), anyString()))
+        when(webServiceClient.makePostRequestWithBinary(startsWith(MODELWRAPPER_URL_PREFIX), any(byte[].class)))
                 .thenThrow(new ModelRunWorkflowException("Test message"));
 
         // Act
@@ -190,16 +196,18 @@ public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTest
         assertThat(occurrence.getStatus()).isEqualTo(DiseaseOccurrenceStatus.READY);
     }
 
-    private void assertThatModelWrapperWebServiceWasCalledCorrectly() {
+    private void assertThatModelWrapperWebServiceWasCalledCorrectly() throws IOException, ZipException {
         // Assert that the model wrapper web service has been called once for dengue (disease group 87), with
         // the specified number of occurrence points and disease extent classes
         verify(modelWrapperWebService, atLeastOnce()).startRun(
                 eq(URI.create(MODELWRAPPER_URL_PREFIX)),
                 argThat(new DiseaseGroupIdMatcher(87)),
                 argThat(new ListSizeMatcher<DiseaseOccurrence>(27)),
-                argThat(new MapSizeMatcher<Integer, Integer>(451)));
-        verify(webServiceClient, atLeastOnce()).makePostRequestWithJSON(
-                startsWith(MODELWRAPPER_URL_PREFIX), anyString());
+                argThat(new MapSizeMatcher<Integer, Integer>(451)),
+                argThat(new ListSizeMatcher<CovariateFile>(0)),
+                eq(System.getProperty("user.home") + "/AppData/Local/abraid/covariates"));
+        verify(webServiceClient, atLeastOnce()).makePostRequestWithBinary(
+                startsWith(MODELWRAPPER_URL_PREFIX), any(byte[].class));
     }
 
     private void assertThatRelevantDiseaseOccurrencesHaveFinalWeightings() {
@@ -224,6 +232,11 @@ public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTest
         return transactionManager.getTransaction(null).isRollbackOnly();
     }
 
+    private void mockCovariateList() {
+        when(covariateFileDao.getCovariateFilesByDiseaseGroup(any(DiseaseGroup.class)))
+                .thenReturn(new ArrayList<CovariateFile>());
+    }
+
     private void mockHealthMapRequest() {
         when(webServiceClient.makeGetRequest(startsWith(HEALTHMAP_URL_PREFIX))).thenReturn(getHealthMapJson());
     }
@@ -236,7 +249,7 @@ public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTest
     }
 
     private void mockModelWrapperRequest() {
-        when(webServiceClient.makePostRequestWithJSON(startsWith(MODELWRAPPER_URL_PREFIX), anyString()))
+        when(webServiceClient.makePostRequestWithBinary(startsWith(MODELWRAPPER_URL_PREFIX), any(byte[].class)))
                 .thenReturn("{\"modelRunName\":\"testname\"}");
     }
 

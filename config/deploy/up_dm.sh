@@ -2,6 +2,16 @@
 set -e
 cd "../../DataManager/"
 
+echo "[[ DM | Loading configuration ]]"
+TEMP_FILE=$(mktemp)
+declare -A deploy_props
+cat "$ABRAID_SUPPORT_PATH/conf/application/deployment.properties" | grep -v "^#" | grep -v '^[[:space:]]*$' > "$TEMP_FILE"
+while read -r line; do
+  [[ $line = *=* ]] || continue
+  deploy_props[${line%%=*}]=${line#*=}
+done < "$TEMP_FILE"
+rm -f "$TEMP_FILE"
+
 if [[ ! -d "$ABRAID_SUPPORT_PATH/datamanager/" ]]; then
   echo "[[ DM | Creating datamanager directory ]]"
   mkdir -p "$ABRAID_SUPPORT_PATH/datamanager/"
@@ -25,9 +35,13 @@ else
   echo "[[ DM | No update required ]]"
 fi
 
+echo "[[ DM | Checking covariate files ]]"
+dirAsk "$REMOTE_USER@${deploy_props[covariate.source]}/" "$ABRAID_SUPPORT_PATH/covariates" "covariate file"
+
 echo "[[ DM | Ensuring correct file permissions ]]"
 permissionFix "abraid:abraid" "$ABRAID_SUPPORT_PATH/datamanager/"
 chmod +x "$ABRAID_SUPPORT_PATH/datamanager/datamanager.sh"
+permissionFix "tomcat7:tomcat7" "$ABRAID_SUPPORT_PATH/covariates/"
 
 echo "[[ DM | Done ]]"
 cd "../config/deploy/"

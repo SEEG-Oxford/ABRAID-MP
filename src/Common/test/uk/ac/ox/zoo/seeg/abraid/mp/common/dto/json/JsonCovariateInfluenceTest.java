@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json;
 
 import org.junit.Test;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateInfluence;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,9 +21,11 @@ public class JsonCovariateInfluenceTest {
         double meanInfluence = 45.94;
 
         CovariateInfluence covariateInfluence = mock(CovariateInfluence.class);
-        when(covariateInfluence.getCovariateFilePath()).thenReturn(name);
-        when(covariateInfluence.getCovariateDisplayName()).thenReturn(displayName);
+        CovariateFile covariateFile = mock(CovariateFile.class);
+        when(covariateFile.getFile()).thenReturn(name);
+        when(covariateFile.getName()).thenReturn(displayName);
         when(covariateInfluence.getMeanInfluence()).thenReturn(meanInfluence);
+        when(covariateInfluence.getCovariateFile()).thenReturn(covariateFile);
 
         // Act
         JsonCovariateInfluence result = new JsonCovariateInfluence(covariateInfluence);

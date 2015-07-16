@@ -9,9 +9,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.RunConfiguration;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -94,16 +92,6 @@ public class FreemarkerScriptGenerator implements ScriptGenerator {
         data.put("admin0_file", escapeFilePathForR(runConfiguration.getAdminUnitConfig().getAdmin0RasterFile()));
         data.put("admin1_file", escapeFilePathForR(runConfiguration.getAdminUnitConfig().getAdmin1RasterFile()));
         data.put("admin2_file", escapeFilePathForR(runConfiguration.getAdminUnitConfig().getAdmin2RasterFile()));
-
-        List<String> covariateFilePaths = new ArrayList<>();
-        List<String> covariateDisplayNames = new ArrayList<>();
-        for (Map.Entry<String, String> entry : runConfiguration.getCovariateConfig().getCovariateFiles().entrySet()) {
-            covariateFilePaths.add(entry.getKey());
-            covariateDisplayNames.add(entry.getValue());
-        }
-        data.put("covariate_files", covariateFilePaths);
-        data.put("covariate_names", covariateDisplayNames);
-
         return data;
     }
 

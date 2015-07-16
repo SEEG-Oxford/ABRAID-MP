@@ -4,13 +4,19 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.ArgumentCaptor;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.GeoJsonDiseaseOccurrenceFeatureCollection;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.AdminUnitRunConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.CodeRunConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.ExecutionRunConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.RunConfiguration;
 
 import java.io.File;
-import java.util.HashMap;
+import java.io.IOException;
 import java.util.Map;
 
+import static com.googlecode.catchexception.CatchException.catchException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
@@ -49,6 +55,80 @@ public class ModelRunnerTest {
 
         // Assert
         verify(mockWorkspaceProvisioner).provisionWorkspace(refEq(config), isNull(GeoJsonDiseaseOccurrenceFeatureCollection.class), anyMapOf(Integer.class, Integer.class));
+    }
+
+    @Test
+    public void runModelDeletesTheTemporaryDataDirectoryForTheRunAfterProvisioning() throws Exception {
+        // Arrange
+        RunConfiguration config = createBasicRunConfiguration();
+        final File tempDir = config.getTempDataDir();
+
+        WorkspaceProvisioner mockWorkspaceProvisioner = mock(WorkspaceProvisioner.class);
+        when(mockWorkspaceProvisioner.provisionWorkspace(any(RunConfiguration.class), any(GeoJsonDiseaseOccurrenceFeatureCollection.class), anyMapOf(Integer.class, Integer.class)))
+                .thenAnswer(new Answer<File>() {
+                    @Override
+                    public File answer(InvocationOnMock invocationOnMock) throws Throwable {
+                        assertThat(tempDir).exists();
+                        return testFolder.getRoot();
+                    }
+                });
+
+        final ProcessRunner mockProcessRunner = mock(ProcessRunner.class);
+        ProcessRunnerFactory mockProcessRunnerFactory = mock(ProcessRunnerFactory.class);
+        when(mockProcessRunnerFactory.createProcessRunner(any(File.class), any(File.class), any(String[].class), anyMapOf(String.class, File.class), anyInt()))
+                .thenAnswer(new Answer<ProcessRunner>() {
+                    @Override
+                    public ProcessRunner answer(InvocationOnMock invocationOnMock) throws Throwable {
+                        assertThat(tempDir).doesNotExist();
+                        return mockProcessRunner;
+                    }
+                });
+
+        ModelRunnerImpl target = new ModelRunnerImpl(mockProcessRunnerFactory, mockWorkspaceProvisioner);
+
+        // Act
+        assertThat(tempDir).exists();
+        target.runModel(config, null, null, null);
+
+        // Assert
+        assertThat(tempDir).doesNotExist();
+    }
+
+    @Test
+    public void runModelDeletesTheTemporaryDataDirectoryForTheRunEvenIfProvisioningThrows() throws Exception {
+        // Arrange
+        RunConfiguration config = createBasicRunConfiguration();
+        final File tempDir = config.getTempDataDir();
+
+        WorkspaceProvisioner mockWorkspaceProvisioner = mock(WorkspaceProvisioner.class);
+        when(mockWorkspaceProvisioner.provisionWorkspace(any(RunConfiguration.class), any(GeoJsonDiseaseOccurrenceFeatureCollection.class), anyMapOf(Integer.class, Integer.class)))
+                .thenAnswer(new Answer<File>() {
+                    @Override
+                    public File answer(InvocationOnMock invocationOnMock) throws Throwable {
+                        assertThat(tempDir).exists();
+                        throw new IOException();
+                    }
+                });
+
+        final ProcessRunner mockProcessRunner = mock(ProcessRunner.class);
+        ProcessRunnerFactory mockProcessRunnerFactory = mock(ProcessRunnerFactory.class);
+        when(mockProcessRunnerFactory.createProcessRunner(any(File.class), any(File.class), any(String[].class), anyMapOf(String.class, File.class), anyInt()))
+                .thenAnswer(new Answer<ProcessRunner>() {
+                    @Override
+                    public ProcessRunner answer(InvocationOnMock invocationOnMock) throws Throwable {
+                        assertThat(tempDir).doesNotExist();
+                        return mockProcessRunner;
+                    }
+                });
+
+        ModelRunnerImpl target = new ModelRunnerImpl(mockProcessRunnerFactory, mockWorkspaceProvisioner);
+
+        // Act
+        assertThat(tempDir).exists();
+        catchException(target).runModel(config, null, null, null);
+
+        // Assert
+        assertThat(tempDir).doesNotExist();
     }
 
     @Test
@@ -93,7 +173,7 @@ public class ModelRunnerTest {
         File expectedBase = new File("base");
         int expectedTimeout = 10;
         RunConfiguration config =
-                new RunConfiguration(null, expectedBase, null, new ExecutionRunConfiguration(expectedR, expectedTimeout, 1, false, true), null, null);
+                new RunConfiguration(null, expectedBase, null, null, new ExecutionRunConfiguration(expectedR, expectedTimeout, 1, false, true), null);
 
         // Act
         target.runModel(config, null, null, null);
@@ -118,12 +198,11 @@ public class ModelRunnerTest {
         assertThat(fileArgs.get(key)).isEqualTo(expectedScript);
     }
 
-    private RunConfiguration createBasicRunConfiguration() {
+    private RunConfiguration createBasicRunConfiguration() throws IOException {
         return new RunConfiguration(
-                "foo", testFolder.getRoot(),
+                "foo", testFolder.newFolder(), testFolder.newFolder(),
                 new CodeRunConfiguration("", ""),
                 new ExecutionRunConfiguration(new File(""), 60000, 1, false, false),
-                new CovariateRunConfiguration("", new HashMap<String, String>()),
                 new AdminUnitRunConfiguration(true, "", "", "", "", ""));
     }
 }

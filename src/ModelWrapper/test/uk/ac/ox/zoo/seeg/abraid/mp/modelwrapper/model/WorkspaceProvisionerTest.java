@@ -1,17 +1,24 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model;
 
+import jersey.repackaged.com.google.common.collect.Iterables;
+import org.apache.commons.io.FileUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.ArgumentCaptor;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.GeoJsonDiseaseOccurrenceFeatureCollection;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.AdminUnitRunConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.CodeRunConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.ExecutionRunConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.RunConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.data.InputDataManager;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
@@ -36,12 +43,13 @@ public class WorkspaceProvisionerTest {
         WorkspaceProvisioner target = new WorkspaceProvisionerImpl(scriptGenerator, mock(SourceCodeManager.class), mock(InputDataManager.class));
         File expectedBasePath = testFolder.getRoot();
         String expectedRunName = "bar";
+        File tempDataDir = testFolder.newFolder();
         RunConfiguration config = new RunConfiguration(
-                expectedRunName, expectedBasePath,
+                expectedRunName, expectedBasePath, tempDataDir,
                 new CodeRunConfiguration("", ""),
                 new ExecutionRunConfiguration(new File(""), 60000, 1, false, false),
-                new CovariateRunConfiguration("", new HashMap<String, String>()),
                 new AdminUnitRunConfiguration(true, "", "", "", "", ""));
+        Paths.get(tempDataDir.getAbsolutePath(), "covariates").toFile().mkdir();
 
         // Act
         File script = target.provisionWorkspace(config, null, null);
@@ -60,7 +68,7 @@ public class WorkspaceProvisionerTest {
         ScriptGenerator scriptGenerator = mock(ScriptGenerator.class);
         File expectedScript = new File("foobar");
         WorkspaceProvisioner target = new WorkspaceProvisionerImpl(scriptGenerator, mock(SourceCodeManager.class), mock(InputDataManager.class));
-        RunConfiguration config = createRunConfiguration("foo", testFolder.getRoot());
+        RunConfiguration config = createRunConfiguration("foo", testFolder.newFolder(), testFolder.newFolder());
         when(scriptGenerator.generateScript(eq(config), any(File.class))).thenReturn(expectedScript);
 
         // Act
@@ -80,8 +88,10 @@ public class WorkspaceProvisionerTest {
         when(scriptGenerator.generateScript(any(RunConfiguration.class), any(File.class))).then(returnsArgAt(1));
         String expectedVersion = "foobar";
         WorkspaceProvisioner target = new WorkspaceProvisionerImpl(scriptGenerator, sourceCodeManager, inputDataManager);
+        File tempDataDir = testFolder.newFolder();
         RunConfiguration config =
-                new RunConfiguration("foo", testFolder.getRoot(), new CodeRunConfiguration(expectedVersion, ""), null, null, null);
+                new RunConfiguration("foo", testFolder.newFolder(), tempDataDir, new CodeRunConfiguration(expectedVersion, ""), null, null);
+        Paths.get(tempDataDir.getAbsolutePath(), "covariates").toFile().mkdir();
 
         // Act
         File runDir = target.provisionWorkspace(config, null, null);
@@ -104,7 +114,7 @@ public class WorkspaceProvisionerTest {
         when(scriptGenerator.generateScript(any(RunConfiguration.class), any(File.class))).then(returnsArgAt(1));
         GeoJsonDiseaseOccurrenceFeatureCollection expectedData = mock(GeoJsonDiseaseOccurrenceFeatureCollection.class);
         WorkspaceProvisioner target = new WorkspaceProvisionerImpl(scriptGenerator, sourceCodeManager, inputDataManager);
-        RunConfiguration config = createRunConfiguration("foo", testFolder.getRoot());
+        RunConfiguration config = createRunConfiguration("foo", testFolder.newFolder(), testFolder.newFolder());
 
         // Act
         File runDir = target.provisionWorkspace(config, expectedData, null);
@@ -133,9 +143,78 @@ public class WorkspaceProvisionerTest {
         assertThat(result).isInstanceOf(IOException.class);
     }
 
-    private RunConfiguration createRunConfiguration(String runName, File baseDir) {
+    @Test
+    public void provisionWorkspaceShouldCopyCovariates() throws Exception {
+        // Arrange
+        ScriptGenerator scriptGenerator = new FreemarkerScriptGenerator();
+        WorkspaceProvisioner target = new WorkspaceProvisionerImpl(scriptGenerator, mock(SourceCodeManager.class), mock(InputDataManager.class));
+        File expectedBasePath = testFolder.newFolder();
+        File tempDir = testFolder.newFolder();
+        String expectedRunName = "bar";
+        RunConfiguration config = new RunConfiguration(
+                expectedRunName, expectedBasePath, tempDir,
+                new CodeRunConfiguration("", ""),
+                new ExecutionRunConfiguration(new File(""), 60000, 1, false, false),
+                new AdminUnitRunConfiguration(true, "", "", "", "", ""));
+        File tempCovDir = Paths.get(tempDir.getAbsolutePath(), "covariates").toFile();
+        tempCovDir.mkdir();
+        Paths.get(tempCovDir.getAbsolutePath(), "sub").toFile().mkdir();
+        FileUtils.writeStringToFile(Paths.get(tempCovDir.getAbsolutePath(), "a").toFile(), "Abc");
+        FileUtils.writeStringToFile(Paths.get(tempCovDir.getAbsolutePath(), "b").toFile(), "aBc");
+        FileUtils.writeStringToFile(Paths.get(tempCovDir.getAbsolutePath(), "sub", "c").toFile(), "abC");
+
+        // Act
+        File script = target.provisionWorkspace(config, null, null);
+        File result = script.getParentFile();
+
+        // Assert
+        File covDir = Paths.get(result.getAbsolutePath(), "covariates").toFile();
+        assertThat(covDir).exists();
+        assertThat(covDir).isDirectory();
+        Collection<File> files = FileUtils.listFiles(covDir, null, true);
+        Collection<File> expectedFiles = FileUtils.listFiles(tempCovDir, null, true);
+
+
+        List<String> actual = Arrays.asList(
+                covDir.toPath().relativize(Iterables.get(files, 0).toPath()).toString(),
+                covDir.toPath().relativize(Iterables.get(files, 1).toPath()).toString(),
+                covDir.toPath().relativize(Iterables.get(files, 2).toPath()).toString());
+        List<String> expected = Arrays.asList(
+                tempCovDir.toPath().relativize(Iterables.get(expectedFiles, 0).toPath()).toString(),
+                tempCovDir.toPath().relativize(Iterables.get(expectedFiles, 1).toPath()).toString(),
+                tempCovDir.toPath().relativize(Iterables.get(expectedFiles, 2).toPath()).toString());
+
+        assertThat(files).hasSameSizeAs(expectedFiles);
+        assertThat(actual).containsAll(expected);
+    }
+
+    @Test
+    public void provisionWorkspaceShouldThrowIfCovariatesCanNotBeCopied() throws Exception {
+        ScriptGenerator scriptGenerator = new FreemarkerScriptGenerator();
+        WorkspaceProvisioner target = new WorkspaceProvisionerImpl(scriptGenerator, mock(SourceCodeManager.class), mock(InputDataManager.class));
+        File expectedBasePath = testFolder.newFolder();
+        File tempDir = testFolder.newFolder();
+        String expectedRunName = "bar";
+        RunConfiguration config = new RunConfiguration(
+                expectedRunName, expectedBasePath, tempDir,
+                new CodeRunConfiguration("", ""),
+                new ExecutionRunConfiguration(new File(""), 60000, 1, false, false),
+                new AdminUnitRunConfiguration(true, "", "", "", "", ""));
+        File tempCovDir = Paths.get(tempDir.getAbsolutePath(), "covariates").toFile();
+
+        // Act
+        catchException(target).provisionWorkspace(config, null, null);
+        Exception result = caughtException();
+
+        // Assert
+        assertThat(result).isInstanceOf(IOException.class);
+    }
+
+    private RunConfiguration createRunConfiguration(String runName, File baseDir, File tempDir) {
+        Paths.get(tempDir.getAbsolutePath(), "covariates").toFile().mkdir();
         RunConfiguration conf = mock(RunConfiguration.class);
         when(conf.getWorkingDirectoryPath()).thenReturn(Paths.get(baseDir.getAbsolutePath(), runName));
+        when(conf.getTempDataDir()).thenReturn(tempDir);
         when(conf.getCodeConfig()).thenReturn(mock(CodeRunConfiguration.class));
         return conf;
     }

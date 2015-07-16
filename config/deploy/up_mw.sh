@@ -36,14 +36,6 @@ fi
 echo "[[ MW | Checking raster input files ]]"
 dirAsk "$REMOTE_USER@${deploy_props[raster.source]}/" "$ABRAID_SUPPORT_PATH/modelwrapper/rasters"
 
-echo "[[ MW | Checking covariate input files ]]"
-if [[ -d "$ABRAID_SUPPORT_PATH/modelwrapper/covariates/" ]]; then
-  fileAsk "$REMOTE_USER@${deploy_props[covariate.source]}/abraid.json" "$ABRAID_SUPPORT_PATH/modelwrapper/covariates/abraid.json" "covariate configuration"
-  dirAsk "$REMOTE_USER@${deploy_props[covariate.source]}/" "$ABRAID_SUPPORT_PATH/modelwrapper/covariates" "covariate file" --exclude "abraid.json"
-else
-  dirAsk "$REMOTE_USER@${deploy_props[covariate.source]}/" "$ABRAID_SUPPORT_PATH/modelwrapper/covariates" "covariate file"
-fi
-
 echo "[[ MW | Ensuring correct file permissions ]]"
 permissionFix "tomcat7:tomcat7" "$ABRAID_SUPPORT_PATH/modelwrapper/"
 
