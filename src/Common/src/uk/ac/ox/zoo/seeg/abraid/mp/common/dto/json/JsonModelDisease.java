@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.util.StringUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.DiseaseSynchronisationJsonView;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.CovariateConfigurationJsonView;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.ModellingJsonView;
 
 /**
@@ -21,17 +21,21 @@ public class JsonModelDisease {
     }
 
     public JsonModelDisease(int id, boolean isGlobal, String name, String abbreviation) {
+        this(id, name);
         setGlobal(isGlobal);
+        setAbbreviation(abbreviation);
+    }
+
+    public JsonModelDisease(int id, String name) {
         setId(id);
         setName(name);
-        setAbbreviation(abbreviation);
     }
 
     public JsonModelDisease(DiseaseGroup diseaseGroup) {
         this(diseaseGroup.getId(), diseaseGroup.isGlobal(), diseaseGroup.getName(), diseaseGroup.getAbbreviation());
     }
 
-    @JsonView({ ModellingJsonView.class, DiseaseSynchronisationJsonView.class })
+    @JsonView({ ModellingJsonView.class, CovariateConfigurationJsonView.class })
     public int getId() {
         return id;
     }
@@ -49,7 +53,7 @@ public class JsonModelDisease {
         this.isGlobal = isGlobal;
     }
 
-    @JsonView({ ModellingJsonView.class, DiseaseSynchronisationJsonView.class })
+    @JsonView({ ModellingJsonView.class, CovariateConfigurationJsonView.class })
     public String getName() {
         return name;
     }

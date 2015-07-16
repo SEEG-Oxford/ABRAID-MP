@@ -27,16 +27,20 @@ html, body {
     min-width: 575px;
 }
 #covariatesAndStatistics h5,
-#covariates td:first-child {
-    text-align: center;
-}
 #covariates td:nth-child(2) {
+    text-align: center;
+}
+#covariates td:nth-child(3) {
     min-width: 120px;
 }
-#covariates td:nth-child(3),
-#covariates th:nth-child(3) {
+#covariates td:nth-child(4),
+#covariates th:nth-child(5) {
     min-width: 120px;
     text-align: center;
+}
+#covariates .popover .popover-content {
+    text-align: justify;
+    font-size: 13px;
 }
 #statistics td:nth-child(3),
 #statistics th:nth-child(3) {
@@ -108,4 +112,61 @@ html, body {
     text-align: justify;
     font-style: italic;
     font-weight: normal;
+}
+.leaflet-bar div a  {
+    border-radius: 4px;
+}
+#covariatesAndStatistics  {
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+ }
+#plotPanel > span:hover {
+    border: 1px solid black;
+    -webkit-box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.43);
+    -moz-box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.43);
+    box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.43);
+}
+#plotPanel > span {
+    position: relative;
+    border: 1px solid lightgray;
+    margin: 3px 0 0 3px;
+    float: left;
+    cursor: pointer;
+    width: 266px;
+    height: 200px;
+}
+#plotPanel {
+    position:absolute;
+    left: 10px;
+    right: 10px;
+    top:6px;
+    bottom:36px;
+    -webkit-box-shadow: inset 0px 0px 6px 0px rgba(0,0,0,0.43);
+    -moz-box-shadow: inset 0px 0px 6px 0px rgba(0,0,0,0.43);
+    box-shadow: inset 0px 0px 6px 0px rgba(0,0,0,0.43);
+    overflow-y: scroll;
+}
+.modal-content {
+    width: 700px;
+}
+.modal-body {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+#plotModal .c3-title {
+    font-weight: bold;
+}
+#histogram .c3-bar {
+    stroke-width: 1px;
+}
+.c3-region {
+    fill: #000000;
+}
+#plotModal .c3-axis-y-label {
+    font-weight: bold;
+    font-size: 12px;
+}
+#plotModal .c3-axis-x-label {
+    font-weight: bold;
+    font-size: 12px;
 }

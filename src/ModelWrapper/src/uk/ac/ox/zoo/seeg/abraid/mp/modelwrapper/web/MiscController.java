@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ConfigurationService;
 
-import java.io.File;
-
 /**
  * Controller for the ModelWrapper misc items configuration forms.
  * Copyright (c) 2014 University of Oxford
@@ -74,30 +72,6 @@ public class MiscController extends AbstractController {
 
         if (value != configurationService.getMaxModelRunDuration()) {
             configurationService.setMaxModelRunDuration(value);
-        }
-
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
-    }
-
-    /**
-     * Updates the covariate directory to use when performing model runs.
-     * @param value The covariate directory.
-     * @return 204 for success.
-     */
-    @RequestMapping(value = "/misc/covariatedirectory", method = RequestMethod.POST)
-    public ResponseEntity updateCovariateDirectory(String value) {
-        if (StringUtils.isEmpty(value)) {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
-        }
-
-        if (!value.equals(configurationService.getCovariateDirectory())) {
-            File newDirectory = new File(value);
-            if (!newDirectory.exists() || !newDirectory.isDirectory() || !newDirectory.canRead()) {
-                LOGGER.info(String.format(LOG_SUPPLIED_DIRECTORY_NOT_USABLE, value));
-                return new ResponseEntity(HttpStatus.BAD_REQUEST);
-            }
-
-            configurationService.setCovariateDirectory(value);
         }
 
         return new ResponseEntity(HttpStatus.NO_CONTENT);

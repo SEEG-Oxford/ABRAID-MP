@@ -17,22 +17,22 @@ public class RunConfigurationTest {
         // Arrange
         String expectedRunName = "foobar";
         File expectedBaseDir = new File("xyz");
+        File expectedTempDir = new File("abc");
         String expectedWorkingDirectory = expectedBaseDir.getAbsolutePath() + File.separator + expectedRunName;
         CodeRunConfiguration expectedCodeConfig = mock(CodeRunConfiguration.class);
         ExecutionRunConfiguration expectedExecutionConfig = mock(ExecutionRunConfiguration.class);
-        CovariateRunConfiguration expectedCovariateConfig = mock(CovariateRunConfiguration.class);
         AdminUnitRunConfiguration expectedAdminUnitConfig = mock(AdminUnitRunConfiguration.class);
 
         // Act
-        RunConfiguration result = new RunConfiguration(expectedRunName, expectedBaseDir,
-                expectedCodeConfig, expectedExecutionConfig, expectedCovariateConfig, expectedAdminUnitConfig);
+        RunConfiguration result = new RunConfiguration(expectedRunName, expectedBaseDir, expectedTempDir,
+                expectedCodeConfig, expectedExecutionConfig, expectedAdminUnitConfig);
 
         // Assert
         assertThat(result.getRunName()).isEqualTo(expectedRunName);
         assertThat(result.getBaseDir()).isEqualTo(expectedBaseDir);
+        assertThat(result.getTempDataDir()).isEqualTo(expectedTempDir);
         assertThat(result.getCodeConfig()).isEqualTo(expectedCodeConfig);
         assertThat(result.getExecutionConfig()).isEqualTo(expectedExecutionConfig);
-        assertThat(result.getCovariateConfig()).isEqualTo(expectedCovariateConfig);
         assertThat(result.getAdminUnitConfig()).isEqualTo(expectedAdminUnitConfig);
         assertThat(result.getWorkingDirectoryPath().toString()).isEqualTo(expectedWorkingDirectory);
     }

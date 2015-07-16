@@ -4,6 +4,7 @@ import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.EffectCurveCovariateInfluence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvEffectCurveCovariateInfluence;
@@ -21,13 +22,17 @@ public class EffectCurveCovariateInfluenceDaoTest extends AbstractCommonSpringIn
     private ModelRunDao modelRunDao;
 
     @Autowired
+    private CovariateFileDao covariateFileDao;
+
+    @Autowired
     private EffectCurveCovariateInfluenceDao effectCurveCovariateInfluenceDao;
 
     @Test
     public void canSaveAndReload() {
         // Arrange
         ModelRun modelRun = createModelRun("foo");
-        EffectCurveCovariateInfluence expectation = createEffectCurveCovariateInfluence("a", modelRun);
+        CovariateFile covariateFile = createCovariateFile(1);
+        EffectCurveCovariateInfluence expectation = createEffectCurveCovariateInfluence(covariateFile, modelRun);
 
         // Act
         effectCurveCovariateInfluenceDao.save(expectation);
@@ -41,8 +46,7 @@ public class EffectCurveCovariateInfluenceDaoTest extends AbstractCommonSpringIn
         assertThat(result.getId()).isNotNull();
         assertThat(result.getId()).isEqualTo(id);
         assertThat(result.getModelRun()).isEqualTo(modelRun);
-        assertThat(result.getCovariateFilePath()).isEqualTo(expectation.getCovariateFilePath());
-        assertThat(result.getCovariateDisplayName()).isEqualTo(expectation.getCovariateDisplayName());
+        assertThat(result.getCovariateFile()).isEqualTo(expectation.getCovariateFile());
         assertThat(result.getMeanInfluence()).isEqualTo(expectation.getMeanInfluence());
         assertThat(result.getLowerQuantile()).isEqualTo(expectation.getLowerQuantile());
         assertThat(result.getUpperQuantile()).isEqualTo(expectation.getUpperQuantile());
@@ -54,9 +58,11 @@ public class EffectCurveCovariateInfluenceDaoTest extends AbstractCommonSpringIn
         // Arrange
         ModelRun run1 = createModelRun("foo1");
         ModelRun run2 = createModelRun("foo2");
-        effectCurveCovariateInfluenceDao.save(createEffectCurveCovariateInfluence("a", run1));
-        effectCurveCovariateInfluenceDao.save(createEffectCurveCovariateInfluence("a", run2));
-        effectCurveCovariateInfluenceDao.save(createEffectCurveCovariateInfluence("b", run1));
+        CovariateFile covariate1 = createCovariateFile(1);
+        CovariateFile covariate2 = createCovariateFile(2);
+        effectCurveCovariateInfluenceDao.save(createEffectCurveCovariateInfluence(covariate1, run1));
+        effectCurveCovariateInfluenceDao.save(createEffectCurveCovariateInfluence(covariate1, run2));
+        effectCurveCovariateInfluenceDao.save(createEffectCurveCovariateInfluence(covariate2, run1));
 
         // Act
         List<EffectCurveCovariateInfluence> results1 =
@@ -69,21 +75,25 @@ public class EffectCurveCovariateInfluenceDaoTest extends AbstractCommonSpringIn
         assertThat(results2).hasSize(1);
     }
 
-    private EffectCurveCovariateInfluence createEffectCurveCovariateInfluence(String name, ModelRun modelRun) {
+    private EffectCurveCovariateInfluence createEffectCurveCovariateInfluence(CovariateFile covariateFile, ModelRun modelRun) {
         CsvEffectCurveCovariateInfluence dto = new CsvEffectCurveCovariateInfluence();
-        dto.setCovariateFilePath(name);
-        dto.setCovariateDisplayName("2");
         dto.setMeanInfluence(3.0);
         dto.setLowerQuantile(4.0);
         dto.setUpperQuantile(5.0);
         dto.setCovariateValue(6.0);
 
-        return new EffectCurveCovariateInfluence(dto, modelRun);
+        return new EffectCurveCovariateInfluence(covariateFile, dto, modelRun);
     }
 
     private ModelRun createModelRun(String name) {
         ModelRun run = new ModelRun(name, 87, "host", DateTime.now(), DateTime.now(), DateTime.now());
         modelRunDao.save(run);
         return run;
+    }
+
+    private CovariateFile createCovariateFile(int idx) {
+        CovariateFile covariate = new CovariateFile("name" + idx, "file" + idx, false, false, "info" + idx);
+        covariateFileDao.save(covariate);
+        return covariate;
     }
 }

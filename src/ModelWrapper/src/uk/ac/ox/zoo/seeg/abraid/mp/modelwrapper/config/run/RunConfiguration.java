@@ -15,21 +15,22 @@ public class RunConfiguration {
     // The base directory into which the run directory should be created
     private final File baseDir;
 
+    private final File tempDataDir;
+
     // Sub configuration objects
     private final CodeRunConfiguration codeConfig;
     private final ExecutionRunConfiguration executionConfig;
-    private final CovariateRunConfiguration covariateConfig;
     private final AdminUnitRunConfiguration adminUnitConfig;
 
-    public RunConfiguration(String runName, File baseDir,
+    public RunConfiguration(String runName, File baseDir, File tempDataDir,
                             CodeRunConfiguration codeConfig, ExecutionRunConfiguration executionConfig,
-                            CovariateRunConfiguration covariateConfig, AdminUnitRunConfiguration adminUnitConfig) {
+                            AdminUnitRunConfiguration adminUnitConfig) {
         this.runName = runName;
         this.baseDir = baseDir;
+        this.tempDataDir = tempDataDir;
 
         this.codeConfig = codeConfig;
         this.executionConfig = executionConfig;
-        this.covariateConfig = covariateConfig;
         this.adminUnitConfig = adminUnitConfig;
     }
 
@@ -41,16 +42,16 @@ public class RunConfiguration {
         return baseDir;
     }
 
+    public File getTempDataDir() {
+        return tempDataDir;
+    }
+
     public CodeRunConfiguration getCodeConfig() {
         return codeConfig;
     }
 
     public ExecutionRunConfiguration getExecutionConfig() {
         return executionConfig;
-    }
-
-    public CovariateRunConfiguration getCovariateConfig() {
-        return covariateConfig;
     }
 
     public AdminUnitRunConfiguration getAdminUnitConfig() {

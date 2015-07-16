@@ -27,7 +27,6 @@
         <dependency org="commons-collections" name="commons-collections" rev="3.2.1" conf="external->default"/>
         <dependency org="org.freemarker" name="freemarker" rev="2.3.20" conf="external->default"/>
         <dependency org="com.googlecode.juniversalchardet" name="juniversalchardet" rev="1.0.3" />
-
         <!-- Web services -->
         <dependency org="org.glassfish.jersey.core" name="jersey-client" rev="2.12" conf="external->default"/>
         <dependency org="org.glassfish.jersey.connectors" name="jersey-apache-connector" rev="2.12" conf="external->default"/>

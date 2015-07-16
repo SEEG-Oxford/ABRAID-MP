@@ -15,20 +15,18 @@ public class CovariateInfluenceTest {
     public void constructorBindsFieldCorrectly() {
         // Arrange
         ModelRun runExpectation = mock(ModelRun.class);
+        CovariateFile covariateExpectation = mock(CovariateFile.class);
         CsvCovariateInfluence dtoExpectation = new CsvCovariateInfluence();
-        dtoExpectation.setCovariateFilePath("1");
-        dtoExpectation.setCovariateDisplayName("2");
         dtoExpectation.setMeanInfluence(3.0);
         dtoExpectation.setLowerQuantile(4.0);
         dtoExpectation.setUpperQuantile(5.0);
 
         // Act
-        CovariateInfluence result = new CovariateInfluence(dtoExpectation, runExpectation);
+        CovariateInfluence result = new CovariateInfluence(covariateExpectation, dtoExpectation, runExpectation);
 
         // Assert
         assertThat(result.getModelRun()).isEqualTo(runExpectation);
-        assertThat(result.getCovariateFilePath()).isEqualTo(dtoExpectation.getCovariateFilePath());
-        assertThat(result.getCovariateDisplayName()).isEqualTo(dtoExpectation.getCovariateDisplayName());
+        assertThat(result.getCovariateFile()).isEqualTo(covariateExpectation);
         assertThat(result.getMeanInfluence()).isEqualTo(dtoExpectation.getMeanInfluence());
         assertThat(result.getLowerQuantile()).isEqualTo(dtoExpectation.getLowerQuantile());
         assertThat(result.getUpperQuantile()).isEqualTo(dtoExpectation.getUpperQuantile());

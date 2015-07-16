@@ -18,9 +18,5 @@ define([
         self.ModelDurationViewModel = ko.validatedObservable(
             new SingleFieldFormViewModel(initialData.runDuration, { required: true, number: true, min: 1000 },
                                          false, false, basePath, "misc/runduration"));
-
-        self.CovariateDirectoryViewModel = ko.validatedObservable(
-            new SingleFieldFormViewModel(initialData.covariateDirectory, { required: true },
-                                         false, false, basePath, "misc/covariatedirectory"));
     };
 });

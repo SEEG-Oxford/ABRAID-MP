@@ -5,7 +5,10 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.AdminUnitRunConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.CodeRunConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.ExecutionRunConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.RunConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSChecker;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSCheckerImpl;
@@ -16,7 +19,6 @@ import java.io.PipedOutputStream;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -32,8 +34,8 @@ public class CommonsExecIntegrationTest {
     @Rule
     public TemporaryFolder testDir = new TemporaryFolder(); ///CHECKSTYLE:SUPPRESS VisibilityModifier
 
-    private RunConfiguration createRunConfig() {
-        return new RunConfiguration("foo", testDir.getRoot(), null, new ExecutionRunConfiguration(findR(), 60000, 1, false, false), null, null);
+    private RunConfiguration createRunConfig() throws IOException {
+        return new RunConfiguration("foo", testDir.newFolder(), testDir.newFolder(), null, new ExecutionRunConfiguration(findR(), 60000, 1, false, false), null);
     }
 
     /**
@@ -148,11 +150,11 @@ public class CommonsExecIntegrationTest {
     @Test
     public void shouldBeAbleToDoDryRunOfModel() throws Exception {
         // Arrange
+        final File baseDir = testDir.newFolder();
         final RunConfiguration config = new RunConfiguration(
-                "foo", testDir.getRoot(),
+                "foo", baseDir, testDir.newFolder(),
                 new CodeRunConfiguration("", ""),
                 new ExecutionRunConfiguration(findR(), 60000, 1, false, true),
-                new CovariateRunConfiguration("", new HashMap<String, String>()),
                 new AdminUnitRunConfiguration(true, "", "", "", "", ""));
 
         WorkspaceProvisioner mockWorkspaceProvisioner = mock(WorkspaceProvisioner.class);
@@ -160,7 +162,7 @@ public class CommonsExecIntegrationTest {
         when(mockWorkspaceProvisioner.provisionWorkspace(config, null, null)).thenAnswer(new Answer<File>() {
             public File answer(InvocationOnMock invocationOnMock) throws Throwable {
                 ScriptGenerator scriptGenerator = new FreemarkerScriptGenerator();
-                return scriptGenerator.generateScript(config, testDir.getRoot());
+                return scriptGenerator.generateScript(config, baseDir);
             }
         });
 

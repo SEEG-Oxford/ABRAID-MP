@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web;
 
 import ch.lambdaj.function.convert.Converter;
+import ch.lambdaj.group.Group;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.io.ZipInputStream;
@@ -15,8 +16,9 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvCovariateInfluence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvEffectCurveCovariateInfluence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvSubmodelStatistic;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelOutputsMetadata;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.CovariateService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.util.RasterUtils;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.util.raster.RasterUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParser;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.ModelOutputConstants;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.RasterFilePathFactory;
@@ -27,10 +29,15 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static ch.lambdaj.Lambda.group;
+import static ch.lambdaj.Lambda.on;
+import static ch.lambdaj.Lambda.sort;
 import static ch.lambdaj.collection.LambdaCollections.with;
+import static ch.lambdaj.group.Groups.by;
 
 /**
  * Main model output handler.
@@ -51,6 +58,8 @@ public class MainHandler {
             "Could not save %s for model run \"%s\"";
     private static final String RASTER_FILE_ALREADY_EXISTS =
             "Raster file \"%s\" already exists";
+    private static final String UNKNOWN_COVARIATE_FILE_REFERENCED =
+            "Unknown covariate file referenced \"%s\"";
     private static final String FAILED_TO_CREATE_DIRECTORY_FOR_OUTPUT_RASTERS =
             "Failed to create directory for output rasters: %s";
     private static final String UNABLE_TO_DELETE_RASTER =
@@ -60,17 +69,21 @@ public class MainHandler {
             "Deleted outdated 'full' raster file '%s'";
 
     private static final Charset UTF8 = StandardCharsets.UTF_8;
+    private static final String COVARIATE_DIR = "covariates/";
 
     private final ModelRunService modelRunService;
+    private final CovariateService covariateService;
     private final GeoserverRestService geoserver;
     private final RasterFilePathFactory rasterFilePathFactory;
     private final ModelOutputRasterMaskingHelper modelOutputRasterMaskingHelper;
 
     public MainHandler(ModelRunService modelRunService,
+                       CovariateService covariateService,
                        GeoserverRestService geoserver,
                        RasterFilePathFactory rasterFilePathFactory,
                        ModelOutputRasterMaskingHelper modelOutputRasterMaskingHelper) {
         this.modelRunService = modelRunService;
+        this.covariateService = covariateService;
         this.geoserver = geoserver;
         this.rasterFilePathFactory = rasterFilePathFactory;
         this.modelOutputRasterMaskingHelper = modelOutputRasterMaskingHelper;
@@ -203,15 +216,27 @@ public class MainHandler {
                         .convert(new Converter<CsvCovariateInfluence, CovariateInfluence>() {
                             @Override
                             public CovariateInfluence convert(CsvCovariateInfluence csv) {
-                                return new CovariateInfluence(csv, modelRun);
+                                CovariateFile covariate = findCovariateFile(csv.getCovariateFilePath());
+                                return new CovariateInfluence(covariate, csv, modelRun);
                             }
                         });
                 modelRun.setCovariateInfluences(covariateInfluences);
                 modelRunService.saveModelRun(modelRun);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 throw new IOException(String.format(LOG_COULD_NOT_SAVE, RELATIVE_INFLUENCE_CSV, modelRun.getName()), e);
             }
         }
+    }
+
+    private CovariateFile findCovariateFile(String covariateFilePath) {
+        String path = (covariateFilePath.startsWith(COVARIATE_DIR)) ?
+                covariateFilePath.replaceFirst(COVARIATE_DIR, "") : covariateFilePath;
+        CovariateFile covariateFile = covariateService.getCovariateFileByPath(path);
+        if (covariateFile == null) {
+            throw new RuntimeException(String.format(
+                    UNKNOWN_COVARIATE_FILE_REFERENCED, covariateFilePath));
+        }
+        return covariateFile;
     }
 
     private void handleEffectCurvesFile(final ModelRun modelRun, byte[] file) throws IOException {
@@ -225,12 +250,31 @@ public class MainHandler {
                         .convert(new Converter<CsvEffectCurveCovariateInfluence, EffectCurveCovariateInfluence>() {
                             @Override
                             public EffectCurveCovariateInfluence convert(CsvEffectCurveCovariateInfluence csv) {
-                                return new EffectCurveCovariateInfluence(csv, modelRun);
+                                CovariateFile covariate = findCovariateFile(csv.getCovariateFilePath());
+                                return new EffectCurveCovariateInfluence(covariate, csv, modelRun);
                             }
                         });
-                modelRun.setEffectCurveCovariateInfluences(effectCurveCovariateInfluences);
+
+                Group<EffectCurveCovariateInfluence> byFile = group(effectCurveCovariateInfluences,
+                            by(on(EffectCurveCovariateInfluence.class).getCovariateFile()));
+
+                List<EffectCurveCovariateInfluence> filteredEffectCurveCovariateInfluences = new ArrayList<>();
+                for (String key : byFile.keySet()) {
+                    List<EffectCurveCovariateInfluence> singleCurve =
+                            sort(byFile.find(key), on(EffectCurveCovariateInfluence.class).getCovariateValue());
+                    if (singleCurve.get(0).getCovariateFile().getDiscrete()) {
+                        // Only keep first and last
+                        filteredEffectCurveCovariateInfluences.add(singleCurve.get(0));
+                        filteredEffectCurveCovariateInfluences.add(singleCurve.get(singleCurve.size() - 1));
+                    } else {
+                        // Keep all
+                        filteredEffectCurveCovariateInfluences.addAll(singleCurve);
+                    }
+                }
+
+                modelRun.setEffectCurveCovariateInfluences(filteredEffectCurveCovariateInfluences);
                 modelRunService.saveModelRun(modelRun);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 throw new IOException(String.format(LOG_COULD_NOT_SAVE, EFFECT_CURVES_CSV, modelRun.getName()), e);
             }
         }

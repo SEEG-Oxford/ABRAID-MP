@@ -36,17 +36,7 @@ attempt_model_run <- function() {
 
     # Define covariates to use.
     # If you would like to use these covariate files please contact abraid@zoo.ox.ac.uk, as we cannot release them in all circumstances.
-    covariate_paths <- c(
-    <#list covariate_files as covariate>
-        "${covariate}"<#if covariate_has_next>,</#if>
-    </#list>
-    )
-
-    covariate_names <- c(
-    <#list covariate_names as covariate>
-        "${covariate}"<#if covariate_has_next>,</#if>
-    </#list>
-    )
+    covariate_paths <- paste("covariates", list.files(path="covariates", recursive=TRUE), sep="/")
 
     # Define admin unit rasters to use.
     # If you would like to use these admin unit rasters (or related shape files) please contact abraid@zoo.ox.ac.uk, as we cannot release them in all circumstances.
@@ -153,11 +143,11 @@ attempt_model_run <- function() {
             '"auc","sens","spec","pcc","kappa","auc_sd","sens_sd","spec_sd","pcc_sd","kappa_sd"',
             '1,2,3,4,5,6,7,8,9,10'))
         create_dry_run_csv("influence", "results/relative_influence.csv", c(
-            '"","file_path","covariate","mean","2.5%","97.5%"',
-            '"X","path/upr_u.tif","GRUMP urban surface","1","2","3"'))
+            '"","file_path","mean","2.5%","97.5%"',
+            '"X","covariates/upr_u.tif","1","2","3"'))
         create_dry_run_csv("effect", "results/effect_curves.csv", c(
-            '"","file_path","covariate","covariate","mean","2.5%","97.5%"',
-            '"1","path/upr_u.tif","GRUMP urban surface","0","-3","-5","0.3"'))
+            '"","file_path","covariate","mean","2.5%","97.5%"',
+            '"1","covariates/upr_u.tif","0","-3","-5","0.3"'))
     }
     </#if>
 
@@ -175,7 +165,6 @@ attempt_model_run <- function() {
             admin1_path,
             admin2_path,
             covariate_paths,
-            covariate_names,
             rep(FALSE, length(covariate_paths)),
             verbose,
             max_cpus,

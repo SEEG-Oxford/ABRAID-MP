@@ -7,7 +7,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv;
 public abstract class AbstractCsvCovariateInfluence {
     private String index;
     private String covariateFilePath;
-    private String covariateDisplayName;
     private Double meanInfluence;
     private Double upperQuantile;
     private Double lowerQuantile;
@@ -29,14 +28,6 @@ public abstract class AbstractCsvCovariateInfluence {
 
     public void setCovariateFilePath(String covariateFilePath) {
         this.covariateFilePath = covariateFilePath;
-    }
-
-    public String getCovariateDisplayName() {
-        return covariateDisplayName;
-    }
-
-    public void setCovariateDisplayName(String covariateDisplayName) {
-        this.covariateDisplayName = covariateDisplayName;
     }
 
     public Double getMeanInfluence() {

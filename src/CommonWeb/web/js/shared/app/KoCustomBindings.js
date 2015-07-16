@@ -6,10 +6,23 @@ define([
     "jquery",
     "moment",
     "knockout",
+    "shared/app/PlotHelper",
+    "c3",
+    "c3.extensions",
     "shared/app/KoCustomUtils",
     "flipclock"
-], function ($, moment, ko) {
+], function ($, moment, ko, PlotHelper, c3) {
     "use strict";
+
+    ko.bindingHandlers.toggleClick = {
+        init: function (element, valueAccessor) {
+            var value = valueAccessor();
+
+            ko.utils.registerEventHandler(element, "click", function () {
+                value(!value());
+            });
+        }
+    };
 
     ko.bindingHandlers.numericText = {
         update: function (element, valueAccessor, allBindings) {
@@ -148,7 +161,110 @@ define([
             updateBinding();
         }
     };
+    
+    ko.bindingHandlers.slideLeft = {
+        init: function (element, valueAccessor) {
+            var distance = $(element).parent().css("width");
+            ko.utils.domData.set(element, "distance", distance);
+            if (ko.utils.recursiveUnwrap(valueAccessor)) {
+                $(element).css("margin-left", 0);
+            }
+        },
+        update: function (element, valueAccessor) {
+            if (ko.utils.recursiveUnwrap(valueAccessor)) {
+                $(element).animate({"margin-left": 0}, 500);
+            } else {
+                var distance = ko.utils.domData.get(element, "distance");
+                $(element).animate({"margin-left": "-" + distance}, 500);
+            }
+        }
+    };
 
+    // Plotting
+    var addPlot = function (element, options) {
+        options.bindto = element;
+        var chart = c3.generate(options);
+        chart.flush();
+        chart.flush(); // workaround for y axis rendering bug
+        ko.utils.domData.set(element, "chart", chart);
+    };
+
+    var getPlotOptions = function (covariate, isLarge, isHistogram, ymin, ymax) {
+        var isDiscrete = covariate.discrete;
+        var data = PlotHelper.prepareData(covariate.effectCurve, covariate.valuesHistogram, isDiscrete);
+        return PlotHelper
+            .createPlotOptions(data, covariate.name, isDiscrete, isLarge, isHistogram, ymin, ymax);
+    };
+
+    var removePlot = function (element) {
+        var chart = ko.utils.domData.get(element, "chart");
+        if (chart) {
+            chart = chart.destroy();
+            ko.utils.domData.clear(element);
+        }
+    };
+
+    ko.bindingHandlers.smallEffectPlot = {
+        init: function (element) {
+            element.style.width = 264;
+            element.style.height = 198;
+        },
+        update: function (element, valueAccessor) {
+            var value = ko.utils.recursiveUnwrap(valueAccessor);
+            removePlot(element);
+
+            if (value.covariate) {
+                var options = getPlotOptions(value.covariate, false, false, value.min, value.max);
+                addPlot(element, options);
+            }
+        }
+    };
+
+    ko.bindingHandlers.largeEffectPlot = {
+        init: function (element) {
+            element.style.width = 668;
+            element.style.height = 453;
+        },
+        update: function (element, valueAccessor) {
+            var value = ko.utils.recursiveUnwrap(valueAccessor);
+            removePlot(element);
+
+            if (value) {
+                var options = getPlotOptions(value, true, false);
+                addPlot(element, options);
+            }
+        }
+    };
+
+    ko.bindingHandlers.covariateHistogramPlot = {
+        init: function (element) {
+            element.style.width = 668;
+            element.style.height = 300;
+        },
+        update: function (element, valueAccessor) {
+            var value = ko.utils.recursiveUnwrap(valueAccessor);
+            removePlot(element);
+            if (value) {
+                var options = getPlotOptions(value, true, true);
+                addPlot(element, options);
+            }
+        }
+    };
+
+    ko.bindingHandlers.savePlot = {
+        init: function (element, valueAccessor) {
+            ko.applyBindingAccessorsToNode(element, {
+                click: function () {
+                    return function () {
+                        var value = ko.utils.recursiveUnwrap(valueAccessor);
+                        var chart = ko.utils.domData.get($("#" + value.id)[0], "chart");
+                        chart.save(value.name);
+                    };
+                }
+            });
+        }
+    };
+    
     // Prevent mouse events from bubbling up to higher DOM elements (argument = include click event)
     ko.bindingHandlers.preventBubble = {
         init: function (element, valueAccessor) {

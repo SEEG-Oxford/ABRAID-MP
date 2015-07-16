@@ -15,6 +15,7 @@ define(["ko"], function (ko) {
         });
 
         self.covariateInfluencesViewModel = covariateInfluencesViewModel;
+        self.showCovariateTable = ko.observable(true);
         self.downloadLinksViewModel = downloadLinksViewModel;
         self.statisticsViewModel = statisticsViewModel;
     };

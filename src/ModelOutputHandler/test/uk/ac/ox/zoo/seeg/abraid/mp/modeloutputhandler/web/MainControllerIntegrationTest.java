@@ -1,5 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web;
 
+import ch.lambdaj.Lambda;
+import ch.lambdaj.function.convert.Converter;
 import freemarker.template.TemplateException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.builder.CompareToBuilder;
@@ -31,10 +33,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.testutils.SpringockitoWebContextLoader;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.extractProperty;
@@ -385,22 +384,33 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
             }
         });
 
-        assertThat(extractProperty("covariateFilePath").from(database)).isEqualTo(extractProperty("covariateFilePath").from(file));
-        assertThat(extractProperty("covariateDisplayName").from(database)).isEqualTo(extractProperty("covariateDisplayName").from(file));
+        assertThat(prepend("covariates/", extractProperty("file").from(extractProperty("covariateFile").from(database)))).isEqualTo(extractProperty("covariateFilePath").from(file));
         assertThat(extractProperty("meanInfluence").from(database)).isEqualTo(extractProperty("meanInfluence").from(file));
         assertThat(extractProperty("upperQuantile").from(database)).isEqualTo(extractProperty("upperQuantile").from(file));
         assertThat(extractProperty("lowerQuantile").from(database)).isEqualTo(extractProperty("lowerQuantile").from(file));
+    }
+
+    private List<String> prepend(final String prefix, List<Object> from) {
+        return Lambda.convert(from, new Converter<Object, String>() {
+            @Override
+            public String convert(Object s) {
+                return prefix + ((String) s);
+            }
+        });
     }
 
     private void assertThatEffectCurvesInDatabaseMatchesFile(final ModelRun run, String path) throws IOException {
         List<EffectCurveCovariateInfluence> database = run.getEffectCurveCovariateInfluences();
         List<CsvEffectCurveCovariateInfluence> file = CsvEffectCurveCovariateInfluence.readFromCSV(FileUtils.readFileToString(new File(TEST_DATA_PATH, path)));
 
+        // Discrete covariates only store min and max effect curve entries, this means that row 5 of the csv should not be kept
+        file.remove(4);
+
         Collections.sort(database, new Comparator<EffectCurveCovariateInfluence>() {
             @Override
             public int compare(EffectCurveCovariateInfluence o1, EffectCurveCovariateInfluence o2) {
                 return new CompareToBuilder()
-                        .append(o1.getCovariateFilePath(), o2.getCovariateFilePath())
+                        .append(o1.getCovariateFile().getFile(), o2.getCovariateFile().getFile())
                         .append(o1.getCovariateValue(), o2.getCovariateValue())
                         .toComparison();
             }
@@ -416,8 +426,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
             }
         });
 
-        assertThat(extractProperty("covariateFilePath").from(database)).isEqualTo(extractProperty("covariateFilePath").from(file));
-        assertThat(extractProperty("covariateDisplayName").from(database)).isEqualTo(extractProperty("covariateDisplayName").from(file));
+        assertThat(prepend("covariates/", extractProperty("file").from(extractProperty("covariateFile").from(database)))).isEqualTo(extractProperty("covariateFilePath").from(file));
         assertThat(extractProperty("covariateValue").from(database)).isEqualTo(extractProperty("covariateValue").from(file));
         assertThat(extractProperty("meanInfluence").from(database)).isEqualTo(extractProperty("meanInfluence").from(file));
         assertThat(extractProperty("upperQuantile").from(database)).isEqualTo(extractProperty("upperQuantile").from(file));

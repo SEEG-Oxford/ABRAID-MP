@@ -70,7 +70,6 @@ public class IndexController extends AbstractController {
         model.addAttribute("available_versions", modelVersions);
         model.addAttribute("run_duration", configurationService.getMaxModelRunDuration());
         model.addAttribute("r_path", rPath);
-        model.addAttribute("covariate_directory", configurationService.getCovariateDirectory());
 
         return "index";
     }
