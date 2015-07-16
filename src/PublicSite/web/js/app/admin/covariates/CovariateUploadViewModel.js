@@ -14,10 +14,13 @@ define([
         self.buildSubmissionData = function () {
             return {
                 name: self.name(),
+                discrete: self.discrete(),
                 subdirectory: self.subdirectory()
             };
         };
         self.postSuccessAction = refresh;
+
+        self.discrete = ko.observable(false);
 
         self.name = ko.observable("")
             .extend({ required: true, isUniqueProperty: {

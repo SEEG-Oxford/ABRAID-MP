@@ -13,12 +13,14 @@ addons:
     packages:
       - r-base
       - devscripts
+before_cache:
+  - rm -rf $HOME/.ant/cache/uk.ac.ox.zoo.seeg.abraid.*
+  - rm -rf $HOME/.ant/cache/resolved-uk.ac.ox.zoo.seeg.abraid.*
+  - rm -rf $HOME/.ant/resp
 cache:
-#  apt: true # apt caching is not yet availible on travis for open source projects
+  # apt: true # apt caching is not yet availible on travis for open source projects
   directories:
-    - $HOME/.ant/lib
-    - $HOME/.ant/manual
-    - $HOME/.ivy2/cache
+    - $HOME/.ant
 before_script:
   - git config core.fileMode false
   - chmod +x .travis.*.sh

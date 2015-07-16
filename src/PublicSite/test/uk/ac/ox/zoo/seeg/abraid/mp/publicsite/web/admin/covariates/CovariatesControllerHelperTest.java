@@ -5,20 +5,24 @@ import org.apache.commons.io.FilenameUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.mockito.ArgumentCaptor;
 import org.springframework.mock.web.MockMultipartFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateFile;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateValueBin;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.CovariateService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.List;
 
+import static ch.lambdaj.Lambda.on;
+import static ch.lambdaj.Lambda.sort;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.extractProperty;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests for CovariatesControllerHelper.
@@ -27,6 +31,7 @@ import static org.mockito.Mockito.when;
 public class CovariatesControllerHelperTest extends BaseCovariatesControllerTests {
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder(); ///CHECKSTYLE:SUPPRESS VisibilityModifier
+    private static final String TEST_DATA_PATH = "PublicSite/test/uk/ac/ox/zoo/seeg/abraid/mp/publicsite/web/admin/covariates";
 
     @Test
     public void extractTargetPathReturnsCorrectPath() throws Exception {
@@ -64,21 +69,6 @@ public class CovariatesControllerHelperTest extends BaseCovariatesControllerTest
     }
 
     @Test
-    public void getCovariateConfigurationChecksForNewFilesOnDisk() throws Exception {
-        // Arrange
-        CovariateService covariateService = createMockCovariateService(testFolder.getRoot());
-        DiseaseService diseaseService = createMockDiseaseService();
-        CovariatesControllerHelper target = new CovariatesControllerHelperImpl(covariateService, diseaseService);
-        File file = testFolder.newFile();
-
-        // Act
-        target.getCovariateConfiguration();
-
-        // Assert
-        verify(covariateService).saveCovariateFile(eq(new CovariateFile("", file.getName(), false, "")));
-    }
-
-    @Test
     public void setCovariateConfigurationUpdatesDBCorrectly() throws Exception {
         // Arrange
         CovariateService covariateService = createMockCovariateService(testFolder.getRoot());
@@ -86,6 +76,7 @@ public class CovariatesControllerHelperTest extends BaseCovariatesControllerTest
         JsonCovariateConfiguration config = createValidMockConfig();
         when(config.getFiles().get(0).getName()).thenReturn("new Name");
         when(config.getFiles().get(0).getHide()).thenReturn(true);
+        when(config.getFiles().get(0).getDiscrete()).thenReturn(true);
         when(config.getFiles().get(2).getEnabled()).thenReturn(Arrays.asList(22, 60));
         when(config.getFiles().get(2).getInfo()).thenReturn("new");
         CovariatesControllerHelper target = new CovariatesControllerHelperImpl(covariateService, diseaseService);
@@ -97,6 +88,7 @@ public class CovariatesControllerHelperTest extends BaseCovariatesControllerTest
         CovariateFile c1 = covariateService.getAllCovariateFiles().get(0);
         verify(c1).setName("new Name");
         verify(c1).setHide(true);
+        verify(c1, never()).setDiscrete(true); // Read only
         verify(covariateService).saveCovariateFile(c1);
         CovariateFile c2 = covariateService.getAllCovariateFiles().get(2);
         verify(c2).setEnabledDiseaseGroups(eq(diseaseService.getAllDiseaseGroups()));
@@ -105,21 +97,65 @@ public class CovariatesControllerHelperTest extends BaseCovariatesControllerTest
     }
 
     @Test
-    public void saveNewCovariateFileStoresCorrectly() throws Exception {
+    public void saveNewCovariateFileStoresCorrectlyForContinuousRasterIncludingHistogramData() throws Exception {
         // Arrange
         CovariateService covariateService = createMockCovariateService(testFolder.getRoot());
         DiseaseService diseaseService = createMockDiseaseService();
         CovariatesControllerHelper target = new CovariatesControllerHelperImpl(covariateService, diseaseService);
-        File refFile = testFolder.newFile();
-        FileUtils.writeStringToFile(refFile, "qwerxgfdsaDFVZVCXZ");
+        File refFile = new File(TEST_DATA_PATH, "continuous_raster.tif");
         byte[] bytes = FileUtils.readFileToByteArray(refFile);
 
         // Act
-        target.saveNewCovariateFile("name", covariateService.getCovariateDirectory() + "/asd/fas", new MockMultipartFile("foo", "oof", "application/octet-stream", bytes));
+        target.saveNewCovariateFile("name", false, covariateService.getCovariateDirectory() + "/asd/fas", new MockMultipartFile("foo", "oof", "application/octet-stream", bytes));
 
         // Assert
         assertThat(new File(covariateService.getCovariateDirectory() + "/asd/fas")).hasContentEqualTo(refFile);
-        verify(covariateService).saveCovariateFile(eq(new CovariateFile("name", "asd/fas", false, "")));
+        ArgumentCaptor<CovariateFile> captor = ArgumentCaptor.forClass(CovariateFile.class);
+        verify(covariateService).saveCovariateFile(captor.capture());
+        CovariateFile saved = captor.getValue();
+        assertThat(saved.getName()).isEqualTo("name");
+        assertThat(saved.getFile()).isEqualTo("asd/fas");
+        assertThat(saved.getHide()).isEqualTo(false);
+        assertThat(saved.getDiscrete()).isEqualTo(false);
+        assertThat(saved.getInfo()).isEqualTo("");
+        assertThat(saved.getEnabledDiseaseGroups()).isNullOrEmpty();
+        assertThat(saved.getCovariateValueHistogramData()).hasSize(10);
+        List<Object> sorted = sort(saved.getCovariateValueHistogramData(), on(CovariateValueBin.class).getMin());
+        assertThat(extractProperty("min").from(sorted)).containsExactly(0.0, 0.09996433036867529, 0.19992866073735058, 0.29989299110602585, 0.39985732147470116, 0.49982165184337646, 0.5997859822120517, 0.6997503125807271, 0.7997146429494023, 0.8996789733180776);
+        assertThat(extractProperty("max").from(sorted)).containsExactly(0.09996433036867529, 0.19992866073735058, 0.29989299110602585, 0.39985732147470116, 0.49982165184337646, 0.5997859822120517, 0.6997503125807271, 0.7997146429494023, 0.8996789733180776, 0.9996433036867529);
+        assertThat(extractProperty("count").from(sorted)).containsExactly(686, 130, 138, 129, 136, 131, 114, 161, 126, 130);
+        assertThat(extractProperty("covariateFile").from(sorted)).containsExactly(saved, saved, saved, saved, saved, saved, saved, saved, saved, saved);
+    }
+
+    @Test
+    public void saveNewCovariateFileStoresCorrectlyForDiscreteRasterIncludingHistogramData() throws Exception {
+        // Arrange
+        CovariateService covariateService = createMockCovariateService(testFolder.getRoot());
+        DiseaseService diseaseService = createMockDiseaseService();
+        CovariatesControllerHelper target = new CovariatesControllerHelperImpl(covariateService, diseaseService);
+        File refFile = new File(TEST_DATA_PATH, "discrete_raster.tif");
+        byte[] bytes = FileUtils.readFileToByteArray(refFile);
+
+        // Act
+        target.saveNewCovariateFile("name", true, covariateService.getCovariateDirectory() + "/asd/fas", new MockMultipartFile("foo", "oof", "application/octet-stream", bytes));
+
+        // Assert
+        assertThat(new File(covariateService.getCovariateDirectory() + "/asd/fas")).hasContentEqualTo(refFile);
+        ArgumentCaptor<CovariateFile> captor = ArgumentCaptor.forClass(CovariateFile.class);
+        verify(covariateService).saveCovariateFile(captor.capture());
+        CovariateFile saved = captor.getValue();
+        assertThat(saved.getName()).isEqualTo("name");
+        assertThat(saved.getFile()).isEqualTo("asd/fas");
+        assertThat(saved.getHide()).isEqualTo(false);
+        assertThat(saved.getDiscrete()).isEqualTo(true);
+        assertThat(saved.getInfo()).isEqualTo("");
+        assertThat(saved.getEnabledDiseaseGroups()).isNullOrEmpty();
+        assertThat(saved.getCovariateValueHistogramData()).hasSize(5);
+        List<Object> sorted = sort(saved.getCovariateValueHistogramData(), on(CovariateValueBin.class).getMin());
+        assertThat(extractProperty("min").from(sorted)).containsExactly(0.0, 0.25, 0.5, 0.75, 1.0);
+        assertThat(extractProperty("max").from(sorted)).containsExactly(0.0, 0.25, 0.5, 0.75, 1.0);
+        assertThat(extractProperty("count").from(sorted)).containsExactly(557, 327, 337, 329, 331);
+        assertThat(extractProperty("covariateFile").from(sorted)).containsExactly(saved, saved, saved, saved, saved);
     }
 
     @Test
@@ -128,15 +164,14 @@ public class CovariatesControllerHelperTest extends BaseCovariatesControllerTest
         CovariateService covariateService = createMockCovariateService(testFolder.getRoot());
         DiseaseService diseaseService = createMockDiseaseService();
         CovariatesControllerHelper target = new CovariatesControllerHelperImpl(covariateService, diseaseService);
-        File refFile = testFolder.newFile();
-        FileUtils.writeStringToFile(refFile, "qwerxgfdsaDFVZVCXZ");
+        File refFile = new File(TEST_DATA_PATH, "continuous_raster.tif");
         byte[] bytes = FileUtils.readFileToByteArray(refFile);
 
         // Act
-        target.saveNewCovariateFile("name", covariateService.getCovariateDirectory() + "/asd/fas", new MockMultipartFile("foo", "oof", "application/octet-stream", bytes));
+        target.saveNewCovariateFile("name", true, covariateService.getCovariateDirectory() + "/asd/fas", new MockMultipartFile("foo", "oof", "application/octet-stream", bytes));
 
         // Assert
         assertThat(new File(covariateService.getCovariateDirectory() + "/asd/fas")).hasContentEqualTo(refFile);
-        verify(covariateService).saveCovariateFile(eq(new CovariateFile("name", "asd/fas", false, "")));
+        verify(covariateService).saveCovariateFile(eq(new CovariateFile("name", "asd/fas", false, true, "")));
     }
 }

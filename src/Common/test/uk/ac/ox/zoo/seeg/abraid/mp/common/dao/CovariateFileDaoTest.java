@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateFile;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateValueBin;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 
 import java.util.Arrays;
@@ -53,9 +54,11 @@ public class CovariateFileDaoTest extends AbstractCommonSpringIntegrationTests {
     @Test
     public void saveAndReload() {
         // Arrange
-        CovariateFile covariateFile = new CovariateFile("NAME", "FILE", true, "INFO");
+        CovariateFile covariateFile = new CovariateFile("NAME", "FILE", true, true, "INFO");
         Collection<DiseaseGroup> enabledDiseaseGroups = Arrays.asList(diseaseGroupDao.getById(87), diseaseGroupDao.getById(60));
+        Collection<CovariateValueBin> bins = Arrays.asList(new CovariateValueBin(covariateFile, 0, 5, 10), new CovariateValueBin(covariateFile, 5, 10, 1), new CovariateValueBin(covariateFile, 10, 10, 10));
         covariateFile.setEnabledDiseaseGroups(enabledDiseaseGroups);
+        covariateFile.setCovariateValueHistogramData(bins);
 
         // Act
         covariateFileDao.save(covariateFile);
@@ -70,5 +73,6 @@ public class CovariateFileDaoTest extends AbstractCommonSpringIntegrationTests {
         assertThat(covariateFile.getHide()).isEqualTo(true);
         assertThat(covariateFile.getEnabledDiseaseGroups()).containsAll(enabledDiseaseGroups);
         assertThat(covariateFile.getEnabledDiseaseGroups()).hasSameSizeAs(enabledDiseaseGroups);
+        assertThat(covariateFile.getCovariateValueHistogramData()).hasSameSizeAs(bins);
     }
 }

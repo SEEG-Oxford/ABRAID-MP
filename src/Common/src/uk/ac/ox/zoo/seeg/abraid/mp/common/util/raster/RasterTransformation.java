@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.common.util;
+package uk.ac.ox.zoo.seeg.abraid.mp.common.util.raster;
 
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;

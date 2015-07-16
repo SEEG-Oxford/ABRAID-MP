@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.common.util;
+package uk.ac.ox.zoo.seeg.abraid.mp.common.util.raster;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import org.apache.commons.io.FileUtils;
@@ -7,12 +7,15 @@ import org.geotools.geometry.jts.JTS;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 
 import javax.media.jai.PlanarImage;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import static com.googlecode.catchexception.CatchException.catchException;
@@ -25,7 +28,7 @@ import static org.mockito.Mockito.*;
  * Copyright (c) 2015 University of Oxford
  */
 public class RasterUtilsTest {
-    private static final String TEST_DATA_PATH = "Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/util";
+    private static final String TEST_DATA_PATH = "Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/util/raster";
 
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder(); ///CHECKSTYLE:SUPPRESS VisibilityModifier
@@ -41,7 +44,7 @@ public class RasterUtilsTest {
         File outputFile = testFolder.newFile();
 
         // Act
-        RasterUtils.transformRaster(rasterFile, outputFile, new File[] {refFile}, new RasterTransformation() {
+        RasterUtils.transformRaster(rasterFile, outputFile, new File[]{refFile}, new RasterTransformation() {
             @Override
             public void transform(WritableRaster raster, Raster[] referenceRasters) {
                 for (int i = 0; i < raster.getWidth(); i++) {
@@ -78,6 +81,101 @@ public class RasterUtilsTest {
                 RasterUtils.transformRaster(rasterFile, outputFile, new File[] {refFile}, new RasterTransformation() {
                     @Override
                     public void transform(WritableRaster raster, Raster[] referenceRasters) throws IOException {
+                        throw new IOException();
+                    }
+                });
+                return null;
+            }
+        };
+        catchException(callable).call();
+
+        // Assert
+        assertThat(caughtException()).isInstanceOf(IOException.class);
+    }
+
+    @Test
+    public void summarizeRasterAppliesOperationCorrectly() throws Exception {
+        // Arrange
+        final File rasterFile = testFolder.newFile();
+        FileUtils.copyFile(new File(TEST_DATA_PATH, "raster.tif"), rasterFile);
+
+        // Act
+        List<Double> values = RasterUtils.summarizeRaster(rasterFile, new RasterSummaryCollator<List<Double>>() {
+            private List<Double> values = new ArrayList<>();
+
+            @Override
+            public void addValue(double value) throws IOException {
+                values.add(value);
+            }
+
+            @Override
+            public List<Double> getSummary() throws IOException {
+                return values;
+            }
+        });
+
+        // Assert
+        assertThat(values).hasSize(1881);
+        assertThat(values.get(0)).isEqualTo(0.3600128307007253);
+        assertThat(values.get(10)).isEqualTo(0.3475194713100791);
+        assertThat(values.get(111)).isEqualTo(0.5636678296141326);
+        assertThat(values.get(1111)).isEqualTo(0);
+        assertThat(values.get(1880)).isEqualTo(0.7626093772705644);
+    }
+
+    @Test
+    public void summarizeRasterThrowsIfOperationThrowsDuringAdd() throws Exception {
+        // Arrange
+        final File rasterFile = testFolder.newFile();
+        FileUtils.copyFile(new File(TEST_DATA_PATH, "raster.tif"), rasterFile);
+
+        // Act
+        Callable callable = new Callable() {
+            @Override
+            public Void call() throws Exception {
+                RasterUtils.summarizeRaster(rasterFile, new RasterSummaryCollator<List<Double>>() {
+                    private List<Double> values = new ArrayList<>();
+
+                    @Override
+                    public void addValue(double value) throws IOException {
+                        values.add(value);
+                        throw new IOException();
+                    }
+
+                    @Override
+                    public List<Double> getSummary() throws IOException {
+                        return values;
+                    }
+                });
+                return null;
+            }
+        };
+        catchException(callable).call();
+
+        // Assert
+        assertThat(caughtException()).isInstanceOf(IOException.class);
+    }
+
+    @Test
+    public void summarizeRasterThrowsIfOperationThrowsDuringResult() throws Exception {
+        // Arrange
+        final File rasterFile = testFolder.newFile();
+        FileUtils.copyFile(new File(TEST_DATA_PATH, "raster.tif"), rasterFile);
+
+        // Act
+        Callable callable = new Callable() {
+            @Override
+            public Void call() throws Exception {
+                RasterUtils.summarizeRaster(rasterFile, new RasterSummaryCollator<List<Double>>() {
+                    private List<Double> values = new ArrayList<>();
+
+                    @Override
+                    public void addValue(double value) throws IOException {
+                        values.add(value);
+                    }
+
+                    @Override
+                    public List<Double> getSummary() throws IOException {
                         throw new IOException();
                     }
                 });
@@ -140,7 +238,7 @@ public class RasterUtilsTest {
     @Test
     public void loadRasterThrowsForWrongFile() throws Exception {
         // Arrange
-        final File rasterFile = new File(TEST_DATA_PATH, "file1_iso-8859-1.txt");
+        final File rasterFile = new File(TEST_DATA_PATH, "../file1_iso-8859-1.txt");
 
         // Act
         Callable callable = new Callable() {

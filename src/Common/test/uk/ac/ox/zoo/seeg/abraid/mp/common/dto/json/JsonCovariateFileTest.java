@@ -19,16 +19,18 @@ public class JsonCovariateFileTest {
         String name = "name";
         String info = "info";
         boolean hide = true;
+        boolean discrete = false;
         List<Integer> enabled = new ArrayList<>();
 
         // Act
-        JsonCovariateFile result = new JsonCovariateFile(path, name, info, hide, enabled);
+        JsonCovariateFile result = new JsonCovariateFile(path, name, info, hide, discrete, enabled);
 
         // Assert
         assertThat(result.getPath()).isEqualTo(path);
         assertThat(result.getName()).isEqualTo(name);
         assertThat(result.getInfo()).isEqualTo(info);
         assertThat(result.getHide()).isEqualTo(hide);
+        assertThat(result.getDiscrete()).isEqualTo(discrete);
         assertThat(result.getEnabled()).isEqualTo(enabled);
     }
 

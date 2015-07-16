@@ -92,6 +92,7 @@ public class FreemarkerScriptGenerator implements ScriptGenerator {
         data.put("admin0_file", escapeFilePathForR(runConfiguration.getAdminUnitConfig().getAdmin0RasterFile()));
         data.put("admin1_file", escapeFilePathForR(runConfiguration.getAdminUnitConfig().getAdmin1RasterFile()));
         data.put("admin2_file", escapeFilePathForR(runConfiguration.getAdminUnitConfig().getAdmin2RasterFile()));
+
         return data;
     }
 

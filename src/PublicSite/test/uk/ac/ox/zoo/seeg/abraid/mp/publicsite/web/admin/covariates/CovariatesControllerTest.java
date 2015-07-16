@@ -178,6 +178,7 @@ public class CovariatesControllerTest {
         final String expectedName = "name";
         final String expectedSubdirectory = "dir";
         final String expectedCovariateDir = testFolder.newFolder().toString();
+        final boolean expectedIsDiscrete = true;
         final String expectedPath = FilenameUtils.separatorsToUnix(expectedCovariateDir + "/" + expectedSubdirectory + "/file.ext");
         final JsonCovariateConfiguration expectedCovariateConf = mock(JsonCovariateConfiguration.class);
 
@@ -191,7 +192,7 @@ public class CovariatesControllerTest {
             .thenReturn(Arrays.asList("FAIL1", "FAIL2"));
 
         // Act
-        ResponseEntity<JsonFileUploadResponse> result = target.addCovariateFile(expectedName, expectedSubdirectory, expectedFile);
+        ResponseEntity<JsonFileUploadResponse> result = target.addCovariateFile(expectedName, expectedIsDiscrete, expectedSubdirectory, expectedFile);
 
         // Assert
         verify(validator).validateCovariateUpload(
@@ -211,6 +212,7 @@ public class CovariatesControllerTest {
         when(expectedFile.getBytes()).thenReturn("Test content".getBytes());
         final String expectedName = "name";
         final String expectedSubdirectory = "dir";
+        final boolean expectedIsDiscrete = false;
         final String expectedCovariateDir = testFolder.newFolder().toString();
         final String expectedPath = FilenameUtils.separatorsToUnix(expectedCovariateDir + "/" + expectedSubdirectory + "/" + expectedFileName);
         final JsonCovariateConfiguration expectedCovariateConf = mock(JsonCovariateConfiguration.class);
@@ -224,10 +226,10 @@ public class CovariatesControllerTest {
                 .thenReturn(new ArrayList<String>());
 
         // Act
-        target.addCovariateFile(expectedName, expectedSubdirectory, expectedFile);
+        target.addCovariateFile(expectedName, expectedIsDiscrete, expectedSubdirectory, expectedFile);
 
         // Assert
-        verify(covariatesControllerHelper).saveNewCovariateFile(expectedName, expectedPath, expectedFile);
+        verify(covariatesControllerHelper).saveNewCovariateFile(expectedName, expectedIsDiscrete, expectedPath, expectedFile);
     }
 
     @Test
@@ -239,6 +241,7 @@ public class CovariatesControllerTest {
         when(expectedFile.getBytes()).thenReturn("Test content".getBytes());
         final String expectedName = "name";
         final String expectedSubdirectory = "dir";
+        final boolean expectedIsDiscrete = true;
         final List<JsonCovariateFile> covariateFileList = new ArrayList<>();
 
         CovariatesControllerHelper covariatesControllerHelper = mock(CovariatesControllerHelper.class);
@@ -249,7 +252,7 @@ public class CovariatesControllerTest {
                 .thenReturn(new ArrayList<String>());
 
         // Act
-        ResponseEntity<JsonFileUploadResponse> result = target.addCovariateFile(expectedName, expectedSubdirectory, expectedFile);
+        ResponseEntity<JsonFileUploadResponse> result = target.addCovariateFile(expectedName, expectedIsDiscrete, expectedSubdirectory, expectedFile);
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);

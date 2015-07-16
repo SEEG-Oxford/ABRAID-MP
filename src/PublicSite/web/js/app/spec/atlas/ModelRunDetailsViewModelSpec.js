@@ -35,5 +35,17 @@ define([
                 expect(vm.activeLayer()).toBe(payload);
             });
         });
+
+        describe("holds the show covariate table field which", function () {
+            var vm = new ModelRunDetailsViewModel({}, {}, {});
+
+            it("is observable", function () {
+                expect(vm.showCovariateTable).toBeObservable();
+            });
+
+            it("starts true", function () {
+                expect(vm.showCovariateTable()).toBe(true);
+            });
+        });
     });
 });

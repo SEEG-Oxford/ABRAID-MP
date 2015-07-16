@@ -36,7 +36,8 @@ attempt_model_run <- function() {
 
     # Define covariates to use.
     # If you would like to use these covariate files please contact abraid@zoo.ox.ac.uk, as we cannot release them in all circumstances.
-    covariate_paths <- paste("covariates", list.files(path="covariates", recursive=TRUE), sep="/")
+    covariate_files <- list.files(path="covariates", recursive=TRUE)
+    covariate_paths <- if(length(covariate_files)==0) c() else paste("covariates", covariate_files, sep="/")
 
     # Define admin unit rasters to use.
     # If you would like to use these admin unit rasters (or related shape files) please contact abraid@zoo.ox.ac.uk, as we cannot release them in all circumstances.

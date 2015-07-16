@@ -11,16 +11,19 @@ public class JsonCovariateFile {
     private String name;
     private String info;
     private boolean hide;
+    private boolean discrete;
     private List<Integer> enabled;
 
     public JsonCovariateFile() {
     }
 
-    public JsonCovariateFile(String path, String name, String info, boolean hide, List<Integer> enabled) {
+    public JsonCovariateFile(String path, String name, String info, boolean hide, boolean discrete,
+                             List<Integer> enabled) {
         setPath(path);
         setName(name);
         setInfo(info);
         setHide(hide);
+        setDiscrete(discrete);
         setEnabled(enabled);
     }
 
@@ -56,6 +59,14 @@ public class JsonCovariateFile {
         this.hide = hide;
     }
 
+    public boolean getDiscrete() {
+        return discrete;
+    }
+
+    public void setDiscrete(boolean discrete) {
+        this.discrete = discrete;
+    }
+
     public List<Integer> getEnabled() {
         return enabled;
     }
@@ -74,6 +85,7 @@ public class JsonCovariateFile {
         JsonCovariateFile that = (JsonCovariateFile) o;
 
         if (hide != that.hide) return false;
+        if (discrete != that.discrete) return false;
         if (enabled != null ? !enabled.equals(that.enabled) : that.enabled != null) return false;
         if (info != null ? !info.equals(that.info) : that.info != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
@@ -88,6 +100,7 @@ public class JsonCovariateFile {
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (info != null ? info.hashCode() : 0);
         result = 31 * result + (hide ? 1 : 0);
+        result = 31 * result + (discrete ? 1 : 0);
         result = 31 * result + (enabled != null ? enabled.hashCode() : 0);
         return result;
     }

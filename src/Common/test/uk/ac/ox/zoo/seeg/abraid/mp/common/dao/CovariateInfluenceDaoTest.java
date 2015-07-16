@@ -88,7 +88,7 @@ public class CovariateInfluenceDaoTest extends AbstractCommonSpringIntegrationTe
     }
 
     private CovariateFile createCovariateFile(int idx) {
-        CovariateFile covariate = new CovariateFile("name" + idx, "file" + idx, false, "info" + idx);
+        CovariateFile covariate = new CovariateFile("name" + idx, "file" + idx, false, false, "info" + idx);
         covariateFileDao.save(covariate);
         return covariate;
     }

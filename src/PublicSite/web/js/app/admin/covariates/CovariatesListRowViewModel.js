@@ -17,6 +17,7 @@ define(["ko", "underscore"], function (ko, _) {
             parentViewModel.hasUnsavedChanges(true);
             parentViewModel.entries.valueHasMutated(); //Force view refresh
         });
+        self.discrete = parentFile.discrete; // Read only
         self.mouseOver = ko.observable(false);
         self.path = "./" + parentFile.path;
         self.info = ko.observable(parentFile.info);

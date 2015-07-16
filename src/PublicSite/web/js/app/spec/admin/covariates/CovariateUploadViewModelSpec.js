@@ -42,6 +42,16 @@ define([
             });
         });
 
+        describe("holds a 'discrete' field which", function () {
+            it("is observable", function () {
+                expect(vm.discrete).toBeObservable();
+            });
+
+            it("starts false", function () {
+                expect(vm.discrete()).toBe(false);
+            });
+        });
+
         describe("holds a 'subdirectory' field which", function () {
             it("is observable", function () {
                 expect(vm.subdirectory).toBeObservable();
@@ -134,9 +144,11 @@ define([
 
             it("a custom buildSubmissionData function, which builds the correct data", function () {
                 vm.name("abc");
+                vm.discrete(true);
                 vm.subdirectory("def");
                 expect(vm.buildSubmissionData()).toEqual({
                     name: "abc",
+                    discrete: true,
                     subdirectory: "def"
                 });
             });

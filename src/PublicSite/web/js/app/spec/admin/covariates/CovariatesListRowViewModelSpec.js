@@ -74,6 +74,27 @@ define([ "app/admin/covariates/CovariatesListRowViewModel" ], function (Covariat
             });
         });
 
+        describe("holds a discrete field which", function () {
+            var parentFile = {};
+            var parentVM = {};
+            beforeEach(function () {
+                parentFile = { discrete: false, enabled: [] };
+                parentVM = {
+                    hasUnsavedChanges: jasmine.createSpy(),
+                    entries: { valueHasMutated: jasmine.createSpy() }
+                };
+                vm = new CovariatesListRowViewModel(parentVM, parentFile, 0);
+            });
+
+            it("is not an observable", function () {
+                expect(vm.discrete).not.toBeObservable();
+            });
+
+            it("has the same initial value as the parent file object", function () {
+                expect(vm.discrete).toBe(parentFile.discrete);
+            });
+        });
+
         describe("holds a 'mouse over' field which", function () {
             it("is an observable", function () {
                 expect(vm.mouseOver).toBeObservable();

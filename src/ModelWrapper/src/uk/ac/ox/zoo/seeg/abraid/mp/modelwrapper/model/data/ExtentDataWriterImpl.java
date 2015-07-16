@@ -1,8 +1,8 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.data;
 
 import org.apache.log4j.Logger;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.util.RasterTransformation;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.util.RasterUtils;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.util.raster.RasterTransformation;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.util.raster.RasterUtils;
 
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
