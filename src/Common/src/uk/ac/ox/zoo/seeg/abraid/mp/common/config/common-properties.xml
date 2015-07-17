@@ -14,28 +14,31 @@
 
     <!-- For use by a local deployment of Data Manager -->
     <context:property-placeholder order="3" ignore-unresolvable="true" ignore-resource-not-found="true" location="
-        file:conf/application/database.properties,
+        file:conf/shared/misc.properties,
         file:conf/shared/email.properties,
-        file:conf/application/misc.properties,
         file:conf/shared/web.properties,
+        file:conf/application/application.properties,
+        file:conf/application/database.properties,
         file:conf/application/service.properties" />
 
     <!-- For use by a standard ABRAID deployment -->
     <context:property-placeholder order="4" ignore-unresolvable="true" ignore-resource-not-found="true" location="
-        file:/var/lib/abraid/conf/application/database.properties,
+        file:/var/lib/abraid/conf/shared/misc.properties,
         file:/var/lib/abraid/conf/shared/email.properties,
-        file:/var/lib/abraid/conf/application/misc.properties,
         file:/var/lib/abraid/conf/shared/web.properties,
+        file:/var/lib/abraid/conf/application/application.properties,
+        file:/var/lib/abraid/conf/application/database.properties,
         file:/var/lib/abraid/conf/application/service.properties,
         WEB-INF/version.properties,
         file:version.properties" />
 
     <!-- For use during development and by the automated tests -->
     <context:property-placeholder order="5" ignore-unresolvable="false" ignore-resource-not-found="true" location="
-        classpath:uk/ac/ox/zoo/seeg/abraid/mp/testutils/config/database-testing.properties,
-        classpath:uk/ac/ox/zoo/seeg/abraid/mp/testutils/config/email-testing.properties,
         classpath:uk/ac/ox/zoo/seeg/abraid/mp/testutils/config/misc-testing.properties,
+        classpath:uk/ac/ox/zoo/seeg/abraid/mp/testutils/config/email-testing.properties,
         classpath:uk/ac/ox/zoo/seeg/abraid/mp/testutils/config/web-testing.properties,
+        classpath:uk/ac/ox/zoo/seeg/abraid/mp/testutils/config/application-testing.properties,
+        classpath:uk/ac/ox/zoo/seeg/abraid/mp/testutils/config/database-testing.properties,
         classpath:uk/ac/ox/zoo/seeg/abraid/mp/testutils/config/service-testing.properties,
         classpath:uk/ac/ox/zoo/seeg/abraid/mp/testutils/config/version-testing.properties" />
 </beans>
