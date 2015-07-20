@@ -5,6 +5,7 @@ import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParserException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.DataAcquisitionException;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.ManualValidationEnforcer;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.domain.HealthMapLocation;
 
 import java.io.IOException;
@@ -33,7 +34,7 @@ public class HealthMapDataAcquirerIntegrationTest {
         List<HealthMapLocation> locations = new ArrayList<>();
 
         // Act
-        HealthMapDataAcquirer dataAcquisition = new HealthMapDataAcquirer(webService, dataConverter, lookupData);
+        HealthMapDataAcquirer dataAcquisition = new HealthMapDataAcquirer(webService, dataConverter, lookupData, mock(ManualValidationEnforcer.class));
         dataAcquisition.acquireDataFromFile(fileName);
 
         // Assert
@@ -47,7 +48,7 @@ public class HealthMapDataAcquirerIntegrationTest {
         List<HealthMapLocation> locations = new ArrayList<>();
 
         // Act
-        HealthMapDataAcquirer dataAcquisition = new HealthMapDataAcquirer(webService, dataConverter, lookupData);
+        HealthMapDataAcquirer dataAcquisition = new HealthMapDataAcquirer(webService, dataConverter, lookupData, mock(ManualValidationEnforcer.class));
         catchException(dataAcquisition).acquireDataFromFile(fileName);
 
         // Assert
@@ -63,7 +64,7 @@ public class HealthMapDataAcquirerIntegrationTest {
         List<HealthMapLocation> locations = new ArrayList<>();
 
         // Act
-        HealthMapDataAcquirer dataAcquisition = new HealthMapDataAcquirer(webService, dataConverter, lookupData);
+        HealthMapDataAcquirer dataAcquisition = new HealthMapDataAcquirer(webService, dataConverter, lookupData, mock(ManualValidationEnforcer.class));
         catchException(dataAcquisition).acquireDataFromFile(fileName);
 
         // Assert

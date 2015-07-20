@@ -6,6 +6,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.DataAcquisitionException;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.DiseaseOccurrenceDataAcquirer;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.ManualValidationEnforcer;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.csv.domain.CsvDiseaseOccurrence;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public class CsvDataAcquirerTest {
         converter = mock(CsvDiseaseOccurrenceConverter.class);
         diseaseOccurrenceDataAcquirer = mock(DiseaseOccurrenceDataAcquirer.class);
         csvLookupData = mock(CsvLookupData.class);
-        csvDataAcquirer = new CsvDataAcquirer(converter, diseaseOccurrenceDataAcquirer, csvLookupData);
+        csvDataAcquirer = new CsvDataAcquirer(converter, diseaseOccurrenceDataAcquirer, csvLookupData, mock(ManualValidationEnforcer.class));
     }
 
     @Test

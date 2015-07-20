@@ -8,6 +8,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Provenance;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParserException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.DataAcquisitionException;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.ManualValidationEnforcer;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.domain.HealthMapLocation;
 
 import java.io.File;
@@ -32,13 +33,16 @@ public class HealthMapDataAcquirer {
     private final HealthMapWebService healthMapWebService;
     private final HealthMapDataConverter healthMapDataConverter;
     private final HealthMapLookupData healthMapLookupData;
+    private final ManualValidationEnforcer manualValidationEnforcer;
 
     public HealthMapDataAcquirer(HealthMapWebService healthMapWebService,
                                  HealthMapDataConverter healthMapDataConverter,
-                                 HealthMapLookupData healthMapLookupData) {
+                                 HealthMapLookupData healthMapLookupData,
+                                 ManualValidationEnforcer manualValidationEnforcer) {
         this.healthMapWebService = healthMapWebService;
         this.healthMapDataConverter = healthMapDataConverter;
         this.healthMapLookupData = healthMapLookupData;
+        this.manualValidationEnforcer = manualValidationEnforcer;
     }
 
     /**
@@ -48,7 +52,10 @@ public class HealthMapDataAcquirer {
         DateTime startDate = getStartDate();
         DateTime endDate = getEndDate(startDate);
         List<HealthMapLocation> healthMapLocations = retrieveDataFromWebService(startDate, endDate);
-        convert(healthMapLocations, endDate);
+        Set<DiseaseOccurrence> occurrences = convert(healthMapLocations, endDate);
+        if (occurrences != null) {
+            manualValidationEnforcer.addRandomSubsetToManualValidation(occurrences);
+        }
     }
 
     /**
@@ -58,7 +65,10 @@ public class HealthMapDataAcquirer {
     public void acquireDataFromFile(String jsonFileName) {
         LOGGER.info(String.format(RETRIEVING_FROM_FILE_MESSAGE, jsonFileName));
         List<HealthMapLocation> healthMapLocations = retrieveDataFromFile(jsonFileName);
-        convert(healthMapLocations, null);
+        Set<DiseaseOccurrence> occurrences = convert(healthMapLocations, null);
+        if (occurrences != null) {
+            manualValidationEnforcer.addRandomSubsetToManualValidation(occurrences);
+        }
     }
 
     private List<HealthMapLocation> retrieveDataFromWebService(DateTime startDate, DateTime endDate) {

@@ -6,6 +6,7 @@ import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Provenance;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.DataAcquisitionException;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.ManualValidationEnforcer;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.domain.HealthMapLocation;
 
 import java.util.ArrayList;
@@ -42,7 +43,7 @@ public class HealthMapDataAcquirerTest {
         when(webService.sendRequest(eq(defaultStartDate), eq(endDate))).thenReturn(locations);
 
         // Act
-        HealthMapDataAcquirer dataAcquisition = new HealthMapDataAcquirer(webService, dataConverter, lookupData);
+        HealthMapDataAcquirer dataAcquisition = new HealthMapDataAcquirer(webService, dataConverter, lookupData, mock(ManualValidationEnforcer.class));
         dataAcquisition.acquireDataFromWebService();
 
         // Assert
@@ -67,7 +68,7 @@ public class HealthMapDataAcquirerTest {
         when(webService.sendRequest(eq(startDate), eq(endDate))).thenReturn(locations);
 
         // Act
-        HealthMapDataAcquirer dataAcquisition = new HealthMapDataAcquirer(webService, dataConverter, lookupData);
+        HealthMapDataAcquirer dataAcquisition = new HealthMapDataAcquirer(webService, dataConverter, lookupData, mock(ManualValidationEnforcer.class));
         dataAcquisition.acquireDataFromWebService();
 
         // Assert
@@ -90,7 +91,7 @@ public class HealthMapDataAcquirerTest {
         when(webService.sendRequest(eq(defaultStartDate), eq(endDate))).thenReturn(locations);
 
         // Act
-        HealthMapDataAcquirer dataAcquisition = new HealthMapDataAcquirer(webService, dataConverter, lookupData);
+        HealthMapDataAcquirer dataAcquisition = new HealthMapDataAcquirer(webService, dataConverter, lookupData, mock(ManualValidationEnforcer.class));
         dataAcquisition.acquireDataFromWebService();
 
         // Assert
@@ -116,7 +117,7 @@ public class HealthMapDataAcquirerTest {
         when(webService.sendRequest(eq(startDate), eq(endDate))).thenReturn(locations);
 
         // Act
-        HealthMapDataAcquirer dataAcquisition = new HealthMapDataAcquirer(webService, dataConverter, lookupData);
+        HealthMapDataAcquirer dataAcquisition = new HealthMapDataAcquirer(webService, dataConverter, lookupData, mock(ManualValidationEnforcer.class));
         dataAcquisition.acquireDataFromWebService();
 
         // Assert
@@ -141,7 +142,7 @@ public class HealthMapDataAcquirerTest {
         when(webService.sendRequest(eq(startDate), eq(endDate))).thenReturn(locations);
 
         // Act
-        HealthMapDataAcquirer dataAcquisition = new HealthMapDataAcquirer(webService, dataConverter, lookupData);
+        HealthMapDataAcquirer dataAcquisition = new HealthMapDataAcquirer(webService, dataConverter, lookupData, mock(ManualValidationEnforcer.class));
         dataAcquisition.acquireDataFromWebService();
 
         // Assert
@@ -167,7 +168,7 @@ public class HealthMapDataAcquirerTest {
         when(webService.sendRequest(eq(startDate), eq(endDate))).thenReturn(locations);
 
         // Act
-        HealthMapDataAcquirer dataAcquisition = new HealthMapDataAcquirer(webService, dataConverter, lookupData);
+        HealthMapDataAcquirer dataAcquisition = new HealthMapDataAcquirer(webService, dataConverter, lookupData, mock(ManualValidationEnforcer.class));
         dataAcquisition.acquireDataFromWebService();
 
         // Assert
@@ -189,7 +190,7 @@ public class HealthMapDataAcquirerTest {
         when(webService.getEndDateDaysAfterStartDate()).thenReturn(null);
 
         // Act
-        HealthMapDataAcquirer dataAcquisition = new HealthMapDataAcquirer(webService, dataConverter, lookupData);
+        HealthMapDataAcquirer dataAcquisition = new HealthMapDataAcquirer(webService, dataConverter, lookupData, mock(ManualValidationEnforcer.class));
         catchException(dataAcquisition).acquireDataFromWebService();
 
         // Assert

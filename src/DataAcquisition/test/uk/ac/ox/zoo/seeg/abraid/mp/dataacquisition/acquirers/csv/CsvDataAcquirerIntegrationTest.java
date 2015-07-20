@@ -5,10 +5,12 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.kubek2k.springockito.annotations.ReplaceWithMock;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.AbstractDataAcquisitionSpringIntegrationTests;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.ManualValidationEnforcer;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,6 +35,10 @@ public class CsvDataAcquirerIntegrationTest extends AbstractDataAcquisitionSprin
 
     @Autowired
     private CsvDataAcquirer csvDataAcquirer;
+
+    @ReplaceWithMock
+    @Autowired
+    private ManualValidationEnforcer manualValidationEnforcer;
 
     @Autowired
     private DiseaseOccurrenceDao diseaseOccurrenceDao;

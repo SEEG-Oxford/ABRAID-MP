@@ -7,6 +7,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.CharacterSetUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.DataAcquisitionException;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.DiseaseOccurrenceDataAcquirer;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.ManualValidationEnforcer;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.csv.domain.CsvDiseaseOccurrence;
 
 import java.nio.charset.Charset;
@@ -37,13 +38,16 @@ public class CsvDataAcquirer {
     private final CsvDiseaseOccurrenceConverter converter;
     private final DiseaseOccurrenceDataAcquirer diseaseOccurrenceDataAcquirer;
     private final CsvLookupData csvLookupData;
+    private final ManualValidationEnforcer manualValidationEnforcer;
 
     public CsvDataAcquirer(CsvDiseaseOccurrenceConverter converter,
                            DiseaseOccurrenceDataAcquirer diseaseOccurrenceDataAcquirer,
-                           CsvLookupData csvLookupData) {
+                           CsvLookupData csvLookupData,
+                           ManualValidationEnforcer manualValidationEnforcer) {
         this.converter = converter;
         this.diseaseOccurrenceDataAcquirer = diseaseOccurrenceDataAcquirer;
         this.csvLookupData = csvLookupData;
+        this.manualValidationEnforcer = manualValidationEnforcer;
     }
 
     /**
@@ -60,6 +64,9 @@ public class CsvDataAcquirer {
             addConversionMessage(csvDiseaseOccurrences, messages);
             int initialMessageCount = messages.size();
             Set<DiseaseOccurrence> convertedOccurrences = convert(csvDiseaseOccurrences, isGoldStandard, messages);
+            if (!isGoldStandard) {
+                manualValidationEnforcer.addRandomSubsetToManualValidation(convertedOccurrences);
+            }
             addCountMessage(convertedOccurrences, messages, initialMessageCount);
             csvLookupData.clearLookups();
         }
