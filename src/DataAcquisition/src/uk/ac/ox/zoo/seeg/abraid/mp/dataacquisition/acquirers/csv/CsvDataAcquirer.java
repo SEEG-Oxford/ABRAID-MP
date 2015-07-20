@@ -25,6 +25,7 @@ import static ch.lambdaj.Lambda.*;
  */
 public class CsvDataAcquirer {
     private static final Logger LOGGER = Logger.getLogger(CsvDataAcquirer.class);
+
     private static final String CONVERTING_TO_UTF8_MESSAGE = "Detected character set %s, converting to UTF-8.";
     private static final String INVALID_FORMAT_ERROR_MESSAGE = "CSV file has invalid format: %s.";
     private static final String LINE_ERROR_MESSAGE = "Error in CSV file on line %d: %s.";
@@ -33,12 +34,13 @@ public class CsvDataAcquirer {
             "Saved %d disease occurrence(s) in %d location(s) (of which %d location(s) passed QC).";
     private static final String SAVED_NO_OCCURRENCES_MESSAGE = "Did not save any disease occurrences.";
 
-    private CsvDiseaseOccurrenceConverter converter;
-    private DiseaseOccurrenceDataAcquirer diseaseOccurrenceDataAcquirer;
-    private CsvLookupData csvLookupData;
+    private final CsvDiseaseOccurrenceConverter converter;
+    private final DiseaseOccurrenceDataAcquirer diseaseOccurrenceDataAcquirer;
+    private final CsvLookupData csvLookupData;
 
     public CsvDataAcquirer(CsvDiseaseOccurrenceConverter converter,
-                           DiseaseOccurrenceDataAcquirer diseaseOccurrenceDataAcquirer, CsvLookupData csvLookupData) {
+                           DiseaseOccurrenceDataAcquirer diseaseOccurrenceDataAcquirer,
+                           CsvLookupData csvLookupData) {
         this.converter = converter;
         this.diseaseOccurrenceDataAcquirer = diseaseOccurrenceDataAcquirer;
         this.csvLookupData = csvLookupData;
@@ -57,7 +59,7 @@ public class CsvDataAcquirer {
         if (csvDiseaseOccurrences != null) {
             addConversionMessage(csvDiseaseOccurrences, messages);
             int initialMessageCount = messages.size();
-            List<DiseaseOccurrence> convertedOccurrences = convert(csvDiseaseOccurrences, isGoldStandard, messages);
+            Set<DiseaseOccurrence> convertedOccurrences = convert(csvDiseaseOccurrences, isGoldStandard, messages);
             addCountMessage(convertedOccurrences, messages, initialMessageCount);
             csvLookupData.clearLookups();
         }
@@ -94,9 +96,9 @@ public class CsvDataAcquirer {
         return new String(convertedInput, StandardCharsets.UTF_8);
     }
 
-    private List<DiseaseOccurrence> convert(List<CsvDiseaseOccurrence> csvDiseaseOccurrences, boolean isGoldStandard,
+    private Set<DiseaseOccurrence> convert(List<CsvDiseaseOccurrence> csvDiseaseOccurrences, boolean isGoldStandard,
                                             List<String> messages) {
-        List<DiseaseOccurrence> convertedOccurrences = new ArrayList<>();
+        Set<DiseaseOccurrence> convertedOccurrences = new HashSet<>();
 
         for (int i = 0; i < csvDiseaseOccurrences.size(); i++) {
             CsvDiseaseOccurrence csvDiseaseOccurrence = csvDiseaseOccurrences.get(i);
@@ -125,7 +127,7 @@ public class CsvDataAcquirer {
         messages.add(message);
     }
 
-    private void addCountMessage(List<DiseaseOccurrence> occurrences, List<String> messages, int initialMessageCount) {
+    private void addCountMessage(Set<DiseaseOccurrence> occurrences, List<String> messages, int initialMessageCount) {
         Set<Location> uniqueLocations = findUniqueLocations(occurrences);
         List<Location> locationsPassingQc = findLocationsPassingQc(uniqueLocations);
         String message;
@@ -140,7 +142,7 @@ public class CsvDataAcquirer {
         messages.add(initialMessageCount, message);
     }
 
-    private Set<Location> findUniqueLocations(List<DiseaseOccurrence> occurrences) {
+    private Set<Location> findUniqueLocations(Set<DiseaseOccurrence> occurrences) {
         return new HashSet<>(extract(occurrences, on(DiseaseOccurrence.class).getLocation()));
     }
 
