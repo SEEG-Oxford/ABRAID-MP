@@ -48,21 +48,58 @@ public final class NativeSQLConstants {
             "    outside_geom = (" + CREATE_EXTENT_GEOM.replace(" IN ", " NOT IN ") + ") " +
             "WHERE disease_group_id = :diseaseGroupId";
 
-    /** Query: Calculates the distance between the specified point and the disease extent of the specified disease
-               group, as follows:
-               1. ST_ClosestPoint: Find the closest point on the disease extent to the specified point. If the point
-                  is within the disease extent, this returns the specified point itself (giving a distance of 0).
-               2. ST_Distance: Find the orthodromic (surface) distance between the closest point and the specified
-                  point. In theory this can operate without the use of ST_ClosestPoint, but it is much slower.
-               3. Return the value in kilometres by dividing by 1000. */
-    public static final String DISTANCE_OUTSIDE_DISEASE_EXTENT =
-            "SELECT ST_Distance(GEOGRAPHY(ST_ClosestPoint(geom, :geom)), GEOGRAPHY(:geom)) / 1000 " +
+    /** Query: Gets the precise or admin unit geom for a specified location id. */
+    private static final String GET_LOCATION_GEOM =
+            "SELECT " +
+            "  CASE precision " +
+            "    WHEN 'PRECISE' THEN l.geom " + // Use the lat/long
+            "    WHEN 'ADMIN1' THEN qc.geom " + // Use the qc shape
+            "    WHEN 'ADMIN2' THEN qc.geom " + // Use the qc shape
+            "    WHEN 'COUNTRY' THEN CASE " +
+            "      WHEN l.country_gaul_code IN (" +
+            "        SELECT DISTINCT country_gaul_code " +
+            "        FROM admin_unit_%1$s_view" +
+            "        WHERE country_gaul_code is not null) " +
+            "      THEN ( " + // if the country is in the extent map, use the amalgamation of its constituent shapes
+            "        SELECT ST_COLLECT(geom) FROM (SELECT (ST_DUMP(geom)).geom " +
+            "        FROM admin_unit_%1$s_view " +
+            "        WHERE country_gaul_code=l.country_gaul_code) ex) " +
+            "      ELSE c.geom " + // otherwise just use the country shape
+            "    END " +
+            "  END AS location_geom " +
+            "FROM location AS l " +
+            "LEFT OUTER JOIN admin_unit_qc AS qc ON l.admin_unit_qc_gaul_code=qc.gaul_code " +
+            "LEFT OUTER JOIN country AS c ON l.country_gaul_code=c.gaul_code " +
+            "WHERE l.id=:locationId ";
+
+    /** Query: Gets the current geom for the disease extent of a specified disease group id. */
+    private static final String GET_EXTENT_GEOM =
+            "SELECT geom AS extent_geom " +
             "FROM disease_extent " +
-            "WHERE disease_group_id = :diseaseGroupId";
+            "WHERE disease_group_id=:diseaseGroupId ";
+
+    /* Query: Calculates the distance between the specified location and any location inside of the disease extent of
+              the specified disease. */
+    public static final String DISTANCE_OUTSIDE_DISEASE_EXTENT =
+            "WITH " +
+            // Get the correct location geom
+            "  location_geom AS ( " + GET_LOCATION_GEOM + " ), " +
+            // Get the extent geom
+            "  extent_geom AS ( " + GET_EXTENT_GEOM + " ), " +
+            // Find the shortest line between the shapes
+            "  line AS ( " +
+            "    SELECT " +
+            "      ST_ShortestLine(extent_geom, location_geom) AS line " +
+            "    FROM location_geom " +
+            "    CROSS JOIN extent_geom " +
+            "  ) " +
+            // Measure the line
+            "SELECT ST_Length(geography(line))/1000 FROM line";
 
     /** Query: Calculates the distance between the specified location and any location outside of the disease extent of
-     the specified disease. */
-    public static final String DISTANCE_WITHIN_DISEASE_EXTENT = DISTANCE_OUTSIDE_DISEASE_EXTENT;
+              the specified disease. */
+    public static final String DISTANCE_INSIDE_DISEASE_EXTENT =
+            DISTANCE_OUTSIDE_DISEASE_EXTENT.replace("geom AS extent_geom", "outside_geom AS extent_geom");
 
     /** Other: Global. */
     public static final String GLOBAL = "global";

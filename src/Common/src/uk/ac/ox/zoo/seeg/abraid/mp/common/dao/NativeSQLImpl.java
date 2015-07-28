@@ -69,29 +69,31 @@ public class NativeSQLImpl implements NativeSQL {
     }
 
     /**
-     * Calculates the distance between the specified point and the boundaries of the disease extent of the specified
+     * Calculates the distance between the specified location and the boundaries of the disease extent of the specified
      * disease group. If the specified point is within the disease extent, it returns zero.
      * @param diseaseGroupId The ID of the disease group.
-     * @param point The location.
-     * @return The distance outside the disease extent, or null if not found.
+     * @param isGlobal True to use admin units for global diseases, false for tropical diseases.
+     * @param locationId The location.
+     * @return The distance outside the disease extent, or 0.
      */
     @Override
-    public Double findDistanceOutsideDiseaseExtent(int diseaseGroupId, Point point) {
-        return (Double) uniqueResult(DISTANCE_OUTSIDE_DISEASE_EXTENT, "diseaseGroupId", diseaseGroupId, "geom", point);
+    public Double findDistanceOutsideDiseaseExtent(int diseaseGroupId, boolean isGlobal, int locationId) {
+        String query = String.format(DISTANCE_OUTSIDE_DISEASE_EXTENT, getGlobalOrTropical(isGlobal));
+        return (Double) uniqueResult(query, "diseaseGroupId", diseaseGroupId, "locationId", locationId);
     }
 
     /**
-     * Finds the nominal distance to be used for a point that is within a disease extent, based on the disease
-     * extent class of the containing geometry.
+     * Calculates the distance between the specified location and the boundaries of the nearest admin unit not in the
+     * disease extent of the specified disease group.
      * @param diseaseGroupId The ID of the disease group.
-     * @param isGlobal True if the disease is global, false if tropical.
-     * @param point The location.
-     * @return The nominal distance within the disease extent, or null if the point is not within the disease extent.
+     * @param isGlobal True to use admin units for global diseases, false for tropical diseases.
+     * @param locationId The location.
+     * @return The distance inside the disease extent, or 0.
      */
     @Override
-    public Double findDistanceWithinDiseaseExtent(int diseaseGroupId, boolean isGlobal, Point point) {
-        String query = String.format(DISTANCE_WITHIN_DISEASE_EXTENT, getGlobalOrTropical(isGlobal));
-        return (Double) uniqueResult(query, "diseaseGroupId", diseaseGroupId, "geom", point);
+    public Double findDistanceInsideDiseaseExtent(int diseaseGroupId, boolean isGlobal, int locationId) {
+        String query = String.format(DISTANCE_INSIDE_DISEASE_EXTENT, getGlobalOrTropical(isGlobal));
+        return (Double) uniqueResult(query, "diseaseGroupId", diseaseGroupId, "locationId", locationId);
     }
 
     private SQLQuery createSQLQuery(String queryString) {
@@ -99,7 +101,8 @@ public class NativeSQLImpl implements NativeSQL {
     }
 
     private Object uniqueResult(String queryString, Object... parameterNamesAndValues) {
-        return getParameterisedSQLQuery(queryString, parameterNamesAndValues).uniqueResult();
+        SQLQuery parameterisedSQLQuery = getParameterisedSQLQuery(queryString, parameterNamesAndValues);
+        return parameterisedSQLQuery.uniqueResult();
     }
 
     private Object executeUpdate(String queryString, Object... parameterNamesAndValues) {
