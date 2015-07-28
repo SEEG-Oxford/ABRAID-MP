@@ -62,7 +62,7 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
     public void findAdminUnitTropicalThatContainsPoint() {
         Point point = GeometryUtils.createPoint(-124.2, 54.1);
         Integer gaulCode = nativeSQL.findAdminUnitThatContainsPoint(point, false);
-        assertThat(gaulCode).isEqualTo(825);
+        assertThat(gaulCode).isEqualTo(46);
     }
 
     @Test
@@ -254,7 +254,7 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
                 adminUnitDiseaseExtentClassDao.getAllTropicalAdminUnitDiseaseExtentClassesByDiseaseGroupId(diseaseGroupId);
         updateAdminUnitDiseaseExtentClass(diseaseExtent, 153, DiseaseExtentClass.ABSENCE);
         updateAdminUnitDiseaseExtentClass(diseaseExtent, 179, DiseaseExtentClass.POSSIBLE_PRESENCE);
-        updateAdminUnitDiseaseExtentClass(diseaseExtent, 825, DiseaseExtentClass.PRESENCE);
+        updateAdminUnitDiseaseExtentClass(diseaseExtent, 64, DiseaseExtentClass.PRESENCE);
         flushAndClear();
     }
 
