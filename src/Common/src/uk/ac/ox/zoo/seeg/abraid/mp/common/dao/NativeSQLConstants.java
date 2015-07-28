@@ -60,8 +60,8 @@ public final class NativeSQLConstants {
             "FROM disease_extent " +
             "WHERE disease_group_id = :diseaseGroupId";
 
-    /** Query: Finds the nominal distance to be used for a point that is within a disease extent, based on the
-               disease extent class of the containing geometry. */
+    /** Query: Calculates the distance between the specified location and any location outside of the disease extent of
+     the specified disease. */
     public static final String DISTANCE_WITHIN_DISEASE_EXTENT = DISTANCE_OUTSIDE_DISEASE_EXTENT;
 
     /** Other: Global. */

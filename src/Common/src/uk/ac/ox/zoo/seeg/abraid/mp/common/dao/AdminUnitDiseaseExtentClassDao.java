@@ -57,4 +57,24 @@ public interface AdminUnitDiseaseExtentClassDao {
      * @param adminUnitDiseaseExtentClass The object to save.
      */
     void save(AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass);
+
+    /**
+     * Gets the disease extent class for all admin units within a specific country.
+     * @param diseaseGroupId The id of the disease group.
+     * @param isGlobal True to use admin units for global diseases, false for tropical diseases.
+     * @param countryGaulCode The gaul code of the parent country.
+     * @return A extent classes.
+     */
+    List<AdminUnitDiseaseExtentClass> getAllAdminUnitDiseaseExtentClassesByCountryGaulCode(
+            int diseaseGroupId, boolean isGlobal, int countryGaulCode);
+
+    /**
+     * Gets the disease extent class for specific global or tropical admin unit.
+     * @param diseaseGroupId The id of the disease group.
+     * @param isGlobal True to use admin units for global diseases, false for tropical diseases.
+     * @param gaulCode The gaul code of the admin unit.
+     * @return A extent class.
+     */
+    AdminUnitDiseaseExtentClass getDiseaseExtentClassByGaulCode(
+            int diseaseGroupId, boolean isGlobal, int gaulCode);
 }

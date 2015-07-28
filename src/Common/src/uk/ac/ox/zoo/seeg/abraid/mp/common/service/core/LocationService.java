@@ -39,4 +39,16 @@ public interface LocationService {
      * @param geoName The GeoName to save.
      */
     void saveGeoName(GeoName geoName);
+
+    /**
+     * Gets one or more extent classes that corresponded to the specified location (multiple for countries that are
+     * split in to admin units in the extent map).
+     * @param diseaseId The disease group.
+     * @param isGlobal True to use admin units for global diseases, false for tropical diseases.
+     * @param location The location
+     * @return A list of extent classes.
+     */
+    List<AdminUnitDiseaseExtentClass> getAdminUnitDiseaseExtentClassesForLocation(
+            int diseaseId, boolean isGlobal, Location location);
+
 }
