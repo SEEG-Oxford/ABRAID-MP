@@ -24,22 +24,28 @@ public final class NativeSQLConstants {
     public static final String LAND_SEA_BORDER_CONTAINS_POINT_QUERY =
             "SELECT MIN(id) FROM land_sea_border WHERE ST_Intersects(geom, :point)";
 
-    /** Clause for selecting relevant disease extent rows in the queries below. */
-    private static final String DISEASE_EXTENT_CLAUSE =
-            "FROM admin_unit_disease_extent_class c " +
-            "JOIN admin_unit_%1$s a ON c.%1$s_gaul_code = a.gaul_code " +
-            "WHERE c.disease_group_id = :diseaseGroupId " +
-            "AND c.disease_extent_class IN ('" + DiseaseExtentClass.POSSIBLE_PRESENCE + "', '" +
-                                                 DiseaseExtentClass.PRESENCE + "')";
+    /** Query: Create an extent geometry by aggregating the geometries in admin_unit_global/tropical, based on
+     relevant rows in admin_unit_disease_extent_class. The geometries are aggregated by applying ST_Dump (split
+     multipolygons into polygons) then ST_Collect (concatenate polygons into a multipolygon); this is much quicker
+     than ST_Union which dissolves boundaries between polygons. */
+    private static final String CREATE_EXTENT_GEOM =
+            "SELECT ST_Collect(geom) FROM (" +
+                    "SELECT (ST_Dump(a.geom)).geom " +
+                    "FROM admin_unit_disease_extent_class c " +
+                    "JOIN admin_unit_%1$s a ON c.%1$s_gaul_code = a.gaul_code " +
+                    "WHERE c.disease_group_id = :diseaseGroupId " +
+                    "AND c.disease_extent_class IN ('" +
+                            DiseaseExtentClass.POSSIBLE_PRESENCE + "', '" +
+                            DiseaseExtentClass.PRESENCE +
+                    "')" +
+            ") x";
 
-    /** Query: Updates a disease extent by aggregating the geometries in admin_unit_global/tropical, based on
-     relevant rows in admin_unit_disease_extent_class. The geometries are aggregated by applying ST_DUMP (split
-     multipolygons into polygons) then ST_COLLECT (concatenate polygons into a multipolygon); this is much quicker
-     than ST_UNION which dissolves boundaries between polygons. */
+    /** Query: Updates a disease extent with the current extent and outside extent geoms. */
     public static final String UPDATE_DISEASE_EXTENT_QUERY =
             "UPDATE disease_extent " +
-            "SET geom = (SELECT ST_COLLECT(geom) FROM " +
-                    "(SELECT (ST_DUMP(a.geom)).geom " + DISEASE_EXTENT_CLAUSE + ") x) " +
+            "SET " +
+            "    geom =  (" + CREATE_EXTENT_GEOM + "), " +
+            "    outside_geom = (" + CREATE_EXTENT_GEOM.replace(" IN ", " NOT IN ") + ") " +
             "WHERE disease_group_id = :diseaseGroupId";
 
     /** Query: Calculates the distance between the specified point and the disease extent of the specified disease
@@ -56,12 +62,7 @@ public final class NativeSQLConstants {
 
     /** Query: Finds the nominal distance to be used for a point that is within a disease extent, based on the
                disease extent class of the containing geometry. */
-    public static final String DISTANCE_WITHIN_DISEASE_EXTENT =
-            "SELECT distance_if_within_extent " +
-            "FROM disease_extent_class " +
-            "WHERE name IN" +
-            "    (SELECT c.disease_extent_class " + DISEASE_EXTENT_CLAUSE +
-            "     AND ST_Intersects(a.geom, :geom))";
+    public static final String DISTANCE_WITHIN_DISEASE_EXTENT = DISTANCE_OUTSIDE_DISEASE_EXTENT;
 
     /** Other: Global. */
     public static final String GLOBAL = "global";
