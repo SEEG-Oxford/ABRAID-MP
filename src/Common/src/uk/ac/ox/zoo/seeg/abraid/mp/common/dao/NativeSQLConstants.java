@@ -78,7 +78,7 @@ public final class NativeSQLConstants {
             "FROM disease_extent " +
             "WHERE disease_group_id=:diseaseGroupId ";
 
-    /* Query: Calculates the distance between the specified location and any location inside of the disease extent of
+    /** Query: Calculates the distance between the specified location and any location inside of the disease extent of
               the specified disease. */
     public static final String DISTANCE_OUTSIDE_DISEASE_EXTENT =
             "WITH " +

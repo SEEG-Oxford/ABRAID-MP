@@ -6,15 +6,13 @@ import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.geometry.jts.JTS;
 import org.opengis.coverage.PointOutsideCoverageException;
 import org.opengis.geometry.DirectPosition;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.raster.RasterUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.RasterFilePathFactory;
 
+import java.awt.image.Raster;
 import java.io.File;
 import java.io.IOException;
 
@@ -107,17 +105,63 @@ public class EnvironmentalSuitabilityHelper {
             throw new RuntimeException(e);
         }
     }
-    
+
     /**
+     * Finds the environmental suitability of the given occurrence, using the specified rasters.
      * @param occurrence The occurrence.
-     * @param raster The raster.
+     * @param suitabilityRaster The environmental suitability raster for the occurrences disease group.
+     * @param adminRasters A set of admin unit level rasters.
      * @return The environmental suitability of the occurrence according to the raster, or null if not found.
      */
-    public Double findEnvironmentalSuitability(DiseaseOccurrence occurrence, GridCoverage2D raster) {
+    public Double findEnvironmentalSuitability(
+            DiseaseOccurrence occurrence, GridCoverage2D suitabilityRaster, GridCoverage2D[] adminRasters) {
+        Location location = occurrence.getLocation();
+        LocationPrecision precision = location.getPrecision();
+        if (precision == LocationPrecision.PRECISE) {
+            return getPreciseES(location, suitabilityRaster);
+        } else {
+            int gaul = getLocationGaulCode(location, precision);
+            GridCoverage2D adminLayerRaster = adminRasters[precision.getModelValue()];
+            Double averageES = getAverageES(gaul, suitabilityRaster, adminLayerRaster);
+            if (averageES == null) {
+                LOGGER.warn(String.format(NO_PIXEL_WARNING, gaul));
+                return getPreciseES(location, suitabilityRaster);
+            }
+            return averageES;
+        }
+    }
+
+    private Integer getLocationGaulCode(Location location, LocationPrecision precision) {
+        return (precision == LocationPrecision.COUNTRY) ?
+                location.getCountryGaulCode() :
+                location.getAdminUnitQCGaulCode();
+    }
+
+    private Double getAverageES(int gaul, GridCoverage2D suitabilityRaster, GridCoverage2D adminRaster) {
+        Raster suitabilityData = suitabilityRaster.getRenderedImage().getData();
+        Raster adminData = adminRaster.getRenderedImage().getData();
+        double sum = 0;
+        int count = 0;
+        for (int i = 0; i < adminData.getWidth(); i++) {
+            for (int j = 0; j < adminData.getHeight(); j++) {
+                int adminValue = adminData.getSample(i, j, 0);
+                if (adminValue == gaul) {
+                    double rasterValue = suitabilityData.getSampleDouble(i, j, 0);
+                    if (rasterValue != RasterUtils.NO_DATA_VALUE) {
+                        count++;
+                        sum += rasterValue;
+                    }
+                }
+            }
+        }
+        return (count != 0) ? (sum / count) : null;
+    }
+
+    private Double getPreciseES(Location location, GridCoverage2D raster) {
         Double result = null;
 
         if (raster != null) {
-            Point point = occurrence.getLocation().getGeom();
+            Point point = location.getGeom();
             try {
                 DirectPosition position = JTS.toDirectPosition(point.getCoordinate(), GeometryUtils.WGS_84_CRS);
                 double[] resultArray = raster.evaluate(position, (double[]) null);
