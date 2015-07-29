@@ -221,6 +221,20 @@ public final class RasterUtils {
         }
     }
 
+    /**
+     * Correctly dispose of an array of GridCoverage2D raster object.
+     * This includes disposing the PlanarImage object that has a read lock on the raster file.
+     * @param rasters The rasters to be disposed.
+     */
+    public static void disposeRasters(GridCoverage2D[] rasters) {
+        if (rasters != null) {
+            for (int i = 0; i < rasters.length; i++) {
+                disposeRaster(rasters[i]);
+                rasters[i] = null;
+            }
+        }
+    }
+
     private static GeneralParameterValue[] getGeoTiffWriteParameters() {
         GeoTiffWriteParams writeParams = new GeoTiffWriteParams();
         writeParams.setCompressionMode(GeoTiffWriteParams.MODE_EXPLICIT);

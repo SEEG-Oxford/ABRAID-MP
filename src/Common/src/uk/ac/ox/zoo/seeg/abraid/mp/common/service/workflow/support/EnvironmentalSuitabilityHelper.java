@@ -3,12 +3,12 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 import com.vividsolutions.jts.geom.Point;
 import org.apache.log4j.Logger;
 import org.geotools.coverage.grid.GridCoverage2D;
-import org.geotools.factory.Hints;
 import org.geotools.geometry.jts.JTS;
 import org.opengis.coverage.PointOutsideCoverageException;
 import org.opengis.geometry.DirectPosition;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
@@ -23,6 +23,9 @@ import java.io.IOException;
  * Copyright (c) 2014 University of Oxford
  */
 public class EnvironmentalSuitabilityHelper {
+    private static final int NUMBER_OF_ADMIN_LEVELS = 3;
+    private static final String NO_PIXEL_WARNING = "Admin unit %s does not appear to cover any raster pixels. " +
+            "Falling back to lat/long based environmental suitability";
     private ModelRunService modelRunService;
     private RasterFilePathFactory rasterFilePathFactory;
 
@@ -35,8 +38,6 @@ public class EnvironmentalSuitabilityHelper {
             "Reading raster file %s for environmental suitability calculation";
 
     private static final int RASTER_NO_DATA_VALUE = -9999;
-    private static final Hints RASTER_READ_HINTS =
-            new Hints(Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, GeometryUtils.WGS_84_CRS);
 
     public EnvironmentalSuitabilityHelper(ModelRunService modelRunService,
                                           RasterFilePathFactory rasterFilePathFactory) {
@@ -72,8 +73,42 @@ public class EnvironmentalSuitabilityHelper {
     }
 
     /**
-     * Finds the environmental suitability of the given occurrence, using the specified raster.
-     * NODATA values in the raster are returned as null.
+     * Gets the admin unit level rasters for the three admin unit levels.
+     * Note: The rasters returned by the method must be disposed using RasterUtils.disposeRasters when no longer in use.
+     * @return The admin unit rasters.
+     */
+    public GridCoverage2D[] getAdminRasters() {
+        GridCoverage2D[] rasters = new GridCoverage2D[NUMBER_OF_ADMIN_LEVELS];
+        loadSingleAdminRaster(0, rasters);
+        loadSingleAdminRaster(1, rasters);
+        loadSingleAdminRaster(2, rasters);
+        return rasters;
+    }
+
+    /**
+     * Gets the admin unit level raster for a single level (at the array index for the level).
+     * Note: The rasters returned by the method must be disposed using RasterUtils.disposeRasters when no longer in use.
+     * @param precision The precision of the admin unit level to load.
+     * @return The admin unit raster.
+     */
+    public GridCoverage2D[] getSingleAdminRasters(LocationPrecision precision) {
+        GridCoverage2D[] rasters = new GridCoverage2D[NUMBER_OF_ADMIN_LEVELS];
+        if (precision != LocationPrecision.PRECISE) {
+            loadSingleAdminRaster(precision.getModelValue(), rasters);
+        }
+        return rasters;
+    }
+
+    private void loadSingleAdminRaster(int level, GridCoverage2D[] set) {
+        File rasterFile = rasterFilePathFactory.getAdminRaster(level);
+        try {
+            set[level] = RasterUtils.loadRaster(rasterFile);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    /**
      * @param occurrence The occurrence.
      * @param raster The raster.
      * @return The environmental suitability of the occurrence according to the raster, or null if not found.
