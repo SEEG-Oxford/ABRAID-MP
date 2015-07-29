@@ -3,16 +3,17 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 import com.vividsolutions.jts.geom.Point;
 import org.junit.Before;
 import org.junit.Test;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.AdminUnitDiseaseExtentClassDao;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.GeoNameDao;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.GeoNamesLocationPrecisionDao;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.LocationDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests for LocationServiceImpl.
@@ -24,13 +25,15 @@ public class LocationServiceTest {
     private LocationDao locationDao;
     private GeoNamesLocationPrecisionDao geoNamesLocationPrecisionDao;
     private GeoNameDao geoNameDao;
+    private AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao;
 
     @Before
     public void setUp() {
         locationDao = mock(LocationDao.class);
         geoNamesLocationPrecisionDao = mock(GeoNamesLocationPrecisionDao.class);
         geoNameDao = mock(GeoNameDao.class);
-        locationService = new LocationServiceImpl(locationDao, geoNamesLocationPrecisionDao, geoNameDao);
+        adminUnitDiseaseExtentClassDao = mock(AdminUnitDiseaseExtentClassDao.class);
+        locationService = new LocationServiceImpl(locationDao, geoNamesLocationPrecisionDao, geoNameDao, adminUnitDiseaseExtentClassDao);
     }
 
     @Test
@@ -95,5 +98,56 @@ public class LocationServiceTest {
 
         // Assert
         verify(geoNameDao).save(expectation);
+    }
+
+    @Test
+    public void getAdminUnitDiseaseExtentClassesCallsDaoForNonCountry() {
+        // Arrange
+        Location location = mock(Location.class);
+        when(location.getPrecision()).thenReturn(LocationPrecision.ADMIN1);
+        when(location.getAdminUnitGlobalGaulCode()).thenReturn(123);
+        AdminUnitDiseaseExtentClass expected = mock(AdminUnitDiseaseExtentClass.class);
+        when(adminUnitDiseaseExtentClassDao.getDiseaseExtentClassByGaulCode(87, true, 123)).thenReturn(expected);
+
+        // Act
+        List<AdminUnitDiseaseExtentClass> result = locationService.getAdminUnitDiseaseExtentClassesForLocation(87, true, location);
+
+        // Assert
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0)).isSameAs(expected);
+    }
+
+    @Test
+    public void getAdminUnitDiseaseExtentClassesCallsDaoForCountrySplit() {
+        Location location = mock(Location.class);
+        when(location.getPrecision()).thenReturn(LocationPrecision.COUNTRY);
+        when(location.getCountryGaulCode()).thenReturn(321);
+        when(location.getAdminUnitGlobalGaulCode()).thenReturn(123);
+        List<AdminUnitDiseaseExtentClass> expected = Arrays.asList(mock(AdminUnitDiseaseExtentClass.class));
+        when(adminUnitDiseaseExtentClassDao.getAllAdminUnitDiseaseExtentClassesByCountryGaulCode(87, true, 321)).thenReturn(expected);
+
+        // Act
+        List<AdminUnitDiseaseExtentClass> result = locationService.getAdminUnitDiseaseExtentClassesForLocation(87, true, location);
+
+        // Assert
+        assertThat(result).isSameAs(expected);
+    }
+
+    @Test
+    public void getAdminUnitDiseaseExtentClassesCallsDaoForCountryNotSplit() {
+        Location location = mock(Location.class);
+        when(location.getPrecision()).thenReturn(LocationPrecision.COUNTRY);
+        when(location.getCountryGaulCode()).thenReturn(321);
+        when(location.getAdminUnitGlobalGaulCode()).thenReturn(123);
+        AdminUnitDiseaseExtentClass expected = mock(AdminUnitDiseaseExtentClass.class);
+        when(adminUnitDiseaseExtentClassDao.getDiseaseExtentClassByGaulCode(87, true, 123)).thenReturn(expected);
+        when(adminUnitDiseaseExtentClassDao.getAllAdminUnitDiseaseExtentClassesByCountryGaulCode(87, true, 321)).thenReturn(new ArrayList<AdminUnitDiseaseExtentClass>());
+
+        // Act
+        List<AdminUnitDiseaseExtentClass> result = locationService.getAdminUnitDiseaseExtentClassesForLocation(87, true, location);
+
+        // Assert
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0)).isSameAs(expected);
     }
 }
