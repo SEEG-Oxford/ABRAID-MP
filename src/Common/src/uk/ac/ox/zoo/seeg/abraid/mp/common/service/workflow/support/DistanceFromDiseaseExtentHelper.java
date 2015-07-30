@@ -30,7 +30,7 @@ public class DistanceFromDiseaseExtentHelper {
      * @return The distance from the disease extent.
      */
     @Transactional
-    public double findDistanceFromDiseaseExtent(DiseaseOccurrence occurrence) {
+    public Double findDistanceFromDiseaseExtent(DiseaseOccurrence occurrence) {
         DiseaseGroup diseaseGroup = occurrence.getDiseaseGroup();
         Location location = occurrence.getLocation();
 
@@ -58,7 +58,7 @@ public class DistanceFromDiseaseExtentHelper {
         } else if (insideExtent) {
             return -1.0 * nativeSQL.findDistanceInsideDiseaseExtent(diseaseGroupId, isGlobal, location.getId());
         } else {
-            throw new IllegalArgumentException();
+            return null; // No extent defined
         }
     }
 

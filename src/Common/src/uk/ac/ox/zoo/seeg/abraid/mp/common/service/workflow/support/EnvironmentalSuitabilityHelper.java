@@ -89,7 +89,7 @@ public class EnvironmentalSuitabilityHelper {
      * @param precision The precision of the admin unit level to load.
      * @return The admin unit raster.
      */
-    public GridCoverage2D[] getSingleAdminRasters(LocationPrecision precision) {
+    public GridCoverage2D[] getSingleAdminRaster(LocationPrecision precision) {
         GridCoverage2D[] rasters = new GridCoverage2D[NUMBER_OF_ADMIN_LEVELS];
         if (precision != LocationPrecision.PRECISE) {
             loadSingleAdminRaster(precision.getModelValue(), rasters);

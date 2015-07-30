@@ -141,7 +141,7 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
         GridCoverage2D[] adminRasters = null;
         try {
             suitabilityRaster = esHelper.getLatestMeanPredictionRaster(occurrence.getDiseaseGroup());
-            adminRasters = esHelper.getSingleAdminRasters(occurrence.getLocation().getPrecision());
+            adminRasters = esHelper.getSingleAdminRaster(occurrence.getLocation().getPrecision());
             addValidationParameters(occurrence, suitabilityRaster, adminRasters);
         } finally {
             RasterUtils.disposeRaster(suitabilityRaster);
