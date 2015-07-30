@@ -54,9 +54,11 @@ public class DistanceFromDiseaseExtentHelper {
         } else if (outsideExtent) {
             // We find the distance using a PostGIS query instead of using routines in the GeometryUtils class, because
             // loading the entire disease extent geometry into memory is likely to be inefficient
-            return nativeSQL.findDistanceOutsideDiseaseExtent(diseaseGroupId, isGlobal, location.getId());
+            Double distance = nativeSQL.findDistanceOutsideDiseaseExtent(diseaseGroupId, isGlobal, location.getId());
+            return (distance != null) ? (+1.0 * distance) : null;
         } else if (insideExtent) {
-            return -1.0 * nativeSQL.findDistanceInsideDiseaseExtent(diseaseGroupId, isGlobal, location.getId());
+            Double distance = nativeSQL.findDistanceInsideDiseaseExtent(diseaseGroupId, isGlobal, location.getId());
+            return (distance != null) ? (-1.0 * distance) : null;
         } else {
             return null; // No extent defined
         }
