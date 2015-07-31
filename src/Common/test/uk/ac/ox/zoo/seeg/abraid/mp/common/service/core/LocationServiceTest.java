@@ -150,4 +150,15 @@ public class LocationServiceTest {
         assertThat(result).hasSize(1);
         assertThat(result.get(0)).isSameAs(expected);
     }
+
+    @Test
+    public void saveLocationCallsDao    () {
+        Location location = mock(Location.class);
+
+        // Act
+        locationService.saveLocation(location);
+
+        // Assert
+        verify(locationDao).save(location);
+    }
 }

@@ -257,7 +257,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         double distanceFromDiseaseExtent = 500;
 
         GridCoverage2D suitabilityRaster = mock(GridCoverage2D.class);
-        GridCoverage2D[] adminRasters = new GridCoverage2D[] { mock(GridCoverage2D.class) };
+        GridCoverage2D[] adminRasters = new GridCoverage2D[] {mock(GridCoverage2D.class)};
 
         DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, true, false);
         occurrence.getLocation().setPrecision(LocationPrecision.ADMIN1);
@@ -490,7 +490,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         double distanceFromDiseaseExtent2 = 800;
         double distanceFromDiseaseExtent3 = 900;
         GridCoverage2D suitabilityRaster = mock(GridCoverage2D.class);
-        GridCoverage2D[] adminRasters = new GridCoverage2D[] { mock(GridCoverage2D.class) };
+        GridCoverage2D[] adminRasters = new GridCoverage2D[] {mock(GridCoverage2D.class)};
 
 
         DiseaseOccurrence occurrence1 = createDiseaseOccurrence(diseaseGroupId, false, false);
@@ -538,7 +538,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         double environmentalSuitability = 0.42;
         double distanceFromDiseaseExtent = 500;
         GridCoverage2D suitabilityRaster = mock(GridCoverage2D.class);
-        GridCoverage2D[] adminRasters = new GridCoverage2D[] { mock(GridCoverage2D.class) };
+        GridCoverage2D[] adminRasters = new GridCoverage2D[] {mock(GridCoverage2D.class)};
 
         DiseaseGroup diseaseGroup = createDiseaseGroup();
         DiseaseOccurrence admin1Occurrence = createAdmin1Occurrence(1, diseaseGroup);
@@ -587,7 +587,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         // Arrange
         int diseaseGroupId = 30;
         GridCoverage2D suitabilityRaster = mock(GridCoverage2D.class);
-        GridCoverage2D[] adminRasters = new GridCoverage2D[] { mock(GridCoverage2D.class) };
+        GridCoverage2D[] adminRasters = new GridCoverage2D[] {mock(GridCoverage2D.class)};
 
         DiseaseOccurrence occurrence1 = createDiseaseOccurrence(diseaseGroupId, false, false);
         DiseaseOccurrence occurrence2 = createDiseaseOccurrence(diseaseGroupId, false, false);

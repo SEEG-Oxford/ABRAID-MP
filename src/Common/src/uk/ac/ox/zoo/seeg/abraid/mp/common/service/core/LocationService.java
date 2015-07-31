@@ -51,4 +51,9 @@ public interface LocationService {
     List<AdminUnitDiseaseExtentClass> getAdminUnitDiseaseExtentClassesForLocation(
             int diseaseId, boolean isGlobal, Location location);
 
+    /**
+     * Saves the specified location.
+     * @param location The location to save.
+     */
+    void saveLocation(Location location);
 }

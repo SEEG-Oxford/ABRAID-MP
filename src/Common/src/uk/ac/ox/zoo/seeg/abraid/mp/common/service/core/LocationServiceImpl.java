@@ -108,4 +108,13 @@ public class LocationServiceImpl implements LocationService {
         return Arrays.asList(
                 adminUnitDiseaseExtentClassDao.getDiseaseExtentClassByGaulCode(diseaseId, isGlobal, gaulCode));
     }
+
+    /**
+     * Saves the specified location.
+     * @param location The location to save.
+     */
+    @Override
+    public void saveLocation(Location location) {
+        locationDao.save(location);
+    }
 }

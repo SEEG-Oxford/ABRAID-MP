@@ -22,7 +22,7 @@ import java.io.IOException;
  */
 public class EnvironmentalSuitabilityHelper {
     private static final int NUMBER_OF_ADMIN_LEVELS = 3;
-    private static final String NO_PIXEL_WARNING = "Admin unit %s does not appear to cover any raster pixels. " +
+    private static final String NO_PIXEL_WARNING = "Admin unit %s (%s) does not appear to cover any raster pixels. " +
             "Falling back to lat/long based environmental suitability";
     private ModelRunService modelRunService;
     private RasterFilePathFactory rasterFilePathFactory;
@@ -124,7 +124,7 @@ public class EnvironmentalSuitabilityHelper {
             GridCoverage2D adminLayerRaster = adminRasters[precision.getModelValue()];
             Double averageES = getAverageES(gaul, suitabilityRaster, adminLayerRaster);
             if (averageES == null) {
-                LOGGER.warn(String.format(NO_PIXEL_WARNING, gaul));
+                LOGGER.warn(String.format(NO_PIXEL_WARNING, gaul, precision));
                 return getPreciseES(location, suitabilityRaster);
             }
             return averageES;
