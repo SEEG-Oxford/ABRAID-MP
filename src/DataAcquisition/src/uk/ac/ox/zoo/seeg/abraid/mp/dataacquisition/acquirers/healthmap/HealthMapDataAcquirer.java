@@ -1,18 +1,21 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Provenance;
-import org.apache.commons.io.FileUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParserException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.DataAcquisitionException;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.ManualValidationEnforcer;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.domain.HealthMapLocation;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Acquires data from HealthMap.
@@ -20,9 +23,6 @@ import java.util.List;
  * Copyright (c) 2014 University of Oxford
  */
 public class HealthMapDataAcquirer {
-    private HealthMapWebService healthMapWebService;
-    private HealthMapDataConverter healthMapDataConverter;
-    private HealthMapLookupData healthMapLookupData;
     private static final Logger LOGGER = Logger.getLogger(HealthMapDataAcquirer.class);
 
     private static final String WEB_SERVICE_ERROR_MESSAGE = "Could not read HealthMap web service response: %s";
@@ -30,12 +30,19 @@ public class HealthMapDataAcquirer {
     private static final String JSON_ERROR_MESSAGE = "Could not read JSON from file \"%s\"";
     private static final String RETRIEVING_FROM_FILE_MESSAGE = "Retrieving HealthMap data from file \"%s\"";
 
+    private final HealthMapWebService healthMapWebService;
+    private final HealthMapDataConverter healthMapDataConverter;
+    private final HealthMapLookupData healthMapLookupData;
+    private final ManualValidationEnforcer manualValidationEnforcer;
+
     public HealthMapDataAcquirer(HealthMapWebService healthMapWebService,
                                  HealthMapDataConverter healthMapDataConverter,
-                                 HealthMapLookupData healthMapLookupData) {
+                                 HealthMapLookupData healthMapLookupData,
+                                 ManualValidationEnforcer manualValidationEnforcer) {
         this.healthMapWebService = healthMapWebService;
         this.healthMapDataConverter = healthMapDataConverter;
         this.healthMapLookupData = healthMapLookupData;
+        this.manualValidationEnforcer = manualValidationEnforcer;
     }
 
     /**
@@ -45,7 +52,10 @@ public class HealthMapDataAcquirer {
         DateTime startDate = getStartDate();
         DateTime endDate = getEndDate(startDate);
         List<HealthMapLocation> healthMapLocations = retrieveDataFromWebService(startDate, endDate);
-        convert(healthMapLocations, endDate);
+        Set<DiseaseOccurrence> occurrences = convert(healthMapLocations, endDate);
+        if (occurrences != null) {
+            manualValidationEnforcer.addRandomSubsetToManualValidation(occurrences);
+        }
     }
 
     /**
@@ -55,7 +65,10 @@ public class HealthMapDataAcquirer {
     public void acquireDataFromFile(String jsonFileName) {
         LOGGER.info(String.format(RETRIEVING_FROM_FILE_MESSAGE, jsonFileName));
         List<HealthMapLocation> healthMapLocations = retrieveDataFromFile(jsonFileName);
-        convert(healthMapLocations, null);
+        Set<DiseaseOccurrence> occurrences = convert(healthMapLocations, null);
+        if (occurrences != null) {
+            manualValidationEnforcer.addRandomSubsetToManualValidation(occurrences);
+        }
     }
 
     private List<HealthMapLocation> retrieveDataFromWebService(DateTime startDate, DateTime endDate) {
@@ -84,11 +97,13 @@ public class HealthMapDataAcquirer {
         }
     }
 
-    private void convert(List<HealthMapLocation> healthMapLocations, DateTime endDate) {
+    private Set<DiseaseOccurrence> convert(List<HealthMapLocation> healthMapLocations, DateTime endDate) {
         if (healthMapLocations != null) {
-            healthMapDataConverter.convert(healthMapLocations, endDate);
+            Set<DiseaseOccurrence> occurrences = healthMapDataConverter.convert(healthMapLocations, endDate);
             healthMapLookupData.clearLookups();
+            return occurrences;
         }
+        return null;
     }
 
     /**

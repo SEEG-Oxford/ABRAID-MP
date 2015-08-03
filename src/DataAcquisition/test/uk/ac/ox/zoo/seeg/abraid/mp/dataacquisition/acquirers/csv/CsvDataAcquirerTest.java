@@ -6,8 +6,11 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.DataAcquisitionException;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.DiseaseOccurrenceDataAcquirer;
+import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.ManualValidationEnforcer;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.csv.domain.CsvDiseaseOccurrence;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,13 +26,15 @@ public class CsvDataAcquirerTest {
     private DiseaseOccurrenceDataAcquirer diseaseOccurrenceDataAcquirer;
     private CsvLookupData csvLookupData;
     private CsvDataAcquirer csvDataAcquirer;
+    private ManualValidationEnforcer manualValidationEnforcer;
 
     @Before
     public void setUp() {
         converter = mock(CsvDiseaseOccurrenceConverter.class);
         diseaseOccurrenceDataAcquirer = mock(DiseaseOccurrenceDataAcquirer.class);
         csvLookupData = mock(CsvLookupData.class);
-        csvDataAcquirer = new CsvDataAcquirer(converter, diseaseOccurrenceDataAcquirer, csvLookupData);
+        manualValidationEnforcer = mock(ManualValidationEnforcer.class);
+        csvDataAcquirer = new CsvDataAcquirer(converter, diseaseOccurrenceDataAcquirer, csvLookupData, manualValidationEnforcer);
     }
 
     @Test
@@ -83,6 +88,18 @@ public class CsvDataAcquirerTest {
     }
 
     @Test
+    public void doesNotCallManualValidationEnforcerIfConversionFails() {
+        // Arrange
+        String csv = "\nMy site,Invalid double";
+
+        // Act
+        csvDataAcquirer.acquireDataFromCsv(csv.getBytes(), false);
+
+        // Assert
+        verify(manualValidationEnforcer, never()).addRandomSubsetToManualValidation(anySetOf(DiseaseOccurrence.class));
+    }
+
+    @Test
     public void initialMessageHasCorrectCountsIfAtLeastOneDiseaseOccurrenceWasAcquired() {
         // Disease occurrence 1 has location 1 (passed QC)
         // Disease occurrence 2 has location 2 (failed QC)
@@ -118,6 +135,39 @@ public class CsvDataAcquirerTest {
         assertThat(messages).hasSize(2);
         assertThat(messages.get(0)).isEqualTo("Found 8 CSV file line(s) to convert.");
         assertThat(messages.get(1)).isEqualTo("Saved 5 disease occurrence(s) in 3 location(s) (of which 2 location(s) passed QC).");
+    }
+
+    @Test
+    public void callsManualValidationEnforcerWithConvertedOccurrences() {
+        // Arrange
+        boolean isGoldStandard = false;
+        Location location1 = createLocation(1, true);
+        Location location2 = createLocation(2, false);
+        Location location3 = createLocation(3, true);
+        Location location4 = createLocation(4, true);
+
+        DiseaseOccurrence diseaseOccurrence1 = createAndSetUpDiseaseOccurrence(1, location1, isGoldStandard, true);
+        DiseaseOccurrence diseaseOccurrence2 = createAndSetUpDiseaseOccurrence(2, location2, isGoldStandard, true);
+        DiseaseOccurrence diseaseOccurrence3 = createAndSetUpDiseaseOccurrence(3, location3, isGoldStandard, true);
+        createAndSetUpDiseaseOccurrence(4, location4, isGoldStandard, false);
+        createAndSetUpDiseaseOccurrence(5, location1, isGoldStandard, false);
+        DiseaseOccurrence diseaseOccurrence6 = createAndSetUpDiseaseOccurrence(6, location2, isGoldStandard, true);
+        DiseaseOccurrence diseaseOccurrence7 = createAndSetUpDiseaseOccurrence(7, location3, isGoldStandard, true);
+        createAndSetUpDiseaseOccurrence(8, location4, isGoldStandard, false);
+
+        String csv = "\n1\n2\n3\n4\n5\n6\n7\n8\n";
+
+        // Act
+        csvDataAcquirer.acquireDataFromCsv(csv.getBytes(), isGoldStandard);
+
+        // Assert
+        verify(manualValidationEnforcer).addRandomSubsetToManualValidation(eq(new HashSet<>(Arrays.asList(
+                diseaseOccurrence1,
+                diseaseOccurrence2,
+                diseaseOccurrence3,
+                diseaseOccurrence6,
+                diseaseOccurrence7
+            ))));
     }
 
     @Test
@@ -161,7 +211,7 @@ public class CsvDataAcquirerTest {
         return location;
     }
 
-    private void createAndSetUpDiseaseOccurrence(int id, Location location, boolean isGoldStandard,
+    private DiseaseOccurrence createAndSetUpDiseaseOccurrence(int id, Location location, boolean isGoldStandard,
                                                  boolean wasDiseaseOccurrenceSaved) {
         DiseaseOccurrence diseaseOccurrence = new DiseaseOccurrence(id);
         diseaseOccurrence.setLocation(location);
@@ -169,5 +219,6 @@ public class CsvDataAcquirerTest {
         csvDiseaseOccurrence.setSite(Integer.toString(id));
         when(converter.convert(csvDiseaseOccurrence, isGoldStandard)).thenReturn(diseaseOccurrence);
         when(diseaseOccurrenceDataAcquirer.acquire(diseaseOccurrence)).thenReturn(wasDiseaseOccurrenceSaved);
+        return diseaseOccurrence;
     }
 }

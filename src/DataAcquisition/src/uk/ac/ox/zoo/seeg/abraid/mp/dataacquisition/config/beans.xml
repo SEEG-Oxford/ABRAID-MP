@@ -55,7 +55,11 @@
     <bean id="healthMapDataConverter" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.HealthMapDataConverter" autowire="constructor"/>
     <bean id="healthMapLocationConverter" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.HealthMapLocationConverter" autowire="constructor"/>
     <bean id="healthMapLookupData" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.HealthMapLookupData" autowire="constructor"/>
-
+    <bean id="manualValidationEnforcer" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.ManualValidationEnforcer" autowire="constructor">
+        <constructor-arg name="minToValidatorPerDiseasePerAcquisition" value="${min.occurrences.to.validator}" />
+        <constructor-arg name="targetFractionToValidatorPerDiseaseAcquisition" value="${target.fraction.to.validator}" />
+        <constructor-arg name="maxToValidatorPerDiseasePerAcquisition" value="${max.occurrences.to.validator}" />
+    </bean>
     <!-- CSV data acquisition beans -->
     <bean id="csvDataAcquirer" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.csv.CsvDataAcquirer" autowire="constructor"/>
     <bean id="csvDiseaseOccurrenceConverter" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.csv.CsvDiseaseOccurrenceConverter" autowire="constructor"/>
