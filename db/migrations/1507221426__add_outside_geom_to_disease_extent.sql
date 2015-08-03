@@ -25,3 +25,10 @@ INNER JOIN
 	WHERE de.geom IS NOT NULL
 ) AS calculated_inverse_geoms
 ON e.disease_group_id = calculated_inverse_geoms.disease_group_id;
+
+-- For testing of distance functions, need to be able to insert customs geoms
+GRANT SELECT, UPDATE (geom) ON country TO ${application_username};
+GRANT SELECT, UPDATE (geom) ON admin_unit_global TO ${application_username};
+GRANT SELECT, UPDATE (geom) ON admin_unit_tropical TO ${application_username};
+GRANT SELECT, UPDATE (geom) ON admin_unit_qc TO ${application_username};
+GRANT SELECT, INSERT ON admin_unit_country TO ${application_username};

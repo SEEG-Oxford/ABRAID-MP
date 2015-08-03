@@ -152,7 +152,7 @@ public class LocationServiceTest {
     }
 
     @Test
-    public void saveLocationCallsDao    () {
+    public void saveLocationCallsDao() {
         Location location = mock(Location.class);
 
         // Act
