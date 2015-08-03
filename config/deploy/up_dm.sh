@@ -38,10 +38,14 @@ fi
 echo "[[ DM | Checking covariate files ]]"
 dirAsk "$REMOTE_USER@${deploy_props[covariate.source]}/" "$ABRAID_SUPPORT_PATH/covariates" "covariate file"
 
+echo "[[ DM | Checking admin raster files ]]"
+dirAsk "$REMOTE_USER@${deploy_props[raster.source]}/" "$ABRAID_SUPPORT_PATH/rasters"
+
 echo "[[ DM | Ensuring correct file permissions ]]"
 permissionFix "abraid:abraid" "$ABRAID_SUPPORT_PATH/datamanager/"
 chmod +x "$ABRAID_SUPPORT_PATH/datamanager/datamanager.sh"
 permissionFix "tomcat7:tomcat7" "$ABRAID_SUPPORT_PATH/covariates/"
+permissionFix "tomcat7:tomcat7" "$ABRAID_SUPPORT_PATH/rasters/"
 
 echo "[[ DM | Done ]]"
 cd "../config/deploy/"

@@ -70,15 +70,18 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
         if (diseaseGroup != null) {
             // Get the latest mean prediction raster for the disease group, and then use it to add validation parameters
             // to all occurrences
-            GridCoverage2D raster = null;
+            GridCoverage2D suitabilityRaster = null;
+            GridCoverage2D[] adminRasters = null;
             try {
-                raster = esHelper.getLatestMeanPredictionRaster(diseaseGroup);
+                suitabilityRaster = esHelper.getLatestMeanPredictionRaster(diseaseGroup);
+                adminRasters = esHelper.getAdminRasters();
                 for (DiseaseOccurrence occurrence : occurrences) {
                     clearAndSetToReady(occurrence);
-                    addValidationParameters(occurrence, raster);
+                    addValidationParameters(occurrence, suitabilityRaster, adminRasters);
                 }
             } finally {
-                RasterUtils.disposeRaster(raster);
+                RasterUtils.disposeRaster(suitabilityRaster);
+                RasterUtils.disposeRasters(adminRasters);
             }
         }
     }
@@ -134,17 +137,22 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
     }
 
     private void addValidationParameters(DiseaseOccurrence occurrence) {
-        GridCoverage2D raster = null;
+        GridCoverage2D suitabilityRaster = null;
+        GridCoverage2D[] adminRasters = null;
         try {
-            raster = esHelper.getLatestMeanPredictionRaster(occurrence.getDiseaseGroup());
-            addValidationParameters(occurrence, raster);
+            suitabilityRaster = esHelper.getLatestMeanPredictionRaster(occurrence.getDiseaseGroup());
+            adminRasters = esHelper.getSingleAdminRaster(occurrence.getLocation().getPrecision());
+            addValidationParameters(occurrence, suitabilityRaster, adminRasters);
         } finally {
-            RasterUtils.disposeRaster(raster);
+            RasterUtils.disposeRaster(suitabilityRaster);
+            RasterUtils.disposeRasters(adminRasters);
         }
     }
 
-    private void addValidationParameters(DiseaseOccurrence occurrence, GridCoverage2D raster) {
-        occurrence.setEnvironmentalSuitability(esHelper.findEnvironmentalSuitability(occurrence, raster));
+    private void addValidationParameters(
+            DiseaseOccurrence occurrence, GridCoverage2D predictionRaster, GridCoverage2D[] adminRasters) {
+        occurrence.setEnvironmentalSuitability(
+                esHelper.findEnvironmentalSuitability(occurrence, predictionRaster, adminRasters));
         occurrence.setDistanceFromDiseaseExtent(dfdeHelper.findDistanceFromDiseaseExtent(occurrence));
         findAndSetMachineWeightingAndInReview(occurrence);
     }

@@ -341,4 +341,42 @@ public class RasterUtilsTest {
         // Assert
         assertThat(caughtException()).isNull();
     }
+    @Test
+    public void disposeRastersCorrectlyDisposesRasterObjects() throws Exception {
+        // Arrange
+        GridCoverage2D raster1 = mock(GridCoverage2D.class);
+        GridCoverage2D raster2 = mock(GridCoverage2D.class);
+        GridCoverage2D[] rasters = new GridCoverage2D[] {raster1, raster2, null};
+        PlanarImage image1 = mock(PlanarImage.class);
+        when(raster1.getRenderedImage()).thenReturn(image1);
+        PlanarImage image2 = mock(PlanarImage.class);
+        when(raster2.getRenderedImage()).thenReturn(image2);
+
+        // Act
+        RasterUtils.disposeRasters(rasters);
+
+        // Assert
+        verify(raster1).dispose(true);
+        verify(image1).dispose();
+        verify(raster2).dispose(true);
+        verify(image2).dispose();
+    }
+
+    @Test
+    public void disposeRastersCorrectlyHandlesNulls() throws Exception {
+        // Arrange
+        Callable callable = new Callable() {
+            @Override
+            public Void call() {
+                RasterUtils.disposeRasters(null);
+                return null;
+            }
+        };
+
+        // Act
+        catchException(callable).call();
+
+        // Assert
+        assertThat(caughtException()).isNull();
+    }
 }

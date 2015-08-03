@@ -24,44 +24,82 @@ public final class NativeSQLConstants {
     public static final String LAND_SEA_BORDER_CONTAINS_POINT_QUERY =
             "SELECT MIN(id) FROM land_sea_border WHERE ST_Intersects(geom, :point)";
 
-    /** Clause for selecting relevant disease extent rows in the queries below. */
-    private static final String DISEASE_EXTENT_CLAUSE =
-            "FROM admin_unit_disease_extent_class c " +
-            "JOIN admin_unit_%1$s a ON c.%1$s_gaul_code = a.gaul_code " +
-            "WHERE c.disease_group_id = :diseaseGroupId " +
-            "AND c.disease_extent_class IN ('" + DiseaseExtentClass.POSSIBLE_PRESENCE + "', '" +
-                                                 DiseaseExtentClass.PRESENCE + "')";
+    /** Query: Create an extent geometry by aggregating the geometries in admin_unit_global/tropical, based on
+     relevant rows in admin_unit_disease_extent_class. The geometries are aggregated by applying ST_Dump (split
+     multipolygons into polygons) then ST_Collect (concatenate polygons into a multipolygon); this is much quicker
+     than ST_Union which dissolves boundaries between polygons. */
+    private static final String CREATE_EXTENT_GEOM =
+            "SELECT ST_Collect(geom) FROM (" +
+                    "SELECT (ST_Dump(a.geom)).geom " +
+                    "FROM admin_unit_disease_extent_class c " +
+                    "JOIN admin_unit_%1$s a ON c.%1$s_gaul_code = a.gaul_code " +
+                    "WHERE c.disease_group_id = :diseaseGroupId " +
+                    "AND c.disease_extent_class IN ('" +
+                            DiseaseExtentClass.POSSIBLE_PRESENCE + "', '" +
+                            DiseaseExtentClass.PRESENCE +
+                    "')" +
+            ") x";
 
-    /** Query: Updates a disease extent by aggregating the geometries in admin_unit_global/tropical, based on
-     relevant rows in admin_unit_disease_extent_class. The geometries are aggregated by applying ST_DUMP (split
-     multipolygons into polygons) then ST_COLLECT (concatenate polygons into a multipolygon); this is much quicker
-     than ST_UNION which dissolves boundaries between polygons. */
+    /** Query: Updates a disease extent with the current extent and outside extent geoms. */
     public static final String UPDATE_DISEASE_EXTENT_QUERY =
             "UPDATE disease_extent " +
-            "SET geom = (SELECT ST_COLLECT(geom) FROM " +
-                    "(SELECT (ST_DUMP(a.geom)).geom " + DISEASE_EXTENT_CLAUSE + ") x) " +
+            "SET " +
+            "    geom =  (" + CREATE_EXTENT_GEOM + "), " +
+            "    outside_geom = (" + CREATE_EXTENT_GEOM.replace(" IN ", " NOT IN ") + ") " +
             "WHERE disease_group_id = :diseaseGroupId";
 
-    /** Query: Calculates the distance between the specified point and the disease extent of the specified disease
-               group, as follows:
-               1. ST_ClosestPoint: Find the closest point on the disease extent to the specified point. If the point
-                  is within the disease extent, this returns the specified point itself (giving a distance of 0).
-               2. ST_Distance: Find the orthodromic (surface) distance between the closest point and the specified
-                  point. In theory this can operate without the use of ST_ClosestPoint, but it is much slower.
-               3. Return the value in kilometres by dividing by 1000. */
-    public static final String DISTANCE_OUTSIDE_DISEASE_EXTENT =
-            "SELECT ST_Distance(GEOGRAPHY(ST_ClosestPoint(geom, :geom)), GEOGRAPHY(:geom)) / 1000 " +
+    /** Query: Gets the precise or admin unit geom for a specified location id. */
+    private static final String GET_LOCATION_GEOM =
+            "SELECT " +
+            "  CASE precision " +
+            "    WHEN 'PRECISE' THEN l.geom " + // Use the lat/long
+            "    WHEN 'ADMIN1' THEN qc.geom " + // Use the qc shape
+            "    WHEN 'ADMIN2' THEN qc.geom " + // Use the qc shape
+            "    WHEN 'COUNTRY' THEN CASE " +
+            "      WHEN l.country_gaul_code IN (" +
+            "        SELECT DISTINCT country_gaul_code " +
+            "        FROM admin_unit_%1$s_view" +
+            "        WHERE country_gaul_code is not null) " +
+            "      THEN ( " + // if the country is in the extent map, use the amalgamation of its constituent shapes
+            "        SELECT ST_COLLECT(geom) FROM (SELECT (ST_DUMP(geom)).geom " +
+            "        FROM admin_unit_%1$s_view " +
+            "        WHERE country_gaul_code=l.country_gaul_code) ex) " +
+            "      ELSE c.geom " + // otherwise just use the country shape
+            "    END " +
+            "  END AS location_geom " +
+            "FROM location AS l " +
+            "LEFT OUTER JOIN admin_unit_qc AS qc ON l.admin_unit_qc_gaul_code=qc.gaul_code " +
+            "LEFT OUTER JOIN country AS c ON l.country_gaul_code=c.gaul_code " +
+            "WHERE l.id=:locationId ";
+
+    /** Query: Gets the current geom for the disease extent of a specified disease group id. */
+    private static final String GET_EXTENT_GEOM =
+            "SELECT geom AS extent_geom " +
             "FROM disease_extent " +
-            "WHERE disease_group_id = :diseaseGroupId";
+            "WHERE disease_group_id=:diseaseGroupId ";
 
-    /** Query: Finds the nominal distance to be used for a point that is within a disease extent, based on the
-               disease extent class of the containing geometry. */
-    public static final String DISTANCE_WITHIN_DISEASE_EXTENT =
-            "SELECT distance_if_within_extent " +
-            "FROM disease_extent_class " +
-            "WHERE name IN" +
-            "    (SELECT c.disease_extent_class " + DISEASE_EXTENT_CLAUSE +
-            "     AND ST_Intersects(a.geom, :geom))";
+    /** Query: Calculates the distance between the specified location and any location inside of the disease extent of
+              the specified disease. */
+    public static final String DISTANCE_OUTSIDE_DISEASE_EXTENT =
+            "WITH " +
+            // Get the correct location geom
+            "  location_geom AS ( " + GET_LOCATION_GEOM + " ), " +
+            // Get the extent geom
+            "  extent_geom AS ( " + GET_EXTENT_GEOM + " ), " +
+            // Find the shortest line between the shapes
+            "  line AS ( " +
+            "    SELECT " +
+            "      ST_ShortestLine(extent_geom, location_geom) AS line " +
+            "    FROM location_geom " +
+            "    CROSS JOIN extent_geom " +
+            "  ) " +
+            // Measure the line
+            "SELECT ST_Length(geography(line))/1000 FROM line";
+
+    /** Query: Calculates the distance between the specified location and any location outside of the disease extent of
+              the specified disease. */
+    public static final String DISTANCE_INSIDE_DISEASE_EXTENT =
+            DISTANCE_OUTSIDE_DISEASE_EXTENT.replace("geom AS extent_geom", "outside_geom AS extent_geom");
 
     /** Other: Global. */
     public static final String GLOBAL = "global";

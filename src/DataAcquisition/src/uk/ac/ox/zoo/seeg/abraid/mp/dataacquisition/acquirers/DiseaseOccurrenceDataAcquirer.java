@@ -63,8 +63,12 @@ public class DiseaseOccurrenceDataAcquirer {
             occurrence.setLocation(location);
 
             if (!doesDiseaseOccurrenceAlreadyExist(occurrence)) {
+                if (location.getId() == null) {
+                    // Save the location because it is required for the native sql occurrence distance to extent
+                    locationService.saveLocation(location);
+                }
+
                 // Add validation parameters to the occurrence and save it all.
-                // Note that the location is saved with the disease occurrence.
                 diseaseOccurrenceValidationService.addValidationParametersWithChecks(occurrence);
                 diseaseService.saveDiseaseOccurrence(occurrence);
                 return true;

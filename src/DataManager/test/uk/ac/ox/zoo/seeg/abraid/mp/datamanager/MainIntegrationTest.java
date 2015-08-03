@@ -47,6 +47,8 @@ public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTest
     public static final String MODELWRAPPER_URL_PREFIX = "http://api:key-to-access-model-wrapper@localhost:8080/modelwrapper/api";
     public static final String LARGE_RASTER_FILENAME =
             "Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/service/workflow/support/testdata/test_raster_large_double.tif";
+    public static final String ADMIN_RASTER_FILENAME =
+            "Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/service/workflow/support/testdata/admin_raster_large_double.tif";
 
     public static final String EXPECTED_PREDICTION_FAILURE_RESPONSE = "No prediction";
 
@@ -75,6 +77,12 @@ public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTest
     public void before() {
         // Sun, 27 Apr 2014 09:45:41
         DateTimeUtils.setCurrentMillisFixed(1398591941000L);
+        when(rasterFilePathFactory.getAdminRaster(0))
+                .thenReturn(new File(ADMIN_RASTER_FILENAME));
+        when(rasterFilePathFactory.getAdminRaster(1))
+                .thenReturn(new File(ADMIN_RASTER_FILENAME));
+        when(rasterFilePathFactory.getAdminRaster(2))
+                .thenReturn(new File(ADMIN_RASTER_FILENAME));
     }
 
     @Test
@@ -87,7 +95,7 @@ public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTest
         mockModelWrapperRequest();
         mockMachineWeightingPredictorRequest();
         createAndSaveTestModelRun(diseaseGroupId);
-        insertTestDiseaseExtent(diseaseGroupId, GeometryUtils.createMultiPolygon(getFivePointedPolygon()));
+        insertTestDiseaseExtent(diseaseGroupId, GeometryUtils.createMultiPolygon(getFivePointedPolygon()), GeometryUtils.createMultiPolygon(getShiftedFivePointedPolygon()));
         setDiseaseGroupParametersToEnsureHelperReturnsOccurrences(diseaseGroupId);
         setFixedCountryAreas();
 
@@ -127,6 +135,9 @@ public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTest
         mockCovariateList();
         mockGeoNamesRequests();
         mockModelWrapperRequest();
+        mockMachineWeightingPredictorRequest();
+        createAndSaveTestModelRun(87);
+        insertTestDiseaseExtent(87, GeometryUtils.createMultiPolygon(getFivePointedPolygon()), GeometryUtils.createMultiPolygon(getShiftedFivePointedPolygon()));
         setDiseaseGroupParametersToEnsureHelperReturnsOccurrences(87);
 
         // Act
@@ -145,7 +156,11 @@ public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTest
         mockHealthMapRequest();
         mockGeoNamesRequests();
         mockCovariateList();
+        mockMachineWeightingPredictorRequest();
+        createAndSaveTestModelRun(87);
+        insertTestDiseaseExtent(87, GeometryUtils.createMultiPolygon(getFivePointedPolygon()), GeometryUtils.createMultiPolygon(getShiftedFivePointedPolygon()));
         setDiseaseGroupParametersToEnsureHelperReturnsOccurrences(87);
+        setFixedCountryAreas();
         when(webServiceClient.makePostRequestWithBinary(startsWith(MODELWRAPPER_URL_PREFIX), any(byte[].class)))
                 .thenThrow(new ModelRunWorkflowException("Test message"));
 
@@ -173,10 +188,10 @@ public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTest
         List<DiseaseOccurrence> occurrences = getLastTwoDiseaseOccurrences();
 
         DiseaseOccurrence validatedOccurrence = occurrences.get(0);
-        assertThatDiseaseOccurrenceValidationParametersAreCorrect(validatedOccurrence, 0.46, 8814.186615);
+        assertThatDiseaseOccurrenceValidationParametersAreCorrect(validatedOccurrence, 0.46, -8251.080507);
 
         DiseaseOccurrence validatedOccurrence2 = occurrences.get(1);
-        assertThatDiseaseOccurrenceValidationParametersAreCorrect(validatedOccurrence2, 0.62, 12524.775729);
+        assertThatDiseaseOccurrenceValidationParametersAreCorrect(validatedOccurrence2, 0.62, 12461.351955);
     }
 
     private void assertThatDiseaseOccurrenceValidationParametersAreCorrect(DiseaseOccurrence occurrence,
@@ -445,13 +460,17 @@ public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTest
                 .thenReturn(new File(LARGE_RASTER_FILENAME));
     }
 
-    private void insertTestDiseaseExtent(int diseaseGroupId, Geometry geom) {
-        executeSQLUpdate("UPDATE disease_extent SET geom=:geom WHERE disease_group_id=:diseaseGroupId",
-                "diseaseGroupId", diseaseGroupId, "geom", geom);
+    private void insertTestDiseaseExtent(int diseaseGroupId, Geometry geom, Geometry outsideGeom) {
+        executeSQLUpdate("UPDATE disease_extent SET geom=:geom, outside_geom=:outsideGeom WHERE disease_group_id=:diseaseGroupId",
+                "diseaseGroupId", diseaseGroupId, "geom", geom, "outsideGeom", outsideGeom);
     }
 
     private Polygon getFivePointedPolygon() {
         return GeometryUtils.createPolygon(163, 74, 165, 81, 172, 78, 169, 75, 165, 76, 163, 74);
+    }
+
+    private Polygon getShiftedFivePointedPolygon() {
+        return GeometryUtils.createPolygon(63, 74, 65, 81, 72, 78, 69, 75, 65, 76, 63, 74);
     }
 
     /**
