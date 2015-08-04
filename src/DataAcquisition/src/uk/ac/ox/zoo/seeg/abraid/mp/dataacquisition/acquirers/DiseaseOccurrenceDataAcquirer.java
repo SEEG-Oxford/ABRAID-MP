@@ -14,7 +14,9 @@ import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.qc.PostQCManager;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.qc.QCManager;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Acquires a disease occurrence.
@@ -51,39 +53,54 @@ public class DiseaseOccurrenceDataAcquirer {
     }
 
     /**
-     * Acquires a disease occurrence, saving it to the database if appropriate.
-     * @param occurrence The occurrence to acquire.
-     * @return True if the disease occurrence was saved, otherwise false.
+     * Acquires a set of disease occurrences, saving to the database if appropriate
+     * (checkOccurrenceAge should be called first).
+     * @param occurrences The occurrences to acquire.
+     * @return The subset of occurrences that were saved.
      */
-    public boolean acquire(DiseaseOccurrence occurrence) {
-        if (occurrence != null) {
-            rejectOccurrenceIfOccurrenceDateInvalid(occurrence);
-
+    public Set<DiseaseOccurrence> acquire(Set<DiseaseOccurrence> occurrences) {
+        // Deduplicate locations
+        for (DiseaseOccurrence occurrence: occurrences) {
             Location location = continueLocationConversion(occurrence.getLocation());
             occurrence.setLocation(location);
+        }
 
-            if (!doesDiseaseOccurrenceAlreadyExist(occurrence)) {
-                if (location.getId() == null) {
-                    // Save the location because it is required for the native sql occurrence distance to extent
-                    locationService.saveLocation(location);
-                }
-
-                // Add validation parameters to the occurrence and save it all.
-                diseaseOccurrenceValidationService.addValidationParametersWithChecks(occurrence);
-                diseaseService.saveDiseaseOccurrence(occurrence);
-                return true;
+        // Save locations
+        for (DiseaseOccurrence occurrence: occurrences) {
+            if (occurrence.getLocation().getId() == null) {
+                // Save the location because it is required for the native sql occurrence distance to extent
+                locationService.saveLocation(occurrence.getLocation());
             }
         }
 
-        return false;
+        // Add validation params
+        for (DiseaseOccurrence occurrence: occurrences) {
+            diseaseOccurrenceValidationService.addValidationParametersWithChecks(occurrence);
+        }
+
+        // Save occurrences
+        Set<DiseaseOccurrence> saved = new HashSet<>();
+        for (DiseaseOccurrence occurrence: occurrences) {
+            if (!doesDiseaseOccurrenceAlreadyExist(occurrence)) {
+                diseaseService.saveDiseaseOccurrence(occurrence);
+                saved.add(occurrence);
+            }
+        }
+        return saved;
     }
 
-    private void rejectOccurrenceIfOccurrenceDateInvalid(DiseaseOccurrence occurrence) {
+    /**
+     * Checks if an occurrence is within the acceptable date range.
+     * @param occurrence The occurrence to check.
+     * @return null, or the reason for failure.
+     */
+    public String checkOccurrenceAge(DiseaseOccurrence occurrence) {
         if (!occurrenceIsCSV(occurrence) && occurrenceIsTooOld(occurrence)) {
-            throw new DataAcquisitionException(OCCURRENCE_IS_TOO_OLD);
+            return OCCURRENCE_IS_TOO_OLD;
         } else if (occurrenceIsInTheFuture(occurrence)) {
-            throw new DataAcquisitionException(OCCURRENCE_IS_IN_THE_FUTURE);
+            return OCCURRENCE_IS_IN_THE_FUTURE;
         }
+        return null;
     }
 
     private boolean occurrenceIsTooOld(DiseaseOccurrence occurrence) {
