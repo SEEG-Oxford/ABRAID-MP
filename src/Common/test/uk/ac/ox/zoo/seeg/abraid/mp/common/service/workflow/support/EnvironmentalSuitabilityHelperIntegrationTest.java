@@ -150,14 +150,14 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractSprin
     private void findEnvironmentalSuitabilityPrecise(double x, double y,
                                                      Double expectedEnvironmentalSuitability) throws Exception {
         // Arrange
-        DiseaseOccurrence occurrence = createOccurrence(x, y, 1, LocationPrecision.PRECISE);
+        Location location = createLocation(x, y, 1, LocationPrecision.PRECISE);
         ModelRun modelRun = createAndSaveModelRun("test name", diseaseGroup.getId(), ModelRunStatus.COMPLETED);
         mockGetRasterFileForModelRun(modelRun);
         GridCoverage2D suitabilityRaster = helper.getLatestMeanPredictionRaster(diseaseGroup);
         GridCoverage2D[] adminRasters = helper.getSingleAdminRaster(LocationPrecision.PRECISE);
 
         // Act
-        Double suitability = helper.findEnvironmentalSuitability(occurrence, suitabilityRaster, adminRasters);
+        Double suitability = helper.findEnvironmentalSuitability(location, suitabilityRaster, adminRasters);
 
         // Assert
         assertThat(suitabilityRaster).isNotNull();
@@ -175,7 +175,7 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractSprin
     private void findEnvironmentalSuitabilityShape(double x, double y, int gaul, LocationPrecision precision,
                                                      Double expectedEnvironmentalSuitability) throws Exception {
         // Arrange
-        DiseaseOccurrence occurrence = createOccurrence(x, y, gaul, precision);
+        Location location = createLocation(x, y, gaul, precision);
         ModelRun modelRun = createAndSaveModelRun("test name", diseaseGroup.getId(), ModelRunStatus.COMPLETED);
         mockGetRasterFileForModelRun(modelRun);
         mockGetAdminRasterFileForLevel(precision.getModelValue());
@@ -183,7 +183,7 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractSprin
         GridCoverage2D[] adminRasters = helper.getSingleAdminRaster(precision);
 
         // Act
-        Double suitability = helper.findEnvironmentalSuitability(occurrence, suitabilityRaster, adminRasters);
+        Double suitability = helper.findEnvironmentalSuitability(location, suitabilityRaster, adminRasters);
 
         // Assert
         assertThat(suitabilityRaster).isNotNull();
@@ -196,9 +196,8 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractSprin
         }
     }
 
-    private DiseaseOccurrence createOccurrence(double x, double y, int gaul, LocationPrecision precision) {
+    private Location createLocation(double x, double y, int gaul, LocationPrecision precision) {
         double offsetForRounding = 0.00005;
-        DiseaseOccurrence occurrence = new DiseaseOccurrence();
         Location location = mock(Location.class);
         when(location.getGeom()).thenReturn(GeometryUtils.createPoint(x + offsetForRounding,  y + offsetForRounding));
         when(location.getPrecision()).thenReturn(precision);
@@ -207,8 +206,6 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractSprin
         } else {
             when(location.getAdminUnitQCGaulCode()).thenReturn(gaul);
         }
-        occurrence.setLocation(location);
-        occurrence.setDiseaseGroup(diseaseGroup);
-        return occurrence;
+        return location;
     }
 }

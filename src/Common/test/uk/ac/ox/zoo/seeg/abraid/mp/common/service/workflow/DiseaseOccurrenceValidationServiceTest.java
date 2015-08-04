@@ -99,8 +99,8 @@ public class DiseaseOccurrenceValidationServiceTest {
         DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, true, false);
         setIsGoldStandardProvenance(occurrence, false);
 
-        when(esHelper.findEnvironmentalSuitability(occurrence, null, null)).thenReturn(environmentalSuitability);
-        when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence)).thenReturn(distanceFromDiseaseExtent);
+        when(esHelper.findEnvironmentalSuitability(occurrence.getLocation(), null, null)).thenReturn(environmentalSuitability);
+        when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence.getDiseaseGroup(), occurrence.getLocation())).thenReturn(distanceFromDiseaseExtent);
         when(mwPredictor.findMachineWeighting(occurrence)).thenReturn(null);
 
         // Act
@@ -167,8 +167,8 @@ public class DiseaseOccurrenceValidationServiceTest {
         occurrence.getLocation().setPrecision(LocationPrecision.COUNTRY);
         occurrence.getLocation().setIsModelEligible(false);
 
-        when(esHelper.findEnvironmentalSuitability(occurrence, null, null)).thenReturn(environmentalSuitability);
-        when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence)).thenReturn(distanceFromDiseaseExtent);
+        when(esHelper.findEnvironmentalSuitability(occurrence.getLocation(), null, null)).thenReturn(environmentalSuitability);
+        when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence.getDiseaseGroup(), occurrence.getLocation())).thenReturn(distanceFromDiseaseExtent);
         when(mwPredictor.findMachineWeighting(occurrence)).thenReturn(null);
 
         // Act
@@ -188,8 +188,8 @@ public class DiseaseOccurrenceValidationServiceTest {
         occurrence.getLocation().setHasPassedQc(true);
         setIsGoldStandardProvenance(occurrence, false);
 
-        when(esHelper.findEnvironmentalSuitability(occurrence, null, null)).thenReturn(null);
-        when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence)).thenReturn(null);
+        when(esHelper.findEnvironmentalSuitability(occurrence.getLocation(), null, null)).thenReturn(null);
+        when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence.getDiseaseGroup(), occurrence.getLocation())).thenReturn(null);
 
         // Act
         service.addValidationParametersWithChecks(occurrence);
@@ -208,8 +208,8 @@ public class DiseaseOccurrenceValidationServiceTest {
         occurrence.getLocation().setHasPassedQc(true);
         setIsGoldStandardProvenance(occurrence, false);
 
-        when(esHelper.findEnvironmentalSuitability(occurrence, null, null)).thenReturn(null);
-        when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence)).thenReturn(1.0);
+        when(esHelper.findEnvironmentalSuitability(occurrence.getLocation(), null, null)).thenReturn(null);
+        when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence.getDiseaseGroup(), occurrence.getLocation())).thenReturn(1.0);
 
         // Act
         service.addValidationParametersWithChecks(occurrence);
@@ -233,8 +233,8 @@ public class DiseaseOccurrenceValidationServiceTest {
         occurrence.getLocation().setHasPassedQc(true);
         setIsGoldStandardProvenance(occurrence, false);
 
-        when(esHelper.findEnvironmentalSuitability(occurrence, null, null)).thenReturn(0.5);
-        when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence)).thenReturn(null);
+        when(esHelper.findEnvironmentalSuitability(occurrence.getLocation(), null, null)).thenReturn(0.5);
+        when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence.getDiseaseGroup(), occurrence.getLocation())).thenReturn(null);
 
         // Act
         service.addValidationParametersWithChecks(occurrence);
@@ -265,8 +265,8 @@ public class DiseaseOccurrenceValidationServiceTest {
         setIsGoldStandardProvenance(occurrence, false);
         when(esHelper.getLatestMeanPredictionRaster(occurrence.getDiseaseGroup())).thenReturn(suitabilityRaster);
         when(esHelper.getSingleAdminRaster(LocationPrecision.ADMIN1)).thenReturn(adminRasters);
-        when(esHelper.findEnvironmentalSuitability(same(occurrence), same(suitabilityRaster), same(adminRasters))).thenReturn(environmentalSuitability);
-        when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence)).thenReturn(distanceFromDiseaseExtent);
+        when(esHelper.findEnvironmentalSuitability(same(occurrence.getLocation()), same(suitabilityRaster), same(adminRasters))).thenReturn(environmentalSuitability);
+        when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence.getDiseaseGroup(), occurrence.getLocation())).thenReturn(distanceFromDiseaseExtent);
         when(mwPredictor.findMachineWeighting(occurrence)).thenReturn(null);
 
         // Act
@@ -329,8 +329,8 @@ public class DiseaseOccurrenceValidationServiceTest {
         DiseaseOccurrence occurrence = createDiseaseOccurrenceWithoutMachineLearning();
         setIsGoldStandardProvenance(occurrence, false);
 
-        when(esHelper.findEnvironmentalSuitability(occurrence, null, null)).thenReturn(0.39);
-        when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence)).thenReturn(-300.0);
+        when(esHelper.findEnvironmentalSuitability(occurrence.getLocation(), null, null)).thenReturn(0.39);
+        when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence.getDiseaseGroup(), occurrence.getLocation())).thenReturn(-300.0);
 
         // Act
         service.addValidationParametersWithChecks(occurrence);
@@ -351,8 +351,8 @@ public class DiseaseOccurrenceValidationServiceTest {
         DiseaseOccurrence occurrence = createDiseaseOccurrenceWithoutMachineLearning();
         setIsGoldStandardProvenance(occurrence, false);
 
-        when(esHelper.findEnvironmentalSuitability(occurrence, null, null)).thenReturn(0.6);
-        when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence)).thenReturn(1.0);
+        when(esHelper.findEnvironmentalSuitability(occurrence.getLocation(), null, null)).thenReturn(0.6);
+        when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence.getDiseaseGroup(), occurrence.getLocation())).thenReturn(1.0);
 
         // Act
         service.addValidationParametersWithChecks(occurrence);
@@ -374,8 +374,8 @@ public class DiseaseOccurrenceValidationServiceTest {
         occurrence.getLocation().setHasPassedQc(true);
         setIsGoldStandardProvenance(occurrence, false);
 
-        when(esHelper.findEnvironmentalSuitability(occurrence, null, null)).thenReturn(null);
-        when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence)).thenReturn(null);
+        when(esHelper.findEnvironmentalSuitability(occurrence.getLocation(), null, null)).thenReturn(null);
+        when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence.getDiseaseGroup(), occurrence.getLocation())).thenReturn(null);
 
         // Act
         service.addValidationParametersWithChecks(occurrence);
@@ -396,8 +396,8 @@ public class DiseaseOccurrenceValidationServiceTest {
         DiseaseOccurrence occurrence = createDiseaseOccurrenceWithoutMachineLearning();
         setIsGoldStandardProvenance(occurrence, false);
 
-        when(esHelper.findEnvironmentalSuitability(occurrence, null, null)).thenReturn(null);
-        when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence)).thenReturn(1.0);
+        when(esHelper.findEnvironmentalSuitability(occurrence.getLocation(), null, null)).thenReturn(null);
+        when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence.getDiseaseGroup(), occurrence.getLocation())).thenReturn(1.0);
 
         // Act
         service.addValidationParametersWithChecks(occurrence);
@@ -419,8 +419,8 @@ public class DiseaseOccurrenceValidationServiceTest {
         occurrence.getDiseaseGroup().setMaxEnvironmentalSuitabilityWithoutML(null);
         setIsGoldStandardProvenance(occurrence, false);
 
-        when(esHelper.findEnvironmentalSuitability(occurrence, null, null)).thenReturn(0.6);
-        when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence)).thenReturn(1.0);
+        when(esHelper.findEnvironmentalSuitability(occurrence.getLocation(), null, null)).thenReturn(0.6);
+        when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence.getDiseaseGroup(), occurrence.getLocation())).thenReturn(1.0);
 
         // Act
         service.addValidationParametersWithChecks(occurrence);
@@ -441,8 +441,8 @@ public class DiseaseOccurrenceValidationServiceTest {
         DiseaseOccurrence occurrence = createDiseaseOccurrenceWithoutMachineLearning();
         setIsGoldStandardProvenance(occurrence, false);
 
-        when(esHelper.findEnvironmentalSuitability(occurrence, null, null)).thenReturn(0.41);
-        when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence)).thenReturn(-1000.0);
+        when(esHelper.findEnvironmentalSuitability(occurrence.getLocation(), null, null)).thenReturn(0.41);
+        when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence.getDiseaseGroup(), occurrence.getLocation())).thenReturn(-1000.0);
 
         // Act
         service.addValidationParametersWithChecks(occurrence);
@@ -463,8 +463,8 @@ public class DiseaseOccurrenceValidationServiceTest {
         DiseaseOccurrence occurrence = createDiseaseOccurrenceWithoutMachineLearning();
         setIsGoldStandardProvenance(occurrence, false);
 
-        when(esHelper.findEnvironmentalSuitability(occurrence, null, null)).thenReturn(0.5);
-        when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence)).thenReturn(null);
+        when(esHelper.findEnvironmentalSuitability(occurrence.getLocation(), null, null)).thenReturn(0.5);
+        when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence.getDiseaseGroup(), occurrence.getLocation())).thenReturn(null);
 
         // Act
         service.addValidationParametersWithChecks(occurrence);
@@ -503,12 +503,12 @@ public class DiseaseOccurrenceValidationServiceTest {
 
         when(esHelper.getLatestMeanPredictionRaster(diseaseGroup)).thenReturn(suitabilityRaster);
         when(esHelper.getAdminRasters()).thenReturn(adminRasters);
-        when(esHelper.findEnvironmentalSuitability(same(occurrence1), same(suitabilityRaster), same(adminRasters))).thenReturn(environmentalSuitability1);
-        when(esHelper.findEnvironmentalSuitability(same(occurrence2), same(suitabilityRaster), same(adminRasters))).thenReturn(environmentalSuitability2);
-        when(esHelper.findEnvironmentalSuitability(same(occurrence3), same(suitabilityRaster), same(adminRasters))).thenReturn(environmentalSuitability3);
-        when(dfdeHelper.findDistanceFromDiseaseExtent(same(occurrence1))).thenReturn(distanceFromDiseaseExtent1);
-        when(dfdeHelper.findDistanceFromDiseaseExtent(same(occurrence2))).thenReturn(distanceFromDiseaseExtent2);
-        when(dfdeHelper.findDistanceFromDiseaseExtent(same(occurrence3))).thenReturn(distanceFromDiseaseExtent3);
+        when(esHelper.findEnvironmentalSuitability(same(occurrence1.getLocation()), same(suitabilityRaster), same(adminRasters))).thenReturn(environmentalSuitability1);
+        when(esHelper.findEnvironmentalSuitability(same(occurrence2.getLocation()), same(suitabilityRaster), same(adminRasters))).thenReturn(environmentalSuitability2);
+        when(esHelper.findEnvironmentalSuitability(same(occurrence3.getLocation()), same(suitabilityRaster), same(adminRasters))).thenReturn(environmentalSuitability3);
+        when(dfdeHelper.findDistanceFromDiseaseExtent(same(diseaseGroup), same(occurrence1.getLocation()))).thenReturn(distanceFromDiseaseExtent1);
+        when(dfdeHelper.findDistanceFromDiseaseExtent(same(diseaseGroup), same(occurrence2.getLocation()))).thenReturn(distanceFromDiseaseExtent2);
+        when(dfdeHelper.findDistanceFromDiseaseExtent(same(diseaseGroup), same(occurrence3.getLocation()))).thenReturn(distanceFromDiseaseExtent3);
         when(mwPredictor.findMachineWeighting(same(occurrence1))).thenReturn(null);
         when(mwPredictor.findMachineWeighting(same(occurrence2))).thenReturn(null);
         when(mwPredictor.findMachineWeighting(same(occurrence3))).thenReturn(null);
@@ -548,12 +548,12 @@ public class DiseaseOccurrenceValidationServiceTest {
 
         when(esHelper.getLatestMeanPredictionRaster(diseaseGroup)).thenReturn(suitabilityRaster);
         when(esHelper.getAdminRasters()).thenReturn(adminRasters);
-        when(esHelper.findEnvironmentalSuitability(same(admin1Occurrence), same(suitabilityRaster), same(adminRasters))).thenReturn(environmentalSuitability);
-        when(esHelper.findEnvironmentalSuitability(same(countryOccurrence), same(suitabilityRaster), same(adminRasters))).thenReturn(environmentalSuitability);
-        when(esHelper.findEnvironmentalSuitability(same(largeCountryOccurrence), same(suitabilityRaster), same(adminRasters))).thenReturn(environmentalSuitability);
-        when(dfdeHelper.findDistanceFromDiseaseExtent(same(admin1Occurrence))).thenReturn(distanceFromDiseaseExtent);
-        when(dfdeHelper.findDistanceFromDiseaseExtent(same(countryOccurrence))).thenReturn(distanceFromDiseaseExtent);
-        when(dfdeHelper.findDistanceFromDiseaseExtent(same(largeCountryOccurrence))).thenReturn(distanceFromDiseaseExtent);
+        when(esHelper.findEnvironmentalSuitability(same(admin1Occurrence.getLocation()), same(suitabilityRaster), same(adminRasters))).thenReturn(environmentalSuitability);
+        when(esHelper.findEnvironmentalSuitability(same(countryOccurrence.getLocation()), same(suitabilityRaster), same(adminRasters))).thenReturn(environmentalSuitability);
+        when(esHelper.findEnvironmentalSuitability(same(largeCountryOccurrence.getLocation()), same(suitabilityRaster), same(adminRasters))).thenReturn(environmentalSuitability);
+        when(dfdeHelper.findDistanceFromDiseaseExtent(same(diseaseGroup), same(admin1Occurrence.getLocation()))).thenReturn(distanceFromDiseaseExtent);
+        when(dfdeHelper.findDistanceFromDiseaseExtent(same(diseaseGroup), same(countryOccurrence.getLocation()))).thenReturn(distanceFromDiseaseExtent);
+        when(dfdeHelper.findDistanceFromDiseaseExtent(same(diseaseGroup), same(largeCountryOccurrence.getLocation()))).thenReturn(distanceFromDiseaseExtent);
         when(mwPredictor.findMachineWeighting(same(admin1Occurrence))).thenReturn(null);
         when(mwPredictor.findMachineWeighting(same(countryOccurrence))).thenReturn(null);
         when(mwPredictor.findMachineWeighting(same(largeCountryOccurrence))).thenReturn(null);
@@ -597,8 +597,8 @@ public class DiseaseOccurrenceValidationServiceTest {
 
         when(esHelper.getLatestMeanPredictionRaster(diseaseGroup)).thenReturn(suitabilityRaster);
         when(esHelper.getAdminRasters()).thenReturn(adminRasters);
-        when(esHelper.findEnvironmentalSuitability(any(DiseaseOccurrence.class), same(suitabilityRaster), same(adminRasters))).thenReturn(0.62);
-        when(dfdeHelper.findDistanceFromDiseaseExtent(any(DiseaseOccurrence.class))).thenReturn(900.0);
+        when(esHelper.findEnvironmentalSuitability(any(Location.class), same(suitabilityRaster), same(adminRasters))).thenReturn(0.62);
+        when(dfdeHelper.findDistanceFromDiseaseExtent(any(DiseaseGroup.class), any(Location.class))).thenReturn(900.0);
         when(mwPredictor.findMachineWeighting(any(DiseaseOccurrence.class))).thenReturn(1.0);
 
         // Act

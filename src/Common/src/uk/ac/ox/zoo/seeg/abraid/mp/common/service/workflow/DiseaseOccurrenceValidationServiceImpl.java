@@ -152,8 +152,9 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
     private void addValidationParameters(
             DiseaseOccurrence occurrence, GridCoverage2D predictionRaster, GridCoverage2D[] adminRasters) {
         occurrence.setEnvironmentalSuitability(
-                esHelper.findEnvironmentalSuitability(occurrence, predictionRaster, adminRasters));
-        occurrence.setDistanceFromDiseaseExtent(dfdeHelper.findDistanceFromDiseaseExtent(occurrence));
+                esHelper.findEnvironmentalSuitability(occurrence.getLocation(), predictionRaster, adminRasters));
+        occurrence.setDistanceFromDiseaseExtent(
+                dfdeHelper.findDistanceFromDiseaseExtent(occurrence.getDiseaseGroup(), occurrence.getLocation()));
         findAndSetMachineWeightingAndInReview(occurrence);
     }
 

@@ -107,15 +107,14 @@ public class EnvironmentalSuitabilityHelper {
     }
 
     /**
-     * Finds the environmental suitability of the given occurrence, using the specified rasters.
-     * @param occurrence The occurrence.
+     * Finds the environmental suitability of the given location, using the specified rasters.
+     * @param location The location.
      * @param suitabilityRaster The environmental suitability raster for the occurrences disease group.
      * @param adminRasters A set of admin unit level rasters.
      * @return The environmental suitability of the occurrence according to the raster, or null if not found.
      */
-    public Double findEnvironmentalSuitability(
-            DiseaseOccurrence occurrence, GridCoverage2D suitabilityRaster, GridCoverage2D[] adminRasters) {
-        Location location = occurrence.getLocation();
+    public Double findEnvironmentalSuitability(Location location,
+                                               GridCoverage2D suitabilityRaster, GridCoverage2D[] adminRasters) {
         LocationPrecision precision = location.getPrecision();
         if (precision == LocationPrecision.PRECISE) {
             return getPreciseES(location, suitabilityRaster);

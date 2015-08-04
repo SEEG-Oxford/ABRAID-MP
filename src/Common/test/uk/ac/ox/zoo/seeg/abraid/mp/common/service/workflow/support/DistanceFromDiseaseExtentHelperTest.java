@@ -46,7 +46,7 @@ public class DistanceFromDiseaseExtentHelperTest {
         when(nativeSQL.findDistanceInsideDiseaseExtent(diseaseGroupId, isGlobal, locationId)).thenReturn(321d);
 
         // Act
-        Double actualDistance = helper.findDistanceFromDiseaseExtent(occurrence);
+        Double actualDistance = helper.findDistanceFromDiseaseExtent(occurrence.getDiseaseGroup(), occurrence.getLocation());
 
         // Assert
         assertThat(actualDistance).isEqualTo(expectedDistance);
@@ -68,7 +68,7 @@ public class DistanceFromDiseaseExtentHelperTest {
         when(nativeSQL.findDistanceInsideDiseaseExtent(diseaseGroupId, isGlobal, locationId)).thenReturn(expectedDistance);
 
         // Act
-        Double actualDistance = helper.findDistanceFromDiseaseExtent(occurrence);
+        Double actualDistance = helper.findDistanceFromDiseaseExtent(occurrence.getDiseaseGroup(), occurrence.getLocation());
 
         // Assert
         assertThat(actualDistance).isEqualTo(-expectedDistance);
@@ -89,7 +89,7 @@ public class DistanceFromDiseaseExtentHelperTest {
         when(nativeSQL.findDistanceInsideDiseaseExtent(diseaseGroupId, isGlobal, locationId)).thenReturn(321d);
 
         // Act
-        Double actualDistance = helper.findDistanceFromDiseaseExtent(occurrence);
+        Double actualDistance = helper.findDistanceFromDiseaseExtent(occurrence.getDiseaseGroup(), occurrence.getLocation());
 
         // Assert
         assertThat(actualDistance).isNull();
@@ -109,7 +109,7 @@ public class DistanceFromDiseaseExtentHelperTest {
         when(nativeSQL.findDistanceInsideDiseaseExtent(diseaseGroupId, isGlobal, locationId)).thenReturn(null);
 
         // Act
-        Double actualDistance = helper.findDistanceFromDiseaseExtent(occurrence);
+        Double actualDistance = helper.findDistanceFromDiseaseExtent(occurrence.getDiseaseGroup(), occurrence.getLocation());
 
         // Assert
         assertThat(actualDistance).isNull();
@@ -129,7 +129,7 @@ public class DistanceFromDiseaseExtentHelperTest {
         when(nativeSQL.findDistanceOutsideDiseaseExtent(diseaseGroupId, isGlobal, locationId)).thenReturn(321d);
 
         // Act
-        Double actualDistance = helper.findDistanceFromDiseaseExtent(occurrence);
+        Double actualDistance = helper.findDistanceFromDiseaseExtent(occurrence.getDiseaseGroup(), occurrence.getLocation());
 
         // Assert
         assertThat(actualDistance).isEqualTo(0);
@@ -149,7 +149,7 @@ public class DistanceFromDiseaseExtentHelperTest {
         when(nativeSQL.findDistanceOutsideDiseaseExtent(diseaseGroupId, isGlobal, locationId)).thenReturn(321d);
 
         // Act
-        Double actualDistance = helper.findDistanceFromDiseaseExtent(occurrence);
+        Double actualDistance = helper.findDistanceFromDiseaseExtent(occurrence.getDiseaseGroup(), occurrence.getLocation());
 
         // Assert
         assertThat(actualDistance).isNull();

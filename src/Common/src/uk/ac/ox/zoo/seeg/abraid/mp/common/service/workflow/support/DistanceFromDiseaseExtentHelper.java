@@ -25,15 +25,13 @@ public class DistanceFromDiseaseExtentHelper {
     }
 
     /**
-     * Finds the distance between the occurrence's location and the occurrence's disease group's current extent.
-     * @param occurrence The occurrence.
+     * Finds the distance between a location and the disease group's current extent.
+     * @param diseaseGroup The disease group.
+     * @param location The location.
      * @return The distance from the disease extent.
      */
     @Transactional
-    public Double findDistanceFromDiseaseExtent(DiseaseOccurrence occurrence) {
-        DiseaseGroup diseaseGroup = occurrence.getDiseaseGroup();
-        Location location = occurrence.getLocation();
-
+    public Double findDistanceFromDiseaseExtent(DiseaseGroup diseaseGroup, Location location) {
         int diseaseGroupId = diseaseGroup.getId();
         boolean isGlobal = diseaseGroup.isGlobal();
 
