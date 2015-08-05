@@ -83,20 +83,6 @@ public class EnvironmentalSuitabilityHelper {
         return rasters;
     }
 
-    /**
-     * Gets the admin unit level raster for a single level (at the array index for the level).
-     * Note: The rasters returned by the method must be disposed using RasterUtils.disposeRasters when no longer in use.
-     * @param precision The precision of the admin unit level to load.
-     * @return The admin unit raster.
-     */
-    public GridCoverage2D[] getSingleAdminRaster(LocationPrecision precision) {
-        GridCoverage2D[] rasters = new GridCoverage2D[NUMBER_OF_ADMIN_LEVELS];
-        if (precision != LocationPrecision.PRECISE) {
-            loadSingleAdminRaster(precision.getModelValue(), rasters);
-        }
-        return rasters;
-    }
-
     private void loadSingleAdminRaster(int level, GridCoverage2D[] set) {
         File rasterFile = rasterFilePathFactory.getAdminRaster(level);
         try {

@@ -13,8 +13,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.MachineWeight
 import java.util.Arrays;
 import java.util.List;
 
-import static com.googlecode.catchexception.CatchException.catchException;
-import static com.googlecode.catchexception.CatchException.caughtException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.same;
@@ -41,14 +39,6 @@ public class DiseaseOccurrenceValidationServiceTest {
         service = new DiseaseOccurrenceValidationServiceImpl(esHelper, dfdeHelper, mwPredictor, modelRunService);
     }
 
-    @Test
-    public void addValidationParametersWithChecksDiscardsOccurrenceIfOccurrenceLocationIsNull() {
-        DiseaseOccurrence occurrence = new DiseaseOccurrence();
-        setIsGoldStandardProvenance(occurrence, false);
-        service.addValidationParametersWithChecks(occurrence);
-        assertThat(occurrence.getStatus()).isEqualTo(DiseaseOccurrenceStatus.DISCARDED_FAILED_QC);
-    }
-
     private void setIsGoldStandardProvenance(DiseaseOccurrence occurrence, boolean isGoldStandard) {
         String provenanceName = isGoldStandard ? ProvenanceNames.MANUAL_GOLD_STANDARD : ProvenanceNames.MANUAL;
         Provenance provenance = new Provenance(provenanceName);
@@ -67,7 +57,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         setIsGoldStandardProvenance(occurrence, false);
 
         // Act
-        service.addValidationParametersWithChecks(occurrence);
+        service.addValidationParameters(Arrays.asList(occurrence), true);
 
         // Assert
         assertThat(occurrence.getStatus()).isEqualTo(DiseaseOccurrenceStatus.DISCARDED_FAILED_QC);
@@ -82,7 +72,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         setIsGoldStandardProvenance(occurrence, false);
 
         // Act
-        service.addValidationParametersWithChecks(occurrence);
+        service.addValidationParameters(Arrays.asList(occurrence), true);
 
         // Assert
         assertThat(occurrence.getStatus()).isEqualTo(DiseaseOccurrenceStatus.DISCARDED_FAILED_QC);
@@ -104,7 +94,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         when(mwPredictor.findMachineWeighting(occurrence)).thenReturn(null);
 
         // Act
-        service.addValidationParametersWithChecks(occurrence);
+        service.addValidationParameters(Arrays.asList(occurrence), true);
 
         // Assert
         assertThat(occurrence.getEnvironmentalSuitability()).isEqualTo(environmentalSuitability);
@@ -126,7 +116,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         when(modelRunService.hasBatchingEverCompleted(diseaseGroupId)).thenReturn(false);
 
         // Act
-        service.addValidationParametersWithChecks(occurrence);
+        service.addValidationParameters(Arrays.asList(occurrence), true);
 
         // Assert
         assertDefaultParameters(occurrence, DiseaseOccurrenceStatus.READY);
@@ -141,7 +131,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         when(modelRunService.hasBatchingEverCompleted(diseaseGroupId)).thenReturn(true);
 
         // Act
-        service.addValidationParametersWithChecks(occurrence);
+        service.addValidationParameters(Arrays.asList(occurrence), true);
 
         // Assert
         assertDefaultParameters(occurrence, DiseaseOccurrenceStatus.AWAITING_BATCHING);
@@ -172,7 +162,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         when(mwPredictor.findMachineWeighting(occurrence)).thenReturn(null);
 
         // Act
-        service.addValidationParametersWithChecks(occurrence);
+        service.addValidationParameters(Arrays.asList(occurrence), true);
 
         // Assert
         assertParameterValues(occurrence, environmentalSuitability, distanceFromDiseaseExtent, DiseaseOccurrenceStatus.READY);
@@ -192,7 +182,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence.getDiseaseGroup(), occurrence.getLocation())).thenReturn(null);
 
         // Act
-        service.addValidationParametersWithChecks(occurrence);
+        service.addValidationParameters(Arrays.asList(occurrence), true);
 
         // Assert
         assertDefaultParameters(occurrence, DiseaseOccurrenceStatus.IN_REVIEW);
@@ -212,7 +202,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence.getDiseaseGroup(), occurrence.getLocation())).thenReturn(1.0);
 
         // Act
-        service.addValidationParametersWithChecks(occurrence);
+        service.addValidationParameters(Arrays.asList(occurrence), true);
 
         // Assert
         assertThat(occurrence.getEnvironmentalSuitability()).isNull();
@@ -237,7 +227,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence.getDiseaseGroup(), occurrence.getLocation())).thenReturn(null);
 
         // Act
-        service.addValidationParametersWithChecks(occurrence);
+        service.addValidationParameters(Arrays.asList(occurrence), true);
 
         // Assert
         assertThat(occurrence.getEnvironmentalSuitability()).isEqualTo(0.5);
@@ -257,20 +247,20 @@ public class DiseaseOccurrenceValidationServiceTest {
         double distanceFromDiseaseExtent = 500;
 
         GridCoverage2D suitabilityRaster = mock(GridCoverage2D.class);
-        GridCoverage2D[] adminRasters = new GridCoverage2D[] {mock(GridCoverage2D.class)};
+        GridCoverage2D[] adminRasters = new GridCoverage2D[] {mock(GridCoverage2D.class), mock(GridCoverage2D.class), mock(GridCoverage2D.class)};
 
         DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, true, false);
         occurrence.getLocation().setPrecision(LocationPrecision.ADMIN1);
         occurrence.getLocation().setHasPassedQc(true);
         setIsGoldStandardProvenance(occurrence, false);
         when(esHelper.getLatestMeanPredictionRaster(occurrence.getDiseaseGroup())).thenReturn(suitabilityRaster);
-        when(esHelper.getSingleAdminRaster(LocationPrecision.ADMIN1)).thenReturn(adminRasters);
+        when(esHelper.getAdminRasters()).thenReturn(adminRasters);
         when(esHelper.findEnvironmentalSuitability(same(occurrence.getLocation()), same(suitabilityRaster), same(adminRasters))).thenReturn(environmentalSuitability);
         when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence.getDiseaseGroup(), occurrence.getLocation())).thenReturn(distanceFromDiseaseExtent);
         when(mwPredictor.findMachineWeighting(occurrence)).thenReturn(null);
 
         // Act
-        service.addValidationParametersWithChecks(occurrence);
+        service.addValidationParameters(Arrays.asList(occurrence), true);
 
         // Assert
         assertThat(occurrence.getEnvironmentalSuitability()).isEqualTo(environmentalSuitability);
@@ -291,7 +281,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         setIsGoldStandardProvenance(occurrence, true);
 
         // Act
-        service.addValidationParametersWithChecks(occurrence);
+        service.addValidationParameters(Arrays.asList(occurrence), true);
 
         // Assert
         assertThat(occurrence.getEnvironmentalSuitability()).isNull();
@@ -311,7 +301,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         setIsGoldStandardProvenance(occurrence, true);
 
         // Act
-        service.addValidationParametersWithChecks(occurrence);
+        service.addValidationParameters(Arrays.asList(occurrence), true);
 
         // Assert
         assertThat(occurrence.getEnvironmentalSuitability()).isNull();
@@ -333,7 +323,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence.getDiseaseGroup(), occurrence.getLocation())).thenReturn(-300.0);
 
         // Act
-        service.addValidationParametersWithChecks(occurrence);
+        service.addValidationParameters(Arrays.asList(occurrence), true);
 
         // Assert
         assertThat(occurrence.getEnvironmentalSuitability()).isEqualTo(0.39);
@@ -355,7 +345,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence.getDiseaseGroup(), occurrence.getLocation())).thenReturn(1.0);
 
         // Act
-        service.addValidationParametersWithChecks(occurrence);
+        service.addValidationParameters(Arrays.asList(occurrence), true);
 
         // Assert
         assertThat(occurrence.getEnvironmentalSuitability()).isEqualTo(0.6);
@@ -378,7 +368,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence.getDiseaseGroup(), occurrence.getLocation())).thenReturn(null);
 
         // Act
-        service.addValidationParametersWithChecks(occurrence);
+        service.addValidationParameters(Arrays.asList(occurrence), true);
 
         // Assert
         assertThat(occurrence.getEnvironmentalSuitability()).isNull();
@@ -400,7 +390,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence.getDiseaseGroup(), occurrence.getLocation())).thenReturn(1.0);
 
         // Act
-        service.addValidationParametersWithChecks(occurrence);
+        service.addValidationParameters(Arrays.asList(occurrence), true);
 
         // Assert
         assertThat(occurrence.getEnvironmentalSuitability()).isNull();
@@ -423,7 +413,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence.getDiseaseGroup(), occurrence.getLocation())).thenReturn(1.0);
 
         // Act
-        service.addValidationParametersWithChecks(occurrence);
+        service.addValidationParameters(Arrays.asList(occurrence), true);
 
         // Assert
         assertThat(occurrence.getEnvironmentalSuitability()).isEqualTo(0.6);
@@ -445,7 +435,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence.getDiseaseGroup(), occurrence.getLocation())).thenReturn(-1000.0);
 
         // Act
-        service.addValidationParametersWithChecks(occurrence);
+        service.addValidationParameters(Arrays.asList(occurrence), true);
 
         // Assert
         assertThat(occurrence.getEnvironmentalSuitability()).isEqualTo(0.41);
@@ -467,7 +457,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         when(dfdeHelper.findDistanceFromDiseaseExtent(occurrence.getDiseaseGroup(), occurrence.getLocation())).thenReturn(null);
 
         // Act
-        service.addValidationParametersWithChecks(occurrence);
+        service.addValidationParameters(Arrays.asList(occurrence), true);
 
         // Assert
         assertThat(occurrence.getEnvironmentalSuitability()).isEqualTo(0.5);
@@ -514,7 +504,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         when(mwPredictor.findMachineWeighting(same(occurrence3))).thenReturn(null);
 
         // Act
-        service.addValidationParameters(occurrences);
+        service.addValidationParameters(occurrences, false);
 
         // Assert
         assertParameterValues(occurrence1, environmentalSuitability1, distanceFromDiseaseExtent1, DiseaseOccurrenceStatus.IN_REVIEW);
@@ -559,27 +549,12 @@ public class DiseaseOccurrenceValidationServiceTest {
         when(mwPredictor.findMachineWeighting(same(largeCountryOccurrence))).thenReturn(null);
 
         // Act
-        service.addValidationParameters(occurrences);
+        service.addValidationParameters(occurrences, false);
 
         // Assert
         assertParameterValues(admin1Occurrence, environmentalSuitability, distanceFromDiseaseExtent, DiseaseOccurrenceStatus.IN_REVIEW);
         assertParameterValues(countryOccurrence, environmentalSuitability, distanceFromDiseaseExtent, DiseaseOccurrenceStatus.IN_REVIEW);
         assertParameterValues(largeCountryOccurrence, environmentalSuitability, distanceFromDiseaseExtent, DiseaseOccurrenceStatus.READY);
-    }
-
-    @Test
-    public void addValidationParametersThrowsExceptionIfOccurrencesHaveDifferentDiseaseGroups() {
-        // Arrange
-        DiseaseOccurrence occurrence1 = createDiseaseOccurrence(1, true, false);
-        DiseaseOccurrence occurrence2 = createDiseaseOccurrence(1, true, false);
-        DiseaseOccurrence occurrence3 = createDiseaseOccurrence(2, true, false);
-        List<DiseaseOccurrence> occurrences = Arrays.asList(occurrence1, occurrence2, occurrence3);
-
-        // Act
-        catchException(service).addValidationParameters(occurrences);
-
-        // Assert
-        assertThat(caughtException()).isInstanceOf(RuntimeException.class);
     }
 
     @Test
@@ -602,7 +577,7 @@ public class DiseaseOccurrenceValidationServiceTest {
         when(mwPredictor.findMachineWeighting(any(DiseaseOccurrence.class))).thenReturn(1.0);
 
         // Act
-        service.addValidationParameters(occurrences);
+        service.addValidationParameters(occurrences, false);
 
         // Assert
         assertParameterValues(occurrence1, 0.62, 900.0, DiseaseOccurrenceStatus.IN_REVIEW);

@@ -403,7 +403,7 @@ public class DiseaseOccurrenceDataAcquirerTest {
     }
 
     private void verifySuccessfulSave(DiseaseOccurrence occurrence, boolean isGoldStandard, Set<DiseaseOccurrence> result) {
-        verify(diseaseOccurrenceValidationService).addValidationParametersWithChecks(same(occurrence));
+        verify(diseaseOccurrenceValidationService).addValidationParameters(eq(Arrays.asList(occurrence)), eq(true));
         verify(diseaseService).saveDiseaseOccurrence(same(occurrence));
         assertThat(result).containsOnly(occurrence);
     }

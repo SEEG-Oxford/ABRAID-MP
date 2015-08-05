@@ -37,6 +37,8 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractSprin
             "Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/service/workflow/support/testdata/test_raster_large_double.tif";
     private static final String ADMIN_RASTER_FILENAME =
             "Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/service/workflow/support/testdata/admin_raster_large_double.tif";
+    private static final String EMPTY_RASTER_FILENAME =
+            "Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/service/workflow/support/testdata/empty.tif";
     private static final double LARGE_RASTER_COLUMNS = 720;
     private static final double LARGE_RASTER_ROWS = 240;
     private static final double LARGE_RASTER_XLLCORNER = -180;
@@ -143,8 +145,19 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractSprin
                 .thenReturn(new File(LARGE_RASTER_FILENAME));
     }
 
-    private void mockGetAdminRasterFileForLevel(int level) {
-        when(rasterFilePathFactory.getAdminRaster(level)).thenReturn(new File(ADMIN_RASTER_FILENAME));
+    private void mockGetAdminRasterFiles(int level) {
+        if (level != -999) {
+            when(rasterFilePathFactory.getAdminRaster(level)).thenReturn(new File(ADMIN_RASTER_FILENAME));
+        }
+        if (level != 0) {
+            when(rasterFilePathFactory.getAdminRaster(0)).thenReturn(new File(EMPTY_RASTER_FILENAME));
+        }
+        if (level != 1) {
+            when(rasterFilePathFactory.getAdminRaster(1)).thenReturn(new File(EMPTY_RASTER_FILENAME));
+        }
+        if (level != 2) {
+            when(rasterFilePathFactory.getAdminRaster(2)).thenReturn(new File(EMPTY_RASTER_FILENAME));
+        }
     }
 
     private void findEnvironmentalSuitabilityPrecise(double x, double y,
@@ -153,8 +166,9 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractSprin
         Location location = createLocation(x, y, 1, LocationPrecision.PRECISE);
         ModelRun modelRun = createAndSaveModelRun("test name", diseaseGroup.getId(), ModelRunStatus.COMPLETED);
         mockGetRasterFileForModelRun(modelRun);
+        mockGetAdminRasterFiles(LocationPrecision.PRECISE.getModelValue());
         GridCoverage2D suitabilityRaster = helper.getLatestMeanPredictionRaster(diseaseGroup);
-        GridCoverage2D[] adminRasters = helper.getSingleAdminRaster(LocationPrecision.PRECISE);
+        GridCoverage2D[] adminRasters = helper.getAdminRasters();
 
         // Act
         Double suitability = helper.findEnvironmentalSuitability(location, suitabilityRaster, adminRasters);
@@ -162,9 +176,9 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractSprin
         // Assert
         assertThat(suitabilityRaster).isNotNull();
         assertThat(adminRasters).isNotNull();
-        assertThat(adminRasters[0]).isNull();
-        assertThat(adminRasters[1]).isNull();
-        assertThat(adminRasters[2]).isNull();
+        assertThat(adminRasters[0]).isNotNull();
+        assertThat(adminRasters[1]).isNotNull();
+        assertThat(adminRasters[2]).isNotNull();
         if (expectedEnvironmentalSuitability != null) {
             assertThat(suitability).isEqualTo(expectedEnvironmentalSuitability, offset(0.0000005));
         } else {
@@ -178,9 +192,9 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractSprin
         Location location = createLocation(x, y, gaul, precision);
         ModelRun modelRun = createAndSaveModelRun("test name", diseaseGroup.getId(), ModelRunStatus.COMPLETED);
         mockGetRasterFileForModelRun(modelRun);
-        mockGetAdminRasterFileForLevel(precision.getModelValue());
+        mockGetAdminRasterFiles(precision.getModelValue());
         GridCoverage2D suitabilityRaster = helper.getLatestMeanPredictionRaster(diseaseGroup);
-        GridCoverage2D[] adminRasters = helper.getSingleAdminRaster(precision);
+        GridCoverage2D[] adminRasters = helper.getAdminRasters();
 
         // Act
         Double suitability = helper.findEnvironmentalSuitability(location, suitabilityRaster, adminRasters);

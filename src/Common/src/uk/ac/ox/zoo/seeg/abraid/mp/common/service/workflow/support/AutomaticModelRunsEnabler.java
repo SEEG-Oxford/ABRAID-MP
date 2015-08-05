@@ -82,7 +82,7 @@ public class AutomaticModelRunsEnabler {
         }
 
         log(occurrences.size(), occurrencesForValidationParameters.size(), earliestDateForValidationParameters);
-        diseaseOccurrenceValidationService.addValidationParameters(occurrencesForValidationParameters);
+        diseaseOccurrenceValidationService.addValidationParameters(occurrencesForValidationParameters, false);
     }
 
     private void discardOccurrence(DiseaseOccurrence occurrence) {

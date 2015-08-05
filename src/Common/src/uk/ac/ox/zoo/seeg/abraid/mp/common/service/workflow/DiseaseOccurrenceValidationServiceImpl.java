@@ -1,11 +1,10 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow;
 
+import ch.lambdaj.function.matcher.LambdaJMatcher;
+import ch.lambdaj.group.Group;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceStatus;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ProvenanceNames;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.DistanceFromDiseaseExtentHelper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.EnvironmentalSuitabilityHelper;
@@ -13,6 +12,11 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.MachineWeight
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.raster.RasterUtils;
 
 import java.util.List;
+
+import static ch.lambdaj.Lambda.*;
+import static ch.lambdaj.group.Groups.by;
+import static ch.lambdaj.group.Groups.group;
+import static org.hamcrest.CoreMatchers.equalTo;
 
 /**
  * Adds validation parameters to a disease occurrence. Marks it for manual validation (via the Data Validator GUI)
@@ -38,124 +42,125 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
     }
 
     /**
-     * Adds validation parameters to a disease occurrence, including various checks.
-     * @param occurrence The disease occurrence.
-     */
-    @Override
-    public void addValidationParametersWithChecks(DiseaseOccurrence occurrence) {
-        // By default, set the occurrence to status READY
-        clearAndSetToReady(occurrence);
-        if (hasPassedQc(occurrence)) {
-            if (isGoldStandard(occurrence)) {
-                handleGoldStandard(occurrence);
-            } else if (automaticModelRunsEnabled(occurrence)) {
-                handleAutomaticModelRunsEnabled(occurrence);
-            } else {
-                handleAutomaticModelRunsDisabled(occurrence);
-            }
-        } else {
-            setToFailedQc(occurrence);
-        }
-    }
-
-    /**
-     * Adds validation parameters to a list of disease occurrences (without checks).
-     * Every occurrence must belong to the same disease group.
+     * Adds validation parameters to a list of disease occurrences.
      * @param occurrences The list of disease occurrences.
+     * @param performChecks If status checks should be performed.
      */
     @Override
-    public void addValidationParameters(List<DiseaseOccurrence> occurrences) {
-        DiseaseGroup diseaseGroup = validateAndGetDiseaseGroup(occurrences);
+    public void addValidationParameters(List<DiseaseOccurrence> occurrences, boolean performChecks) {
+        // By default, set the occurrence to status READY
+        clearAndSetToReady(occurrences);
 
-        if (diseaseGroup != null) {
-            // Get the latest mean prediction raster for the disease group, and then use it to add validation parameters
-            // to all occurrences
-            GridCoverage2D suitabilityRaster = null;
-            GridCoverage2D[] adminRasters = null;
-            try {
-                suitabilityRaster = esHelper.getLatestMeanPredictionRaster(diseaseGroup);
-                adminRasters = esHelper.getAdminRasters();
-                for (DiseaseOccurrence occurrence : occurrences) {
-                    clearAndSetToReady(occurrence);
-                    addValidationParameters(occurrence, suitabilityRaster, adminRasters);
+        Group<DiseaseOccurrence> byDisease = group(occurrences, by(on(DiseaseOccurrence.class).getDiseaseGroup()));
+
+        for (Group<DiseaseOccurrence> diseaseGrouping : byDisease.subgroups()) {
+            DiseaseGroup disease = (DiseaseGroup) diseaseGrouping.key();
+            List<DiseaseOccurrence> occurrencesForDisease = diseaseGrouping.findAll();
+
+            if (performChecks) {
+                // Discard QC failures
+                List<DiseaseOccurrence> failedQC = filter(failedQC(), occurrencesForDisease);
+                processFailedQc(failedQC);
+                occurrencesForDisease.removeAll(failedQC);
+
+                // Fast forward Gold Standard - passed QC
+                List<DiseaseOccurrence> goldStandard = filter(isGoldStandard(), occurrencesForDisease);
+                processGoldStandard(goldStandard);
+                occurrencesForDisease.removeAll(goldStandard);
+
+                if (!occurrencesForDisease.isEmpty()) {
+                    if (!disease.isAutomaticModelRunsEnabled()) {
+                        if (modelRunService.hasBatchingEverCompleted(disease.getId())) {
+                            processAwaitingBatching(occurrencesForDisease);
+                        }
+                        // If there is no batching for this disease group, leave the status at the default (READY)
+                        // so that it can be used in an initial model run and disease extent generation
+                    } else {
+                        // Add properties to automatic, non-gold standard, passed qc
+                        processNeedsValidationParameters(occurrencesForDisease, disease);
+                    }
                 }
-            } finally {
-                RasterUtils.disposeRaster(suitabilityRaster);
-                RasterUtils.disposeRasters(adminRasters);
+            } else {
+                processNeedsValidationParameters(occurrencesForDisease, disease);
             }
         }
     }
 
-    private void clearAndSetToReady(DiseaseOccurrence occurrence) {
+    private void clearAndSetToReady(List<DiseaseOccurrence> occurrences) {
         // By default, the occurrence avoids the validation process altogether (i.e. marked READY with no validation
         // parameters
-        occurrence.setEnvironmentalSuitability(null);
-        occurrence.setDistanceFromDiseaseExtent(null);
-        occurrence.setMachineWeighting(null);
-        occurrence.setValidationWeighting(null);
-        occurrence.setFinalWeighting(null);
-        occurrence.setFinalWeightingExcludingSpatial(null);
-        occurrence.setStatus(DiseaseOccurrenceStatus.READY);
+        for (DiseaseOccurrence occurrence : occurrences) {
+            occurrence.setEnvironmentalSuitability(null);
+            occurrence.setDistanceFromDiseaseExtent(null);
+            occurrence.setMachineWeighting(null);
+            occurrence.setValidationWeighting(null);
+            occurrence.setFinalWeighting(null);
+            occurrence.setFinalWeightingExcludingSpatial(null);
+            occurrence.setStatus(DiseaseOccurrenceStatus.READY);
+        }
     }
 
-    private boolean hasPassedQc(DiseaseOccurrence occurrence) {
-        return (occurrence.getLocation() != null) && occurrence.getLocation().hasPassedQc();
+    private LambdaJMatcher<DiseaseOccurrence> failedQC() {
+        return having(on(DiseaseOccurrence.class).getLocation().hasPassedQc(), equalTo(false));
     }
 
-    private boolean isGoldStandard(DiseaseOccurrence occurrence) {
-        return occurrence.getAlert().getFeed().getProvenance().getName().equals(ProvenanceNames.MANUAL_GOLD_STANDARD);
+    private LambdaJMatcher<DiseaseOccurrence> isGoldStandard() {
+        return having(on(DiseaseOccurrence.class).getAlert().getFeed().getProvenance().getName(),
+                equalTo(ProvenanceNames.MANUAL_GOLD_STANDARD));
     }
 
-    private void setToFailedQc(DiseaseOccurrence occurrence) {
-        occurrence.setStatus(DiseaseOccurrenceStatus.DISCARDED_FAILED_QC);
+    private void processFailedQc(List<DiseaseOccurrence> occurrences) {
+        for (DiseaseOccurrence occurrence : occurrences) {
+            occurrence.setStatus(DiseaseOccurrenceStatus.DISCARDED_FAILED_QC);
+        }
     }
 
-    private boolean automaticModelRunsEnabled(DiseaseOccurrence occurrence) {
-        return occurrence.getDiseaseGroup().isAutomaticModelRunsEnabled();
-    }
-
-    private void handleGoldStandard(DiseaseOccurrence occurrence) {
+    private void processGoldStandard(List<DiseaseOccurrence> occurrences) {
         // If the disease occurrence is from a "gold standard" data set, it should not be validated. So set its
         // final weightings to 1.
-        occurrence.setFinalWeighting(DiseaseOccurrence.GOLD_STANDARD_FINAL_WEIGHTING);
-        occurrence.setFinalWeightingExcludingSpatial(DiseaseOccurrence.GOLD_STANDARD_FINAL_WEIGHTING);
+        for (DiseaseOccurrence occurrence : occurrences) {
+            occurrence.setFinalWeighting(DiseaseOccurrence.GOLD_STANDARD_FINAL_WEIGHTING);
+            occurrence.setFinalWeightingExcludingSpatial(DiseaseOccurrence.GOLD_STANDARD_FINAL_WEIGHTING);
+        }
     }
 
-    private void handleAutomaticModelRunsEnabled(DiseaseOccurrence occurrence) {
-        addValidationParameters(occurrence);
-    }
-
-    private void handleAutomaticModelRunsDisabled(DiseaseOccurrence occurrence) {
-        if (modelRunService.hasBatchingEverCompleted(occurrence.getDiseaseGroup().getId())) {
-            // We are in disease group set-up and points are being batched for validation, so we need to set this point
-            // to AWAITING_BATCHING
+    private void processAwaitingBatching(List<DiseaseOccurrence> occurrences) {
+        // We are in disease group set-up and points are being batched for validation, so we need to set this point
+        // to AWAITING_BATCHING
+        for (DiseaseOccurrence occurrence : occurrences) {
             occurrence.setStatus(DiseaseOccurrenceStatus.AWAITING_BATCHING);
         }
-
-        // If there is no batching for this disease group, leave the status at the default (READY) so that it can be
-        // used in an initial model run and disease extent generation
     }
 
-    private void addValidationParameters(DiseaseOccurrence occurrence) {
+    private void processNeedsValidationParameters(List<DiseaseOccurrence> occurrences, DiseaseGroup diseaseGroup) {
         GridCoverage2D suitabilityRaster = null;
         GridCoverage2D[] adminRasters = null;
         try {
-            suitabilityRaster = esHelper.getLatestMeanPredictionRaster(occurrence.getDiseaseGroup());
-            adminRasters = esHelper.getSingleAdminRaster(occurrence.getLocation().getPrecision());
-            addValidationParameters(occurrence, suitabilityRaster, adminRasters);
+            suitabilityRaster = esHelper.getLatestMeanPredictionRaster(diseaseGroup);
+            adminRasters = esHelper.getAdminRasters();
+            // Group by location to avoid doing repeated (expensive) calculation for the same location
+            Group<DiseaseOccurrence> byLocation = group(occurrences, by(on(DiseaseOccurrence.class).getLocation()));
+            for (Group<DiseaseOccurrence> locationGrouping : byLocation.subgroups()) {
+                Location location = (Location) locationGrouping.key();
+                List<DiseaseOccurrence> locationOccurrences = locationGrouping.findAll();
+                calculateAndSetValidationParametersAtLocation(
+                        location, diseaseGroup, locationOccurrences, suitabilityRaster, adminRasters);
+            }
         } finally {
             RasterUtils.disposeRaster(suitabilityRaster);
             RasterUtils.disposeRasters(adminRasters);
         }
     }
 
-    private void addValidationParameters(
-            DiseaseOccurrence occurrence, GridCoverage2D predictionRaster, GridCoverage2D[] adminRasters) {
-        occurrence.setEnvironmentalSuitability(
-                esHelper.findEnvironmentalSuitability(occurrence.getLocation(), predictionRaster, adminRasters));
-        occurrence.setDistanceFromDiseaseExtent(
-                dfdeHelper.findDistanceFromDiseaseExtent(occurrence.getDiseaseGroup(), occurrence.getLocation()));
-        findAndSetMachineWeightingAndInReview(occurrence);
+    private void calculateAndSetValidationParametersAtLocation(Location location, DiseaseGroup diseaseGroup,
+            List<DiseaseOccurrence> occurrences, GridCoverage2D predictionRaster, GridCoverage2D[] adminRasters) {
+        Double suitability = esHelper.findEnvironmentalSuitability(location, predictionRaster, adminRasters);
+        Double distance = dfdeHelper.findDistanceFromDiseaseExtent(diseaseGroup, location);
+        for (DiseaseOccurrence occurrence : occurrences) {
+            occurrence.setEnvironmentalSuitability(suitability);
+            occurrence.setDistanceFromDiseaseExtent(distance);
+            findAndSetMachineWeightingAndInReview(occurrence);
+        }
     }
 
     private void findAndSetMachineWeightingAndInReview(DiseaseOccurrence occurrence) {
@@ -208,19 +213,4 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
         return (occurrence.getDistanceFromDiseaseExtent() > 0);
     }
 
-    private DiseaseGroup validateAndGetDiseaseGroup(List<DiseaseOccurrence> occurrences) {
-        DiseaseGroup diseaseGroup = null;
-        if (occurrences != null && occurrences.size() > 0) {
-            // Get the disease group of the first occurrence in the list
-            diseaseGroup = occurrences.get(0).getDiseaseGroup();
-            // Ensure that all other occurrences have the same disease group
-            for (int i = 1; i < occurrences.size(); i++) {
-                DiseaseGroup otherDiseaseGroup = occurrences.get(i).getDiseaseGroup();
-                if (otherDiseaseGroup == null || !diseaseGroup.getId().equals(otherDiseaseGroup.getId())) {
-                    throw new RuntimeException("All occurrences must have the same disease group");
-                }
-            }
-        }
-        return diseaseGroup;
-    }
 }

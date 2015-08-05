@@ -74,9 +74,7 @@ public class DiseaseOccurrenceDataAcquirer {
         }
 
         // Add validation params
-        for (DiseaseOccurrence occurrence: occurrences) {
-            diseaseOccurrenceValidationService.addValidationParametersWithChecks(occurrence);
-        }
+        diseaseOccurrenceValidationService.addValidationParameters(new ArrayList<>(occurrences), true);
 
         // Save occurrences
         Set<DiseaseOccurrence> saved = new HashSet<>();

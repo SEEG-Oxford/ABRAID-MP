@@ -150,7 +150,7 @@ public class BatchingHandlerHelper {
 
     private void setValidationParametersForOccurrencesBatch(List<DiseaseOccurrence> occurrences) {
         if (occurrences.size() > 0) {
-            diseaseOccurrenceValidationService.addValidationParameters(occurrences);
+            diseaseOccurrenceValidationService.addValidationParameters(occurrences, false);
             for (DiseaseOccurrence occurrence : occurrences) {
                 diseaseService.saveDiseaseOccurrence(occurrence);
             }

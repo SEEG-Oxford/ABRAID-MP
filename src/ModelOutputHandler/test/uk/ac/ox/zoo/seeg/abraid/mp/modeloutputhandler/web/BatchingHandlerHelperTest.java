@@ -56,7 +56,7 @@ public class BatchingHandlerHelperTest {
         verify(modelRunService, never()).hasBatchingEverCompleted(anyInt());
         verify(diseaseService, never()).getDiseaseOccurrencesByDiseaseGroupId(anyInt());
         verify(diseaseService, never()).getDiseaseOccurrencesForBatching(anyInt(), any(DateTime.class), any(DateTime.class));
-        verify(diseaseOccurrenceValidationService, never()).addValidationParameters(anyListOf(DiseaseOccurrence.class));
+        verify(diseaseOccurrenceValidationService, never()).addValidationParameters(anyListOf(DiseaseOccurrence.class), eq(false));
         verify(diseaseService, never()).saveDiseaseOccurrence(any(DiseaseOccurrence.class));
         verify(modelRunService, never()).saveModelRun(any(ModelRun.class));
     }
@@ -80,7 +80,7 @@ public class BatchingHandlerHelperTest {
         verify(modelRunService, never()).hasBatchingEverCompleted(anyInt());
         verify(diseaseService, never()).getDiseaseOccurrencesByDiseaseGroupId(anyInt());
         verify(diseaseService, never()).getDiseaseOccurrencesForBatching(anyInt(), any(DateTime.class), any(DateTime.class));
-        verify(diseaseOccurrenceValidationService, never()).addValidationParameters(anyListOf(DiseaseOccurrence.class));
+        verify(diseaseOccurrenceValidationService, never()).addValidationParameters(anyListOf(DiseaseOccurrence.class), eq(false));
         verify(diseaseService, never()).saveDiseaseOccurrence(any(DiseaseOccurrence.class));
         verify(modelRunService, never()).saveModelRun(any(ModelRun.class));
     }
@@ -160,7 +160,7 @@ public class BatchingHandlerHelperTest {
         assertThat(batchingInitialisationDate).isNull();
         verify(modelRunService, never()).hasBatchingEverCompleted(anyInt());
         verify(diseaseService, never()).getDiseaseOccurrencesForBatching(anyInt(), any(DateTime.class), any(DateTime.class));
-        verify(diseaseOccurrenceValidationService, never()).addValidationParameters(anyListOf(DiseaseOccurrence.class));
+        verify(diseaseOccurrenceValidationService, never()).addValidationParameters(anyListOf(DiseaseOccurrence.class), eq(false));
         verify(diseaseService, never()).saveDiseaseOccurrence(any(DiseaseOccurrence.class));
         verify(modelRunService, never()).saveModelRun(any(ModelRun.class));
     }
@@ -190,7 +190,7 @@ public class BatchingHandlerHelperTest {
         assertThat(batchingInitialisationDate).isEqualTo(DateTime.now());
         verify(diseaseService).getDiseaseOccurrencesForBatching(
                 eq(diseaseGroupId), eq(batchStartDate), eq(batchEndDate));
-        verify(diseaseOccurrenceValidationService, never()).addValidationParameters(anyListOf(DiseaseOccurrence.class));
+        verify(diseaseOccurrenceValidationService, never()).addValidationParameters(anyListOf(DiseaseOccurrence.class), eq(false));
         verify(diseaseService, never()).saveDiseaseOccurrence(any(DiseaseOccurrence.class));
         verify(modelRunService).saveModelRun(modelRun);
     }
@@ -224,7 +224,7 @@ public class BatchingHandlerHelperTest {
         assertThat(batchingInitialisationDate).isEqualTo(DateTime.now());
         verify(diseaseService).getDiseaseOccurrencesForBatching(
                 eq(diseaseGroupId), eq(batchStartDate), eq(batchEndDate));
-        verify(diseaseOccurrenceValidationService).addValidationParameters(same(occurrences));
+        verify(diseaseOccurrenceValidationService).addValidationParameters(same(occurrences), eq(false));
         verify(diseaseService).saveDiseaseOccurrence(same(occurrence1));
         verify(diseaseService).saveDiseaseOccurrence(same(occurrence2));
         verify(modelRunService).saveModelRun(modelRun);

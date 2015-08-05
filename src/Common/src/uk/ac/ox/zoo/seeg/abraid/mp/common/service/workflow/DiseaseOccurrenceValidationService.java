@@ -12,15 +12,9 @@ import java.util.List;
  */
 public interface DiseaseOccurrenceValidationService {
     /**
-     * Adds validation parameters to a disease occurrence, including various checks.
-     * @param occurrence The disease occurrence.
-     */
-    void addValidationParametersWithChecks(DiseaseOccurrence occurrence);
-
-    /**
-     * Adds validation parameters to a list of disease occurrences (without checks). Each occurrence must belong to
-     * the same disease group.
+     * Adds validation parameters to a list of disease occurrences.
      * @param occurrences The list of disease occurrences.
+     * @param performChecks If status checks should be performed.
      */
-    void addValidationParameters(List<DiseaseOccurrence> occurrences);
+    void addValidationParameters(List<DiseaseOccurrence> occurrences, boolean performChecks);
 }
