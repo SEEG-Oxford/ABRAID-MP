@@ -5,6 +5,7 @@ import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.GeometryService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 
 import java.util.Collection;
@@ -28,6 +29,7 @@ public class DiseaseExtentGenerator {
     private static final Logger LOGGER = Logger.getLogger(DiseaseExtentGenerator.class);
 
     private ModelRunService modelRunService;
+    private LocationService locationService;
     private DiseaseService diseaseService;
     private DiseaseExtentGenerationInputDataSelector extentDataSelector;
     private DiseaseExtentGeneratorHelperFactory helperFactory;
@@ -37,12 +39,14 @@ public class DiseaseExtentGenerator {
                                   DiseaseExtentGeneratorHelperFactory helperFactory,
                                   GeometryService geometryService,
                                   DiseaseService diseaseService,
-                                  ModelRunService modelRunService) {
+                                  ModelRunService modelRunService,
+                                  LocationService locationService) {
         this.extentDataSelector = extentDataSelector;
         this.helperFactory = helperFactory;
         this.geometryService = geometryService;
         this.diseaseService = diseaseService;
         this.modelRunService = modelRunService;
+        this.locationService = locationService;
     }
 
     /**
@@ -111,6 +115,9 @@ public class DiseaseExtentGenerator {
 
         // Update aggregated extent geometry
         diseaseService.updateAggregatedDiseaseExtent(diseaseGroup);
+
+        // Clear distance cache
+        locationService.clearDistanceToExtentCacheForDisease(diseaseGroup.getId());
 
         // Save input occurrences
         diseaseGroup.getDiseaseExtentParameters()

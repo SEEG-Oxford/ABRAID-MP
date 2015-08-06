@@ -21,6 +21,7 @@
     <bean id="covariateFileDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.CovariateFileDaoImpl" autowire="constructor" />
     <bean id="covariateInfluenceDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.CovariateInfluenceDaoImpl" autowire="constructor" />
     <bean id="diseaseExtentClassDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseExtentClassDaoImpl" autowire="constructor" />
+    <bean id="distanceToExtentCacheEntryDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DistanceToExtentCacheEntryDaoImpl" autowire="constructor" />
     <bean id="diseaseGroupDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseGroupDaoImpl" autowire="constructor" />
     <bean id="diseaseOccurrenceDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDaoImpl" autowire="constructor" />
     <bean id="diseaseOccurrenceReviewDao" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceReviewDaoImpl" autowire="constructor" />

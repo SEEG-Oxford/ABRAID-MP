@@ -51,17 +51,34 @@ public class DistanceFromDiseaseExtentHelper {
         if (insideExtent && outsideExtent) {
             // "Split" country straddling the edge
             return 0.0;
-        } else if (outsideExtent) {
-            // We find the distance using a PostGIS query instead of using routines in the GeometryUtils class, because
-            // loading the entire disease extent geometry into memory is likely to be inefficient
-            Double distance = nativeSQL.findDistanceOutsideDiseaseExtent(diseaseGroupId, isGlobal, location.getId());
-            return (distance != null) ? (+1.0 * distance) : null;
-        } else if (insideExtent) {
-            Double distance = nativeSQL.findDistanceInsideDiseaseExtent(diseaseGroupId, isGlobal, location.getId());
-            return (distance != null) ? (-1.0 * distance) : null;
+        } else if (outsideExtent || insideExtent) {
+            return getCachedDistanceOrCalculate(outsideExtent, diseaseGroupId, location.getId(), isGlobal);
         } else {
             return null; // No extent defined
         }
+    }
+
+    private Double getCachedDistanceOrCalculate(
+            boolean outsideExtent, int diseaseGroupId, int locationId, boolean isGlobal) {
+        Double distance = locationService.getDistanceToExtentFromCache(diseaseGroupId, locationId);
+        if (distance != null) {
+            return distance;
+        }
+
+        if (outsideExtent) {
+            // We find the distance using a PostGIS query instead of using routines in the GeometryUtils class, because
+            // loading the entire disease extent geometry into memory is likely to be inefficient
+            distance = nativeSQL.findDistanceOutsideDiseaseExtent(diseaseGroupId, isGlobal, locationId);
+            distance = (distance != null) ? (+1.0 * distance) : null;
+        } else {
+            distance = nativeSQL.findDistanceInsideDiseaseExtent(diseaseGroupId, isGlobal, locationId);
+            distance = (distance != null) ? (-1.0 * distance) : null;
+        }
+
+        if (distance != null) {
+            locationService.saveDistanceToExtentCacheEntry(diseaseGroupId, locationId, distance);
+        }
+        return distance;
     }
 
     private boolean containsClass(List<AdminUnitDiseaseExtentClass> diseaseExtentClasses, String extentClass) {
