@@ -6,7 +6,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Provenance;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.AlertService;
-import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.DataAcquisitionException;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.DiseaseOccurrenceDataAcquirer;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.domain.HealthMapAlert;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.domain.HealthMapLocation;
@@ -64,6 +63,7 @@ public class HealthMapDataConverter {
     }
 
     private Set<DiseaseOccurrence> convertHealthMapLocations(List<HealthMapLocation> healthMapLocations) {
+        // Convert
         Set<DiseaseOccurrence> convertedOccurrences = new HashSet<>();
         for (HealthMapLocation healthMapLocation : healthMapLocations) {
             Location location = locationConverter.convert(healthMapLocation);
@@ -71,7 +71,9 @@ public class HealthMapDataConverter {
                 convertHealthMapAlert(healthMapLocation, location, convertedOccurrences);
             }
         }
-        return convertedOccurrences;
+
+        // Acquire
+        return diseaseOccurrenceDataAcquirer.acquire(convertedOccurrences);
     }
 
     private void convertHealthMapAlert(HealthMapLocation healthMapLocation, Location location,
@@ -79,13 +81,11 @@ public class HealthMapDataConverter {
         if (healthMapLocation.getAlerts() != null) {
             for (HealthMapAlert healthMapAlert : healthMapLocation.getAlerts()) {
                 for (DiseaseOccurrence occurrence : alertConverter.convert(healthMapAlert, location)) {
-                    try {
-                        if (diseaseOccurrenceDataAcquirer.acquire(occurrence)) {
-                            convertedOccurrences.add(occurrence);
-                        }
-                    } catch (DataAcquisitionException e) {
-                        // DataAcquisitionException should not cause a roll back (occurrence age check failed)
-                        LOGGER.warn(e.getMessage());
+                    String ageWarning = diseaseOccurrenceDataAcquirer.checkOccurrenceAge(occurrence);
+                    if (ageWarning == null) {
+                        convertedOccurrences.add(occurrence);
+                    } else {
+                        LOGGER.warn(ageWarning);
                     }
                 }
             }

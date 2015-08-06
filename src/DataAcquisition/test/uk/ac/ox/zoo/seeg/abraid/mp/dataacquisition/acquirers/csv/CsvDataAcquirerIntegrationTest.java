@@ -212,6 +212,13 @@ public class CsvDataAcquirerIntegrationTest extends AbstractDataAcquisitionSprin
 
         int size = diseaseOccurrences.size();
         assertThat(size).isGreaterThanOrEqualTo(2);
-        return Arrays.asList(diseaseOccurrences.get(size - 2), diseaseOccurrences.get(size - 1));
+        List<DiseaseOccurrence> occurrences = Arrays.asList(diseaseOccurrences.get(size - 2), diseaseOccurrences.get(size - 1));
+        Collections.sort(occurrences, new Comparator<DiseaseOccurrence>() {
+            @Override
+            public int compare(DiseaseOccurrence o1, DiseaseOccurrence o2) {
+                return o1.getLocation().getName().compareTo(o2.getLocation().getName());
+            }
+        });
+        return occurrences;
     }
 }

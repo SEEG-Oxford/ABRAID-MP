@@ -105,16 +105,19 @@ public class CsvDataAcquirer {
 
     private Set<DiseaseOccurrence> convert(List<CsvDiseaseOccurrence> csvDiseaseOccurrences, boolean isGoldStandard,
                                             List<String> messages) {
+        // Convert
         Set<DiseaseOccurrence> convertedOccurrences = new HashSet<>();
-
         for (int i = 0; i < csvDiseaseOccurrences.size(); i++) {
             CsvDiseaseOccurrence csvDiseaseOccurrence = csvDiseaseOccurrences.get(i);
+            DiseaseOccurrence occurrence = null;
             try {
                 // Convert the CSV disease occurrence into an ABRAID disease occurrence
-                DiseaseOccurrence occurrence = converter.convert(csvDiseaseOccurrence, isGoldStandard);
-                // Now acquire the ABRAID disease occurrence
-                if (diseaseOccurrenceDataAcquirer.acquire(occurrence)) {
+                occurrence = converter.convert(csvDiseaseOccurrence, isGoldStandard);
+                String ageWarning = diseaseOccurrenceDataAcquirer.checkOccurrenceAge(occurrence);
+                if (ageWarning == null) {
                     convertedOccurrences.add(occurrence);
+                } else {
+                    throw new DataAcquisitionException(ageWarning);
                 }
             } catch (DataAcquisitionException e) {
                 // This CSV disease occurrence could not be acquired. So add the exception message to the list of
@@ -123,9 +126,11 @@ public class CsvDataAcquirer {
                 LOGGER.warn(message);
                 messages.add(message);
             }
+
         }
 
-        return convertedOccurrences;
+        // Acquire
+        return diseaseOccurrenceDataAcquirer.acquire(convertedOccurrences);
     }
 
     private void addConversionMessage(List<CsvDiseaseOccurrence> csvDiseaseOccurrences, List<String> messages) {

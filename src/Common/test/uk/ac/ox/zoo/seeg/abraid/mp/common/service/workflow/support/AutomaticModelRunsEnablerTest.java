@@ -89,7 +89,7 @@ public class AutomaticModelRunsEnablerTest {
         assertThat(occurrence1.getFinalWeighting()).isNull();
         assertThat(occurrence1.getFinalWeightingExcludingSpatial()).isNull();
 
-        verify(diseaseOccurrenceValidationService).addValidationParameters(Arrays.asList(occurrence2));
+        verify(diseaseOccurrenceValidationService).addValidationParameters(Arrays.asList(occurrence2), false);
         verify(diseaseService).saveDiseaseOccurrence(occurrence1);
         verify(diseaseService).saveDiseaseOccurrence(occurrence2);
     }

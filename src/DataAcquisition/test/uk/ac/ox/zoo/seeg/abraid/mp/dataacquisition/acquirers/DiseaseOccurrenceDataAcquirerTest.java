@@ -15,12 +15,8 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.qc.PostQCManager;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.qc.QCManager;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
-import static com.googlecode.catchexception.CatchException.catchException;
-import static com.googlecode.catchexception.CatchException.caughtException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -55,10 +51,10 @@ public class DiseaseOccurrenceDataAcquirerTest {
         mockDiseaseOccurrenceAlreadyExists(occurrence, true);
 
         // Act
-        boolean result = acquirer.acquire(occurrence);
+        Set<DiseaseOccurrence> result = acquirer.acquire(new HashSet<>(Arrays.asList(occurrence)));
 
         // Assert
-        assertThat(result).isFalse();
+        assertThat(result).isEmpty();
         verify(diseaseService, never()).saveDiseaseOccurrence(any(DiseaseOccurrence.class));
     }
 
@@ -71,7 +67,7 @@ public class DiseaseOccurrenceDataAcquirerTest {
                 Arrays.asList(existingLocation));
 
         // Act
-        boolean result = acquirer.acquire(occurrence);
+        Set<DiseaseOccurrence> result = acquirer.acquire(new HashSet<>(Arrays.asList(occurrence)));
 
         // Assert
         assertThat(occurrence.getLocation()).isSameAs(existingLocation);
@@ -92,7 +88,7 @@ public class DiseaseOccurrenceDataAcquirerTest {
                 Arrays.asList(existingLocation));
 
         // Act
-        boolean result = acquirer.acquire(occurrence);
+        Set<DiseaseOccurrence> result = acquirer.acquire(new HashSet<>(Arrays.asList(occurrence)));
 
         // Assert
         assertThat(occurrence.getLocation()).isSameAs(existingLocation);
@@ -112,7 +108,7 @@ public class DiseaseOccurrenceDataAcquirerTest {
                 Arrays.asList(existingLocation));
 
         // Act
-        boolean result = acquirer.acquire(occurrence);
+        Set<DiseaseOccurrence> result = acquirer.acquire(new HashSet<>(Arrays.asList(occurrence)));
 
         // Assert
         assertThat(occurrence.getLocation()).isSameAs(existingLocation);
@@ -133,7 +129,7 @@ public class DiseaseOccurrenceDataAcquirerTest {
                 Arrays.asList(existingLocation1, existingLocation2));
 
         // Act
-        boolean result = acquirer.acquire(occurrence);
+        Set<DiseaseOccurrence> result = acquirer.acquire(new HashSet<>(Arrays.asList(occurrence)));
 
         // Assert
         assertThat(occurrence.getLocation()).isSameAs(existingLocation1);
@@ -154,7 +150,7 @@ public class DiseaseOccurrenceDataAcquirerTest {
                 Arrays.asList(existingLocation1, existingLocation2));
 
         // Act
-        boolean result = acquirer.acquire(occurrence);
+        Set<DiseaseOccurrence> result = acquirer.acquire(new HashSet<>(Arrays.asList(occurrence)));
 
         // Assert
         assertThat(occurrence.getLocation()).isSameAs(existingLocation2);
@@ -178,7 +174,7 @@ public class DiseaseOccurrenceDataAcquirerTest {
                 Arrays.asList(existingLocation1, existingLocation2));
 
         // Act
-        boolean result = acquirer.acquire(occurrence);
+        Set<DiseaseOccurrence> result = acquirer.acquire(new HashSet<>(Arrays.asList(occurrence)));
 
         // Assert
         assertThat(occurrence.getLocation()).isSameAs(existingLocation1);
@@ -203,7 +199,7 @@ public class DiseaseOccurrenceDataAcquirerTest {
         mockRunQCWithPointChange(currentLocation, pointAfterQc, true);
 
         // Act
-        boolean result = acquirer.acquire(occurrence);
+        Set<DiseaseOccurrence> result = acquirer.acquire(new HashSet<>(Arrays.asList(occurrence)));
 
         // Assert
         assertThat(occurrence.getLocation()).isSameAs(existingLocation);
@@ -221,7 +217,7 @@ public class DiseaseOccurrenceDataAcquirerTest {
         mockRunQC(occurrence.getLocation(), true);
 
         // Act
-        boolean result = acquirer.acquire(occurrence);
+        Set<DiseaseOccurrence> result = acquirer.acquire(new HashSet<>(Arrays.asList(occurrence)));
 
         // Assert
         assertThat(occurrence.getLocation().hasPassedQc()).isTrue();
@@ -243,7 +239,7 @@ public class DiseaseOccurrenceDataAcquirerTest {
         mockRunQC(occurrence.getLocation(), true);
 
         // Act
-        boolean result = acquirer.acquire(occurrence);
+        Set<DiseaseOccurrence> result = acquirer.acquire(new HashSet<>(Arrays.asList(occurrence)));
 
         // Assert
         assertThat(occurrence.getLocation().hasPassedQc()).isTrue();
@@ -252,7 +248,7 @@ public class DiseaseOccurrenceDataAcquirerTest {
     }
 
     @Test
-    public void acquireSavesGoldStandardDiseaseOccurrence() {
+    public void  checkOccurrenceAgeAcceptsGoldStandardDiseaseOccurrence() {
         // Arrange
         DiseaseOccurrence occurrence = createGoldStandardOccurrence();
         mockGetLocationsByPointAndPrecision(occurrence.getLocation().getGeom(), occurrence.getLocation().getPrecision(),
@@ -260,43 +256,27 @@ public class DiseaseOccurrenceDataAcquirerTest {
         mockRunQC(occurrence.getLocation(), true);
 
         // Act
-        boolean result = acquirer.acquire(occurrence);
+        String result = acquirer.checkOccurrenceAge(occurrence);
 
         // Assert
-        assertThat(occurrence.getLocation().hasPassedQc()).isTrue();
-        verify(postQcManager).runPostQCProcesses(same(occurrence.getLocation()));
-        verifySuccessfulSave(occurrence, true, result);
+        assertThat(result).isNull();
     }
 
     @Test
-    public void acquireRejectsNullDiseaseOccurrence() {
-        // Arrange
-        DiseaseOccurrence occurrence = null;
-
-        // Act
-        boolean result = acquirer.acquire(occurrence);
-
-        // Assert
-        assertThat(result).isFalse();
-        verify(diseaseService, never()).saveDiseaseOccurrence(any(DiseaseOccurrence.class));
-    }
-
-    @Test
-    public void acquireRejectsOutdatedDiseaseOccurrence() {
+    public void checkOccurrenceAgeRejectsOutdatedDiseaseOccurrence() {
         // Arrange
         DiseaseOccurrence occurrence = createDefaultDiseaseOccurrence();
         occurrence.setOccurrenceDate(DateTime.now().minusYears(1).minusDays(1));
 
         // Act
-        catchException(acquirer).acquire(occurrence);
+        String result = acquirer.checkOccurrenceAge(occurrence);
 
         // Assert
-        assertThat(caughtException()).hasMessage("Occurrence date for occurrence is older than the max allowable age");
-        verify(diseaseService, never()).saveDiseaseOccurrence(any(DiseaseOccurrence.class));
+        assertThat(result).isEqualTo("Occurrence date for occurrence is older than the max allowable age");
     }
 
     @Test
-    public void acquireSavesOutdatedGoldStandardCSVDiseaseOccurrence() {
+    public void checkOccurrenceAgeAcceptsOutdatedGoldStandardCSVDiseaseOccurrence() {
         // Arrange
         DiseaseOccurrence occurrence = createGoldStandardOccurrence();
         occurrence.setOccurrenceDate(DateTime.now().minusYears(1).minusDays(1));
@@ -305,16 +285,14 @@ public class DiseaseOccurrenceDataAcquirerTest {
         mockRunQC(occurrence.getLocation(), true);
 
         // Act
-        boolean result = acquirer.acquire(occurrence);
+        String result = acquirer.checkOccurrenceAge(occurrence);
 
         // Assert
-        assertThat(occurrence.getLocation().hasPassedQc()).isTrue();
-        verify(postQcManager).runPostQCProcesses(same(occurrence.getLocation()));
-        verifySuccessfulSave(occurrence, true, result);
+        assertThat(result).isNull();
     }
 
     @Test
-    public void acquireSavesOutdatedNoGoldStandardCSVDiseaseOccurrence() {
+    public void checkOccurrenceAgeAcceptsOutdatedNoGoldStandardCSVDiseaseOccurrence() {
         // Arrange
         DiseaseOccurrence occurrence = createGoldStandardOccurrence();
         occurrence.setOccurrenceDate(DateTime.now().minusYears(1).minusDays(1));
@@ -323,30 +301,28 @@ public class DiseaseOccurrenceDataAcquirerTest {
         mockRunQC(occurrence.getLocation(), true);
 
         // Act
-        boolean result = acquirer.acquire(occurrence);
+        String result = acquirer.checkOccurrenceAge(occurrence);
 
         // Assert
-        assertThat(occurrence.getLocation().hasPassedQc()).isTrue();
-        verify(postQcManager).runPostQCProcesses(same(occurrence.getLocation()));
-        verifySuccessfulSave(occurrence, true, result);
+        assertThat(result).isNull();
     }
 
     @Test
-    public void acquireRejectsFutureDiseaseOccurrence() {
+    public void checkOccurrenceAgeRejectsFutureDiseaseOccurrence() {
         // Arrange
         DiseaseOccurrence occurrence = createDefaultDiseaseOccurrence();
         occurrence.setOccurrenceDate(DateTime.now().plusDays(2));
 
         // Act
-        catchException(acquirer).acquire(occurrence);
+        String result = acquirer.checkOccurrenceAge(occurrence);
 
         // Assert
-        assertThat(caughtException()).hasMessage("Occurrence date for occurrence is in the future");
+        assertThat(result).isEqualTo("Occurrence date for occurrence is in the future");
         verify(diseaseService, never()).saveDiseaseOccurrence(any(DiseaseOccurrence.class));
     }
 
     @Test
-    public void acquireSavesOccurrenceJustInTheFuture() {
+    public void checkOccurrenceAgeAcceptsOccurrenceJustInTheFuture() {
         // Arrange -- This is to protect against date time zone edge cases
         DiseaseOccurrence occurrence = createGoldStandardOccurrence();
         occurrence.setOccurrenceDate(DateTime.now().plusDays(1));
@@ -355,12 +331,10 @@ public class DiseaseOccurrenceDataAcquirerTest {
         mockRunQC(occurrence.getLocation(), true);
 
         // Act
-        boolean result = acquirer.acquire(occurrence);
+        String result = acquirer.checkOccurrenceAge(occurrence);
 
         // Assert
-        assertThat(occurrence.getLocation().hasPassedQc()).isTrue();
-        verify(postQcManager).runPostQCProcesses(same(occurrence.getLocation()));
-        verifySuccessfulSave(occurrence, true, result);
+        assertThat(result).isNull();
     }
 
     private DiseaseOccurrence createDefaultDiseaseOccurrence() {
@@ -428,10 +402,10 @@ public class DiseaseOccurrenceDataAcquirerTest {
         }).when(qcManager).performQC(same(location));
     }
 
-    private void verifySuccessfulSave(DiseaseOccurrence occurrence, boolean isGoldStandard, boolean result) {
-        verify(diseaseOccurrenceValidationService).addValidationParametersWithChecks(same(occurrence));
+    private void verifySuccessfulSave(DiseaseOccurrence occurrence, boolean isGoldStandard, Set<DiseaseOccurrence> result) {
+        verify(diseaseOccurrenceValidationService).addValidationParameters(eq(Arrays.asList(occurrence)), eq(true));
         verify(diseaseService).saveDiseaseOccurrence(same(occurrence));
-        assertThat(result).isTrue();
+        assertThat(result).containsOnly(occurrence);
     }
 
     /**

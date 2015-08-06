@@ -107,7 +107,7 @@ public class CsvDataAcquirerTest {
         // Disease occurrence 4 has location 4 (passed QC) but was not saved
         // Disease occurrence 5 has location 1 (passed QC) but was not saved
         // Disease occurrence 6 has location 2 (failed QC)
-        // Disease occurrence 7 has location 3 (passed QC)
+        // Disease occurrence 7 has location 3 (passed QC) // rejected during "acquire"
         // Disease occurrence 8 has location 4 (passed QC) but was not saved
 
         // Arrange
@@ -117,14 +117,16 @@ public class CsvDataAcquirerTest {
         Location location3 = createLocation(3, true);
         Location location4 = createLocation(4, true);
 
-        createAndSetUpDiseaseOccurrence(1, location1, isGoldStandard, true);
-        createAndSetUpDiseaseOccurrence(2, location2, isGoldStandard, true);
-        createAndSetUpDiseaseOccurrence(3, location3, isGoldStandard, true);
-        createAndSetUpDiseaseOccurrence(4, location4, isGoldStandard, false);
-        createAndSetUpDiseaseOccurrence(5, location1, isGoldStandard, false);
-        createAndSetUpDiseaseOccurrence(6, location2, isGoldStandard, true);
-        createAndSetUpDiseaseOccurrence(7, location3, isGoldStandard, true);
-        createAndSetUpDiseaseOccurrence(8, location4, isGoldStandard, false);
+        DiseaseOccurrence o1 = createAndSetUpDiseaseOccurrence(1, location1, isGoldStandard, true);
+        DiseaseOccurrence o2 = createAndSetUpDiseaseOccurrence(2, location2, isGoldStandard, true);
+        DiseaseOccurrence o3 = createAndSetUpDiseaseOccurrence(3, location3, isGoldStandard, true);
+        DiseaseOccurrence o4 = createAndSetUpDiseaseOccurrence(4, location4, isGoldStandard, false);
+        DiseaseOccurrence o5 = createAndSetUpDiseaseOccurrence(5, location1, isGoldStandard, false);
+        DiseaseOccurrence o6 = createAndSetUpDiseaseOccurrence(6, location2, isGoldStandard, true);
+        DiseaseOccurrence o7 = createAndSetUpDiseaseOccurrence(7, location3, isGoldStandard, true);
+        DiseaseOccurrence o8 = createAndSetUpDiseaseOccurrence(8, location4, isGoldStandard, false);
+
+        mockAcquire(Arrays.asList(o1, o2, o3, o6, o7), Arrays.asList(o1, o2, o3, o6));
 
         String csv = "\n1\n2\n3\n4\n5\n6\n7\n8\n";
 
@@ -132,9 +134,12 @@ public class CsvDataAcquirerTest {
         List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv.getBytes(), isGoldStandard);
 
         // Assert
-        assertThat(messages).hasSize(2);
+        assertThat(messages).hasSize(5);
         assertThat(messages.get(0)).isEqualTo("Found 8 CSV file line(s) to convert.");
-        assertThat(messages.get(1)).isEqualTo("Saved 5 disease occurrence(s) in 3 location(s) (of which 2 location(s) passed QC).");
+        assertThat(messages.get(1)).isEqualTo("Saved 4 disease occurrence(s) in 3 location(s) (of which 2 location(s) passed QC).");
+        assertThat(messages.get(2)).isEqualTo("Error in CSV file on line 5: BAD.");
+        assertThat(messages.get(3)).isEqualTo("Error in CSV file on line 6: BAD.");
+        assertThat(messages.get(4)).isEqualTo("Error in CSV file on line 9: BAD.");
     }
 
     @Test
@@ -157,17 +162,14 @@ public class CsvDataAcquirerTest {
 
         String csv = "\n1\n2\n3\n4\n5\n6\n7\n8\n";
 
+        List<DiseaseOccurrence> all = Arrays.asList(diseaseOccurrence1, diseaseOccurrence2, diseaseOccurrence3, diseaseOccurrence6, diseaseOccurrence7);
+        mockAcquire(all, all);
+
         // Act
         csvDataAcquirer.acquireDataFromCsv(csv.getBytes(), isGoldStandard);
 
         // Assert
-        verify(manualValidationEnforcer).addRandomSubsetToManualValidation(eq(new HashSet<>(Arrays.asList(
-                diseaseOccurrence1,
-                diseaseOccurrence2,
-                diseaseOccurrence3,
-                diseaseOccurrence6,
-                diseaseOccurrence7
-            ))));
+        verify(manualValidationEnforcer).addRandomSubsetToManualValidation(eq(new HashSet<>(all)));
     }
 
     @Test
@@ -191,8 +193,11 @@ public class CsvDataAcquirerTest {
         Location location1 = createLocation(1, true);
         Location location2 = createLocation(2, false);
 
-        createAndSetUpDiseaseOccurrence(1, location1, isGoldStandard, true);
-        createAndSetUpDiseaseOccurrence(2, location2, isGoldStandard, true);
+        DiseaseOccurrence o1 = createAndSetUpDiseaseOccurrence(1, location1, isGoldStandard, true);
+        DiseaseOccurrence o2 = createAndSetUpDiseaseOccurrence(2, location2, isGoldStandard, true);
+
+        List<DiseaseOccurrence> all = Arrays.asList(o1, o2);
+        mockAcquire(all, all);
 
         String csv = "\n1\n2\n";
 
@@ -212,13 +217,19 @@ public class CsvDataAcquirerTest {
     }
 
     private DiseaseOccurrence createAndSetUpDiseaseOccurrence(int id, Location location, boolean isGoldStandard,
-                                                 boolean wasDiseaseOccurrenceSaved) {
+                                                 boolean isOccurrenceSafe) {
         DiseaseOccurrence diseaseOccurrence = new DiseaseOccurrence(id);
         diseaseOccurrence.setLocation(location);
         CsvDiseaseOccurrence csvDiseaseOccurrence = new CsvDiseaseOccurrence();
         csvDiseaseOccurrence.setSite(Integer.toString(id));
         when(converter.convert(csvDiseaseOccurrence, isGoldStandard)).thenReturn(diseaseOccurrence);
-        when(diseaseOccurrenceDataAcquirer.acquire(diseaseOccurrence)).thenReturn(wasDiseaseOccurrenceSaved);
+        if (!isOccurrenceSafe) {
+           when(diseaseOccurrenceDataAcquirer.checkOccurrenceAge(diseaseOccurrence)).thenReturn("BAD");
+        }
         return diseaseOccurrence;
+    }
+
+    private void mockAcquire(List<DiseaseOccurrence> diseaseOccurrences, List<DiseaseOccurrence> savedOccurrences) {
+        when(diseaseOccurrenceDataAcquirer.acquire(eq(new HashSet<>(diseaseOccurrences)))).thenReturn(new HashSet<>(savedOccurrences));
     }
 }
