@@ -8,6 +8,10 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DistanceToExtentCacheEntryId;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * Tests for DistanceToExtentCacheEntryDao.
+ * Copyright (c) 2015 University of Oxford
+ */
 public class DistanceToExtentCacheEntryDaoTest extends AbstractCommonSpringIntegrationTests {
     @Autowired
     private DistanceToExtentCacheEntryDao distanceToExtentCacheEntryDao;
