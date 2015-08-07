@@ -25,7 +25,8 @@ define([
         }, self);
 
         self.tif = ko.computed(function () {
-            return activeLayer() ? baseUrl + "atlas/results/" + activeLayer().run.id + ".tif" : "#";
+            return activeLayer() ?
+                baseUrl + "atlas/results/" + activeLayer().run.id + "_" + activeLayer().type + ".tif" : "#";
         }, self);
 
         self.occurrences = ko.computed(function () {

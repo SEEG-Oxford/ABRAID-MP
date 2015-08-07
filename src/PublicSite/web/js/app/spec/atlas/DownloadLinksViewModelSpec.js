@@ -78,13 +78,13 @@ define([
             it("updates to reflect the 'active-atlas-layer' through an event subscription", function () {
                 expect(vm.tif()).toBe("#");
                 ko.postbox.publish("active-atlas-layer", { type: "l1type", run: { id: "asdf" } });
-                expect(vm.tif()).toContain("/results/asdf.tif");
+                expect(vm.tif()).toContain("/results/asdf_l1type.tif");
                 ko.postbox.publish("active-atlas-layer", { type: "l2type", run: { id: "wert" } });
-                expect(vm.tif()).toContain("/results/wert.tif");
+                expect(vm.tif()).toContain("/results/wert_l2type.tif");
                 ko.postbox.publish("active-atlas-layer", undefined);
                 expect(vm.tif()).toBe("#");
                 ko.postbox.publish("active-atlas-layer", { type: "l3type", run: { id: "zxcv" } });
-                expect(vm.tif()).toContain("/results/zxcv.tif");
+                expect(vm.tif()).toContain("/results/zxcv_l3type.tif");
             });
         });
 
