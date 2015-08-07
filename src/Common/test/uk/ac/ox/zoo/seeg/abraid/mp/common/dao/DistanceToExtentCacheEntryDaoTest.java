@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DistanceToExtentCacheEntry;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DistanceToExtentCacheEntryId;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidationParameterCacheEntryId;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -27,7 +27,7 @@ public class DistanceToExtentCacheEntryDaoTest extends AbstractCommonSpringInteg
         // Act
         distanceToExtentCacheEntryDao.save(entry);
         entry = null;
-        entry = distanceToExtentCacheEntryDao.getById(new DistanceToExtentCacheEntryId(87, 6));
+        entry = distanceToExtentCacheEntryDao.getById(new ValidationParameterCacheEntryId(87, 6));
 
         // Assert
         assertThat(entry.getDistance()).isEqualTo(expectedDistance);
@@ -49,7 +49,7 @@ public class DistanceToExtentCacheEntryDaoTest extends AbstractCommonSpringInteg
         distanceToExtentCacheEntryDao.clearCacheForDisease(2);
 
         // Assert
-        assertThat(distanceToExtentCacheEntryDao.getById(new DistanceToExtentCacheEntryId(1, 6))).isNotNull();
-        assertThat(distanceToExtentCacheEntryDao.getById(new DistanceToExtentCacheEntryId(2, 12))).isNotNull();
+        assertThat(distanceToExtentCacheEntryDao.getById(new ValidationParameterCacheEntryId(1, 6))).isNotNull();
+        assertThat(distanceToExtentCacheEntryDao.getById(new ValidationParameterCacheEntryId(2, 12))).isNotNull();
     }
 }

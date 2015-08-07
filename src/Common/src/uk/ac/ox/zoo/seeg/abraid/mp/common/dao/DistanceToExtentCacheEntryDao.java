@@ -1,7 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DistanceToExtentCacheEntry;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DistanceToExtentCacheEntryId;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidationParameterCacheEntryId;
 
 /**
  * Interface for the DistanceToExtentCacheEntry entity's Data Access Object.
@@ -13,7 +13,7 @@ public interface DistanceToExtentCacheEntryDao {
      * @param id The location and disease pair.
      * @return The cached entry or null.
      */
-    DistanceToExtentCacheEntry getById(DistanceToExtentCacheEntryId id);
+    DistanceToExtentCacheEntry getById(ValidationParameterCacheEntryId id);
 
     /**
      * Clears the "distance to disease extent" cache of all values for a disease (i.e. the extent has changed).

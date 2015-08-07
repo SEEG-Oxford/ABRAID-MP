@@ -11,6 +11,7 @@ import org.springframework.test.context.ContextConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ValidationParameterCacheService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.RasterFilePathFactory;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
@@ -19,9 +20,7 @@ import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.offset;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.same;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Integration tests for the EnvironmentalSuitabilityHelper class.
@@ -58,9 +57,15 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractSprin
     @ReplaceWithMock
     private RasterFilePathFactory rasterFilePathFactory;
 
+    @Autowired
+    @ReplaceWithMock
+    private ValidationParameterCacheService cacheService;
+
     @Before
     public void setUp() {
         diseaseGroup = diseaseService.getDiseaseGroupById(87);
+        reset(cacheService);
+        when(cacheService.getEnvironmentalSuitabilityFromCache(anyInt(), anyInt())).thenReturn(null);
     }
 
     @Test
@@ -130,6 +135,24 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractSprin
         findEnvironmentalSuitabilityShape(0, 0, 321, LocationPrecision.ADMIN2, 0.491874);
     }
 
+    @Test
+    public void findEnvironmentalSuitabilityUsesCachedValue() throws Exception {
+        // Arrange
+        DiseaseOccurrence occurrence = createOccurrence(1, 1, 1, LocationPrecision.PRECISE);
+        ModelRun modelRun = createAndSaveModelRun("test name", diseaseGroup.getId(), ModelRunStatus.COMPLETED);
+        mockGetRasterFileForModelRun(modelRun);
+        GridCoverage2D suitabilityRaster = helper.getLatestMeanPredictionRaster(diseaseGroup);
+        GridCoverage2D[] adminRasters = helper.getSingleAdminRaster(LocationPrecision.PRECISE);
+
+        when(cacheService.getEnvironmentalSuitabilityFromCache(occurrence.getDiseaseGroup().getId(), occurrence.getLocation().getId())).thenReturn(12345d);
+
+        // Act
+        Double suitability = helper.findEnvironmentalSuitability(occurrence, suitabilityRaster, adminRasters);
+
+        // Assert
+        assertThat(suitability).isEqualTo(12345d);
+    }
+
     private ModelRun createAndSaveModelRun(String name, int diseaseGroupId, ModelRunStatus status) {
         ModelRun modelRun = new ModelRun(name, diseaseGroupId, "host", DateTime.now(), DateTime.now(), DateTime.now());
         modelRun.setStatus(status);
@@ -167,6 +190,7 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractSprin
         assertThat(adminRasters[2]).isNull();
         if (expectedEnvironmentalSuitability != null) {
             assertThat(suitability).isEqualTo(expectedEnvironmentalSuitability, offset(0.0000005));
+            verify(cacheService).saveEnvironmentalSuitabilityCacheEntry(occurrence.getDiseaseGroup().getId(), occurrence.getLocation().getId(), suitability);
         } else {
             assertThat(suitability).isNull();
         }
@@ -191,6 +215,7 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractSprin
         assertThat(adminRasters[precision.getModelValue()]).isNotNull();
         if (expectedEnvironmentalSuitability != null) {
             assertThat(suitability).isEqualTo(expectedEnvironmentalSuitability, offset(0.0000005));
+            verify(cacheService).saveEnvironmentalSuitabilityCacheEntry(occurrence.getDiseaseGroup().getId(), occurrence.getLocation().getId(), suitability);
         } else {
             assertThat(suitability).isNull();
         }

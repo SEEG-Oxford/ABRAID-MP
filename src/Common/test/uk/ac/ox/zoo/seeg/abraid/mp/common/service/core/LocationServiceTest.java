@@ -23,7 +23,6 @@ public class LocationServiceTest {
     private GeoNamesLocationPrecisionDao geoNamesLocationPrecisionDao;
     private GeoNameDao geoNameDao;
     private AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao;
-    private DistanceToExtentCacheEntryDao distanceToExtentCacheEntryDao;
 
     @Before
     public void setUp() {
@@ -31,8 +30,7 @@ public class LocationServiceTest {
         geoNamesLocationPrecisionDao = mock(GeoNamesLocationPrecisionDao.class);
         geoNameDao = mock(GeoNameDao.class);
         adminUnitDiseaseExtentClassDao = mock(AdminUnitDiseaseExtentClassDao.class);
-        distanceToExtentCacheEntryDao = mock(DistanceToExtentCacheEntryDao.class);
-        locationService = new LocationServiceImpl(locationDao, geoNamesLocationPrecisionDao, geoNameDao, adminUnitDiseaseExtentClassDao, distanceToExtentCacheEntryDao);
+        locationService = new LocationServiceImpl(locationDao, geoNamesLocationPrecisionDao, geoNameDao, adminUnitDiseaseExtentClassDao);
     }
 
     @Test
@@ -159,49 +157,5 @@ public class LocationServiceTest {
 
         // Assert
         verify(locationDao).save(location);
-    }
-
-    @Test
-    public void getDistanceToExtentFromCacheReturnsCorrectValue() {
-        // Arrange
-        DistanceToExtentCacheEntry mock = mock(DistanceToExtentCacheEntry.class);
-        when(mock.getDistance()).thenReturn(3d);
-        when(distanceToExtentCacheEntryDao.getById(eq(new DistanceToExtentCacheEntryId(1, 2)))).thenReturn(mock);
-
-        // Act
-        Double result = locationService.getDistanceToExtentFromCache(1, 2);
-
-        // Assert
-        assertThat(result).isEqualTo(3d);
-    }
-
-    @Test
-    public void getDistanceToExtentFromCacheReturnsCorrectValueIfNull() {
-        // Arrange
-        when(distanceToExtentCacheEntryDao.getById(eq(new DistanceToExtentCacheEntryId(1, 2)))).thenReturn(null);
-
-        // Act
-        Double result = locationService.getDistanceToExtentFromCache(1, 2);
-
-        // Assert
-        assertThat(result).isNull();
-    }
-
-    @Test
-    public void clearDistanceToExtentCacheForDiseaseCallsDao() {
-        // Act
-        locationService.clearDistanceToExtentCacheForDisease(1);
-
-        // Assert
-        verify(distanceToExtentCacheEntryDao).clearCacheForDisease(1);
-    }
-
-    @Test
-    public void saveDistanceToExtentCacheEntryCallsDao() {
-        // Act
-        locationService.saveDistanceToExtentCacheEntry(1, 2, 3d);
-
-        // Assert
-        verify(distanceToExtentCacheEntryDao).save(eq(new DistanceToExtentCacheEntry(1, 2, 3d)));
     }
 }

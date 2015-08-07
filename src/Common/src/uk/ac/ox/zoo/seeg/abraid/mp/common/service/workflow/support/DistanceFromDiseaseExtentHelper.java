@@ -4,6 +4,7 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQL;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ValidationParameterCacheService;
 
 import java.util.List;
 
@@ -18,10 +19,13 @@ import static org.hamcrest.Matchers.equalTo;
 public class DistanceFromDiseaseExtentHelper {
     private NativeSQL nativeSQL;
     private LocationService locationService;
+    private ValidationParameterCacheService cacheService;
 
-    public DistanceFromDiseaseExtentHelper(NativeSQL nativeSQL, LocationService locationService) {
+    public DistanceFromDiseaseExtentHelper(NativeSQL nativeSQL, LocationService locationService,
+                                           ValidationParameterCacheService cacheService) {
         this.nativeSQL = nativeSQL;
         this.locationService = locationService;
+        this.cacheService = cacheService;
     }
 
     /**
@@ -34,7 +38,7 @@ public class DistanceFromDiseaseExtentHelper {
         DiseaseGroup diseaseGroup = occurrence.getDiseaseGroup();
         Location location = occurrence.getLocation();
 
-        Double distance = locationService.getDistanceToExtentFromCache(diseaseGroup.getId(), location.getId());
+        Double distance = cacheService.getDistanceToExtentFromCache(diseaseGroup.getId(), location.getId());
         if (distance != null) {
             return distance;
         }
@@ -42,7 +46,7 @@ public class DistanceFromDiseaseExtentHelper {
         distance = calculateDistance(diseaseGroup, location);
 
         if (distance != null) {
-            locationService.saveDistanceToExtentCacheEntry(diseaseGroup.getId(), location.getId(), distance);
+            cacheService.saveDistanceToExtentCacheEntry(diseaseGroup.getId(), location.getId(), distance);
         }
         return distance;
     }

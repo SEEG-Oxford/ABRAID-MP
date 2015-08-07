@@ -5,21 +5,21 @@ import javax.persistence.Embeddable;
 import java.io.Serializable;
 
 /**
- * A composite primary key used on DistanceToExtentCacheEntry objects.
+ * A composite primary key used on ValidationParameterCacheEntryId objects.
  * Copyright (c) 2015 University of Oxford
  */
 @Embeddable
-public class DistanceToExtentCacheEntryId implements Serializable {
+public class ValidationParameterCacheEntryId implements Serializable {
     @Column(name = "disease_group_id", nullable = false)
     private int diseaseGroupId;
 
     @Column(name = "location_id", nullable = false)
     private int locationId;
 
-    public DistanceToExtentCacheEntryId() {
+    public ValidationParameterCacheEntryId() {
     }
 
-    public DistanceToExtentCacheEntryId(int diseaseGroupId, int locationId) {
+    public ValidationParameterCacheEntryId(int diseaseGroupId, int locationId) {
         setDiseaseGroupId(diseaseGroupId);
         setLocationId(locationId);
     }
@@ -47,7 +47,7 @@ public class DistanceToExtentCacheEntryId implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        DistanceToExtentCacheEntryId that = (DistanceToExtentCacheEntryId) o;
+        ValidationParameterCacheEntryId that = (ValidationParameterCacheEntryId) o;
 
         if (diseaseGroupId != that.diseaseGroupId) return false;
         if (locationId != that.locationId) return false;

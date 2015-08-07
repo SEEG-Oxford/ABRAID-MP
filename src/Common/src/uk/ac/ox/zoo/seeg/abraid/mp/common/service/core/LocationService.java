@@ -56,26 +56,4 @@ public interface LocationService {
      * @param location The location to save.
      */
     void saveLocation(Location location);
-
-     /**
-     * Gets the cached "distance to disease extent" value for a location and disease pair, or null if not in the cache.
-     * @param diseaseGroupId The id of the disease group.
-     * @param locationId The id of the location.
-     * @return The cached value or null.
-     */
-    Double getDistanceToExtentFromCache(int diseaseGroupId, int locationId);
-
-    /**
-     * Clears the "distance to disease extent" cache of all values for a disease (i.e. the extent has changed).
-     * @param diseaseGroupId The id of the disease group.
-     */
-    void clearDistanceToExtentCacheForDisease(int diseaseGroupId);
-
-    /**
-     * Add a "distance to disease extent" value to the cache.
-     * @param diseaseGroupId The id of the disease group.
-     * @param locationId The id of the location.
-     * @param distance The distance to cache.
-     */
-    void saveDistanceToExtentCacheEntry(int diseaseGroupId, int locationId, double distance);
 }

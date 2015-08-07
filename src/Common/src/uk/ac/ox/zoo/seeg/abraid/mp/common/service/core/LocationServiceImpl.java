@@ -22,17 +22,13 @@ public class LocationServiceImpl implements LocationService {
     private GeoNamesLocationPrecisionDao geoNamesLocationPrecisionDao;
     private GeoNameDao geoNameDao;
     private AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao;
-    private DistanceToExtentCacheEntryDao distanceToExtentCacheDao;
-
 
     public LocationServiceImpl(LocationDao locationDao, GeoNamesLocationPrecisionDao geoNamesLocationPrecisionDao,
-                               GeoNameDao geoNameDao, AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao,
-                               DistanceToExtentCacheEntryDao distanceToExtentCacheDao) {
+                               GeoNameDao geoNameDao, AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao) {
         this.locationDao = locationDao;
         this.geoNamesLocationPrecisionDao = geoNamesLocationPrecisionDao;
         this.geoNameDao = geoNameDao;
         this.adminUnitDiseaseExtentClassDao = adminUnitDiseaseExtentClassDao;
-        this.distanceToExtentCacheDao = distanceToExtentCacheDao;
     }
 
     /**
@@ -119,38 +115,5 @@ public class LocationServiceImpl implements LocationService {
     @Override
     public void saveLocation(Location location) {
         locationDao.save(location);
-    }
-
-    /**
-     * Gets the cached "distance to disease extent" value for a location and disease pair, or null if not in the cache.
-     * @param diseaseGroupId The id of the disease group.
-     * @param locationId     The id of the location.
-     * @return The cached value or null.
-     */
-    @Override
-    public Double getDistanceToExtentFromCache(int diseaseGroupId, int locationId) {
-        DistanceToExtentCacheEntryId id = new DistanceToExtentCacheEntryId(diseaseGroupId, locationId);
-        DistanceToExtentCacheEntry entry = distanceToExtentCacheDao.getById(id);
-        return (entry != null) ? entry.getDistance() : null;
-    }
-
-    /**
-     * Clears the "distance to disease extent" cache of all values for a disease (i.e. the extent has changed).
-     * @param diseaseGroupId The id of the disease group.
-     */
-    @Override
-    public void clearDistanceToExtentCacheForDisease(int diseaseGroupId) {
-        distanceToExtentCacheDao.clearCacheForDisease(diseaseGroupId);
-    }
-
-    /**
-     * Add a "distance to disease extent" value to the cache.
-     * @param diseaseGroupId The id of the disease group.
-     * @param locationId The id of the location.
-     * @param distance The distance to cache.
-     */
-    @Override
-    public void saveDistanceToExtentCacheEntry(int diseaseGroupId, int locationId, double distance) {
-        distanceToExtentCacheDao.save(new DistanceToExtentCacheEntry(diseaseGroupId, locationId, distance));
     }
 }

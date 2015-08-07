@@ -8,29 +8,23 @@ import javax.persistence.*;
  */
 @NamedQueries({
         @NamedQuery(
-                name = "clearCacheForDisease",
+                name = "clearDistanceToExtentCacheForDisease",
                 query = "delete from DistanceToExtentCacheEntry where id.diseaseGroupId=:diseaseGroupId"
         )
 })
 @Entity
 @Table(name = "disease_to_extent_cache")
-public class DistanceToExtentCacheEntry {
-    @EmbeddedId
-    private DistanceToExtentCacheEntryId id;
-
+public class DistanceToExtentCacheEntry extends ValidationParameterCacheEntry {
     @Column(name = "distance", nullable = false)
     private double distance;
 
     public DistanceToExtentCacheEntry() {
+        super();
     }
 
     public DistanceToExtentCacheEntry(int diseaseGroupId, int locationId, double distance) {
-        this.id = new DistanceToExtentCacheEntryId(diseaseGroupId, locationId);
-        this.distance = distance;
-    }
-
-    public DistanceToExtentCacheEntryId getId() {
-        return id;
+        super(diseaseGroupId, locationId);
+        setDistance(distance);
     }
 
     public double getDistance() {
@@ -47,20 +41,19 @@ public class DistanceToExtentCacheEntry {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
 
-        DistanceToExtentCacheEntry that = (DistanceToExtentCacheEntry) o;
+        DistanceToExtentCacheEntry entry = (DistanceToExtentCacheEntry) o;
 
-        if (Double.compare(that.distance, distance) != 0) return false;
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (Double.compare(entry.distance, distance) != 0) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result;
+        int result = super.hashCode();
         long temp;
-        result = id != null ? id.hashCode() : 0;
         temp = Double.doubleToLongBits(distance);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         return result;
