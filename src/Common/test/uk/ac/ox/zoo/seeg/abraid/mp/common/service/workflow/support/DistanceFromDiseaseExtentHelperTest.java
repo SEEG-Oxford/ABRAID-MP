@@ -5,12 +5,15 @@ import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQL;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ValidationParameterCacheService;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -22,12 +25,15 @@ public class DistanceFromDiseaseExtentHelperTest {
     private NativeSQL nativeSQL;
     private DistanceFromDiseaseExtentHelper helper;
     private LocationService locationService;
+    private ValidationParameterCacheService cacheService;
 
     @Before
     public void setUp() {
         nativeSQL = mock(NativeSQL.class);
         locationService = mock(LocationService.class);
-        helper = new DistanceFromDiseaseExtentHelper(nativeSQL, locationService);
+        cacheService = mock(ValidationParameterCacheService.class);
+        when(cacheService.getDistanceToExtentFromCache(anyInt(), anyInt())).thenReturn(null);
+        helper = new DistanceFromDiseaseExtentHelper(nativeSQL, locationService, cacheService);
     }
 
     @Test
@@ -50,6 +56,7 @@ public class DistanceFromDiseaseExtentHelperTest {
 
         // Assert
         assertThat(actualDistance).isEqualTo(expectedDistance);
+        verify(cacheService).saveDistanceToExtentCacheEntry(diseaseGroupId, locationId, actualDistance);
     }
 
     @Test
@@ -72,6 +79,7 @@ public class DistanceFromDiseaseExtentHelperTest {
 
         // Assert
         assertThat(actualDistance).isEqualTo(-expectedDistance);
+        verify(cacheService).saveDistanceToExtentCacheEntry(diseaseGroupId, locationId, actualDistance);
     }
 
     @Test
@@ -153,6 +161,45 @@ public class DistanceFromDiseaseExtentHelperTest {
 
         // Assert
         assertThat(actualDistance).isNull();
+    }
+
+    public void findDistanceFromDiseaseExtentUsesCacheWhenOutside() {
+        int diseaseGroupId = 87;
+        int locationId = 123;
+        double expectedDistance = 25;
+        boolean isGlobal = false;
+        when(cacheService.getDistanceToExtentFromCache(diseaseGroupId, locationId)).thenReturn(expectedDistance);
+        Location location = mock(Location.class);
+        when(location.getId()).thenReturn(locationId);
+        setupExtentClass(diseaseGroupId, isGlobal, location, DiseaseExtentClass.UNCERTAIN, DiseaseExtentClass.POSSIBLE_ABSENCE, DiseaseExtentClass.ABSENCE);
+
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, isGlobal, location);
+
+        // Act
+        Double actualDistance = helper.findDistanceFromDiseaseExtent(occurrence);
+
+        // Assert
+        assertThat(actualDistance).isEqualTo(expectedDistance);
+    }
+
+    public void findDistanceFromDiseaseExtentUsesCacheWhenInside() {
+        // Arrange
+        int diseaseGroupId = 87;
+        int locationId = 123;
+        double expectedDistance = -25;
+        boolean isGlobal = false;
+        when(cacheService.getDistanceToExtentFromCache(diseaseGroupId, locationId)).thenReturn(expectedDistance);
+        Location location = mock(Location.class);
+        when(location.getId()).thenReturn(locationId);
+        setupExtentClass(diseaseGroupId, isGlobal, location, DiseaseExtentClass.POSSIBLE_PRESENCE, DiseaseExtentClass.PRESENCE);
+
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, isGlobal, location);
+
+        // Act
+        Double actualDistance = helper.findDistanceFromDiseaseExtent(occurrence);
+
+        // Assert
+        assertThat(actualDistance).isEqualTo(expectedDistance);
     }
 
     private void setupExtentClass(int disease, boolean isGlobal, Location location, String... extentClassNames) {

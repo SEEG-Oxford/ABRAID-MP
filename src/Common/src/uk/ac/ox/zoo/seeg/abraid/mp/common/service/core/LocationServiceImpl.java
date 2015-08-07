@@ -2,13 +2,13 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 
 import com.vividsolutions.jts.geom.Point;
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.AdminUnitDiseaseExtentClassDao;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.GeoNameDao;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.GeoNamesLocationPrecisionDao;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.LocationDao;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Service class for locations and associated geoname objects.
@@ -22,7 +22,6 @@ public class LocationServiceImpl implements LocationService {
     private GeoNamesLocationPrecisionDao geoNamesLocationPrecisionDao;
     private GeoNameDao geoNameDao;
     private AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao;
-
 
     public LocationServiceImpl(LocationDao locationDao, GeoNamesLocationPrecisionDao geoNamesLocationPrecisionDao,
                                GeoNameDao geoNameDao, AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao) {

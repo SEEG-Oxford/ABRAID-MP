@@ -18,6 +18,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvSubmodelStatistic;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelOutputsMetadata;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.CovariateService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ValidationParameterCacheService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.raster.RasterUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParser;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.ModelOutputConstants;
@@ -76,17 +77,20 @@ public class MainHandler {
     private final GeoserverRestService geoserver;
     private final RasterFilePathFactory rasterFilePathFactory;
     private final ModelOutputRasterMaskingHelper modelOutputRasterMaskingHelper;
+    private ValidationParameterCacheService cacheService;
 
     public MainHandler(ModelRunService modelRunService,
                        CovariateService covariateService,
                        GeoserverRestService geoserver,
                        RasterFilePathFactory rasterFilePathFactory,
-                       ModelOutputRasterMaskingHelper modelOutputRasterMaskingHelper) {
+                       ModelOutputRasterMaskingHelper modelOutputRasterMaskingHelper,
+                       ValidationParameterCacheService cacheService) {
         this.modelRunService = modelRunService;
         this.covariateService = covariateService;
         this.geoserver = geoserver;
         this.rasterFilePathFactory = rasterFilePathFactory;
         this.modelOutputRasterMaskingHelper = modelOutputRasterMaskingHelper;
+        this.cacheService = cacheService;
     }
 
     /**
@@ -295,6 +299,8 @@ public class MainHandler {
                 if (modelRun.getStatus() == ModelRunStatus.COMPLETED) {
                     geoserver.publishGeoTIFF(maskedFile);
                 }
+
+                cacheService.clearEnvironmentalSuitabilityCacheForDisease(modelRun.getDiseaseGroupId());
             } catch (Exception e) {
                 throw new IOException(String.format(LOG_COULD_NOT_SAVE, PREDICTION_RASTER, modelRun.getName()), e);
             }

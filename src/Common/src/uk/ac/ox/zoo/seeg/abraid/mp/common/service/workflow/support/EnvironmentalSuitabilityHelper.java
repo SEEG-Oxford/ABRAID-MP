@@ -8,6 +8,7 @@ import org.opengis.coverage.PointOutsideCoverageException;
 import org.opengis.geometry.DirectPosition;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ValidationParameterCacheService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.raster.RasterUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.RasterFilePathFactory;
@@ -26,6 +27,7 @@ public class EnvironmentalSuitabilityHelper {
             "Falling back to lat/long based environmental suitability";
     private ModelRunService modelRunService;
     private RasterFilePathFactory rasterFilePathFactory;
+    private ValidationParameterCacheService cacheService;
 
     private static final Logger LOGGER = Logger.getLogger(EnvironmentalSuitabilityHelper.class);
     private static final String ES_NOT_FOUND_NO_DATA_MESSAGE =
@@ -38,9 +40,11 @@ public class EnvironmentalSuitabilityHelper {
     private static final int RASTER_NO_DATA_VALUE = -9999;
 
     public EnvironmentalSuitabilityHelper(ModelRunService modelRunService,
-                                          RasterFilePathFactory rasterFilePathFactory) {
+                                          RasterFilePathFactory rasterFilePathFactory,
+                                          ValidationParameterCacheService cacheService) {
         this.modelRunService = modelRunService;
         this.rasterFilePathFactory = rasterFilePathFactory;
+        this.cacheService = cacheService;
     }
 
     /**
@@ -115,6 +119,24 @@ public class EnvironmentalSuitabilityHelper {
      */
     public Double findEnvironmentalSuitability(
             DiseaseOccurrence occurrence, GridCoverage2D suitabilityRaster, GridCoverage2D[] adminRasters) {
+        Integer diseaseGroupId = occurrence.getDiseaseGroup().getId();
+        Integer locationId = occurrence.getLocation().getId();
+
+        Double suitability = cacheService.getEnvironmentalSuitabilityFromCache(diseaseGroupId, locationId);
+        if (suitability != null) {
+            return suitability;
+        }
+
+        suitability = calculateEnvironmentalSuitability(occurrence, suitabilityRaster, adminRasters);
+
+        if (suitability != null) {
+            cacheService.saveEnvironmentalSuitabilityCacheEntry(diseaseGroupId, locationId, suitability);
+        }
+        return suitability;
+    }
+
+    private Double calculateEnvironmentalSuitability(DiseaseOccurrence occurrence,
+                                                     GridCoverage2D suitabilityRaster, GridCoverage2D[] adminRasters) {
         Location location = occurrence.getLocation();
         LocationPrecision precision = location.getPrecision();
         if (precision == LocationPrecision.PRECISE) {

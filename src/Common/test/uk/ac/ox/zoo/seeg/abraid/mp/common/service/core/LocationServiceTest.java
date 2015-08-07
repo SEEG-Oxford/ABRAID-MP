@@ -3,10 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 import com.vividsolutions.jts.geom.Point;
 import org.junit.Before;
 import org.junit.Test;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.AdminUnitDiseaseExtentClassDao;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.GeoNameDao;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.GeoNamesLocationPrecisionDao;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.LocationDao;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 

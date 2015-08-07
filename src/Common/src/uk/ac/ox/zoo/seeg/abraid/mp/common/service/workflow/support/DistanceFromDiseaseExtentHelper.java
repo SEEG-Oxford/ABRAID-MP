@@ -4,6 +4,7 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQL;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ValidationParameterCacheService;
 
 import java.util.List;
 
@@ -18,10 +19,13 @@ import static org.hamcrest.Matchers.equalTo;
 public class DistanceFromDiseaseExtentHelper {
     private NativeSQL nativeSQL;
     private LocationService locationService;
+    private ValidationParameterCacheService cacheService;
 
-    public DistanceFromDiseaseExtentHelper(NativeSQL nativeSQL, LocationService locationService) {
+    public DistanceFromDiseaseExtentHelper(NativeSQL nativeSQL, LocationService locationService,
+                                           ValidationParameterCacheService cacheService) {
         this.nativeSQL = nativeSQL;
         this.locationService = locationService;
+        this.cacheService = cacheService;
     }
 
     /**
@@ -34,8 +38,23 @@ public class DistanceFromDiseaseExtentHelper {
         DiseaseGroup diseaseGroup = occurrence.getDiseaseGroup();
         Location location = occurrence.getLocation();
 
-        int diseaseGroupId = diseaseGroup.getId();
+        Double distance = cacheService.getDistanceToExtentFromCache(diseaseGroup.getId(), location.getId());
+        if (distance != null) {
+            return distance;
+        }
+
+        distance = calculateDistance(diseaseGroup, location);
+
+        if (distance != null) {
+            cacheService.saveDistanceToExtentCacheEntry(diseaseGroup.getId(), location.getId(), distance);
+        }
+        return distance;
+    }
+
+    private Double calculateDistance(DiseaseGroup diseaseGroup, Location location) {
         boolean isGlobal = diseaseGroup.isGlobal();
+        int diseaseGroupId = diseaseGroup.getId();
+        int locationId = location.getId();
 
         List<AdminUnitDiseaseExtentClass> diseaseExtentClasses =
                 locationService.getAdminUnitDiseaseExtentClassesForLocation(diseaseGroupId, isGlobal, location);
@@ -54,10 +73,10 @@ public class DistanceFromDiseaseExtentHelper {
         } else if (outsideExtent) {
             // We find the distance using a PostGIS query instead of using routines in the GeometryUtils class, because
             // loading the entire disease extent geometry into memory is likely to be inefficient
-            Double distance = nativeSQL.findDistanceOutsideDiseaseExtent(diseaseGroupId, isGlobal, location.getId());
+            Double distance = nativeSQL.findDistanceOutsideDiseaseExtent(diseaseGroupId, isGlobal, locationId);
             return (distance != null) ? (+1.0 * distance) : null;
         } else if (insideExtent) {
-            Double distance = nativeSQL.findDistanceInsideDiseaseExtent(diseaseGroupId, isGlobal, location.getId());
+            Double distance = nativeSQL.findDistanceInsideDiseaseExtent(diseaseGroupId, isGlobal, locationId);
             return (distance != null) ? (-1.0 * distance) : null;
         } else {
             return null; // No extent defined

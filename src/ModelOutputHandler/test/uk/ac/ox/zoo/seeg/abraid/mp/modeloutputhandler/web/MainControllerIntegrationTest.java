@@ -26,6 +26,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvCovariateInfluence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvEffectCurveCovariateInfluence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvSubmodelStatistic;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ValidationParameterCacheService;
 import uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.geoserver.GeoserverRestService;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.SpringockitoWebContextLoader;
@@ -92,6 +93,10 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
     @Autowired
     private ModelRunDao modelRunDao;
 
+    @ReplaceWithMock
+    @Autowired
+    private ValidationParameterCacheService cacheService;
+
     @Before
     public void setup() {
         when(rasterFileDirectory.getAbsolutePath()).thenReturn(testFolder.getRoot().getAbsolutePath());
@@ -139,6 +144,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
 
         assertThatRasterWrittenToFile(run, "mean_prediction_full.tif", "mean_full");
         assertThatRasterWrittenToFile(run, "mean_prediction.tif", "mean");
+        verifyEnvironmentalSuitabilityCacheReset(run);
         assertThatRasterPublishedToGeoserver(run, "mean");
         assertThatRasterWrittenToFile(run, "prediction_uncertainty_full.tif", "uncertainty_full");
         assertThatRasterWrittenToFile(run, "prediction_uncertainty.tif", "uncertainty");
@@ -173,6 +179,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
 
         assertThatRasterFileDoesNotExist(run, "mean_full");
         assertThatRasterWrittenToFile(run, "mean_prediction.tif", "mean");
+        verifyEnvironmentalSuitabilityCacheReset(run);
         assertThatRasterFileDoesNotExist(run, "uncertainty_full");
         assertThatRasterWrittenToFile(run, "prediction_uncertainty.tif", "uncertainty");
         assertThatRasterWrittenToFile(run, "extent.tif", "extent");
@@ -335,6 +342,10 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
         File actualFile = Paths.get(testFolder.getRoot().getAbsolutePath(), run.getName() + "_" + type + ".tif").toFile();
 
         assertThat(actualFile).hasContentEqualTo(expectedFile);
+    }
+
+    private void verifyEnvironmentalSuitabilityCacheReset(ModelRun run) {
+        verify(cacheService).clearEnvironmentalSuitabilityCacheForDisease(run.getDiseaseGroupId());
     }
 
     private void assertThatRasterFileDoesNotExist(ModelRun run, String type) throws IOException {

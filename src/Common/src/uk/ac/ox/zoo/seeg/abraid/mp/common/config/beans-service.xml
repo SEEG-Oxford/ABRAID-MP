@@ -26,6 +26,7 @@
     <bean id="locationService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationServiceImpl" autowire="constructor"/>
     <bean id="geometryService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.GeometryServiceImpl" autowire="constructor"/>
     <bean id="modelRunService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunServiceImpl" autowire="constructor"/>
+    <bean id="validationParameterCacheService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ValidationParameterCacheServiceImpl" autowire="constructor"/>
     <import resource="classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/beans-email-service.xml"/>
 
     <!-- Business workflow services -->
