@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 
+import org.joda.time.LocalDate;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ModelRunDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
@@ -141,6 +142,26 @@ public class ModelRunServiceTest {
         assertThat(result).isEqualTo(expected);
     }
 
+    @Test
+    public void getFilteredModelRuns() {
+        // Arrange
+        String name = "name";
+        int diseaseGroupId = 87;
+        LocalDate minResponseDate = new LocalDate("2015-01-01");
+        LocalDate maxResponseDate = new LocalDate("2015-01-02");
+
+        Collection<ModelRun> expectedRuns = Arrays.asList(mock(ModelRun.class), mock(ModelRun.class));
+        ModelRunDao modelRunDao = mock(ModelRunDao.class);
+        when(modelRunDao.getFilteredModelRuns(name, diseaseGroupId, minResponseDate, maxResponseDate)).thenReturn(expectedRuns);
+        ModelRunService modelRunService = new ModelRunServiceImpl(modelRunDao);
+
+        // Act
+        Collection<ModelRun> result = modelRunService.getFilteredModelRuns(name, diseaseGroupId, minResponseDate, maxResponseDate);
+
+        // Assert
+        assertThat(result).isEqualTo(expectedRuns);
+        verify(modelRunDao).getFilteredModelRuns(name, diseaseGroupId, minResponseDate, maxResponseDate);
+    }
 
     @Test
     public void getModelRunsForDiseaseGroup() {

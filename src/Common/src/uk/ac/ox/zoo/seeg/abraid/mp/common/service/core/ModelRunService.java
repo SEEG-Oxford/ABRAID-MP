@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 
+import org.joda.time.LocalDate;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 
 import java.util.Collection;
@@ -58,6 +59,17 @@ public interface ModelRunService {
      * @return The completed model runs to be displayed on Atlas.
      */
     Collection<ModelRun> getCompletedModelRunsForDisplay();
+
+    /**
+     * Gets a filtered subset of the model runs (completed - automatic).
+     * @param name The name to filter on, or null.
+     * @param diseaseGroupId The disease to filter on, or null.
+     * @param minResponseDate The min response date to filter on, or null.
+     * @param maxResponseDate The max response date to filter on, or null.
+     * @return A filtered list of model runs.
+     */
+    Collection<ModelRun> getFilteredModelRuns(String name, Integer diseaseGroupId,
+                                              LocalDate minResponseDate, LocalDate maxResponseDate);
 
     /**
      * Gets all of the servers that have been used for model runs, first sorted by the number of active model runs,

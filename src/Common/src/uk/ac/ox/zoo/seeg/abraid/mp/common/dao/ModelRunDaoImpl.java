@@ -2,6 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
+import org.joda.time.LocalDate;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 
 import java.util.Collection;
@@ -13,6 +14,24 @@ import java.util.List;
  * Copyright (c) 2014 University of Oxford
  */
 public class ModelRunDaoImpl extends AbstractDao<ModelRun, Integer> implements ModelRunDao {
+    private static final String GET_FILTERED_RUNS_BASE_QUERY =
+            "select distinct mr " +
+            "from ModelRun mr " +
+            "join fetch mr.diseaseGroup dg " +
+            "left outer join fetch mr.covariateInfluences ci " +
+            "where mr.status = 'COMPLETED' " +
+            "and dg.automaticModelRunsStartDate is not null " +
+            "and mr.requestDate >= dg.automaticModelRunsStartDate ";
+
+    private static final String NAME_FILTER =
+            "and mr.name=:name ";
+    private static final String DISEASE_GROUP_FILTER =
+            "and dg.id=:diseaseGroupId ";
+    private static final String MIN_RESPONSE_DATE_FILTER =
+            "and mr.responseDate >= :minResponseDate ";
+    private static final String MAX_RESPONSE_DATE_FILTER =
+            "and mr.responseDate <= :maxResponseDate ";
+
     public ModelRunDaoImpl(SessionFactory sessionFactory) {
         super(sessionFactory);
     }
@@ -97,6 +116,49 @@ public class ModelRunDaoImpl extends AbstractDao<ModelRun, Integer> implements M
     @Override
     public Collection<ModelRun> getModelRunsForDiseaseGroup(int diseaseGroupId) {
         return listNamedQuery("getModelRunsForDiseaseGroup", "diseaseGroupId", diseaseGroupId);
+    }
+
+    /**
+     * Gets a filtered subset of the model runs (completed - automatic).
+     * @param name The name to filter on, or null.
+     * @param diseaseGroupId The disease to filter on, or null.
+     * @param minResponseDate The min response date to filter on, or null.
+     * @param maxResponseDate The max response date to filter on, or null.
+     * @return A filtered list of model runs.
+     */
+    @Override
+    public Collection<ModelRun> getFilteredModelRuns(String name, Integer diseaseGroupId,
+                                                     LocalDate minResponseDate, LocalDate maxResponseDate) {
+        String queryString = GET_FILTERED_RUNS_BASE_QUERY;
+        if (name != null) {
+            queryString += NAME_FILTER;
+        }
+        if (diseaseGroupId != null) {
+            queryString += DISEASE_GROUP_FILTER;
+        }
+        if (minResponseDate != null) {
+            queryString += MIN_RESPONSE_DATE_FILTER;
+        }
+        if (maxResponseDate != null) {
+            queryString += MAX_RESPONSE_DATE_FILTER;
+        }
+
+        Query query = currentSession().createQuery(queryString);
+
+        if (name != null) {
+            query.setParameter("name", name);
+        }
+        if (diseaseGroupId != null) {
+            query.setParameter("diseaseGroupId", diseaseGroupId);
+        }
+        if (minResponseDate != null) {
+            query.setParameter("minResponseDate", minResponseDate.toDateTimeAtStartOfDay());
+        }
+        if (maxResponseDate != null) {
+            query.setParameter("maxResponseDate", maxResponseDate.toDateTimeAtStartOfDay().plusDays(1).minusMillis(1));
+        }
+
+        return list(query);
     }
 
     private ModelRun firstOrNull(List<ModelRun> modelRuns) {

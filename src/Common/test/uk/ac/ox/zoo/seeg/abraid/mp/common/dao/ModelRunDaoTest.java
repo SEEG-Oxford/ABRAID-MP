@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -299,12 +300,7 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
     public void getMostRecentlyRequestedModelRunWhichCompletedReturnsCorrectValueIfCompletedModelRuns() {
         // Arrange
         int diseaseGroupId = 87;
-        modelRunDao.save(modelRunMalarias1);
-        modelRunDao.save(modelRunDengue1);
-        modelRunDao.save(modelRunDengue2);
-        modelRunDao.save(modelRunDengue3);
-        modelRunDao.save(modelRunDengue4);
-        modelRunDao.save(modelRunDengue5);
+        saveStandardRuns();
 
         // Act
         ModelRun modelRun = modelRunDao.getMostRecentlyRequestedModelRunWhichCompleted(diseaseGroupId);
@@ -359,12 +355,7 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
     public void getMostRecentlyFinishedModelRunWhichCompletedReturnsCorrectValueIfCompletedModelRuns() {
         // Arrange
         int diseaseGroupId = 87;
-        modelRunDao.save(modelRunMalarias1);
-        modelRunDao.save(modelRunDengue1);
-        modelRunDao.save(modelRunDengue2);
-        modelRunDao.save(modelRunDengue3);
-        modelRunDao.save(modelRunDengue4);
-        modelRunDao.save(modelRunDengue5);
+        saveStandardRuns();
 
         // Act
         ModelRun modelRun = modelRunDao.getMostRecentlyFinishedModelRunWhichCompleted(diseaseGroupId);
@@ -476,6 +467,97 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
         assertThat(result).contains(modelRunDengue5);
     }
 
+    private void saveStandardRuns() {
+        modelRunDao.save(modelRunMalarias1);
+        modelRunDao.save(modelRunDengue1);
+        modelRunDao.save(modelRunDengue2);
+        modelRunDao.save(modelRunDengue3);
+        modelRunDao.save(modelRunDengue4);
+        modelRunDao.save(modelRunDengue5);
+    }
+
+    @Test
+    public void getFilteredModelRunsReturnsCorrectSetWithoutFilters() {
+        // Arrange
+        setModelRunStartDates("2014-07-02", "2014-07-02");
+        saveStandardRuns();
+
+        // Act
+        Collection<ModelRun> modelRuns = modelRunDao.getFilteredModelRuns(null, null, null, null);
+        // Assert
+        assertThat(modelRuns).containsOnly(modelRunDengue3, modelRunMalarias1); // Only completed automatic runs
+    }
+
+    @Test
+    public void getFilteredModelRunsReturnsCorrectSetWithNameFilter() {
+        // Arrange
+        setModelRunStartDates("2014-06-28", "2014-07-02");
+        saveStandardRuns();
+
+        // Act
+        Collection<ModelRun> modelRuns = modelRunDao.getFilteredModelRuns("dengue 2", null, null, null);
+        // Assert
+        assertThat(modelRuns).containsOnly(modelRunDengue2);
+    }
+
+    @Test
+    public void getFilteredModelRunsReturnsCorrectSetWithDiseaseFilter() {
+        // Arrange
+        setModelRunStartDates("2014-06-28", "2014-07-02");
+        saveStandardRuns();
+
+        // Act
+        Collection<ModelRun> modelRuns = modelRunDao.getFilteredModelRuns(null, 87, null, null);
+        // Assert
+        assertThat(modelRuns).containsOnly(modelRunDengue2, modelRunDengue3);
+    }
+
+    @Test
+    public void getFilteredModelRunsReturnsCorrectSetWithMinDateFilter() {
+        // Arrange
+        setModelRunStartDates("2014-06-28", "2014-07-02");
+        saveStandardRuns();
+
+        // Act
+        Collection<ModelRun> modelRuns = modelRunDao.getFilteredModelRuns(null, null, new LocalDate("2014-07-04"), null);
+        // Assert
+        assertThat(modelRuns).containsOnly(modelRunDengue2, modelRunMalarias1);
+    }
+
+    @Test
+    public void getFilteredModelRunsReturnsCorrectSetWithMaxDateFilter() {
+        // Arrange
+        setModelRunStartDates("2014-06-28", "2014-07-02");
+        saveStandardRuns();
+
+        // Act
+        Collection<ModelRun> modelRuns = modelRunDao.getFilteredModelRuns(null, null, null, new LocalDate("2014-07-03"));
+        // Assert
+        assertThat(modelRuns).containsOnly(modelRunDengue3);
+    }
+
+    @Test
+    public void getFilteredModelRunsReturnsCorrectSetWithNormalFilters() {
+        // Arrange
+        setModelRunStartDates("2014-06-28", "2014-07-02");
+        saveStandardRuns();
+
+        // Act
+        Collection<ModelRun> modelRuns = modelRunDao.getFilteredModelRuns(null, 87, new LocalDate("2014-07-03"), new LocalDate("2014-07-03"));
+        // Assert
+        assertThat(modelRuns).containsOnly(modelRunDengue3);
+    }
+
+    private void setModelRunStartDates(String dengueDate, String malariaDate) {
+        int diseaseGroupId = 87;
+        DiseaseGroup dengue = diseaseGroupDao.getById(diseaseGroupId);
+        DiseaseGroup malaria = diseaseGroupDao.getById(202);
+        dengue.setAutomaticModelRunsStartDate(new DateTime(dengueDate));
+        malaria.setAutomaticModelRunsStartDate(new DateTime(malariaDate));
+        diseaseGroupDao.save(dengue);
+        diseaseGroupDao.save(malaria);
+    }
+
     private ModelRunAdminUnitDiseaseExtentClass createAdminUnitDiseaseExtentClass(
             ModelRun run, String diseaseExtentClass,
             Integer adminUnitTropicalGaul, Integer adminUnitGlobalGaul) {
@@ -520,9 +602,9 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
 
     private ModelRun createModelRun(String name, int diseaseGroupId, ModelRunStatus status, String requestServer,
                                            String requestDate, String responseDate) {
-        ModelRun modelRun = new ModelRun(name, diseaseGroupDao.getById(diseaseGroupId), requestServer, new DateTime(requestDate), DateTime.now(), DateTime.now());
+        ModelRun modelRun = new ModelRun(name, diseaseGroupDao.getById(diseaseGroupId), requestServer, new LocalDate(requestDate).toDateTimeAtStartOfDay(), DateTime.now(), DateTime.now());
         modelRun.setStatus(status);
-        modelRun.setResponseDate(new DateTime(responseDate));
+        modelRun.setResponseDate(new LocalDate(responseDate).toDateTimeAtStartOfDay());
         return modelRun;
     }
 

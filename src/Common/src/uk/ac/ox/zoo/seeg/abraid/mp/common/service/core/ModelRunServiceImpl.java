@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.core;
 
+import org.joda.time.LocalDate;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ModelRunDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
@@ -80,6 +81,20 @@ public class ModelRunServiceImpl implements ModelRunService {
     @Override
     public Collection<ModelRun> getCompletedModelRunsForDisplay() {
         return modelRunDao.getCompletedModelRunsForDisplay();
+    }
+
+    /**
+     * Gets a filtered subset of the model runs (completed - automatic).
+     * @param name The name to filter on, or null.
+     * @param diseaseGroupId The disease to filter on, or null.
+     * @param minResponseDate The min response date to filter on, or null.
+     * @param maxResponseDate The max response date to filter on, or null.
+     * @return A filtered list of model runs.
+     */
+    @Override
+    public Collection<ModelRun> getFilteredModelRuns(String name, Integer diseaseGroupId,
+                                                     LocalDate minResponseDate, LocalDate maxResponseDate) {
+        return modelRunDao.getFilteredModelRuns(name, diseaseGroupId, minResponseDate, maxResponseDate);
     }
 
     /**

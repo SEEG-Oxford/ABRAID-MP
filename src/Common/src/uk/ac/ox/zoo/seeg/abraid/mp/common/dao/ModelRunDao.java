@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
+import org.joda.time.LocalDate;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 
 import java.util.Collection;
@@ -78,4 +79,15 @@ public interface ModelRunDao {
      * @return All the model runs for the given disease group
      */
     Collection<ModelRun> getModelRunsForDiseaseGroup(int diseaseGroupId);
+
+    /**
+     * Gets a filtered subset of the model runs (completed - automatic).
+     * @param name The name to filter on, or null.
+     * @param diseaseGroupId The disease to filter on, or null.
+     * @param minResponseDate The min response date to filter on, or null.
+     * @param maxResponseDate The max response date to filter on, or null.
+     * @return A filtered list of model runs.
+     */
+    Collection<ModelRun> getFilteredModelRuns(String name, Integer diseaseGroupId,
+                                              LocalDate minResponseDate, LocalDate maxResponseDate);
 }
