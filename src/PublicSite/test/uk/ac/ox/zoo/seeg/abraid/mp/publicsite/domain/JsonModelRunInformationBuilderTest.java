@@ -9,6 +9,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Tests the JsonModelRunInformationBuilder class.
@@ -30,7 +32,7 @@ public class JsonModelRunInformationBuilderTest {
     @Test
     public void populateLastModelRunTextWhenInProgress() {
         // Arrange
-        ModelRun modelRun = new ModelRun("name", 87, "host", new DateTime("2014-07-01T08:07:06"), DateTime.now(), DateTime.now());
+        ModelRun modelRun = new ModelRun("name", createMockDiseaseGroup(87), "host", new DateTime("2014-07-01T08:07:06"), DateTime.now(), DateTime.now());
         JsonModelRunInformationBuilder builder = new JsonModelRunInformationBuilder();
 
         // Act
@@ -43,7 +45,7 @@ public class JsonModelRunInformationBuilderTest {
     @Test
     public void populateLastModelRunTextWhenCompletedWithNoBatching() {
         // Arrange
-        ModelRun modelRun = new ModelRun("name", 87, "host", new DateTime("2014-07-01T08:07:06"), DateTime.now(), DateTime.now());
+        ModelRun modelRun = new ModelRun("name", createMockDiseaseGroup(87), "host", new DateTime("2014-07-01T08:07:06"), DateTime.now(), DateTime.now());
         modelRun.setStatus(ModelRunStatus.COMPLETED);
         modelRun.setResponseDate(new DateTime("2014-07-02T09:08:07"));
         JsonModelRunInformationBuilder builder = new JsonModelRunInformationBuilder();
@@ -58,7 +60,7 @@ public class JsonModelRunInformationBuilderTest {
     @Test
     public void populateLastModelRunTextWhenCompletedWithBatchingCompleted() {
         // Arrange
-        ModelRun modelRun = new ModelRun("name", 87, "host", new DateTime("2014-07-01T08:07:06"), DateTime.now(), DateTime.now());
+        ModelRun modelRun = new ModelRun("name", createMockDiseaseGroup(87), "host", new DateTime("2014-07-01T08:07:06"), DateTime.now(), DateTime.now());
         modelRun.setStatus(ModelRunStatus.COMPLETED);
         modelRun.setResponseDate(new DateTime("2014-07-02T09:08:07"));
         modelRun.setBatchStartDate(new DateTime("2006-12-30T04:05:06"));
@@ -78,7 +80,7 @@ public class JsonModelRunInformationBuilderTest {
     @Test
     public void populateLastModelRunTextWhenCompletedWithBatchingIncomplete() {
         // Arrange
-        ModelRun modelRun = new ModelRun("name", 87, "host", new DateTime("2014-07-01T08:07:06"), DateTime.now(), DateTime.now());
+        ModelRun modelRun = new ModelRun("name", createMockDiseaseGroup(87), "host", new DateTime("2014-07-01T08:07:06"), DateTime.now(), DateTime.now());
         modelRun.setStatus(ModelRunStatus.COMPLETED);
         modelRun.setResponseDate(new DateTime("2014-07-02T09:08:07"));
         modelRun.setBatchStartDate(new DateTime("2006-12-30T00:00:00"));
@@ -96,7 +98,7 @@ public class JsonModelRunInformationBuilderTest {
     @Test
     public void populateLastModelRunTextWhenFailedAndBatchingRequested() {
         // Arrange
-        ModelRun modelRun = new ModelRun("name", 87, "host", new DateTime("2014-07-01T08:07:06"), DateTime.now(), DateTime.now());
+        ModelRun modelRun = new ModelRun("name", createMockDiseaseGroup(87), "host", new DateTime("2014-07-01T08:07:06"), DateTime.now(), DateTime.now());
         modelRun.setStatus(ModelRunStatus.FAILED);
         modelRun.setResponseDate(new DateTime("2014-07-02T13:08:07"));
         modelRun.setBatchStartDate(new DateTime("2006-12-30T00:00:00"));
@@ -113,7 +115,7 @@ public class JsonModelRunInformationBuilderTest {
     @Test
     public void populateLastModelRunTextWhenFailedAndBatchingNotRequested() {
         // Arrange
-        ModelRun modelRun = new ModelRun("name", 87, "host", new DateTime("2014-07-01T08:07:06"), DateTime.now(), DateTime.now());
+        ModelRun modelRun = new ModelRun("name", createMockDiseaseGroup(87), "host", new DateTime("2014-07-01T08:07:06"), DateTime.now(), DateTime.now());
         modelRun.setStatus(ModelRunStatus.FAILED);
         modelRun.setResponseDate(new DateTime("2014-07-02T13:08:07"));
         JsonModelRunInformationBuilder builder = new JsonModelRunInformationBuilder();
@@ -276,6 +278,12 @@ public class JsonModelRunInformationBuilderTest {
         assertThat(information.isHasGoldStandardOccurrences()).isFalse();
     }
 
+    private DiseaseGroup createMockDiseaseGroup(int id) {
+        DiseaseGroup mock = mock(DiseaseGroup.class);
+        when(mock.getId()).thenReturn(id);
+        return mock;
+    }
+
     private DiseaseGroup createValidDiseaseGroup() {
         DiseaseGroup diseaseGroup = new DiseaseGroup(87);
         diseaseGroup.setName("Test name");
@@ -301,7 +309,7 @@ public class JsonModelRunInformationBuilderTest {
 
         ModelRun modelRun = null;
         if (previousBatchEndDate != null) {
-            modelRun = new ModelRun("name", 87, "host", new DateTime("2014-07-01T08:07:06"), DateTime.now(), DateTime.now());
+            modelRun = new ModelRun("name", createMockDiseaseGroup(87), "host", new DateTime("2014-07-01T08:07:06"), DateTime.now(), DateTime.now());
             modelRun.setBatchEndDate(getDate(previousBatchEndDate));
             modelRun.setBatchingCompletedDate(now.minusHours(2));
         }

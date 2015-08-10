@@ -84,7 +84,7 @@ public class AdminDiseaseGroupControllerTest {
     public void getModelRunInformation() {
         // Arrange
         int diseaseGroupId = 87;
-        ModelRun lastRequestedModelRun = new ModelRun("dengue 1", 87, "host", new DateTime("2014-07-02T14:15:16"), DateTime.now(), DateTime.now());
+        ModelRun lastRequestedModelRun = new ModelRun("dengue 1", createMockDiseaseGroup(87), "host", new DateTime("2014-07-02T14:15:16"), DateTime.now(), DateTime.now());
         ModelRun lastCompletedModelRun = new ModelRun();
         DiseaseOccurrenceStatistics statistics = new DiseaseOccurrenceStatistics(0, 0, null, null);
         DiseaseGroup diseaseGroup = new DiseaseGroup(87);
@@ -372,7 +372,6 @@ public class AdminDiseaseGroupControllerTest {
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
-
     @Test
     public void saveReturnsBadRequestForInvalidParentDiseaseGroup() throws Exception {
         // Arrange
@@ -389,6 +388,7 @@ public class AdminDiseaseGroupControllerTest {
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
+
 
     @Test
     public void saveReturnsBadRequestForInvalidValidatorDiseaseGroup() throws Exception {
@@ -457,7 +457,6 @@ public class AdminDiseaseGroupControllerTest {
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
-
     @Test
     public void addReturnsBadRequestForInvalidParentDiseaseGroup() throws Exception {
         // Arrange
@@ -471,6 +470,7 @@ public class AdminDiseaseGroupControllerTest {
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
+
 
     @Test
     public void addReturnsBadRequestForInvalidValidatorDiseaseGroup() throws Exception {
@@ -501,6 +501,12 @@ public class AdminDiseaseGroupControllerTest {
         // Assert
         assertThat(view).isEqualTo("admin/diseasegroups/occurrencespread");
         verify(model).addAttribute("table", table);
+    }
+
+    private DiseaseGroup createMockDiseaseGroup(int id) {
+        DiseaseGroup mock = mock(DiseaseGroup.class);
+        when(mock.getId()).thenReturn(id);
+        return mock;
     }
 
     ///CHECKSTYLE:OFF ParameterNumber - constructor for tests

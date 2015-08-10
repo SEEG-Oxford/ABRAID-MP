@@ -5,12 +5,15 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 
 import java.io.File;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Tests the RasterFilePathFactory class.
@@ -33,7 +36,7 @@ public class RasterFilePathFactoryTest {
 
     @Test
     public void getFullMeanPredictionRasterFileReturnsCorrectFile() throws IOException {
-        ModelRun modelRun = new ModelRun("testname", 87, "host", DateTime.now(), DateTime.now(), DateTime.now());
+        ModelRun modelRun = new ModelRun("testname", createMockDiseaseGroup(87), "host", DateTime.now(), DateTime.now(), DateTime.now());
         File file = builder.getFullMeanPredictionRasterFile(modelRun);
         assertThat(file.getName()).isEqualTo("testname_mean_full.tif");
         assertThat(file.getParent()).isEqualTo(resultsDirectory);
@@ -41,7 +44,7 @@ public class RasterFilePathFactoryTest {
 
     @Test
     public void getMaskedMeanPredictionRasterFileReturnsCorrectFile() throws IOException {
-        ModelRun modelRun = new ModelRun("testname", 87, "host", DateTime.now(), DateTime.now(), DateTime.now());
+        ModelRun modelRun = new ModelRun("testname", createMockDiseaseGroup(87), "host", DateTime.now(), DateTime.now(), DateTime.now());
         File file = builder.getMaskedMeanPredictionRasterFile(modelRun);
         assertThat(file.getName()).isEqualTo("testname_mean.tif");
         assertThat(file.getParent()).isEqualTo(resultsDirectory);
@@ -49,7 +52,7 @@ public class RasterFilePathFactoryTest {
 
     @Test
     public void getFullPredictionUncertaintyRasterFileReturnsCorrectFile() throws IOException {
-        ModelRun modelRun = new ModelRun("testname", 87, "host", DateTime.now(), DateTime.now(), DateTime.now());
+        ModelRun modelRun = new ModelRun("testname", createMockDiseaseGroup(87), "host", DateTime.now(), DateTime.now(), DateTime.now());
         File file = builder.getFullPredictionUncertaintyRasterFile(modelRun);
         assertThat(file.getName()).isEqualTo("testname_uncertainty_full.tif");
         assertThat(file.getParent()).isEqualTo(resultsDirectory);
@@ -57,7 +60,7 @@ public class RasterFilePathFactoryTest {
 
     @Test
     public void getMaskedPredictionUncertaintyRasterFileReturnsCorrectFile() throws IOException {
-        ModelRun modelRun = new ModelRun("testname", 87, "host", DateTime.now(), DateTime.now(), DateTime.now());
+        ModelRun modelRun = new ModelRun("testname", createMockDiseaseGroup(87), "host", DateTime.now(), DateTime.now(), DateTime.now());
         File file = builder.getMaskedPredictionUncertaintyRasterFile(modelRun);
         assertThat(file.getName()).isEqualTo("testname_uncertainty.tif");
         assertThat(file.getParent()).isEqualTo(resultsDirectory);
@@ -65,7 +68,7 @@ public class RasterFilePathFactoryTest {
 
     @Test
     public void getExtentInputRasterFileReturnsCorrectFile() throws IOException {
-        ModelRun modelRun = new ModelRun("testname", 87, "host", DateTime.now(), DateTime.now(), DateTime.now());
+        ModelRun modelRun = new ModelRun("testname", createMockDiseaseGroup(87), "host", DateTime.now(), DateTime.now(), DateTime.now());
         File file = builder.getExtentInputRasterFile(modelRun);
         assertThat(file.getName()).isEqualTo("testname_extent.tif");
         assertThat(file.getParent()).isEqualTo(resultsDirectory);
@@ -90,5 +93,11 @@ public class RasterFilePathFactoryTest {
 
     private String getAdminDirectory() throws IOException {
         return testFolder.newFolder().getAbsolutePath();
+    }
+
+    private DiseaseGroup createMockDiseaseGroup(int id) {
+        DiseaseGroup mock = mock(DiseaseGroup.class);
+        when(mock.getId()).thenReturn(id);
+        return mock;
     }
 }

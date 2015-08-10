@@ -451,7 +451,7 @@ public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTest
     }
 
     private void createAndSaveTestModelRun(int diseaseGroupId) {
-        ModelRun modelRun = new ModelRun("test" + diseaseGroupId, diseaseGroupId, "localhost", DateTime.now().minusDays(1), DateTime.now(), DateTime.now());
+        ModelRun modelRun = new ModelRun("test" + diseaseGroupId, diseaseGroupDao.getById(diseaseGroupId), "localhost", DateTime.now().minusDays(1), DateTime.now(), DateTime.now());
         modelRun.setStatus(ModelRunStatus.COMPLETED);
         modelRun.setResponseDate(DateTime.now());
         modelRunService.saveModelRun(modelRun);

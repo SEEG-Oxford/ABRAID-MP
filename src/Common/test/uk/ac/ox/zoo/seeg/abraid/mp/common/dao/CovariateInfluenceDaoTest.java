@@ -27,6 +27,9 @@ public class CovariateInfluenceDaoTest extends AbstractCommonSpringIntegrationTe
     @Autowired
     private CovariateInfluenceDao covariateInfluenceDao;
 
+    @Autowired
+    private DiseaseGroupDao diseaseGroupDao;
+
     @Test
     public void canSaveAndReload() {
         // Arrange
@@ -82,7 +85,7 @@ public class CovariateInfluenceDaoTest extends AbstractCommonSpringIntegrationTe
     }
 
     private ModelRun createModelRun(String name) {
-        ModelRun run = new ModelRun(name, 87, "host", DateTime.now(), DateTime.now(), DateTime.now());
+        ModelRun run = new ModelRun(name, diseaseGroupDao.getById(87), "host", DateTime.now(), DateTime.now(), DateTime.now());
         modelRunDao.save(run);
         return run;
     }

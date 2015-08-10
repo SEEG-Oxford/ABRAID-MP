@@ -1,11 +1,14 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.Type;
+import org.hibernate.annotations.*;
 import org.joda.time.DateTime;
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 import java.util.List;
 
 /**
@@ -21,42 +24,42 @@ import java.util.List;
         @NamedQuery(
                 name = "getLastRequestedModelRun",
                 query = "from ModelRun " +
-                        "where diseaseGroupId=:diseaseGroupId " +
+                        "where diseaseGroup.id=:diseaseGroupId " +
                         "and requestDate = " +
                         "   (select max(requestDate) from ModelRun" +
-                        "    where diseaseGroupId=:diseaseGroupId)"
+                        "    where diseaseGroup.id=:diseaseGroupId)"
         ),
         @NamedQuery(
                 name = "getMostRecentlyRequestedModelRunWhichCompleted",
                 query = "from ModelRun " +
-                        "where diseaseGroupId=:diseaseGroupId " +
+                        "where diseaseGroup.id=:diseaseGroupId " +
                         "and status = 'COMPLETED' " +
                         "and requestDate =" +
                         "   (select max(requestDate) from ModelRun" +
-                        "    where diseaseGroupId=:diseaseGroupId" +
+                        "    where diseaseGroup.id=:diseaseGroupId" +
                         "    and status = 'COMPLETED')"
         ),
         @NamedQuery(
                 name = "getMostRecentlyFinishedModelRunWhichCompleted",
                 query = "from ModelRun " +
-                        "where diseaseGroupId=:diseaseGroupId " +
+                        "where diseaseGroup.id=:diseaseGroupId " +
                         "and status = 'COMPLETED' " +
                         "and responseDate =" +
                         "   (select max(responseDate) from ModelRun" +
-                        "    where diseaseGroupId=:diseaseGroupId" +
+                        "    where diseaseGroup.id=:diseaseGroupId" +
                         "    and status = 'COMPLETED')"
         ),
         @NamedQuery(
                 name = "getCompletedModelRunsForDisplay",
-                query = "select m from ModelRun m, DiseaseGroup d " +
-                        "where m.diseaseGroupId = d.id " +
-                        "and m.status = 'COMPLETED' " +
+                query = "select m from ModelRun m " +
+                        "join fetch m.diseaseGroup d " +
+                        "where m.status = 'COMPLETED' " +
                         "and (d.automaticModelRunsStartDate is null or m.requestDate >= d.automaticModelRunsStartDate)"
         ),
         @NamedQuery(
                 name = "hasBatchingEverCompleted",
                 query = "select count(*) from ModelRun " +
-                        "where diseaseGroupId=:diseaseGroupId " +
+                        "where diseaseGroup.id=:diseaseGroupId " +
                         "and batchingCompletedDate is not null"
         ),
         @NamedQuery(
@@ -70,7 +73,7 @@ import java.util.List;
         @NamedQuery(
                 name = "getModelRunsForDiseaseGroup",
                 query = "from ModelRun " +
-                        "where diseaseGroupId=:diseaseGroupId "
+                        "where diseaseGroup.id=:diseaseGroupId "
         )
 })
 @Entity
@@ -90,9 +93,10 @@ public class ModelRun {
     @Enumerated(EnumType.STRING)
     private ModelRunStatus status;
 
-    // The ID of the disease group for the model run.
-    @Column(name = "disease_group_id")
-    private int diseaseGroupId;
+    // The disease group for the model run.
+    @ManyToOne
+    @JoinColumn(name = "disease_group_id", nullable = false)
+    private DiseaseGroup diseaseGroup;
 
     // Request server.
     @Column(name = "request_server")
@@ -177,13 +181,13 @@ public class ModelRun {
         this.id = id;
     }
 
-    public ModelRun(String name, int diseaseGroupId, String requestServer, DateTime requestDate,
+    public ModelRun(String name, DiseaseGroup diseaseGroup, String requestServer, DateTime requestDate,
                     DateTime occurrenceDataRangeStartDate, DateTime occurrenceDataRangeEndDate) {
         this.name = name;
         this.status = ModelRunStatus.IN_PROGRESS;
         this.requestServer = requestServer;
         this.requestDate = requestDate;
-        this.diseaseGroupId = diseaseGroupId;
+        this.diseaseGroup = diseaseGroup;
         this.occurrenceDataRangeStartDate = occurrenceDataRangeStartDate;
         this.occurrenceDataRangeEndDate = occurrenceDataRangeEndDate;
     }
@@ -209,11 +213,15 @@ public class ModelRun {
     }
 
     public int getDiseaseGroupId() {
-        return diseaseGroupId;
+        return diseaseGroup.getId();
     }
 
-    public void setDiseaseGroupId(int diseaseGroupId) {
-        this.diseaseGroupId = diseaseGroupId;
+    public DiseaseGroup getDiseaseGroup() {
+        return diseaseGroup;
+    }
+
+    public void setDiseaseGroup(DiseaseGroup diseaseGroup) {
+        this.diseaseGroup = diseaseGroup;
     }
 
     public String getRequestServer() {
@@ -349,7 +357,7 @@ public class ModelRun {
 
         ModelRun modelRun = (ModelRun) o;
 
-        if (diseaseGroupId != modelRun.diseaseGroupId) return false;
+        if (diseaseGroup.getId() != modelRun.diseaseGroup.getId()) return false;
         if (batchEndDate != null ? !batchEndDate.equals(modelRun.batchEndDate) : modelRun.batchEndDate != null)
             return false;
         if (batchOccurrenceCount != null ? !batchOccurrenceCount.equals(modelRun.batchOccurrenceCount) : modelRun.batchOccurrenceCount != null)
@@ -382,7 +390,7 @@ public class ModelRun {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (status != null ? status.hashCode() : 0);
-        result = 31 * result + diseaseGroupId;
+        result = 31 * result + diseaseGroup.getId();
         result = 31 * result + (requestServer != null ? requestServer.hashCode() : 0);
         result = 31 * result + (requestDate != null ? requestDate.hashCode() : 0);
         result = 31 * result + (responseDate != null ? responseDate.hashCode() : 0);
