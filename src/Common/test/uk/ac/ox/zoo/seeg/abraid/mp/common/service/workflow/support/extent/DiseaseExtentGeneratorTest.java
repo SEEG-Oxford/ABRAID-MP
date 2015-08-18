@@ -89,7 +89,7 @@ public class DiseaseExtentGeneratorTest extends BaseDiseaseExtentGenerationTests
     }
 
     @Test
-    public void generateDiseaseExtentCalculatesNewModelingExtentWithCorrectDataForAutomaticNonInitial() throws Exception {
+    public void generateDiseaseExtentCalculatesNewModellingExtentWithCorrectDataForAutomaticNonInitial() throws Exception {
         // Arrange
         setupAdminUnits(adminUnits);
         setupOldModelRun(true);
@@ -106,7 +106,7 @@ public class DiseaseExtentGeneratorTest extends BaseDiseaseExtentGenerationTests
     }
 
     @Test
-    public void generateDiseaseExtentSkipsNewModelingExtentWithCorrectDataForAutomaticInitial() throws Exception {
+    public void generateDiseaseExtentSkipsNewModellingExtentWithCorrectDataForAutomaticInitial() throws Exception {
         // Arrange
         setupAdminUnits(adminUnits);
         setupOldModelRun(false);
@@ -123,7 +123,7 @@ public class DiseaseExtentGeneratorTest extends BaseDiseaseExtentGenerationTests
     }
 
     @Test
-    public void generateDiseaseExtentSkipsNewModelingExtentWithCorrectDataForManualInitial() throws Exception {
+    public void generateDiseaseExtentSkipsNewModellingExtentWithCorrectDataForManualInitial() throws Exception {
         // Arrange
         setupAdminUnits(adminUnits);
         setupOldModelRun(false);
@@ -140,7 +140,7 @@ public class DiseaseExtentGeneratorTest extends BaseDiseaseExtentGenerationTests
     }
 
     @Test
-    public void generateDiseaseExtentSkipsNewModelingExtentWithCorrectDataForManualNonInitial() throws Exception {
+    public void generateDiseaseExtentSkipsNewModellingExtentWithCorrectDataForManualNonInitial() throws Exception {
         // Arrange
         setupAdminUnits(adminUnits);
         setupOldModelRun(true);

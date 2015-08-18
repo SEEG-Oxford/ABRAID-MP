@@ -6,7 +6,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelingLocationPrecisionAdjuster;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModellingLocationPrecisionAdjuster;
 
 /**
  * A DTO to represent a DiseaseOccurrence ready for download.
@@ -27,7 +27,7 @@ public class JsonDownloadDiseaseOccurrence extends JsonModellingDiseaseOccurrenc
     @JsonProperty("Url")
     private String url;
 
-    public JsonDownloadDiseaseOccurrence(ModelingLocationPrecisionAdjuster precisionAdjuster,
+    public JsonDownloadDiseaseOccurrence(ModellingLocationPrecisionAdjuster precisionAdjuster,
                                          double longitude, double latitude, double weight, int admin, String gaul,
                                          String date, String provenance, String feed, String url) {
         super(precisionAdjuster, longitude, latitude, weight, admin, gaul);
@@ -37,7 +37,7 @@ public class JsonDownloadDiseaseOccurrence extends JsonModellingDiseaseOccurrenc
         setUrl(url);
     }
 
-    public JsonDownloadDiseaseOccurrence(ModelingLocationPrecisionAdjuster precisionAdjuster,
+    public JsonDownloadDiseaseOccurrence(ModellingLocationPrecisionAdjuster precisionAdjuster,
                                          DiseaseOccurrence inputDiseaseOccurrence) {
         this(precisionAdjuster,
             inputDiseaseOccurrence.getLocation().getGeom().getX(),

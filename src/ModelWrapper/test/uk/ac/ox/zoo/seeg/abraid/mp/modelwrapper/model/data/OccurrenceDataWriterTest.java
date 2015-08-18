@@ -10,7 +10,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.GeoJsonDiseaseOccurrenceFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.geojson.GeoJsonNamedCrs;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelingLocationPrecisionAdjuster;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModellingLocationPrecisionAdjuster;
 
 import java.io.File;
 import java.nio.file.Paths;
@@ -113,9 +113,9 @@ public class OccurrenceDataWriterTest {
         // Arrange
         GeoJsonDiseaseOccurrenceFeatureCollection data = new GeoJsonDiseaseOccurrenceFeatureCollection(
                 Arrays.asList(occurrence));
-        ModelingLocationPrecisionAdjuster adjuster = null;
+        ModellingLocationPrecisionAdjuster adjuster = null;
         if (adjustPrecision) {
-            adjuster = mock(ModelingLocationPrecisionAdjuster.class);
+            adjuster = mock(ModellingLocationPrecisionAdjuster.class);
             when(adjuster.adjust(anyInt(), anyString())).thenReturn(-999);
         } else {
             adjuster = createNoopAdjuster();
@@ -181,8 +181,8 @@ public class OccurrenceDataWriterTest {
         assertThat(caughtException()).isInstanceOf(IllegalArgumentException.class).hasMessage("Feature level CRS are not supported.");
     }
 
-    private ModelingLocationPrecisionAdjuster createNoopAdjuster() {
-        ModelingLocationPrecisionAdjuster adjuster = mock(ModelingLocationPrecisionAdjuster.class);
+    private ModellingLocationPrecisionAdjuster createNoopAdjuster() {
+        ModellingLocationPrecisionAdjuster adjuster = mock(ModellingLocationPrecisionAdjuster.class);
         when(adjuster.adjust(anyInt(), anyString())).thenAnswer(new Answer<Integer>() {
             @Override
             public Integer answer(InvocationOnMock invocationOnMock) throws Throwable {

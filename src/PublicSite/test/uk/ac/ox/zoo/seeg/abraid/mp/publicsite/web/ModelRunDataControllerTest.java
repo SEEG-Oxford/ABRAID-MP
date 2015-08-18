@@ -12,7 +12,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.GeoJsonDiseaseOccurrenceFeatu
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonDownloadDiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.WrappedList;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelingLocationPrecisionAdjuster;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModellingLocationPrecisionAdjuster;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractDiseaseOccurrenceGeoJsonTests;
 
 import java.util.ArrayList;
@@ -198,8 +198,8 @@ public class ModelRunDataControllerTest extends AbstractDiseaseOccurrenceGeoJson
         return modelRun;
     }
 
-    private ModelingLocationPrecisionAdjuster createNoopAdjuster() {
-        ModelingLocationPrecisionAdjuster adjuster = mock(ModelingLocationPrecisionAdjuster.class);
+    private ModellingLocationPrecisionAdjuster createNoopAdjuster() {
+        ModellingLocationPrecisionAdjuster adjuster = mock(ModellingLocationPrecisionAdjuster.class);
         when(adjuster.adjust(anyInt(), anyString())).thenAnswer(new Answer<Integer>() {
             @Override
             public Integer answer(InvocationOnMock invocationOnMock) throws Throwable {

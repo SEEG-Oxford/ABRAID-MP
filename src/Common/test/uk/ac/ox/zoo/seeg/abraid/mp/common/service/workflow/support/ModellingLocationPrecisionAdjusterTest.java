@@ -6,14 +6,14 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Tests for ModelingLocationPrecisionAdjuster.
+ * Tests for ModellingLocationPrecisionAdjuster.
  * Copyright (c) 2015 University of Oxford
  */
-public class ModelingLocationPrecisionAdjusterTest {
+public class ModellingLocationPrecisionAdjusterTest {
     @Test
     public void adjustChangesTargetGaulsToPrecise() throws Exception {
         // Arrange
-        ModelingLocationPrecisionAdjuster adjuster = new ModelingLocationPrecisionAdjuster(new String[] {
+        ModellingLocationPrecisionAdjuster adjuster = new ModellingLocationPrecisionAdjuster(new String[] {
                 "1", "2", "7", "5111"
         });
 
@@ -33,7 +33,7 @@ public class ModelingLocationPrecisionAdjusterTest {
     @Test
     public void adjustLeavesOtherGaulsUnchanged() throws Exception {
         // Arrange
-        ModelingLocationPrecisionAdjuster adjuster = new ModelingLocationPrecisionAdjuster(new String[] {
+        ModellingLocationPrecisionAdjuster adjuster = new ModellingLocationPrecisionAdjuster(new String[] {
                 "1", "2", "7", "5111"
         });
 

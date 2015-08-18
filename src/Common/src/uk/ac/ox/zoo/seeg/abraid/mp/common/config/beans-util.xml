@@ -13,7 +13,7 @@
         <constructor-arg type="java.lang.String" value=" "/>
     </bean>
 
-    <bean id="modelingLocationPrecisionAdjuster" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelingLocationPrecisionAdjuster" autowire="constructor" >
+    <bean id="modellingLocationPrecisionAdjuster" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModellingLocationPrecisionAdjuster" autowire="constructor" >
         <constructor-arg name="gaulsToAdjust" ref="gaulsToAdjust" />
     </bean>
 

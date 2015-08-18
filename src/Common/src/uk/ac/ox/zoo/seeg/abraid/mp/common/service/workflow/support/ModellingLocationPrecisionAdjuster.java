@@ -12,15 +12,15 @@ import java.util.List;
  * admin qc level raster files.
  * Copyright (c) 2015 University of Oxford
  */
-public class ModelingLocationPrecisionAdjuster {
-    private static final Logger LOGGER = Logger.getLogger(ModelingLocationPrecisionAdjuster.class);
+public class ModellingLocationPrecisionAdjuster {
+    private static final Logger LOGGER = Logger.getLogger(ModellingLocationPrecisionAdjuster.class);
     private static Integer precise = LocationPrecision.PRECISE.getModelValue();
     private List<String> gaulsToAdjust;
 
-    public ModelingLocationPrecisionAdjuster(String[] gaulsToAdjust) {
+    public ModellingLocationPrecisionAdjuster(String[] gaulsToAdjust) {
         this.gaulsToAdjust = Arrays.asList(gaulsToAdjust);
         LOGGER.info(String.format(
-                "ModelingLocationPrecisionAdjuster loaded with %s gauls to adjust", gaulsToAdjust.length));
+                "ModellingLocationPrecisionAdjuster loaded with %s gauls to adjust", gaulsToAdjust.length));
     }
 
     /**

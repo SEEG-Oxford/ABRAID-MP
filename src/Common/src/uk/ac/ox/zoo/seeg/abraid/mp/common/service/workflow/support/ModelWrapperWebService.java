@@ -50,7 +50,7 @@ public class ModelWrapperWebService {
      * @param occurrences The disease occurrences for this model run.
      * @param diseaseExtent Ths disease extent for this model run, expressed as a mapping between GAUL codes
      *                      and extent class weightings.
-     * @param covariateFiles The covariate files for modeling the specified disease group.
+     * @param covariateFiles The covariate files for modelling the specified disease group.
      * @param covariateDirectory The directory where the covariate files are stored.
      * @return The model run name, or null if the run did not start successfully.
      * @throws WebServiceClientException If the web service call fails.
