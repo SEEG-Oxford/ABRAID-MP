@@ -63,7 +63,7 @@ attempt_model_run <- function() {
 
     # Load the model and its dependencies via devtools
     # The full model is available from GitHub at https://github.com/SEEG-Oxford/seegSDM
-    install_deps('model')
+    install_deps('model', dependencies = c('Depends', 'Imports'))
     load_all('model', recompile=TRUE)
     rasterOptions(tmpdir="temp")
     </#if>
