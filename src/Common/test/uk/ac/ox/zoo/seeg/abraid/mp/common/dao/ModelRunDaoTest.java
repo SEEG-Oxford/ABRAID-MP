@@ -521,7 +521,7 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
         // Act
         Collection<ModelRun> modelRuns = modelRunDao.getFilteredModelRuns(null, null, new LocalDate("2014-07-04"), null);
         // Assert
-        assertThat(modelRuns).containsOnly(modelRunDengue2, modelRunMalarias1);
+        assertThat(modelRuns).containsExactly(modelRunMalarias1, modelRunDengue2);
     }
 
     @Test

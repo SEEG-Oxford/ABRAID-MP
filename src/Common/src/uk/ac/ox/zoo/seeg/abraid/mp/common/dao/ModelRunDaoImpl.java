@@ -22,7 +22,8 @@ public class ModelRunDaoImpl extends AbstractDao<ModelRun, Integer> implements M
             "where mr.status = 'COMPLETED' " +
             "and dg.automaticModelRunsStartDate is not null " +
             "and mr.requestDate >= dg.automaticModelRunsStartDate ";
-
+    private static final String GET_FILTERED_RUNS_ORDER =
+            "order by mr.responseDate desc";
     private static final String NAME_FILTER =
             "and mr.name=:name ";
     private static final String DISEASE_GROUP_FILTER =
@@ -127,7 +128,7 @@ public class ModelRunDaoImpl extends AbstractDao<ModelRun, Integer> implements M
      * @return A filtered list of model runs.
      */
     @Override
-    public Collection<ModelRun> getFilteredModelRuns(String name, Integer diseaseGroupId,
+    public List<ModelRun> getFilteredModelRuns(String name, Integer diseaseGroupId,
                                                      LocalDate minResponseDate, LocalDate maxResponseDate) {
         String queryString = GET_FILTERED_RUNS_BASE_QUERY;
         if (name != null) {
@@ -142,6 +143,8 @@ public class ModelRunDaoImpl extends AbstractDao<ModelRun, Integer> implements M
         if (maxResponseDate != null) {
             queryString += MAX_RESPONSE_DATE_FILTER;
         }
+
+        queryString += GET_FILTERED_RUNS_ORDER;
 
         Query query = currentSession().createQuery(queryString);
 

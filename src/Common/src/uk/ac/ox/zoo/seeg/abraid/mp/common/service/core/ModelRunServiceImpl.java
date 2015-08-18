@@ -92,7 +92,7 @@ public class ModelRunServiceImpl implements ModelRunService {
      * @return A filtered list of model runs.
      */
     @Override
-    public Collection<ModelRun> getFilteredModelRuns(String name, Integer diseaseGroupId,
+    public List<ModelRun> getFilteredModelRuns(String name, Integer diseaseGroupId,
                                                      LocalDate minResponseDate, LocalDate maxResponseDate) {
         return modelRunDao.getFilteredModelRuns(name, diseaseGroupId, minResponseDate, maxResponseDate);
     }

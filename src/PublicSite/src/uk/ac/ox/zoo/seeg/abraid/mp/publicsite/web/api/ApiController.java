@@ -55,7 +55,7 @@ public class ApiController extends AbstractController {
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date minCompletionDate,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date maxCompletionDate
     ) {
-        Collection<ModelRun> runs = modelRunService.getFilteredModelRuns(
+        List<ModelRun> runs = modelRunService.getFilteredModelRuns(
                 name, diseaseGroupId, convertDate(minCompletionDate), convertDate(maxCompletionDate));
 
         List<JsonApiModelRun> converted = convert(

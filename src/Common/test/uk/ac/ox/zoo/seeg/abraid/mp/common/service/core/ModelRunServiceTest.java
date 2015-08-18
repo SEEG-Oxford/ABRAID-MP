@@ -150,7 +150,7 @@ public class ModelRunServiceTest {
         LocalDate minResponseDate = new LocalDate("2015-01-01");
         LocalDate maxResponseDate = new LocalDate("2015-01-02");
 
-        Collection<ModelRun> expectedRuns = Arrays.asList(mock(ModelRun.class), mock(ModelRun.class));
+        List<ModelRun> expectedRuns = Arrays.asList(mock(ModelRun.class), mock(ModelRun.class));
         ModelRunDao modelRunDao = mock(ModelRunDao.class);
         when(modelRunDao.getFilteredModelRuns(name, diseaseGroupId, minResponseDate, maxResponseDate)).thenReturn(expectedRuns);
         ModelRunService modelRunService = new ModelRunServiceImpl(modelRunDao);

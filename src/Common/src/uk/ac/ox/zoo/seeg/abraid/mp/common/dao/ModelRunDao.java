@@ -88,6 +88,6 @@ public interface ModelRunDao {
      * @param maxResponseDate The max response date to filter on, or null.
      * @return A filtered list of model runs.
      */
-    Collection<ModelRun> getFilteredModelRuns(String name, Integer diseaseGroupId,
+      List<ModelRun> getFilteredModelRuns(String name, Integer diseaseGroupId,
                                               LocalDate minResponseDate, LocalDate maxResponseDate);
 }
