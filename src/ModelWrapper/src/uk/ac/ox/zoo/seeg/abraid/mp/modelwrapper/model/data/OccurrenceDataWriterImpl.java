@@ -8,7 +8,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.GeoJsonDiseaseOccurrenceFeatu
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.GeoJsonDiseaseOccurrenceFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModellingDiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.geojson.GeoJsonNamedCrs;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelingLocationPrecisionAdjuster;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModellingLocationPrecisionAdjuster;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -25,10 +25,10 @@ public class OccurrenceDataWriterImpl implements OccurrenceDataWriter {
     private static final String LOG_FEATURE_CRS_WARN = "Aborted writing occurrence data due to feature level CRS.";
     private static final String LOG_WRITING_OCCURRENCE_DATA = "Writing %d occurrence data points to workspace at %s";
     private static final String LOG_TOP_LEVEL_CRS_WARN = "Aborted writing occurrence data due to incorrect CRS.";
-    private ModelingLocationPrecisionAdjuster modelingLocationPrecisionAdjuster;
+    private ModellingLocationPrecisionAdjuster modellingLocationPrecisionAdjuster;
 
-    public OccurrenceDataWriterImpl(ModelingLocationPrecisionAdjuster modelingLocationPrecisionAdjuster) {
-        this.modelingLocationPrecisionAdjuster = modelingLocationPrecisionAdjuster;
+    public OccurrenceDataWriterImpl(ModellingLocationPrecisionAdjuster modellingLocationPrecisionAdjuster) {
+        this.modellingLocationPrecisionAdjuster = modellingLocationPrecisionAdjuster;
     }
 
     /**
@@ -47,7 +47,7 @@ public class OccurrenceDataWriterImpl implements OccurrenceDataWriter {
         List<JsonModellingDiseaseOccurrence> occurrences = new ArrayList<>();
         for (GeoJsonDiseaseOccurrenceFeature occurrence : occurrenceData.getFeatures()) {
             validateOccurrence(occurrence);
-            occurrences.add(new JsonModellingDiseaseOccurrence(modelingLocationPrecisionAdjuster, occurrence));
+            occurrences.add(new JsonModellingDiseaseOccurrence(modellingLocationPrecisionAdjuster, occurrence));
         }
 
         CsvMapper csvMapper = new CsvMapper();

@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelingLocationPrecisionAdjuster;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModellingLocationPrecisionAdjuster;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyInt;
@@ -89,7 +89,7 @@ public class JsonDownloadDiseaseOccurrenceTest {
         String url = null;
         String gaul = "gaul";
 
-        ModelingLocationPrecisionAdjuster adjuster = mock(ModelingLocationPrecisionAdjuster.class);
+        ModellingLocationPrecisionAdjuster adjuster = mock(ModellingLocationPrecisionAdjuster.class);
         when(adjuster.adjust(admin, gaul)).thenReturn(admin - 1);
 
         // Act
@@ -220,7 +220,7 @@ public class JsonDownloadDiseaseOccurrenceTest {
         when(mock.getAlert().getFeed().getProvenance().getName()).thenReturn(provenance);
         when(mock.getAlert().getUrl()).thenReturn(url);
 
-        ModelingLocationPrecisionAdjuster adjuster = mock(ModelingLocationPrecisionAdjuster.class);
+        ModellingLocationPrecisionAdjuster adjuster = mock(ModellingLocationPrecisionAdjuster.class);
         when(adjuster.adjust(admin, gaul)).thenReturn(admin - 1);
         // Act
         JsonDownloadDiseaseOccurrence result = new JsonDownloadDiseaseOccurrence(adjuster, mock);
@@ -261,8 +261,8 @@ public class JsonDownloadDiseaseOccurrenceTest {
         assertThat(result).isEqualTo("{\"Longitude\":7.0,\"Latitude\":6.0,\"Weight\":5.0,\"Admin\":4,\"GAUL\":\"NA\",\"Date\":\"2015-03-07\",\"Provenance\":\"2\",\"Feed\":\"1\",\"Url\":\"-\"}");
     }
 
-    private ModelingLocationPrecisionAdjuster createNoopAdjuster() {
-        ModelingLocationPrecisionAdjuster adjuster = mock(ModelingLocationPrecisionAdjuster.class);
+    private ModellingLocationPrecisionAdjuster createNoopAdjuster() {
+        ModellingLocationPrecisionAdjuster adjuster = mock(ModellingLocationPrecisionAdjuster.class);
         when(adjuster.adjust(anyInt(), anyString())).thenAnswer(new Answer<Integer>() {
             @Override
             public Integer answer(InvocationOnMock invocationOnMock) throws Throwable {

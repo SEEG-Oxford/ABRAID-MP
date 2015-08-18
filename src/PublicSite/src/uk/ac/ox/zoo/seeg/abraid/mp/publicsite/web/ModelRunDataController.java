@@ -16,7 +16,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.GeoJsonDiseaseOccurrenceFeatu
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonDownloadDiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.WrappedList;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelingLocationPrecisionAdjuster;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModellingLocationPrecisionAdjuster;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,13 +29,13 @@ import java.util.List;
 public class ModelRunDataController {
     private static final String ATLAS_MODEL_RUN_DATA_URL = "/atlas/data/modelrun";
     private final ModelRunService modelRunService;
-    private ModelingLocationPrecisionAdjuster modelingLocationPrecisionAdjuster;
+    private ModellingLocationPrecisionAdjuster modellingLocationPrecisionAdjuster;
 
     @Autowired
     public ModelRunDataController(ModelRunService modelRunService,
-                                  ModelingLocationPrecisionAdjuster modelingLocationPrecisionAdjuster) {
+                                  ModellingLocationPrecisionAdjuster modellingLocationPrecisionAdjuster) {
         this.modelRunService = modelRunService;
-        this.modelingLocationPrecisionAdjuster = modelingLocationPrecisionAdjuster;
+        this.modellingLocationPrecisionAdjuster = modellingLocationPrecisionAdjuster;
     }
 
     /**
@@ -83,7 +83,7 @@ public class ModelRunDataController {
         List<JsonDownloadDiseaseOccurrence> json = new ArrayList<>();
         if (!inputDiseaseOccurrences.isEmpty()) {
             for (DiseaseOccurrence inputDiseaseOccurrence : inputDiseaseOccurrences) {
-                json.add(new JsonDownloadDiseaseOccurrence(modelingLocationPrecisionAdjuster, inputDiseaseOccurrence));
+                json.add(new JsonDownloadDiseaseOccurrence(modellingLocationPrecisionAdjuster, inputDiseaseOccurrence));
             }
         }
         return new WrappedList<>(json);
