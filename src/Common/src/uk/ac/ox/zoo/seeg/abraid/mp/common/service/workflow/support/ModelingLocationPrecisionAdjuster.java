@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 
+import org.apache.log4j.Logger;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 
 import java.util.Arrays;
@@ -12,11 +13,14 @@ import java.util.List;
  * Copyright (c) 2015 University of Oxford
  */
 public class ModelingLocationPrecisionAdjuster {
+    private static final Logger LOGGER = Logger.getLogger(ModelingLocationPrecisionAdjuster.class);
     private static Integer precise = LocationPrecision.PRECISE.getModelValue();
     private List<String> gaulsToAdjust;
 
     public ModelingLocationPrecisionAdjuster(String[] gaulsToAdjust) {
         this.gaulsToAdjust = Arrays.asList(gaulsToAdjust);
+        LOGGER.info(String.format(
+                "ModelingLocationPrecisionAdjuster loaded with %s gauls to adjust", gaulsToAdjust.length));
     }
 
     /**
