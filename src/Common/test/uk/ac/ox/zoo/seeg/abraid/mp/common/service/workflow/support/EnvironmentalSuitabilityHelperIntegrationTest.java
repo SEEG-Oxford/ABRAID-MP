@@ -85,6 +85,7 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractSprin
 
     @Test
     public void findEnvironmentalSuitabilityLowerLeftCorner() throws Exception {
+        findEnvironmentalSuitabilityPoint(LARGE_RASTER_XLLCORNER, LARGE_RASTER_YLLCORNER, 0.89);
         findEnvironmentalSuitabilityPrecise(LARGE_RASTER_XLLCORNER, LARGE_RASTER_YLLCORNER, 0.89);
     }
 
@@ -92,6 +93,7 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractSprin
     public void findEnvironmentalSuitabilityUpperRightCorner() throws Exception {
         double upperRightCornerX = LARGE_RASTER_XLLCORNER + (LARGE_RASTER_COLUMNS - 1) * LARGE_RASTER_CELLSIZE;
         double upperRightCornerY = LARGE_RASTER_YLLCORNER + (LARGE_RASTER_ROWS - 1) * LARGE_RASTER_CELLSIZE;
+        findEnvironmentalSuitabilityPoint(upperRightCornerX, upperRightCornerY, 0.79);
         findEnvironmentalSuitabilityPrecise(upperRightCornerX, upperRightCornerY, 0.79);
     }
 
@@ -99,6 +101,7 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractSprin
     public void findEnvironmentalSuitabilityInterpolated() throws Exception {
         double lowerLeftCornerSlightlyShiftedX = LARGE_RASTER_XLLCORNER + (LARGE_RASTER_CELLSIZE * 0.5);
         double lowerLeftCornerSlightlyShiftedY = LARGE_RASTER_YLLCORNER + (LARGE_RASTER_CELLSIZE * 0.5);
+        findEnvironmentalSuitabilityPoint(lowerLeftCornerSlightlyShiftedX, lowerLeftCornerSlightlyShiftedY, 0.89);
         findEnvironmentalSuitabilityPrecise(lowerLeftCornerSlightlyShiftedX, lowerLeftCornerSlightlyShiftedY, 0.89);
     }
 
@@ -106,6 +109,7 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractSprin
     public void findEnvironmentalSuitabilityOutOfRasterRange() throws Exception {
         double oneCellBeyondUpperRightCornerX = LARGE_RASTER_XLLCORNER + LARGE_RASTER_COLUMNS * LARGE_RASTER_CELLSIZE;
         double oneCellBeyondUpperRightCornerY = LARGE_RASTER_YLLCORNER + LARGE_RASTER_ROWS * LARGE_RASTER_CELLSIZE;
+        findEnvironmentalSuitabilityPoint(oneCellBeyondUpperRightCornerX, oneCellBeyondUpperRightCornerY, null);
         findEnvironmentalSuitabilityPrecise(oneCellBeyondUpperRightCornerX, oneCellBeyondUpperRightCornerY, null);
     }
 
@@ -114,6 +118,7 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractSprin
         // The NODATA value in the raster is in column 6 row 12 (from the top left)
         double noDataValueX = LARGE_RASTER_XLLCORNER + 5 * LARGE_RASTER_CELLSIZE;
         double noDataValueY = LARGE_RASTER_YLLCORNER + (LARGE_RASTER_ROWS - 12) * LARGE_RASTER_CELLSIZE;
+        findEnvironmentalSuitabilityPoint(noDataValueX, noDataValueY, null);
         findEnvironmentalSuitabilityPrecise(noDataValueX, noDataValueY, null);
     }
 
@@ -191,6 +196,25 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractSprin
         if (expectedEnvironmentalSuitability != null) {
             assertThat(suitability).isEqualTo(expectedEnvironmentalSuitability, offset(0.0000005));
             verify(cacheService).saveEnvironmentalSuitabilityCacheEntry(occurrence.getDiseaseGroup().getId(), occurrence.getLocation().getId(), suitability);
+        } else {
+            assertThat(suitability).isNull();
+        }
+    }
+
+    private void findEnvironmentalSuitabilityPoint(double x, double y,
+                                                     Double expectedEnvironmentalSuitability) throws Exception {
+        // Arrange
+        ModelRun modelRun = createAndSaveModelRun("test name 1", diseaseGroup.getId(), ModelRunStatus.COMPLETED);
+        mockGetRasterFileForModelRun(modelRun);
+        File suitabilityRaster = rasterFilePathFactory.getFullMeanPredictionRasterFile(modelRun);
+        double offsetForRounding = 0.00005;
+
+        // Act
+        Double suitability = helper.findPointEnvironmentalSuitability(suitabilityRaster, GeometryUtils.createPoint(x + offsetForRounding,  y + offsetForRounding));
+
+        // Assert
+        if (expectedEnvironmentalSuitability != null) {
+            assertThat(suitability).isEqualTo(expectedEnvironmentalSuitability, offset(0.0000005));
         } else {
             assertThat(suitability).isNull();
         }

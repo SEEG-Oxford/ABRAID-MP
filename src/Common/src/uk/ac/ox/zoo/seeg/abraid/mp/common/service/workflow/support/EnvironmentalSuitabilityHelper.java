@@ -180,21 +180,44 @@ public class EnvironmentalSuitabilityHelper {
     }
 
     private Double getPreciseES(Location location, GridCoverage2D raster) {
-        Double result = null;
+        Point point = location.getGeom();
 
-        if (raster != null) {
-            Point point = location.getGeom();
+        return getPointES(raster, point);
+    }
+
+    private Double getPointES(GridCoverage2D raster, Point point) {
+        Double result = null;
+        try {
+            DirectPosition position = JTS.toDirectPosition(point.getCoordinate(), GeometryUtils.WGS_84_CRS);
+            double[] resultArray = raster.evaluate(position, (double[]) null);
+            if (resultArray[0] != RASTER_NO_DATA_VALUE) {
+                result = resultArray[0];
+            } else {
+                LOGGER.debug(String.format(ES_NOT_FOUND_NO_DATA_MESSAGE, point.getX(), point.getY()));
+            }
+        } catch (PointOutsideCoverageException e) {
+            // Ignore the exception - if the point is outside of the raster area, the result is null
+            LOGGER.debug(String.format(ES_NOT_FOUND_OUTSIDE_AREA_MESSAGE, point.getX(), point.getY()));
+        }
+        return result;
+    }
+
+    /**
+     * Finds the environmental suitability of the given point, using the specified rasters.
+     * @param point The point.
+     * @param rasterFile The environmental suitability raster.
+     * @return The environmental suitability of the point according to the raster, or null if not found.
+     * @throws IOException If a value can not be extracted.
+     */
+    public Double findPointEnvironmentalSuitability(File rasterFile, Point point) throws IOException {
+        Double result = null;
+        if (rasterFile != null) {
+            GridCoverage2D raster = null;
             try {
-                DirectPosition position = JTS.toDirectPosition(point.getCoordinate(), GeometryUtils.WGS_84_CRS);
-                double[] resultArray = raster.evaluate(position, (double[]) null);
-                if (resultArray[0] != RASTER_NO_DATA_VALUE) {
-                    result = resultArray[0];
-                } else {
-                    LOGGER.debug(String.format(ES_NOT_FOUND_NO_DATA_MESSAGE, point.getX(), point.getY()));
-                }
-            } catch (PointOutsideCoverageException e) {
-                // Ignore the exception - if the point is outside of the raster area, the result is null
-                LOGGER.debug(String.format(ES_NOT_FOUND_OUTSIDE_AREA_MESSAGE, point.getX(), point.getY()));
+                raster = RasterUtils.loadRaster(rasterFile);
+                result = getPointES(raster, point);
+            } finally {
+                RasterUtils.disposeRaster(raster);
             }
         }
 

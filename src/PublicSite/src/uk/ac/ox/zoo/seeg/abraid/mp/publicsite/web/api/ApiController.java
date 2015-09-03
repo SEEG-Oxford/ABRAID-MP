@@ -18,7 +18,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.WrappedList;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
