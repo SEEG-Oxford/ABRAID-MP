@@ -3,17 +3,30 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 import com.vividsolutions.jts.geom.Point;
 import org.apache.log4j.Logger;
 import org.geotools.coverage.grid.GridCoverage2D;
+import org.geotools.coverage.grid.GridEnvelope2D;
+import org.geotools.coverage.grid.io.AbstractGridFormat;
+import org.geotools.coverage.processing.Operations;
+import org.geotools.gce.geotiff.GeoTiffFormat;
+import org.geotools.gce.geotiff.GeoTiffWriteParams;
+import org.geotools.geometry.Envelope2D;
 import org.geotools.geometry.jts.JTS;
 import org.opengis.coverage.PointOutsideCoverageException;
+import org.opengis.coverage.grid.GridCoverageWriter;
 import org.opengis.geometry.DirectPosition;
+import org.opengis.parameter.GeneralParameterValue;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.operation.TransformException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ValidationParameterCacheService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.util.raster.RasterTransformation;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.raster.RasterUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.RasterFilePathFactory;
 
+import java.awt.*;
 import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 
@@ -36,6 +49,8 @@ public class EnvironmentalSuitabilityHelper {
             "Environmental suitability at position (%f,%f) is outside of the raster area";
     private static final String READING_RASTER_FILE_MESSAGE =
             "Reading raster file %s for environmental suitability calculation";
+    private static final String TEMP_FILE_NOT_REMOVED =
+            "An intermediary file could not be removed (%s)";
 
     private static final int RASTER_NO_DATA_VALUE = -9999;
 
@@ -222,5 +237,90 @@ public class EnvironmentalSuitabilityHelper {
         }
 
         return result;
+    }
+
+    /**
+     * Create a temporary file containing a cropped version of the specified suitability raster, limited to a masked set
+     * of pixels associated with the given gaul code.
+     * @param gaulCode The gaul code.
+     * @param adminRaster The admin layer raster.
+     * @param suitabilityRaster The suitability raster.
+     * @return A temporary file containing the cropped raster.
+     * @throws IOException If a cropped raster can not be extracted.
+     */
+    public File createCroppedEnvironmentalSuitabilityRaster(final int gaulCode,
+                final File adminRaster, final File suitabilityRaster) throws IOException {
+        File maskedFile = File.createTempFile("masked", "tif");
+        File croppedFile = File.createTempFile("cropped", "tif");
+
+        // Mask the raster and record pixel bounds
+        final Rectangle cropRectangle = new Rectangle();
+        RasterUtils.transformRaster(suitabilityRaster, maskedFile, new File[]{adminRaster}, new RasterTransformation() {
+            @Override
+            public void transform(WritableRaster raster, Raster[] referenceRasters) throws IOException {
+                int minI = Integer.MAX_VALUE;
+                int minJ = Integer.MAX_VALUE;
+                int maxI = Integer.MIN_VALUE;
+                int maxJ = Integer.MIN_VALUE;
+                for (int i = 0; i < raster.getWidth(); i++) {
+                    for (int j = 0; j < raster.getHeight(); j++) {
+                        int rasterValue = raster.getSample(i, j, 0);
+                        if (rasterValue != RasterUtils.NO_DATA_VALUE) {
+                            int adminValue = referenceRasters[0].getSample(i, j, 0);
+                            if (adminValue != gaulCode) {
+                                raster.setSample(i, j, 0, RasterUtils.NO_DATA_VALUE);
+                            } else {
+                                minI = (minI > i) ? i : minI;
+                                minJ = (minJ > j) ? j : minJ;
+                                maxI = (maxI < i) ? i : maxI;
+                                maxJ = (maxJ < j) ? j : maxJ;
+                            }
+                        }
+                    }
+                }
+                cropRectangle.setBounds(minI, minJ, maxI - minI, maxJ - minJ);
+            }
+        });
+
+        // Cut to masked pixel bounds
+        GridCoverage2D maskedRaster = null;
+        GridCoverage2D croppedRaster = null;
+        try {
+            maskedRaster = RasterUtils.loadRaster(maskedFile);
+            Envelope2D cropEnvelope = null;
+            try {
+                cropEnvelope = maskedRaster.getGridGeometry().gridToWorld(new GridEnvelope2D(cropRectangle));
+            } catch (TransformException e) {
+                throw new IOException(e);
+            }
+            croppedRaster = (GridCoverage2D) (new Operations(null)).crop(maskedRaster, cropEnvelope);
+
+            // Save as compressed geotiff
+            final GeoTiffFormat format = new GeoTiffFormat();
+            final GridCoverageWriter writer = format.getWriter(croppedFile);
+            final GeoTiffWriteParams writeParams = new GeoTiffWriteParams();
+            writeParams.setCompressionMode(GeoTiffWriteParams.MODE_EXPLICIT);
+            writeParams.setCompressionType("Deflate");
+            writeParams.setCompressionQuality(1); // this equates to "level 9" (level = (int)(1 + 8*quality))
+            // https://github.com/geosolutions-it/imageio-ext/blob/master/plugin/tiff/src
+            // /main/java/it/geosolutions/imageioimpl/plugins/tiff/TIFFDeflater.java#L105
+            final ParameterValueGroup params = format.getWriteParameters();
+            params.parameter(
+                    AbstractGridFormat.GEOTOOLS_WRITE_PARAMS.getName().toString())
+                    .setValue(params);
+            writer.write(croppedRaster, params.values()
+                    .toArray(new GeneralParameterValue[1]));
+
+            // Clean up
+        } finally {
+            RasterUtils.disposeRaster(maskedRaster);
+            RasterUtils.disposeRaster(croppedRaster);
+        }
+
+        if (maskedFile.exists() && !maskedFile.delete()) {
+            LOGGER.warn(String.format(TEMP_FILE_NOT_REMOVED, maskedFile.getAbsolutePath()));
+        }
+
+        return croppedFile;
     }
 }
