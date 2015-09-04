@@ -10,9 +10,10 @@ define([
     "use strict";
 
     return function (sendJson, receiveJson, baseUrl, targetUrl, messages,
-                     excludeGenericFailureMessage, preventRepeatSubmissions) {
+                     excludeGenericFailureMessage, preventRepeatSubmissions, method) {
         var self = this;
 
+        method = method || "POST";
         excludeGenericFailureMessage = excludeGenericFailureMessage || false;
         preventRepeatSubmissions = preventRepeatSubmissions || false;
         messages = messages || {};
@@ -38,7 +39,7 @@ define([
         self.buildAjaxArgs = function () {
             var args = {};
 
-            args.method = "POST";
+            args.method = method;
             args.url = self.buildSubmissionUrl();
 
             if (sendJson) {
