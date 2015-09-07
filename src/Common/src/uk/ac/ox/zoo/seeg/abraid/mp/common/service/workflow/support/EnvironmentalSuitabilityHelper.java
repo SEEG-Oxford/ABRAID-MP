@@ -307,7 +307,7 @@ public class EnvironmentalSuitabilityHelper {
             final ParameterValueGroup params = format.getWriteParameters();
             params.parameter(
                     AbstractGridFormat.GEOTOOLS_WRITE_PARAMS.getName().toString())
-                    .setValue(params);
+                    .setValue(writeParams);
             writer.write(croppedRaster, params.values()
                     .toArray(new GeneralParameterValue[1]));
 
