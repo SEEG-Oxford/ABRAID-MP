@@ -73,5 +73,29 @@ define([
                 expect(paramsDownload).toEqual(_(paramsDisplay).extend(extraDownloadParameters));
             });
         });
+
+        describe("has a 'createLayerParametersForCroppedDownload' method, which", function () {
+            it("returns the correct parameters", function () {
+                var expected = {
+                    service: "WMS",
+                    version: "1.1.0",
+                    request: "GetMap",
+                    srs: "EPSG:4326",
+                    format: "image/png",
+                    bgcolor: "#eef7fa",
+                    bbox: "BBOX",
+                    width: "WIDTH",
+                    height: "HEIGHT",
+                    layers: "abraid:LAYERNAME_mean,abraid:country,abraid:country,abraid:country",
+                    styles: "abraid_mean,abraid_mask,country_white,country_borders",
+                    cql_filter: "INCLUDE;gaul_code=GAULCODE;gaul_code<>GAULCODE;INCLUDE" // jshint ignore:line
+                };
+
+                var result = vm.createLayerParametersForCroppedDownload(
+                    "LAYERNAME", "GAULCODE", { bbox: "BBOX", width: "WIDTH", height: "HEIGHT" });
+
+                expect(result).toEqual(expected);
+            });
+        });
     });
 });

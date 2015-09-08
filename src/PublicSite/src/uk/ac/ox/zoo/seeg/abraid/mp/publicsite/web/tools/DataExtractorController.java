@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Country;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
@@ -103,7 +104,10 @@ public class DataExtractorController {
      */
     @RequestMapping(value = "/tools/location/precise", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<String> getPreciseData(final double lat, final double lng, final String run)
+    public ResponseEntity<String> getPreciseData(
+            @RequestParam(required = true) final double lat,
+            @RequestParam(required = true) final double lng,
+            @RequestParam(required = true) final String run)
             throws Exception {
         ModelRun modelRun = modelRunService.getModelRunByName(run);
         File meanRaster = rasterFilePathFactory.getMaskedMeanPredictionRasterFile(modelRun);
@@ -124,7 +128,10 @@ public class DataExtractorController {
     @RequestMapping(value = "/tools/location/adminUnit", method = RequestMethod.GET,
             produces = "image/tiff")
     @ResponseBody
-    public ResponseEntity<byte[]> getAdminUnitData(final int gaul, final String run, HttpServletResponse response)
+    public ResponseEntity<byte[]> getAdminUnitData(
+            @RequestParam(required = true) final int gaul,
+            @RequestParam(required = true) final String run,
+            HttpServletResponse response)
             throws Exception {
         response.setHeader("Content-Disposition", String.format("attachment; filename=\"%s_%s.tif\"", gaul, run));
         File adminRaster = rasterFilePathFactory.getAdminRaster(0);

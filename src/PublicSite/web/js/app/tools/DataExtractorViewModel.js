@@ -11,7 +11,7 @@ define([
 
     return function (baseUrl, wmsUrl, runs, countries, wmsParameterFactory) {
         var self = this;
-        BaseFormViewModel.call(self, false, false, baseUrl, "tools/location/precise", {}, true, false, "GET");
+        BaseFormViewModel.call(self, false, false, baseUrl, "tools/location/precise", {}, false, false, "GET");
 
         self.buildSubmissionData = function () {
             return {
@@ -26,13 +26,13 @@ define([
         };
         self.score = ko.observable();
         self.diseases = _(runs).chain().pluck("disease").unique().sort().value();
-        self.disease = ko.observable("dengue");
+        self.disease = ko.observable(_(self.diseases).contains("dengue") ? "dengue" : self.diseases[0]);
         self.runs = ko.computed(function () {
             return _(runs).chain().where({disease: self.disease()}).sortBy("date").reverse().value();
         });
         self.run = ko.observable(self.runs()[0]);
         self.countries = _(countries).sortBy("name");
-        self.country = ko.observable(_(countries).findWhere({name: "Afghanistan"}));
+        self.country = ko.observable(_(countries).findWhere({name: "Afghanistan"}) || self.countries[0]);
 
         self.lat = ko.observable().extend({ required: true, number: true, min: -60, max: 85 });
         self.lng = ko.observable().extend({ required: true, number: true, min: -180, max: 180 });
