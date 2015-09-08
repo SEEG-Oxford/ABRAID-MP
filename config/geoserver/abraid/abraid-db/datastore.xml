@@ -18,6 +18,7 @@
     <entry key="fetch size">1000</entry>
     <entry key="preparedStatements">false</entry>
     <entry key="min connections">1</entry>
+    <entry key="Expose primary keys">true</entry>
     <entry key="host">HOST_REPLACE</entry>
     <entry key="validate connections">true</entry>
     <entry key="max connections">10</entry>

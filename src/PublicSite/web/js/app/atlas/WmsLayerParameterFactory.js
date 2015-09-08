@@ -34,16 +34,37 @@ define(["underscore"], function (_) {
             return params;
         };
 
-        self.createLayerParametersForDownload = function (layer) {
-            var params = self.createLayerParametersForDisplay(layer);
-            params = _(params).extend({
+        var createBasicDownloadParameters = function () {
+            return {
                 service: "WMS",
                 version: "1.1.0",
                 request: "GetMap",
+                srs: "EPSG:4326",
+                format: "image/png"
+            };
+        };
+
+        self.createLayerParametersForDownload = function (layer) {
+            var params = self.createLayerParametersForDisplay(layer);
+            params = _(params).extend(createBasicDownloadParameters());
+            params = _(params).extend({
                 bbox: "-180.1,-60.0,180.0,85.0", // BBox min set to -180.1 due to bug in Geoserver (should be -180.0)
                 width: 1656,
-                height: 667,
-                srs: "EPSG:4326"
+                height: 667
+            });
+            return params;
+        };
+
+        self.createLayerParametersForCroppedDownload = function (layer, gaulCode, box) {
+            var params = createBasicDownloadParameters();
+            params = _(params).extend({
+                bbox: box.bbox,
+                width: box.width,
+                height: box.height,
+                cql_filter: "INCLUDE;gaul_code=" + gaulCode + ";gaul_code<>" + gaulCode + ";INCLUDE", // jshint ignore:line
+                layers: "abraid:" + layer + "_mean,abraid:country,abraid:country,abraid:country",
+                styles: "abraid_mean,abraid_mask,country_white,country_borders",
+                bgcolor: "#eef7fa"
             });
             return params;
         };

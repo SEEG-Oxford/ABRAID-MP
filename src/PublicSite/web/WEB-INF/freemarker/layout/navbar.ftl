@@ -38,18 +38,18 @@
                 <li><a href="<@spring.url "/experts"/>">Contributors</a></li>
             </ul>
         </li>
-        <@security.authorize ifAnyGranted="ROLE_ADMIN">
-            <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tools<span class="caret"></span></a>
-                <ul class="dropdown-menu" role="menu">
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tools<span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+                <li><a href="<@spring.url "/tools/location/"/>">Data Extractor</a></li>
+                <@security.authorize ifAnyGranted="ROLE_ADMIN">
                     <li><a href="<@spring.url "/tools/uploadcsv/"/>">Upload CSV</a></li>
                     <li><a href="<@spring.url "/admin/diseases/"/>">Administration - Diseases</a></li>
                     <li><a href="<@spring.url "/admin/experts/"/>">Administration - Experts</a></li>
                     <li><a href="<@spring.url "/admin/covariates/"/>">Administration - Covariates</a></li>
-                </ul>
-            </li>
-        </@security.authorize>
-
+                </@security.authorize>
+            </ul>
+        </li>
     </ul>
 
     <@security.authorize ifAnyGranted="ROLE_USER">

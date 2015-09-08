@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Expert;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
@@ -18,6 +19,9 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserService;
 
 import java.util.*;
+
+import static ch.lambdaj.Lambda.on;
+import static ch.lambdaj.Lambda.sort;
 
 /**
  * Controller for the Atlas Home page.
@@ -71,25 +75,24 @@ public class AtlasController extends AbstractController {
                 diseaseService.getDiseaseGroupIdsForAutomaticModelRuns();
         final Collection<ModelRun> modelRuns = modelRunService.getCompletedModelRunsForDisplay();
 
-        Map<Integer, List<JsonModelRunLayer>> layersByDiseaseId = new HashMap<>();
+        Map<DiseaseGroup, List<JsonModelRunLayer>> layersByDisease = new HashMap<>();
         for (ModelRun modelRun : modelRuns) {
-            int diseaseGroupId = modelRun.getDiseaseGroupId();
-            boolean automaticRun = diseaseGroupsInAutomaticModelRuns.contains(diseaseGroupId);
+            DiseaseGroup diseaseGroup = modelRun.getDiseaseGroup();
+            boolean automaticRun = diseaseGroupsInAutomaticModelRuns.contains(diseaseGroup.getId());
             if (seegMember || automaticRun) {
-                if (!layersByDiseaseId.containsKey(diseaseGroupId)) {
-                    layersByDiseaseId.put(diseaseGroupId, new ArrayList<JsonModelRunLayer>());
+                if (!layersByDisease.containsKey(diseaseGroup)) {
+                    layersByDisease.put(diseaseGroup, new ArrayList<JsonModelRunLayer>());
                 }
-                layersByDiseaseId.get(diseaseGroupId).add(new JsonModelRunLayer(modelRun, automaticRun));
+                layersByDisease.get(diseaseGroup).add(new JsonModelRunLayer(modelRun, automaticRun));
             }
         }
 
         List<JsonDiseaseModelRunLayerSet> layers = new ArrayList<>();
-        for (Map.Entry<Integer, List<JsonModelRunLayer>> diseasePair : layersByDiseaseId.entrySet()) {
-            String name = diseaseService.getDiseaseGroupById(diseasePair.getKey()).getShortNameForDisplay();
+        for (Map.Entry<DiseaseGroup, List<JsonModelRunLayer>> diseasePair : layersByDisease.entrySet()) {
+            String name = diseasePair.getKey().getShortNameForDisplay();
             layers.add(new JsonDiseaseModelRunLayerSet(name, diseasePair.getValue()));
         }
-
-        return layers;
+        return sort(layers, on(JsonDiseaseModelRunLayerSet.class).getDisease());
     }
 
     private boolean userIsSeegMember() {

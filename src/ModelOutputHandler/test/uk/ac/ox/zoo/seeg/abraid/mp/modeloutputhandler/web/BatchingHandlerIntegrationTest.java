@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseGroupDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceStatus;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
@@ -63,6 +64,9 @@ public class BatchingHandlerIntegrationTest extends AbstractSpringIntegrationTes
     @Autowired
     @ReplaceWithMock
     private RasterFilePathFactory rasterFilePathFactory;
+
+    @Autowired
+    private DiseaseGroupDao diseaseGroupDao;
 
     @Test
     public void handleFirstBatch() throws Exception {
@@ -150,7 +154,7 @@ public class BatchingHandlerIntegrationTest extends AbstractSpringIntegrationTes
                                                DateTime batchingCompletionDate) {
         String name = Double.toString(Math.random());
         ModelRun modelRun = new ModelRun(
-                name, diseaseGroupId, "host", DateTime.now().minusDays(1), DateTime.now(), DateTime.now());
+                name, diseaseGroupDao.getById(diseaseGroupId), "host", DateTime.now().minusDays(1), DateTime.now(), DateTime.now());
         modelRun.setStatus(ModelRunStatus.COMPLETED);
         modelRun.setResponseDate(DateTime.now());
         modelRun.setBatchStartDate(batchStartDate);

@@ -30,6 +30,15 @@ public class ModellingLocationPrecisionAdjuster {
      * @return The adjusted location precision.
      */
     public int adjust(int locationPrecision, String gaulCode) {
-        return gaulsToAdjust.contains(gaulCode) ? precise : locationPrecision;
+        return checkGaul(gaulCode) ? precise : locationPrecision;
+    }
+
+    /**
+     * Checks if the location precision, of an admin unit or country should be adjusted.
+     * @param gaulCode The gaul code of the location.
+     * @return True if the division contains 0 raster pixels.
+     */
+    public boolean checkGaul(String gaulCode) {
+        return gaulsToAdjust.contains(gaulCode);
     }
 }

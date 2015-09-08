@@ -20,6 +20,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseGroupDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ModelRunDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvCovariateInfluence;
@@ -96,6 +97,9 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
     @ReplaceWithMock
     @Autowired
     private ValidationParameterCacheService cacheService;
+
+    @Autowired
+    private DiseaseGroupDao diseaseGroupDao;
 
     @Before
     public void setup() {
@@ -329,7 +333,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
     }
 
     private void insertModelRun(String name) {
-        ModelRun modelRun = new ModelRun(name, TEST_MODEL_RUN_DISEASE_GROUP_ID, TEST_MODEL_RUN_SERVER, DateTime.now(), DateTime.now(), DateTime.now());
+        ModelRun modelRun = new ModelRun(name, diseaseGroupDao.getById(TEST_MODEL_RUN_DISEASE_GROUP_ID), TEST_MODEL_RUN_SERVER, DateTime.now(), DateTime.now(), DateTime.now());
         modelRunDao.save(modelRun);
     }
 

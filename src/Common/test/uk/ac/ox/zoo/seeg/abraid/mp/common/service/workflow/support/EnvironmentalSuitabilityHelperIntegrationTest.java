@@ -17,7 +17,10 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.RasterFilePathFactory;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
 
 import java.io.File;
+import java.io.IOException;
 
+import static com.googlecode.catchexception.CatchException.catchException;
+import static com.googlecode.catchexception.CatchException.caughtException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.offset;
 import static org.mockito.Mockito.*;
@@ -85,6 +88,7 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractSprin
 
     @Test
     public void findEnvironmentalSuitabilityLowerLeftCorner() throws Exception {
+        findEnvironmentalSuitabilityPoint(LARGE_RASTER_XLLCORNER, LARGE_RASTER_YLLCORNER, 0.89);
         findEnvironmentalSuitabilityPrecise(LARGE_RASTER_XLLCORNER, LARGE_RASTER_YLLCORNER, 0.89);
     }
 
@@ -92,6 +96,7 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractSprin
     public void findEnvironmentalSuitabilityUpperRightCorner() throws Exception {
         double upperRightCornerX = LARGE_RASTER_XLLCORNER + (LARGE_RASTER_COLUMNS - 1) * LARGE_RASTER_CELLSIZE;
         double upperRightCornerY = LARGE_RASTER_YLLCORNER + (LARGE_RASTER_ROWS - 1) * LARGE_RASTER_CELLSIZE;
+        findEnvironmentalSuitabilityPoint(upperRightCornerX, upperRightCornerY, 0.79);
         findEnvironmentalSuitabilityPrecise(upperRightCornerX, upperRightCornerY, 0.79);
     }
 
@@ -99,6 +104,7 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractSprin
     public void findEnvironmentalSuitabilityInterpolated() throws Exception {
         double lowerLeftCornerSlightlyShiftedX = LARGE_RASTER_XLLCORNER + (LARGE_RASTER_CELLSIZE * 0.5);
         double lowerLeftCornerSlightlyShiftedY = LARGE_RASTER_YLLCORNER + (LARGE_RASTER_CELLSIZE * 0.5);
+        findEnvironmentalSuitabilityPoint(lowerLeftCornerSlightlyShiftedX, lowerLeftCornerSlightlyShiftedY, 0.89);
         findEnvironmentalSuitabilityPrecise(lowerLeftCornerSlightlyShiftedX, lowerLeftCornerSlightlyShiftedY, 0.89);
     }
 
@@ -106,6 +112,7 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractSprin
     public void findEnvironmentalSuitabilityOutOfRasterRange() throws Exception {
         double oneCellBeyondUpperRightCornerX = LARGE_RASTER_XLLCORNER + LARGE_RASTER_COLUMNS * LARGE_RASTER_CELLSIZE;
         double oneCellBeyondUpperRightCornerY = LARGE_RASTER_YLLCORNER + LARGE_RASTER_ROWS * LARGE_RASTER_CELLSIZE;
+        findEnvironmentalSuitabilityPoint(oneCellBeyondUpperRightCornerX, oneCellBeyondUpperRightCornerY, null);
         findEnvironmentalSuitabilityPrecise(oneCellBeyondUpperRightCornerX, oneCellBeyondUpperRightCornerY, null);
     }
 
@@ -114,6 +121,7 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractSprin
         // The NODATA value in the raster is in column 6 row 12 (from the top left)
         double noDataValueX = LARGE_RASTER_XLLCORNER + 5 * LARGE_RASTER_CELLSIZE;
         double noDataValueY = LARGE_RASTER_YLLCORNER + (LARGE_RASTER_ROWS - 12) * LARGE_RASTER_CELLSIZE;
+        findEnvironmentalSuitabilityPoint(noDataValueX, noDataValueY, null);
         findEnvironmentalSuitabilityPrecise(noDataValueX, noDataValueY, null);
     }
 
@@ -153,8 +161,55 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractSprin
         assertThat(suitability).isEqualTo(12345d);
     }
 
+    @Test
+    public void createCroppedEnvironmentalSuitabilityRasterCropsCorrectArea() throws Exception {
+        // Arrange
+        File suitabilityRaster = new File(LARGE_RASTER_FILENAME);
+        File adminRaster = new File(ADMIN_RASTER_FILENAME);
+        int gaul = 321;
+
+        // Act
+        File cropped = helper.createCroppedEnvironmentalSuitabilityRaster(gaul, adminRaster, suitabilityRaster);
+
+        // Assert
+        File adminRasterCroppedBy321 = new File("Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/service/workflow/support/testdata/test_raster_large_double_cropped_by_321.tif");
+        assertThat(cropped).hasContentEqualTo(adminRasterCroppedBy321);
+        cropped.delete();
+    }
+
+    @Test
+    public void createCroppedEnvironmentalSuitabilityRasterCropsCorrectAreaWithWaterBody() throws Exception {
+        // Arrange
+        File suitabilityRaster = new File(LARGE_RASTER_FILENAME);
+        File adminRaster = new File(ADMIN_RASTER_FILENAME);
+        int gaul = 654;
+
+        // Act
+        File cropped = helper.createCroppedEnvironmentalSuitabilityRaster(gaul, adminRaster, suitabilityRaster);
+
+        // Assert
+        File adminRasterCroppedBy654 = new File("Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/service/workflow/support/testdata/test_raster_large_double_cropped_by_654.tif");
+        assertThat(cropped).hasContentEqualTo(adminRasterCroppedBy654);
+        cropped.delete();
+    }
+
+    @Test
+    public void createCroppedEnvironmentalSuitabilityRasterWhenNoMatchingPixels() throws Exception {
+        // Arrange
+        File suitabilityRaster = new File(LARGE_RASTER_FILENAME);
+        File adminRaster = new File(ADMIN_RASTER_FILENAME);
+        int gaul = 123;
+
+        // Act
+        catchException(helper).createCroppedEnvironmentalSuitabilityRaster(gaul, adminRaster, suitabilityRaster);
+
+        // Assert
+        assertThat(caughtException()).isInstanceOf(IOException.class);
+        assertThat(caughtException().getMessage()).isEqualTo("The specified country does not appear to cover any raster pixels.");
+    }
+
     private ModelRun createAndSaveModelRun(String name, int diseaseGroupId, ModelRunStatus status) {
-        ModelRun modelRun = new ModelRun(name, diseaseGroupId, "host", DateTime.now(), DateTime.now(), DateTime.now());
+        ModelRun modelRun = new ModelRun(name, diseaseService.getDiseaseGroupById(diseaseGroupId), "host", DateTime.now(), DateTime.now(), DateTime.now());
         modelRun.setStatus(status);
         modelRun.setResponseDate(DateTime.now());
         modelRunService.saveModelRun(modelRun);
@@ -191,6 +246,25 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractSprin
         if (expectedEnvironmentalSuitability != null) {
             assertThat(suitability).isEqualTo(expectedEnvironmentalSuitability, offset(0.0000005));
             verify(cacheService).saveEnvironmentalSuitabilityCacheEntry(occurrence.getDiseaseGroup().getId(), occurrence.getLocation().getId(), suitability);
+        } else {
+            assertThat(suitability).isNull();
+        }
+    }
+
+    private void findEnvironmentalSuitabilityPoint(double x, double y,
+                                                     Double expectedEnvironmentalSuitability) throws Exception {
+        // Arrange
+        ModelRun modelRun = createAndSaveModelRun("test name 1", diseaseGroup.getId(), ModelRunStatus.COMPLETED);
+        mockGetRasterFileForModelRun(modelRun);
+        File suitabilityRaster = rasterFilePathFactory.getFullMeanPredictionRasterFile(modelRun);
+        double offsetForRounding = 0.00005;
+
+        // Act
+        Double suitability = helper.findPointEnvironmentalSuitability(suitabilityRaster, GeometryUtils.createPoint(x + offsetForRounding,  y + offsetForRounding));
+
+        // Assert
+        if (expectedEnvironmentalSuitability != null) {
+            assertThat(suitability).isEqualTo(expectedEnvironmentalSuitability, offset(0.0000005));
         } else {
             assertThat(suitability).isNull();
         }

@@ -18,6 +18,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.WrappedList;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModellingLocationPrecisionAdjuster;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,13 +63,15 @@ public class ModelRunDataController {
     /**
      * Gets the list of input disease occurrences associated with a model run, as csv.
      * @param modelRunName The unique name of the model run.
+     * @param response The servlet response object (provided by spring).
      * @return The DTO of input disease occurrences.
      */
     @RequestMapping(value = ATLAS_MODEL_RUN_DATA_URL + "/{modelRunName}/inputoccurrences", method = RequestMethod.GET)
     @Transactional
     @ResponseBody
     public ResponseEntity<WrappedList<JsonDownloadDiseaseOccurrence>> getInputDiseaseOccurrences(
-            @PathVariable String modelRunName) {
+            @PathVariable String modelRunName, HttpServletResponse response) {
+        response.setHeader("Content-Disposition", String.format("attachment; filename=\"%s_input.csv\"", modelRunName));
         ModelRun modelRun = modelRunService.getModelRunByName(modelRunName);
         if (modelRun == null || modelRun.getStatus() != ModelRunStatus.COMPLETED) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

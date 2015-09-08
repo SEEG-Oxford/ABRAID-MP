@@ -119,9 +119,9 @@ public class AtlasControllerTest {
         DiseaseGroup diseaseGroup1 = mock(DiseaseGroup.class);
         DiseaseGroup diseaseGroup2 = mock(DiseaseGroup.class);
 
-        when(modelRun1.getDiseaseGroupId()).thenReturn(1);
-        when(modelRun2.getDiseaseGroupId()).thenReturn(2);
-        when(modelRun3.getDiseaseGroupId()).thenReturn(1);
+        when(modelRun1.getDiseaseGroup()).thenReturn(diseaseGroup1);
+        when(modelRun2.getDiseaseGroup()).thenReturn(diseaseGroup2);
+        when(modelRun3.getDiseaseGroup()).thenReturn(diseaseGroup1);
         when(modelRun1.getRequestDate()).thenReturn(new DateTime(2014, 10, 13, 12, 0));
         when(modelRun2.getRequestDate()).thenReturn(new DateTime(1995, 10, 9, 12, 0));
         when(modelRun3.getRequestDate()).thenReturn(new DateTime(2036, 12, 18, 12, 0));
@@ -147,11 +147,11 @@ public class AtlasControllerTest {
         when(modelRun3.getSubmodelStatistics()).thenReturn(new ArrayList<SubmodelStatistic>());
 
         when(diseaseGroup1.getShortNameForDisplay()).thenReturn("Disease Group 1");
+        when(diseaseGroup1.getId()).thenReturn(1);
         when(diseaseGroup2.getShortNameForDisplay()).thenReturn("Disease Group 2");
+        when(diseaseGroup2.getId()).thenReturn(2);
 
         when(modelRunService.getCompletedModelRunsForDisplay()).thenReturn(Arrays.asList(modelRun1, modelRun2, modelRun3));
 
-        when(diseaseService.getDiseaseGroupById(1)).thenReturn(diseaseGroup1);
-        when(diseaseService.getDiseaseGroupById(2)).thenReturn(diseaseGroup2);
     }
 }

@@ -270,7 +270,7 @@ public class BatchingHandlerHelperTest {
     private ModelRun createModelRun(int diseaseGroupId, ModelRunStatus status) {
         ModelRun modelRun = new ModelRun(1);
         modelRun.setName("test");
-        modelRun.setDiseaseGroupId(diseaseGroupId);
+        modelRun.setDiseaseGroup(new DiseaseGroup(diseaseGroupId));
         modelRun.setRequestDate(DateTime.now());
         modelRun.setStatus(status);
         return modelRun;

@@ -15,6 +15,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModellingLocationPrecisionAdjuster;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractDiseaseOccurrenceGeoJsonTests;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -22,7 +23,9 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -50,9 +53,10 @@ public class ModelRunDataControllerTest extends AbstractDiseaseOccurrenceGeoJson
         ModelRun modelRun = mockCompletedModelRunWithOccurrences(Arrays.asList(occurrence));
         ModelRunService modelRunService = mockModelRunService(name, modelRun);
         ModelRunDataController controller = new ModelRunDataController(modelRunService, createNoopAdjuster());
+        HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
 
         // Act
-        ResponseEntity response = controller.getInputDiseaseOccurrences(name);
+        ResponseEntity response = controller.getInputDiseaseOccurrences(name, httpServletResponse);
 
         // Assert
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -65,6 +69,7 @@ public class ModelRunDataControllerTest extends AbstractDiseaseOccurrenceGeoJson
         assertThat(body.getList().get(0).getGaul()).isEqualTo("1234");
         assertThat(body.getList().get(0).getProvenance()).isEqualTo("provenance");
         assertThat(body.getList().get(0).getFeed()).isEqualTo("feed");
+        verify(httpServletResponse).setHeader(eq("Content-Disposition"), eq("attachment; filename=\"" + name + "_input.csv\""));
     }
 
     @Test
@@ -75,7 +80,7 @@ public class ModelRunDataControllerTest extends AbstractDiseaseOccurrenceGeoJson
         ModelRunDataController controller = new ModelRunDataController(modelRunService, createNoopAdjuster());
 
         // Act
-        ResponseEntity response = controller.getInputDiseaseOccurrences(name);
+        ResponseEntity response = controller.getInputDiseaseOccurrences(name, mock(HttpServletResponse.class));
 
         // Assert
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -92,7 +97,7 @@ public class ModelRunDataControllerTest extends AbstractDiseaseOccurrenceGeoJson
         ModelRunDataController controller = new ModelRunDataController(modelRunService, createNoopAdjuster());
 
         // Act
-        ResponseEntity response = controller.getInputDiseaseOccurrences(name);
+        ResponseEntity response = controller.getInputDiseaseOccurrences(name, mock(HttpServletResponse.class));
 
         // Assert
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -107,7 +112,7 @@ public class ModelRunDataControllerTest extends AbstractDiseaseOccurrenceGeoJson
         ModelRunDataController controller = new ModelRunDataController(modelRunService, createNoopAdjuster());
 
         // Act
-        ResponseEntity response = controller.getInputDiseaseOccurrences(name);
+        ResponseEntity response = controller.getInputDiseaseOccurrences(name, mock(HttpServletResponse.class));
 
         // Assert
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
