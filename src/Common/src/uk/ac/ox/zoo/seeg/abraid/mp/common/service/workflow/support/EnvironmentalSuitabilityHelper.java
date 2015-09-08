@@ -36,6 +36,8 @@ import java.io.IOException;
  */
 public class EnvironmentalSuitabilityHelper {
     private static final int NUMBER_OF_ADMIN_LEVELS = 3;
+    private static final String COUNTRY_NO_PIXELS_WARNING =
+            "The specified country does not appear to cover any raster pixels.";
     private static final String NO_PIXEL_WARNING = "Admin unit %s (%s) does not appear to cover any raster pixels. " +
             "Falling back to lat/long based environmental suitability";
     private ModelRunService modelRunService;
@@ -53,6 +55,7 @@ public class EnvironmentalSuitabilityHelper {
             "An intermediary file could not be removed (%s)";
 
     private static final int RASTER_NO_DATA_VALUE = -9999;
+
 
     public EnvironmentalSuitabilityHelper(ModelRunService modelRunService,
                                           RasterFilePathFactory rasterFilePathFactory,
@@ -258,6 +261,7 @@ public class EnvironmentalSuitabilityHelper {
         RasterUtils.transformRaster(suitabilityRaster, maskedFile, new File[]{adminRaster}, new RasterTransformation() {
             @Override
             public void transform(WritableRaster raster, Raster[] referenceRasters) throws IOException {
+                Boolean containedAtLeastOnePixel = false;
                 int minI = Integer.MAX_VALUE;
                 int minJ = Integer.MAX_VALUE;
                 int maxI = Integer.MIN_VALUE;
@@ -270,6 +274,7 @@ public class EnvironmentalSuitabilityHelper {
                             if (adminValue != gaulCode) {
                                 raster.setSample(i, j, 0, RasterUtils.NO_DATA_VALUE);
                             } else {
+                                containedAtLeastOnePixel = true;
                                 minI = (minI > i) ? i : minI;
                                 minJ = (minJ > j) ? j : minJ;
                                 maxI = (maxI < i) ? i : maxI;
@@ -278,7 +283,16 @@ public class EnvironmentalSuitabilityHelper {
                         }
                     }
                 }
-                cropRectangle.setBounds(minI, minJ, maxI - minI, maxJ - minJ);
+                if (containedAtLeastOnePixel) {
+                    // Pad
+                    minI = Math.max(minI - 1, 0);
+                    minJ = Math.max(minJ - 1, 0);
+                    maxI = Math.min(maxI + 1, raster.getWidth());
+                    maxJ = Math.min(maxJ + 1, raster.getHeight());
+                    cropRectangle.setBounds(minI, minJ, maxI - minI, maxJ - minJ);
+                } else {
+                    throw new IOException(COUNTRY_NO_PIXELS_WARNING);
+                }
             }
         });
 

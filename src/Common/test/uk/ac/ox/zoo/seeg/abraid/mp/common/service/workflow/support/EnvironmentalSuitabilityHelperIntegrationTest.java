@@ -17,7 +17,10 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.RasterFilePathFactory;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
 
 import java.io.File;
+import java.io.IOException;
 
+import static com.googlecode.catchexception.CatchException.catchException;
+import static com.googlecode.catchexception.CatchException.caughtException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.offset;
 import static org.mockito.Mockito.*;
@@ -156,6 +159,53 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractSprin
 
         // Assert
         assertThat(suitability).isEqualTo(12345d);
+    }
+
+    @Test
+    public void createCroppedEnvironmentalSuitabilityRasterCropsCorrectArea() throws Exception {
+        // Arrange
+        File suitabilityRaster = new File(LARGE_RASTER_FILENAME);
+        File adminRaster = new File(ADMIN_RASTER_FILENAME);
+        int gaul = 321;
+
+        // Act
+        File cropped = helper.createCroppedEnvironmentalSuitabilityRaster(gaul, adminRaster, suitabilityRaster);
+
+        // Assert
+        File adminRasterCroppedBy321 = new File("Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/service/workflow/support/testdata/test_raster_large_double_cropped_by_321.tif");
+        assertThat(cropped).hasContentEqualTo(adminRasterCroppedBy321);
+        cropped.delete();
+    }
+
+    @Test
+    public void createCroppedEnvironmentalSuitabilityRasterCropsCorrectAreaWithWaterBody() throws Exception {
+        // Arrange
+        File suitabilityRaster = new File(LARGE_RASTER_FILENAME);
+        File adminRaster = new File(ADMIN_RASTER_FILENAME);
+        int gaul = 654;
+
+        // Act
+        File cropped = helper.createCroppedEnvironmentalSuitabilityRaster(gaul, adminRaster, suitabilityRaster);
+
+        // Assert
+        File adminRasterCroppedBy654 = new File("Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/service/workflow/support/testdata/test_raster_large_double_cropped_by_654.tif");
+        assertThat(cropped).hasContentEqualTo(adminRasterCroppedBy654);
+        cropped.delete();
+    }
+
+    @Test
+    public void createCroppedEnvironmentalSuitabilityRasterWhenNoMatchingPixels() throws Exception {
+        // Arrange
+        File suitabilityRaster = new File(LARGE_RASTER_FILENAME);
+        File adminRaster = new File(ADMIN_RASTER_FILENAME);
+        int gaul = 123;
+
+        // Act
+        catchException(helper).createCroppedEnvironmentalSuitabilityRaster(gaul, adminRaster, suitabilityRaster);
+
+        // Assert
+        assertThat(caughtException()).isInstanceOf(IOException.class);
+        assertThat(caughtException().getMessage()).isEqualTo("The specified country does not appear to cover any raster pixels.");
     }
 
     private ModelRun createAndSaveModelRun(String name, int diseaseGroupId, ModelRunStatus status) {
