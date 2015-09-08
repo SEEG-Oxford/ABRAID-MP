@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.tools;
 
 import ch.lambdaj.function.convert.Converter;
+import ch.lambdaj.function.matcher.LambdaJMatcher;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -21,14 +22,17 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelRunSimple;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.GeometryService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.EnvironmentalSuitabilityHelper;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModellingLocationPrecisionAdjuster;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.RasterFilePathFactory;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.util.Collection;
+import java.util.List;
 
 import static ch.lambdaj.Lambda.convert;
+import static ch.lambdaj.Lambda.filter;
 
 /**
  * Controller for the Data Extractor tool.
@@ -46,17 +50,20 @@ public class DataExtractorController {
     private EnvironmentalSuitabilityHelper environmentalSuitabilityHelper;
     private GeometryService geometryService;
     private AbraidJsonObjectMapper objectMapper;
+    private ModellingLocationPrecisionAdjuster precisionAdjuster;
+    private List<String> gaulsToAdjust;
 
     @Autowired
     public DataExtractorController(
             RasterFilePathFactory rasterFilePathFactory, ModelRunService modelRunService,
             EnvironmentalSuitabilityHelper environmentalSuitabilityHelper, GeometryService geometryService,
-            AbraidJsonObjectMapper objectMapper) {
+            AbraidJsonObjectMapper objectMapper, ModellingLocationPrecisionAdjuster precisionAdjuster) {
         this.rasterFilePathFactory = rasterFilePathFactory;
         this.modelRunService = modelRunService;
         this.environmentalSuitabilityHelper = environmentalSuitabilityHelper;
         this.geometryService = geometryService;
         this.objectMapper = objectMapper;
+        this.precisionAdjuster = precisionAdjuster;
     }
 
     /**
@@ -86,7 +93,13 @@ public class DataExtractorController {
     }
 
     private Collection<JsonCountry> convertToCountryDtos(final Collection<Country> countries) {
-        return convert(countries, new Converter<Country, JsonCountry>() {
+        Collection<Country> filteredCountries = filter(new LambdaJMatcher<Country>() {
+            @Override
+            public boolean matches(Object o) {
+                return !precisionAdjuster.checkGaul(((Country) o).getGaulCode().toString());
+            }
+        }, countries);
+        return convert(filteredCountries, new Converter<Country, JsonCountry>() {
             @Override
             public JsonCountry convert(Country country) {
                 return new JsonCountry(country);

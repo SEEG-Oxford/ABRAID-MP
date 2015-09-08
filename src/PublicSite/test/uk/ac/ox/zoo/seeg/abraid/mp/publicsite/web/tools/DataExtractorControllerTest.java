@@ -14,6 +14,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.GeometryService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.EnvironmentalSuitabilityHelper;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModellingLocationPrecisionAdjuster;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.RasterFilePathFactory;
 
@@ -48,9 +49,13 @@ public class DataExtractorControllerTest {
                 mockModelRun("NAME3", "DISEASE2", new DateTime("2015-04-03")));
         List<Country> countries = Arrays.asList(
                 mockCountry("NAME", 54321, GeometryUtils.createPolygon(0, 0, 1, 2, 2, 3, 0, 0)),
+                mockCountry("BAD", 9876, GeometryUtils.createPolygon(0, 0, 1, 2, 2, 3, 0, 0)),
                 mockCountry("NAME1", 432, GeometryUtils.createPolygon(-1, -2, 1, 2, 5, 3, -1, -2)),
                 mockCountry("NAME2", 123, GeometryUtils.createPolygon(0, 0, 1, 2, 4, 4, 0, 0)));
-        DataExtractorController target = new DataExtractorController(rasterFilePathFactory, modelRunService, environmentalSuitabilityHelper, geometryService, objectMapper);
+        ModellingLocationPrecisionAdjuster precisionAdjuster = mock(ModellingLocationPrecisionAdjuster.class);
+        when(precisionAdjuster.checkGaul(anyString())).thenReturn(false);
+        when(precisionAdjuster.checkGaul("9876")).thenReturn(true);
+        DataExtractorController target = new DataExtractorController(rasterFilePathFactory, modelRunService, environmentalSuitabilityHelper, geometryService, objectMapper, precisionAdjuster);
         when(modelRunService.getFilteredModelRuns(null, null, null, null)).thenReturn(runs);
         when(geometryService.getAllCountries()).thenReturn(countries);
 
@@ -97,7 +102,7 @@ public class DataExtractorControllerTest {
         when(rasterFilePathFactory.getMaskedMeanPredictionRasterFile(same(modelRun))).thenReturn(raster);
         when(environmentalSuitabilityHelper.findPointEnvironmentalSuitability(same(raster), eq(GeometryUtils.createPoint(lng, lat)))).thenReturn(expected);
 
-        DataExtractorController target = new DataExtractorController(rasterFilePathFactory, modelRunService, environmentalSuitabilityHelper, mock(GeometryService.class), mock(AbraidJsonObjectMapper.class));
+        DataExtractorController target = new DataExtractorController(rasterFilePathFactory, modelRunService, environmentalSuitabilityHelper, mock(GeometryService.class), mock(AbraidJsonObjectMapper.class), mock(ModellingLocationPrecisionAdjuster.class));
 
         // Act
         ResponseEntity<String> result = target.getPreciseData(lat, lng, run);
@@ -124,7 +129,7 @@ public class DataExtractorControllerTest {
         when(rasterFilePathFactory.getMaskedMeanPredictionRasterFile(same(modelRun))).thenReturn(raster);
         when(environmentalSuitabilityHelper.findPointEnvironmentalSuitability(same(raster), eq(GeometryUtils.createPoint(lng, lat)))).thenReturn(expected);
 
-        DataExtractorController target = new DataExtractorController(rasterFilePathFactory, modelRunService, environmentalSuitabilityHelper, mock(GeometryService.class), mock(AbraidJsonObjectMapper.class));
+        DataExtractorController target = new DataExtractorController(rasterFilePathFactory, modelRunService, environmentalSuitabilityHelper, mock(GeometryService.class), mock(AbraidJsonObjectMapper.class), mock(ModellingLocationPrecisionAdjuster.class));
 
         // Act
         ResponseEntity<String> result = target.getPreciseData(lat, lng, run);
@@ -153,7 +158,7 @@ public class DataExtractorControllerTest {
         when(rasterFilePathFactory.getAdminRaster(eq(0))).thenReturn(adminRaster);
         when(environmentalSuitabilityHelper.createCroppedEnvironmentalSuitabilityRaster(eq(gaul), same(adminRaster), same(meanRaster))).thenReturn(cropped);
 
-        DataExtractorController target = new DataExtractorController(rasterFilePathFactory, modelRunService, environmentalSuitabilityHelper, mock(GeometryService.class), mock(AbraidJsonObjectMapper.class));
+        DataExtractorController target = new DataExtractorController(rasterFilePathFactory, modelRunService, environmentalSuitabilityHelper, mock(GeometryService.class), mock(AbraidJsonObjectMapper.class), mock(ModellingLocationPrecisionAdjuster.class));
 
         // Act
         ResponseEntity<byte[]> result = target.getAdminUnitData(gaul, run, mock(HttpServletResponse.class));
