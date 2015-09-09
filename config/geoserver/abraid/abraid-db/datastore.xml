@@ -25,7 +25,6 @@
     <entry key="Support on the fly geometry simplification">true</entry>
     <entry key="database">DB_REPLACE</entry>
     <entry key="Loose bbox">true</entry>
-    <entry key="Expose primary keys">false</entry>
     <entry key="Max open prepared statements">50</entry>
     <entry key="Estimated extends">true</entry>
     <entry key="user">USER_REPLACE</entry>
