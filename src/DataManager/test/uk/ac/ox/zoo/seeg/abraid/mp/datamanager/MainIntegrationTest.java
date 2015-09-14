@@ -190,8 +190,9 @@ public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTest
         DiseaseOccurrence validatedOccurrence = occurrences.get(0);
         assertThatDiseaseOccurrenceValidationParametersAreCorrect(validatedOccurrence, 0.46, -8251.080507);
 
+        boolean hasGeoms = countryDao.getByName("France").getGeom() != null;
         DiseaseOccurrence validatedOccurrence2 = occurrences.get(1);
-        assertThatDiseaseOccurrenceValidationParametersAreCorrect(validatedOccurrence2, 0.62, 12461.351955);
+        assertThatDiseaseOccurrenceValidationParametersAreCorrect(validatedOccurrence2, 0.62, hasGeoms ? 12013.566370 : 12461.351955);
     }
 
     private void assertThatDiseaseOccurrenceValidationParametersAreCorrect(DiseaseOccurrence occurrence,
