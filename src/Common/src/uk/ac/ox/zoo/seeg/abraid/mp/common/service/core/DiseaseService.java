@@ -58,6 +58,20 @@ public interface DiseaseService {
     Map<String, List<DiseaseGroup>> getValidatorDiseaseGroupMap();
 
     /**
+     * Gets a list of the disease groups for which there are occurrences waiting to be reviewed, by the given expert.
+     * @param expert The expert.
+     * @return A list of disease groups.
+     */
+    List<DiseaseGroup> getDiseaseGroupsNeedingOccurrenceReviewByExpert(Expert expert);
+
+    /**
+     * Gets a list of the disease groups for which there are admin units waiting to be reviewed, by the given expert.
+     * @param expert The expert.
+     * @return A list of disease groups.
+     */
+    List<DiseaseGroup> getDiseaseGroupsNeedingExtentReviewByExpert(Expert expert);
+
+    /**
      * Gets the disease occurrence with the specified ID.
      * @param diseaseOccurrenceId The id of the disease occurrence.
      * @return The disease occurrence.

@@ -14,12 +14,37 @@ import javax.persistence.*;
  *
  * Copyright (c) 2014 University of Oxford
  */
-@NamedQueries(
+@NamedQueries({
         @NamedQuery(
                 name = "getDiseaseGroupIdsForAutomaticModelRuns",
                 query = "select id from DiseaseGroup where automaticModelRunsStartDate is not null"
+        ),
+        @NamedQuery(
+                name = "getDiseaseGroupsNeedingOccurrenceReviewByExpert",
+                query = "select distinct do.diseaseGroup " +
+                        "from DiseaseOccurrence as do " +
+                        "where do.status='IN_REVIEW' " +
+                        "and do.id not in (" +
+                        "   select distinct diseaseOccurrence.id " +
+                        "   from DiseaseOccurrenceReview as r " +
+                        "   where r.expert.id = :expertId" +
+                        ") " +
+                        "and do.diseaseGroup.automaticModelRunsStartDate is not null"
+        ),
+        @NamedQuery(
+                name = "getDiseaseGroupsNeedingExtentReviewByExpert",
+                query = "select distinct dec.diseaseGroup " +
+                        "from AdminUnitDiseaseExtentClass as dec " +
+                        "where coalesce(dec.adminUnitGlobal.gaulCode, dec.adminUnitTropical.gaulCode) not in (" +
+                        "   select coalesce(r.adminUnitGlobalGaulCode, r.adminUnitGlobalGaulCode) " +
+                        "   from AdminUnitReview as r " +
+                        "   where r.createdDate >= dec.classChangedDate " +
+                        "   and r.diseaseGroup.id=dec.diseaseGroup.id " +
+                        "   and r.expert.id=:expertId" +
+                        ") " +
+                        "and dec.diseaseGroup.automaticModelRunsStartDate is not null"
         )
-)
+})
 @Entity
 @Table(name = "disease_group")
 public class DiseaseGroup {
