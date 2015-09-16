@@ -46,7 +46,8 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
             );
 
             ko.applyBindings(
-                new SelectedLayerViewModel(data.diseaseInterests, data.allOtherDiseases),
+                new SelectedLayerViewModel(data.diseaseInterests, data.allOtherDiseases,
+                    data.diseasesRequiringExtentInput, data.diseasesRequiringOccurrenceInput),
                 doc.getElementById("layerSelector")
             );
         }
