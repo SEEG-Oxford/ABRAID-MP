@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
+package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.runrequest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectWriter;

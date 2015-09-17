@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
+package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.runrequest;
 
 import net.lingala.zip4j.exception.ZipException;
 import org.joda.time.DateTime;

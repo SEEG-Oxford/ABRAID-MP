@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
+package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.runrequest;
 
 import ch.lambdaj.function.convert.Converter;
 import ch.lambdaj.function.matcher.LambdaJMatcher;
@@ -10,6 +10,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelRunResponse;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.CovariateService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunWorkflowException;
 
 import java.net.URI;
 import java.util.*;
