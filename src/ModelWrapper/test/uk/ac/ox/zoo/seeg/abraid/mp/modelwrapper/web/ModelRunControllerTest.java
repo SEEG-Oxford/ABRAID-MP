@@ -7,10 +7,12 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.mockito.ArgumentCaptor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelDisease;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelRun;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelRunResponse;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.ExecutionRunConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.RunConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.RunConfigurationFactory;
@@ -23,18 +25,17 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
-import static uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractDiseaseOccurrenceGeoJsonTests.defaultDiseaseOccurrence;
 
 /**
- * Tests for ModelRunController.
- * Copyright (c) 2014 University of Oxford
- */
+* Tests for ModelRunController.
+* Copyright (c) 2014 University of Oxford
+*/
 public class ModelRunControllerTest {
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder(); ///CHECKSTYLE:SUPPRESS VisibilityModifier
@@ -49,7 +50,7 @@ public class ModelRunControllerTest {
         ResponseEntity result = target.startRun(null);
 
         // Assert
-        assertResponseEntity(result, null, "Run data must be provided and be valid.", HttpStatus.BAD_REQUEST);
+        assertResponseEntity(result, "Run data must be provided and be valid.", HttpStatus.BAD_REQUEST);
     }
 
     @Test
@@ -62,32 +63,26 @@ public class ModelRunControllerTest {
         ModelRunnerAsyncWrapperImpl mockRunner = mock(ModelRunnerAsyncWrapperImpl.class);
         when(mockConf.getRunName()).thenReturn(runName);
         when(mockConf.getExecutionConfig()).thenReturn(mock(ExecutionRunConfiguration.class));
-        when(mockFactory.createDefaultConfiguration(any(File.class), anyBoolean(), anyString())).thenReturn(mockConf);
+        File workspace = Paths.get(testFolder.getRoot().toString(), runName).toFile();
+        when(mockConf.getWorkingDirectoryPath()).thenReturn(workspace.toPath());
+        when(mockFactory.createDefaultConfiguration(anyString())).thenReturn(mockConf);
 
         ModelRunController target = new ModelRunController(mockFactory, mockRunner, mock(ModelOutputHandlerWebService.class), objectMapper);
-
-        GeoJsonDiseaseOccurrenceFeatureCollection occurrence = new GeoJsonDiseaseOccurrenceFeatureCollection(
-                Arrays.asList(defaultDiseaseOccurrence(), defaultDiseaseOccurrence()));
-        Map<Integer, Integer> extent = new HashMap<>();
-
-        when(objectMapper.readValue(eq("metadata"), eq(JsonModelRun.class))).thenReturn(new JsonModelRun(new JsonModelDisease(1, true, "foo", "foo"), occurrence, extent));
+        when(objectMapper.readValue(eq("metadata"), eq(JsonModelRun.class))).thenReturn(new JsonModelRun(new JsonModelDisease(1, true, "foo", "foo"), runName));
 
         // Act
         ResponseEntity result = target.startRun(fakeData());
 
         // Assert
         // start model correctly
-        verify(mockRunner).startModel(eq(mockConf), eq(occurrence), eq(extent), any(ModelStatusReporter.class));
-        // extracted covariates correctly
-        ArgumentCaptor<File> captor = ArgumentCaptor.forClass(File.class);
-        verify(mockFactory).createDefaultConfiguration(captor.capture(), eq(true), eq("foo"));
-        String tempDir = captor.getValue().getAbsolutePath();
-        assertThat(Paths.get(tempDir, "covariates", "a").toFile()).exists();
-        assertThat(Paths.get(tempDir, "covariates", "a").toFile()).hasContent("c1");
-        assertThat(Paths.get(tempDir, "covariates", "c", "b").toFile()).exists();
-        assertThat(Paths.get(tempDir, "covariates", "c", "b").toFile()).hasContent("c2");
+        verify(mockRunner).startModel(eq(mockConf), any(ModelStatusReporter.class));
+        // extracted zip content correctly
+        assertThat(Paths.get(workspace.toString(), "r", "a").toFile()).exists();
+        assertThat(Paths.get(workspace.toString(), "r", "a").toFile()).hasContent("c1");
+        assertThat(Paths.get(workspace.toString(), "a", "c", "b").toFile()).exists();
+        assertThat(Paths.get(workspace.toString(), "a", "c", "b").toFile()).hasContent("c2");
         // give correct result
-        assertResponseEntity(result, runName, null, HttpStatus.OK);
+        assertResponseEntity(result, null, HttpStatus.OK);
     }
 
     @Test
@@ -96,27 +91,22 @@ public class ModelRunControllerTest {
         AbraidJsonObjectMapper objectMapper = mock(AbraidJsonObjectMapper.class);
         ModelRunController target = new ModelRunController(null, null, null, objectMapper);
 
-        GeoJsonDiseaseOccurrenceFeatureCollection object = new GeoJsonDiseaseOccurrenceFeatureCollection(
-                Arrays.asList(defaultDiseaseOccurrence(), defaultDiseaseOccurrence()));
-
-        when(objectMapper.readValue(eq("metadata"), eq(JsonModelRun.class))).thenReturn(new JsonModelRun(new JsonModelDisease(1, true, "foo", "foo"), object, new HashMap<Integer, Integer>()));
+        when(objectMapper.readValue(eq("metadata"), eq(JsonModelRun.class))).thenReturn(new JsonModelRun(new JsonModelDisease(1, true, "foo", "foo"), "name"));
 
         // Act
         ResponseEntity result = target.startRun(fakeData());
 
         // Assert
-        assertResponseEntity(result, null, "Could not start model run. See server logs for more details.",
+        assertResponseEntity(result, "Could not start model run. See server logs for more details.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     private void assertResponseEntity(ResponseEntity response,
-                                      String expectedModelRunName,
                                       String expectedErrorText,
                                       HttpStatus expectedStatus) {
         assertThat(response.getStatusCode()).isEqualTo(expectedStatus);
         assertThat(response.getBody()).isInstanceOf(JsonModelRunResponse.class);
         JsonModelRunResponse responseBody = (JsonModelRunResponse) response.getBody();
-        assertThat(responseBody.getModelRunName()).isEqualTo(expectedModelRunName);
         assertThat(responseBody.getErrorText()).isEqualTo(expectedErrorText);
     }
 
@@ -127,10 +117,12 @@ public class ModelRunControllerTest {
         File dir = testFolder.newFolder();
         File metadata = Paths.get(dir.getAbsolutePath(), "metadata.json").toFile();
         FileUtils.writeStringToFile(metadata, "metadata");
-        File c1 = Paths.get(dir.getAbsolutePath(), "covariates", "a").toFile();
-        File c2 = Paths.get(dir.getAbsolutePath(), "covariates", "c", "b").toFile();
+        // Add some random files
+        File c1 = Paths.get(dir.getAbsolutePath(), "r", "a").toFile();
+        File c2 = Paths.get(dir.getAbsolutePath(), "a", "c", "b").toFile();
         FileUtils.writeStringToFile(c1, "c1");
         FileUtils.writeStringToFile(c2, "c2");
+        //Zip
         ZipParameters zipParameters = new ZipParameters();
         zipParameters.setIncludeRootFolder(false);
         zipFile.createZipFileFromFolder(dir, zipParameters, false, 0);

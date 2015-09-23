@@ -5,23 +5,13 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json;
  * Copyright (c) 2014 University of Oxford
  */
 public class JsonModelRunResponse {
-    private String modelRunName;
     private String errorText;
 
     public JsonModelRunResponse() {
     }
 
-    public JsonModelRunResponse(String modelRunName, String errorText) {
-        this.modelRunName = modelRunName;
+    public JsonModelRunResponse(String errorText) {
         this.errorText = errorText;
-    }
-
-    public String getModelRunName() {
-        return modelRunName;
-    }
-
-    public void setModelRunName(String modelRunName) {
-        this.modelRunName = modelRunName;
     }
 
     public String getErrorText() {
@@ -42,16 +32,13 @@ public class JsonModelRunResponse {
         JsonModelRunResponse that = (JsonModelRunResponse) o;
 
         if (errorText != null ? !errorText.equals(that.errorText) : that.errorText != null) return false;
-        if (modelRunName != null ? !modelRunName.equals(that.modelRunName) : that.modelRunName != null) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = modelRunName != null ? modelRunName.hashCode() : 0;
-        result = 31 * result + (errorText != null ? errorText.hashCode() : 0);
-        return result;
+        return errorText != null ? errorText.hashCode() : 0;
     }
     ///CHECKSTYLE:ON
     ///COVERAGE:ON

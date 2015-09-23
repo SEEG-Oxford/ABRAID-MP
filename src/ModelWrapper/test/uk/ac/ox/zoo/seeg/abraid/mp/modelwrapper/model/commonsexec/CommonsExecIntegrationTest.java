@@ -3,13 +3,15 @@ package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.commonsexec;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.AdminUnitRunConfiguration;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.CodeRunConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.config.ModellingConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.runrequest.FreemarkerScriptGenerator;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.runrequest.ScriptGenerator;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.ExecutionRunConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.RunConfiguration;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelRunner;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelRunnerImpl;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelStatusReporter;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ProcessHandler;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSChecker;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSCheckerImpl;
 
@@ -22,12 +24,11 @@ import java.nio.file.Paths;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
- * Integration tests for the commons exec based R script runner.
- * Copyright (c) 2014 University of Oxford
- */
+* Integration tests for the commons exec based R script runner.
+* Copyright (c) 2014 University of Oxford
+*/
 public class CommonsExecIntegrationTest {
     private static final int SUCCESSFUL = 0;
 
@@ -35,7 +36,7 @@ public class CommonsExecIntegrationTest {
     public TemporaryFolder testDir = new TemporaryFolder(); ///CHECKSTYLE:SUPPRESS VisibilityModifier
 
     private RunConfiguration createRunConfig() throws IOException {
-        return new RunConfiguration("foo", testDir.newFolder(), testDir.newFolder(), null, new ExecutionRunConfiguration(findR(), 60000, 1, false, false), null);
+        return new RunConfiguration("foo", testDir.getRoot(), new ExecutionRunConfiguration(findR(), 60000));
     }
 
     /**
@@ -45,16 +46,11 @@ public class CommonsExecIntegrationTest {
     public void shouldBeAbleToRunEmptyScript() throws Exception {
         // Arrange
         RunConfiguration config = createRunConfig();
-        WorkspaceProvisioner mockWorkspaceProvisioner = mock(WorkspaceProvisioner.class);
-        ModelRunner runner = new ModelRunnerImpl(new CommonsExecProcessRunnerFactory(), mockWorkspaceProvisioner);
-        when(mockWorkspaceProvisioner.provisionWorkspace(config, null, null)).thenAnswer(new Answer<File>() {
-            public File answer(InvocationOnMock invocationOnMock) throws Throwable {
-                return createScript(testDir, new String[]{""});
-            }
-        });
+        ModelRunner runner = new ModelRunnerImpl(new CommonsExecProcessRunnerFactory());
+        createScript(testDir, new String[]{""});
 
         // Act
-        ProcessHandler processHandler = runner.runModel(config, null, null, mock(ModelStatusReporter.class));
+        ProcessHandler processHandler = runner.runModel(config, mock(ModelStatusReporter.class));
         int exitCode = processHandler.waitForCompletion();
 
         // Assert
@@ -68,16 +64,12 @@ public class CommonsExecIntegrationTest {
     public void shouldBeAbleToRunHelloWorldScript() throws Exception {
         // Arrange
         RunConfiguration config = createRunConfig();
-        WorkspaceProvisioner mockWorkspaceProvisioner = mock(WorkspaceProvisioner.class);
-        ModelRunner runner = new ModelRunnerImpl(new CommonsExecProcessRunnerFactory(), mockWorkspaceProvisioner);
-        when(mockWorkspaceProvisioner.provisionWorkspace(config, null, null)).thenAnswer(new Answer<File>() {
-            public File answer(InvocationOnMock invocationOnMock) throws Throwable {
-                return createScript(testDir, new String[]{"cat('Hello, world!\n')"});
-            }
-        });
+        ModelRunner runner = new ModelRunnerImpl(new CommonsExecProcessRunnerFactory());
+
+        createScript(testDir, new String[]{"cat('Hello, world!\n')"});
 
         // Act
-        ProcessHandler processHandler = runner.runModel(config, null, null, mock(ModelStatusReporter.class));
+        ProcessHandler processHandler = runner.runModel(config, mock(ModelStatusReporter.class));
         int exitCode = processHandler.waitForCompletion();
         String result = processHandler.getOutputStream().toString();
 
@@ -93,16 +85,11 @@ public class CommonsExecIntegrationTest {
     public void shouldBeAbleToRunHelloErrorScript() throws Exception {
         // Arrange
         RunConfiguration config = createRunConfig();
-        WorkspaceProvisioner mockWorkspaceProvisioner = mock(WorkspaceProvisioner.class);
-        ModelRunner runner = new ModelRunnerImpl(new CommonsExecProcessRunnerFactory(), mockWorkspaceProvisioner);
-        when(mockWorkspaceProvisioner.provisionWorkspace(config, null, null)).thenAnswer(new Answer<File>() {
-            public File answer(InvocationOnMock invocationOnMock) throws Throwable {
-                return createScript(testDir, new String[]{"write('Hello, world!\n', stderr())"});
-            }
-        });
+        ModelRunner runner = new ModelRunnerImpl(new CommonsExecProcessRunnerFactory());
+        createScript(testDir, new String[]{"write('Hello, world!\n', stderr())"});
 
         // Act
-        ProcessHandler processHandler = runner.runModel(config, null, null, mock(ModelStatusReporter.class));
+        ProcessHandler processHandler = runner.runModel(config, mock(ModelStatusReporter.class));
         int exitCode = processHandler.waitForCompletion();
         String result = processHandler.getErrorStream().toString();
 
@@ -118,20 +105,15 @@ public class CommonsExecIntegrationTest {
     public void shouldBeAbleToRunHelloNameScript() throws Exception {
         // Arrange
         RunConfiguration config = createRunConfig();
-        WorkspaceProvisioner mockWorkspaceProvisioner = mock(WorkspaceProvisioner.class);
-        ModelRunner runner = new ModelRunnerImpl(new CommonsExecProcessRunnerFactory(), mockWorkspaceProvisioner);
-        when(mockWorkspaceProvisioner.provisionWorkspace(config, null, null)).thenAnswer(new Answer<File>() {
-            public File answer(InvocationOnMock invocationOnMock) throws Throwable {
-                return createScript(testDir, new String[]{
+        ModelRunner runner = new ModelRunnerImpl(new CommonsExecProcessRunnerFactory());
+        createScript(testDir, new String[]{
                         "name <- readLines(file(\"stdin\"),1)",
                         "cat('Hello, ', name, '!\n', sep='')"});
-            }
-        });
         String expectedName = "Bob";
         PipedOutputStream writer = new PipedOutputStream();
 
         // Act
-        ProcessHandler processHandler = runner.runModel(config, null, null, mock(ModelStatusReporter.class));
+        ProcessHandler processHandler = runner.runModel(config, mock(ModelStatusReporter.class));
         processHandler.getInputStream().connect(writer);
         writer.write(expectedName.getBytes());
         writer.flush();
@@ -150,25 +132,16 @@ public class CommonsExecIntegrationTest {
     @Test
     public void shouldBeAbleToDoDryRunOfModel() throws Exception {
         // Arrange
-        final File baseDir = testDir.newFolder();
-        Files.createDirectory(Paths.get(baseDir.getAbsolutePath(), "covariates"));
-        final RunConfiguration config = new RunConfiguration(
-                "foo", baseDir, testDir.newFolder(),
-                new CodeRunConfiguration("", ""),
-                new ExecutionRunConfiguration(findR(), 60000, 1, false, true),
-                new AdminUnitRunConfiguration(true, "", "", "", "", ""));
+        final RunConfiguration config = createRunConfig();
+        Files.createDirectories(Paths.get(config.getWorkingDirectoryPath().toString(), "covariates"));
 
-        WorkspaceProvisioner mockWorkspaceProvisioner = mock(WorkspaceProvisioner.class);
-        ModelRunner runner = new ModelRunnerImpl(new CommonsExecProcessRunnerFactory(), mockWorkspaceProvisioner);
-        when(mockWorkspaceProvisioner.provisionWorkspace(config, null, null)).thenAnswer(new Answer<File>() {
-            public File answer(InvocationOnMock invocationOnMock) throws Throwable {
-                ScriptGenerator scriptGenerator = new FreemarkerScriptGenerator();
-                return scriptGenerator.generateScript(config, baseDir);
-            }
-        });
+        ScriptGenerator scriptGenerator = new FreemarkerScriptGenerator();
+        scriptGenerator.generateScript(new ModellingConfiguration(1, true, true), config.getWorkingDirectoryPath().toFile());
+
+        ModelRunner runner = new ModelRunnerImpl(new CommonsExecProcessRunnerFactory());
 
         // Act
-        ProcessHandler processHandler = runner.runModel(config, null, null, mock(ModelStatusReporter.class));
+        ProcessHandler processHandler = runner.runModel(config, mock(ModelStatusReporter.class));
         int exitCode = processHandler.waitForCompletion();
 
         // Assert
@@ -189,8 +162,9 @@ public class CommonsExecIntegrationTest {
     }
 
     private static File createScript(TemporaryFolder baseDir, String[] lines) throws IOException {
-        File directory = baseDir.newFolder();
-        File script = Files.createFile(Paths.get(directory.getPath(), "script.R")).toFile();
+        File directory = baseDir.getRoot();
+        Files.createDirectories(Paths.get(directory.getPath(), "foo")).toFile();
+        File script = Files.createFile(Paths.get(directory.getPath(), "foo", "modelRun.R")).toFile();
         PrintWriter writer = new PrintWriter(script);
         for (String line : lines) {
             writer.println(line);

@@ -1,8 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import java.util.Map;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * The JSON DTO used to trigger model runs.
@@ -10,19 +9,15 @@ import java.util.Map;
  */
 public class JsonModelRun {
     private JsonModelDisease disease;
-    private GeoJsonDiseaseOccurrenceFeatureCollection occurrences;
-    // Mapping from GAUL code to disease extent class weighting
-    private Map<Integer, Integer> extentWeightings;
+    private String runName;
 
     public JsonModelRun() {
     }
 
     public JsonModelRun(JsonModelDisease disease,
-                        GeoJsonDiseaseOccurrenceFeatureCollection occurrences,
-                        Map<Integer, Integer> extentWeightings) {
+                        String runName) {
         setDisease(disease);
-        setOccurrences(occurrences);
-        setExtentWeightings(extentWeightings);
+        setRunName(runName);
     }
 
     public JsonModelDisease getDisease() {
@@ -33,24 +28,16 @@ public class JsonModelRun {
         this.disease = disease;
     }
 
-    public GeoJsonDiseaseOccurrenceFeatureCollection getOccurrences() {
-        return occurrences;
+    public String getRunName() {
+        return runName;
     }
 
-    public void setOccurrences(GeoJsonDiseaseOccurrenceFeatureCollection occurrences) {
-        this.occurrences = occurrences;
-    }
-
-    public Map<Integer, Integer> getExtentWeightings() {
-        return extentWeightings;
-    }
-
-    public void setExtentWeightings(Map<Integer, Integer> extents) {
-        this.extentWeightings = extents;
+    public void setRunName(String runName) {
+        this.runName = runName;
     }
 
     @JsonIgnore
     public boolean isValid() {
-        return disease != null && occurrences != null && extentWeightings != null;
+        return disease != null && runName != null && StringUtils.isNotBlank(runName);
     }
 }

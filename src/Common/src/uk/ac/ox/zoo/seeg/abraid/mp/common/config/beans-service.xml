@@ -29,6 +29,22 @@
     <bean id="validationParameterCacheService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ValidationParameterCacheServiceImpl" autowire="constructor"/>
     <import resource="classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/beans-email-service.xml"/>
 
+    <!-- Config -->
+    <bean id="configurationService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.config.ConfigurationServiceImpl">
+        <constructor-arg name="basicProperties" value="${application.managed.properties.file}" />
+    </bean>
+
+    <bean id="gaulsToAdjust" class="org.springframework.util.StringUtils" factory-method="tokenizeToStringArray">
+        <constructor-arg type="java.lang.String" value="${gaul.codes.to.model.as.precise}"/>
+        <constructor-arg type="java.lang.String" value=" "/>
+    </bean>
+
+    <bean id="modellingConfiguration" class="uk.ac.ox.zoo.seeg.abraid.mp.common.config.ModellingConfiguration">
+        <constructor-arg name="maxCPUs" value="${model.max.cpu}"/>
+        <constructor-arg name="dryRun" value="${model.dry.run}"/>
+        <constructor-arg name="verbose" value="${model.verbose}"/>
+    </bean>
+
     <!-- Business workflow services -->
     <bean id="diseaseOccurrenceValidationService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.DiseaseOccurrenceValidationServiceImpl" autowire="constructor"/>
     <bean id="modelRunWorkflowService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.ModelRunWorkflowServiceImpl" autowire="constructor"/>
@@ -47,6 +63,17 @@
     </bean>
     <bean id="modelRunRequester" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.runrequest.ModelRunRequester" autowire="constructor">
         <constructor-arg name="modelWrapperUrlCollection" ref="modelWrapperUrls" />
+    </bean>
+    <bean id="modelRunPackageBuilder" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.runrequest.ModelRunPackageBuilder" autowire="constructor"/>
+    <bean id="scriptGenerator" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.runrequest.FreemarkerScriptGenerator" />
+    <bean id="sourceCodeManager" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.GitSourceCodeManager" autowire="constructor" >
+        <constructor-arg name="repositoryDirectory" value="${abraid.repo.cache.dir}" />
+    </bean>
+    <bean id="occurrenceDataWriter" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.runrequest.data.OccurrenceDataWriterImpl" autowire="constructor" />
+    <bean id="extentDataWriter" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.runrequest.data.ExtentDataWriterImpl" />
+    <bean id="inputDataManager" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.runrequest.data.InputDataManagerImpl" autowire="constructor" />
+    <bean id="modellingLocationPrecisionAdjuster" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModellingLocationPrecisionAdjuster" autowire="constructor" >
+        <constructor-arg name="gaulsToAdjust" ref="gaulsToAdjust" />
     </bean>
     <bean id="environmentalSuitabilityHelper" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.EnvironmentalSuitabilityHelper" autowire="constructor"/>
     <bean id="distanceFromDiseaseExtentHelper" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.DistanceFromDiseaseExtentHelper" autowire="constructor"/>

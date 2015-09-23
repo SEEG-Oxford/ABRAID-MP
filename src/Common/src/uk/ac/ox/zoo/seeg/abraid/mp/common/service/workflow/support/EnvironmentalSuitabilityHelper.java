@@ -184,10 +184,13 @@ public class EnvironmentalSuitabilityHelper {
         int count = 0;
         for (int i = 0; i < adminData.getWidth(); i++) {
             for (int j = 0; j < adminData.getHeight(); j++) {
+                //System.out.println("av");
                 int adminValue = adminData.getSample(i, j, 0);
                 if (adminValue == gaul) {
+                    //System.out.println("sd");
                     double rasterValue = suitabilityData.getSampleDouble(i, j, 0);
                     if (rasterValue != RasterUtils.NO_DATA_VALUE) {
+                        //System.out.println("add");
                         count++;
                         sum += rasterValue;
                     }

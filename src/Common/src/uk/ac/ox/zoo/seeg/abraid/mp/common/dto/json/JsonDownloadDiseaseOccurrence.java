@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModellingLocationPrecisionAdjuster;
 
 /**
@@ -44,19 +43,11 @@ public class JsonDownloadDiseaseOccurrence extends JsonModellingDiseaseOccurrenc
             inputDiseaseOccurrence.getLocation().getGeom().getY(),
             inputDiseaseOccurrence.getFinalWeighting(),
             inputDiseaseOccurrence.getLocation().getPrecision().getModelValue(),
-            extractGaulString(extractGaulCode(inputDiseaseOccurrence)),
+            extractGaulString(inputDiseaseOccurrence.getLocation()),
             extractDateString(inputDiseaseOccurrence.getOccurrenceDate()),
             inputDiseaseOccurrence.getAlert().getFeed().getProvenance().getName(),
             inputDiseaseOccurrence.getAlert().getFeed().getName(),
             inputDiseaseOccurrence.getAlert().getUrl());
-    }
-
-    private static Integer extractGaulCode(DiseaseOccurrence inputDiseaseOccurrence) {
-        if (inputDiseaseOccurrence.getLocation().getPrecision().equals(LocationPrecision.COUNTRY)) {
-            return inputDiseaseOccurrence.getLocation().getCountryGaulCode();
-        } else {
-            return inputDiseaseOccurrence.getLocation().getAdminUnitQCGaulCode();
-        }
     }
 
     private static String extractDateString(DateTime occurrenceDate) {

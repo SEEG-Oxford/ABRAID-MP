@@ -3,6 +3,9 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.apache.commons.lang.ObjectUtils;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModellingLocationPrecisionAdjuster;
 
 /**
@@ -39,22 +42,33 @@ public class JsonModellingDiseaseOccurrence {
     }
 
     public JsonModellingDiseaseOccurrence(ModellingLocationPrecisionAdjuster precisionAdjuster,
-                                          GeoJsonDiseaseOccurrenceFeature occurrence) {
+                                          DiseaseOccurrence occurrence) {
         this(precisionAdjuster,
-            occurrence.getGeometry().getCoordinates().getLongitude(),
-            occurrence.getGeometry().getCoordinates().getLatitude(),
-            occurrence.getProperties().getWeighting(),
-            occurrence.getProperties().getLocationPrecision().getModelValue(),
-            extractGaulString(occurrence.getProperties().getGaulCode()));
+            occurrence.getLocation().getGeom().getX(),
+            occurrence.getLocation().getGeom().getY(),
+            occurrence.getFinalWeighting(),
+            occurrence.getLocation().getPrecision().getModelValue(),
+            extractGaulString(occurrence.getLocation()));
     }
 
+
     /**
-     * Handles null gaul codes appropriately. For use in constructors.
-     * @param gaul The gaul code.
-     * @return The gaul code string.
+     * Gets the string representing the GAUL code to use in the model data.
+     * @param location The occurrence location.
+     * @return The GAUL code string.
      */
-    protected static String extractGaulString(Integer gaul) {
-        return (gaul == null) ? null : ObjectUtils.toString(gaul);
+    protected static String extractGaulString(Location location) {
+        if (location.getPrecision().equals(LocationPrecision.PRECISE)) {
+            return replaceNullGaul(null);
+        } else if (location.getPrecision().equals(LocationPrecision.COUNTRY)) {
+            return replaceNullGaul(location.getCountryGaulCode());
+        } else {
+            return replaceNullGaul(location.getAdminUnitQCGaulCode());
+        }
+    }
+
+    private static String replaceNullGaul(Integer gaul) {
+        return (gaul == null) ? R_CODE_NULL_IDENTIFIER : ObjectUtils.toString(gaul);
     }
 
     public double getLongitude() {

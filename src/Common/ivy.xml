@@ -25,8 +25,10 @@
         <dependency org="org.springframework.security" name="spring-security-core" rev="3.2.2.RELEASE" conf="external->default"/>
         <dependency org="javax.servlet" name="javax.servlet-api" rev="3.1.0" />
         <dependency org="commons-collections" name="commons-collections" rev="3.2.1" conf="external->default"/>
+        <dependency org="commons-configuration" name="commons-configuration" rev="1.9" conf="external->default"/>
         <dependency org="org.freemarker" name="freemarker" rev="2.3.20" conf="external->default"/>
         <dependency org="com.googlecode.juniversalchardet" name="juniversalchardet" rev="1.0.3" />
+        <dependency org="org.eclipse.jgit" name="org.eclipse.jgit" rev="3.2.0.201312181205-r" conf="external->default"/>
         <!-- Web services -->
         <dependency org="org.glassfish.jersey.core" name="jersey-client" rev="2.12" conf="external->default"/>
         <dependency org="org.glassfish.jersey.connectors" name="jersey-apache-connector" rev="2.12" conf="external->default"/>

@@ -15,23 +15,13 @@ public class RunConfiguration {
     // The base directory into which the run directory should be created
     private final File baseDir;
 
-    private final File tempDataDir;
-
     // Sub configuration objects
-    private final CodeRunConfiguration codeConfig;
     private final ExecutionRunConfiguration executionConfig;
-    private final AdminUnitRunConfiguration adminUnitConfig;
 
-    public RunConfiguration(String runName, File baseDir, File tempDataDir,
-                            CodeRunConfiguration codeConfig, ExecutionRunConfiguration executionConfig,
-                            AdminUnitRunConfiguration adminUnitConfig) {
+    public RunConfiguration(String runName, File baseDir, ExecutionRunConfiguration executionConfig) {
         this.runName = runName;
         this.baseDir = baseDir;
-        this.tempDataDir = tempDataDir;
-
-        this.codeConfig = codeConfig;
         this.executionConfig = executionConfig;
-        this.adminUnitConfig = adminUnitConfig;
     }
 
     public String getRunName() {
@@ -42,20 +32,8 @@ public class RunConfiguration {
         return baseDir;
     }
 
-    public File getTempDataDir() {
-        return tempDataDir;
-    }
-
-    public CodeRunConfiguration getCodeConfig() {
-        return codeConfig;
-    }
-
     public ExecutionRunConfiguration getExecutionConfig() {
         return executionConfig;
-    }
-
-    public AdminUnitRunConfiguration getAdminUnitConfig() {
-        return adminUnitConfig;
     }
 
     public Path getWorkingDirectoryPath() {

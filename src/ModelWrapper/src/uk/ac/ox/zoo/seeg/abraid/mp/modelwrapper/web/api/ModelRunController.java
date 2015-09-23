@@ -33,9 +33,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 /**
- * Controller for the ModelWrapper model run triggers.
- * Copyright (c) 2014 University of Oxford
- */
+* Controller for the ModelWrapper model run triggers.
+* Copyright (c) 2014 University of Oxford
+*/
 @Controller
 public class ModelRunController extends AbstractController {
     private static final Logger LOGGER = Logger.getLogger(ModelRunController.class);
@@ -77,7 +77,7 @@ public class ModelRunController extends AbstractController {
         JsonModelRun runData = null;
         File tempDataDir = null;
         try {
-            tempDataDir = saveRequestBodyToTemporaryFile(data);
+            tempDataDir = saveRequestBodyToTemporaryDir(data);
             runData = readMetadata(tempDataDir);
         } catch (ZipException|JsonParseException|JsonMappingException e) {
             return createErrorResponse("Run data must be provided and be valid.", HttpStatus.BAD_REQUEST);
@@ -91,28 +91,26 @@ public class ModelRunController extends AbstractController {
             return createErrorResponse("Run data must be provided and be valid.", HttpStatus.BAD_REQUEST);
         }
 
-        String runName;
         try {
-            runName = submitModelRun(runData, tempDataDir);
+            submitModelRun(runData, tempDataDir);
         } catch (Exception e) {
             LOGGER.error(LOG_EXCEPTION_STARTING_MODEL_RUN, e);
             return createErrorResponse("Could not start model run. See server logs for more details.",
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        return createSuccessResponse(runName);
+        return createSuccessResponse();
     }
 
-    private String submitModelRun(JsonModelRun runData, File tempDataDir) throws ConfigurationException, IOException {
+    private void submitModelRun(JsonModelRun runData, File tempDataDir) throws ConfigurationException, IOException {
         RunConfiguration runConfiguration = runConfigurationFactory.createDefaultConfiguration(
-                tempDataDir,
-                runData.getDisease().isGlobal(),
-                runData.getDisease().getAbbreviation());
+                runData.getRunName());
+
+        FileUtils.moveDirectory(tempDataDir, runConfiguration.getWorkingDirectoryPath().toFile());
 
         ModelStatusReporter modelStatusReporter = new ModelStatusReporterImpl(
                 runConfiguration.getRunName(),
                 runConfiguration.getWorkingDirectoryPath(),
-                runConfiguration.getExecutionConfig().getDryRunFlag(),
                 modelOutputHandlerWebService,
                 objectMapper);
 
@@ -121,9 +119,7 @@ public class ModelRunController extends AbstractController {
                 runConfiguration.getRunName()));
 
         modelRunnerAsyncWrapper.startModel(
-                runConfiguration, runData.getOccurrences(), runData.getExtentWeightings(), modelStatusReporter);
-
-        return runConfiguration.getRunName();
+                runConfiguration, modelStatusReporter);
     }
 
     private JsonModelRun readMetadata(File tempDir) throws IOException {
@@ -132,7 +128,7 @@ public class ModelRunController extends AbstractController {
         return objectMapper.readValue(json, JsonModelRun.class);
     }
 
-    private File saveRequestBodyToTemporaryFile(byte[] modelRunZip) throws IOException, ZipException {
+    private File saveRequestBodyToTemporaryDir(byte[] modelRunZip) throws IOException, ZipException {
         File tempDataDir = null;
         File zipFile = null;
         try {
@@ -154,11 +150,11 @@ public class ModelRunController extends AbstractController {
         }
     }
 
-    private ResponseEntity<JsonModelRunResponse> createSuccessResponse(String modelRunName) {
-        return new ResponseEntity<>(new JsonModelRunResponse(modelRunName, null), HttpStatus.OK);
+    private ResponseEntity<JsonModelRunResponse> createSuccessResponse() {
+        return new ResponseEntity<>(new JsonModelRunResponse(null), HttpStatus.OK);
     }
 
     private ResponseEntity<JsonModelRunResponse> createErrorResponse(String errorText, HttpStatus status) {
-        return new ResponseEntity<>(new JsonModelRunResponse(null, errorText), status);
+        return new ResponseEntity<>(new JsonModelRunResponse(errorText), status);
     }
 }

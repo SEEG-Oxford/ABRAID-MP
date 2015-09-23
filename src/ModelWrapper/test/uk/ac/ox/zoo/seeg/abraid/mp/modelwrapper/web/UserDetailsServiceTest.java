@@ -5,7 +5,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ConfigurationService;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ModelWrapperConfigurationService;
 
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
@@ -21,7 +21,7 @@ public class UserDetailsServiceTest {
     @Test
     public void testLoadUserByUsernameThrowsForIncorrectUsername() throws Exception {
         // Arrange
-        ConfigurationService mockConfigurationService = mock(ConfigurationService.class);
+        ModelWrapperConfigurationService mockConfigurationService = mock(ModelWrapperConfigurationService.class);
         UserDetailsService target = new UserDetailsServiceImpl(mockConfigurationService);
         when(mockConfigurationService.getAuthenticationUsername()).thenReturn("correctUsername");
 
@@ -35,7 +35,7 @@ public class UserDetailsServiceTest {
     @Test
     public void testLoadUserByUsernameReturnsCorrectUser() throws Exception {
         // Arrange
-        ConfigurationService mockConfigurationService = mock(ConfigurationService.class);
+        ModelWrapperConfigurationService mockConfigurationService = mock(ModelWrapperConfigurationService.class);
         UserDetailsService target = new UserDetailsServiceImpl(mockConfigurationService);
         String expectedUsername = "expectedUsername";
         String expectedPasswordHash = "expectedPasswordHash";

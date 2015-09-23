@@ -4,6 +4,7 @@ import ch.lambdaj.function.convert.Converter;
 import ch.lambdaj.function.matcher.LambdaJMatcher;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 import org.springframework.util.StringUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelRunResponse;
@@ -12,6 +13,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunWorkflowException;
 
+import java.io.File;
 import java.net.URI;
 import java.util.*;
 
@@ -25,6 +27,7 @@ import static ch.lambdaj.Lambda.*;
 public class ModelRunRequester {
     private ModelWrapperWebService modelWrapperWebService;
     private CovariateService covariateService;
+    private final ModelRunPackageBuilder modelRunPackageBuilder;
     private DiseaseService diseaseService;
     private ModelRunService modelRunService;
 
@@ -33,12 +36,20 @@ public class ModelRunRequester {
     private static final String REQUEST_LOG_MESSAGE =
             "Requesting a model run for disease group %d (%s) with %d disease occurrence(s)";
     private static final String NO_OCCURRENCES_MESSAGE = "Cannot request a model run because there are no occurrences";
+    private static final String CLEAN_UP_WARNING_MESSAGE = "Could not clean up workspace package (%s).";
+
+    // This the max file name length (255) minus reserved space for a GUID (36), a datetime (19) and separators (2)
+    private static final int MAX_DISEASE_NAME_LENGTH = 195;
+
     private List<URI> modelWrapperUrlCollection;
 
-    public ModelRunRequester(ModelWrapperWebService modelWrapperWebService, CovariateService covariateService,
+    public ModelRunRequester(ModelWrapperWebService modelWrapperWebService,
+                             ModelRunPackageBuilder modelRunPackageBuilder,
+                             CovariateService covariateService,
                              DiseaseService diseaseService, ModelRunService modelRunService,
                              String[] modelWrapperUrlCollection) {
         this.modelWrapperWebService = modelWrapperWebService;
+        this.modelRunPackageBuilder = modelRunPackageBuilder;
         this.diseaseService = diseaseService;
         this.covariateService = covariateService;
         this.modelRunService = modelRunService;
@@ -65,37 +76,51 @@ public class ModelRunRequester {
     public void requestModelRun(int diseaseGroupId, List<DiseaseOccurrence> occurrencesForModelRun,
                                 DateTime batchStartDate, DateTime batchEndDate) throws ModelRunWorkflowException {
         if (occurrencesForModelRun != null && occurrencesForModelRun.size() > 0) {
+            // Collate the data
             DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
             Collection<AdminUnitDiseaseExtentClass> diseaseExtent =
                     diseaseService.getDiseaseExtentByDiseaseGroupId(diseaseGroupId);
-            Map<Integer, Integer> diseaseExtentMap = extractDiseaseExtentMap(diseaseExtent);
             Collection<CovariateFile> covariateFiles = covariateService.getCovariateFilesByDiseaseGroup(diseaseGroup);
-            String covariateDir = covariateService.getCovariateDirectory();
-            DateTime requestDate = DateTime.now();
+            String covariateDirectory = covariateService.getCovariateDirectory();
 
+            // Pick a blade
+            URI modelWrapperUrl = selectLeastBusyModelWrapperUrl();
+
+            File runPackage = null;
             try {
+                // Build the work package
+                String name = buildRunName(diseaseGroup.getAbbreviation());
+                runPackage = modelRunPackageBuilder.buildPackage(
+                        name, diseaseGroup, occurrencesForModelRun, diseaseExtent, covariateFiles, covariateDirectory);
+
+                // Submit the run
                 logRequest(diseaseGroup, occurrencesForModelRun);
-                URI modelWrapperUrl = selectLeastBusyModelWrapperUrl();
-                ModelRun modelRun = createPreliminaryModelRun(diseaseGroup, requestDate, modelWrapperUrl,
+                ModelRun modelRun = createPreliminaryModelRun(name, diseaseGroup, modelWrapperUrl,
                         batchStartDate, batchEndDate, occurrencesForModelRun, diseaseExtent);
-                JsonModelRunResponse response = modelWrapperWebService.startRun(modelWrapperUrl, diseaseGroup,
-                        occurrencesForModelRun, diseaseExtentMap, covariateFiles, covariateDir);
+
+                JsonModelRunResponse response = modelWrapperWebService.startRun(modelWrapperUrl, runPackage);
+
                 handleModelRunResponse(response, modelRun);
             } catch (Exception e) {
                 String message = String.format(WEB_SERVICE_ERROR_MESSAGE, e.getMessage());
                 LOGGER.error(message);
                 throw new ModelRunWorkflowException(message, e);
+            } finally {
+                if (runPackage != null && runPackage.exists() && !runPackage.delete()) {
+                    LOGGER.warn(String.format(CLEAN_UP_WARNING_MESSAGE, runPackage.getAbsolutePath()));
+                }
             }
         } else {
             throw new ModelRunWorkflowException(NO_OCCURRENCES_MESSAGE);
         }
     }
 
-    private ModelRun createPreliminaryModelRun(DiseaseGroup diseaseGroup, DateTime requestDate, URI modelWrapperUrl,
+    private ModelRun createPreliminaryModelRun(String name, DiseaseGroup diseaseGroup,
+                                               URI modelWrapperUrl,
                                                DateTime batchStartDate, DateTime batchEndDate,
                                                List<DiseaseOccurrence> occurrencesForModelRun,
                                                Collection<AdminUnitDiseaseExtentClass> diseaseExtent) {
-        final ModelRun modelRun = new ModelRun(null, diseaseGroup, modelWrapperUrl.getHost(), requestDate,
+        final ModelRun modelRun = new ModelRun(name, diseaseGroup, modelWrapperUrl.getHost(), DateTime.now(),
                 min(occurrencesForModelRun, on(DiseaseOccurrence.class).getOccurrenceDate()),
                 max(occurrencesForModelRun, on(DiseaseOccurrence.class).getOccurrenceDate()));
         modelRun.setBatchStartDate(batchStartDate);
@@ -141,25 +166,24 @@ public class ModelRunRequester {
                 diseaseOccurrences.size()));
     }
 
+    private String buildRunName(String diseaseAbbreviation) {
+        String safeDiseaseName = diseaseAbbreviation.replaceAll("[^A-Za-z0-9]", "-");
+        if (safeDiseaseName.length() > MAX_DISEASE_NAME_LENGTH) {
+            safeDiseaseName = safeDiseaseName.substring(0, MAX_DISEASE_NAME_LENGTH);
+        }
+
+        return safeDiseaseName + "_" +
+                LocalDateTime.now().toString("yyyy-MM-dd-HH-mm-ss") + "_" +
+                UUID.randomUUID();
+    }
+
     private void handleModelRunResponse(JsonModelRunResponse response, ModelRun modelRun) {
         if (StringUtils.hasText(response.getErrorText())) {
             String message = String.format(WEB_SERVICE_ERROR_MESSAGE, response.getErrorText());
             LOGGER.error(message);
             throw new ModelRunWorkflowException(message);
         } else {
-            modelRun.setName(response.getModelRunName());
             modelRunService.saveModelRun(modelRun);
         }
-    }
-
-    private Map<Integer, Integer> extractDiseaseExtentMap(Collection<AdminUnitDiseaseExtentClass> diseaseExtent) {
-        // Create a mapping of GAUL codes to extent class weightings
-        Map<Integer, Integer> extentMapping = new HashMap<>();
-        for (AdminUnitDiseaseExtentClass extentClass : diseaseExtent) {
-            extentMapping.put(extentClass.getAdminUnitGlobalOrTropical().getGaulCode(),
-                    extentClass.getDiseaseExtentClass().getWeighting());
-        }
-
-        return extentMapping;
     }
 }

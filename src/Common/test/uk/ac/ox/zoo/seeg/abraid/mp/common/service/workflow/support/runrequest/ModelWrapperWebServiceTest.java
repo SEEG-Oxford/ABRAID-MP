@@ -1,15 +1,10 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.runrequest;
 
-import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
-import net.lingala.zip4j.model.ZipParameters;
 import org.apache.commons.io.FileUtils;
-import org.joda.time.DateTime;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelRunResponse;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParserException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
@@ -18,9 +13,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.*;
 
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
@@ -31,10 +23,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Tests the ModelWrapperWebService class.
- *
- * Copyright (c) 2014 University of Oxford
- */
+* Tests the ModelWrapperWebService class.
+*
+* Copyright (c) 2014 University of Oxford
+*/
 public class ModelWrapperWebServiceTest {
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder(); ///CHECKSTYLE:SUPPRESS VisibilityModifier
@@ -44,38 +36,32 @@ public class ModelWrapperWebServiceTest {
     @Test
     public void startRunWithTypicalParameters() throws IOException, ZipException {
         // Arrange
-        String covariateDirectory = testFolder.getRoot().getAbsolutePath();
         String expectedUrl = "http://localhost:8080/ModelWrapper/model/run";
-        String modelRunName = "foo_2014-04-24-10-50-27_cd0efc75-42d3-4d96-94b4-287e28fbcdac";
-        String requestJson = getStartRunRequestJson();
-        String responseJson = String.format("{\"modelRunName\":\"%s\"}", modelRunName);
-        Collection<CovariateFile> requestCovariates = createMockCovariates(covariateDirectory, "a", "b", "c/d");
-        byte[] expectedRequestBody = fakeZipData(requestJson, requestCovariates);
-        ModelWrapperWebService webService = getModelWrapperWebService(expectedUrl, expectedRequestBody, responseJson);
-        DiseaseGroup diseaseGroup = getDiseaseGroup();
-        List<DiseaseOccurrence> diseaseOccurrences = getDiseaseOccurrences(diseaseGroup);
-        Map<Integer, Integer> extentWeightings = getExtentWeightings();
-        JsonModelRunResponse expectedResponse = new JsonModelRunResponse(modelRunName, null);
+        File mockZip = testFolder.newFile();
+        FileUtils.writeStringToFile(mockZip, "Some fake content");
+        String responseJson = "{ \"errorText\": \"Some Error\" }";
+
+        ModelWrapperWebService webService = getModelWrapperWebService(expectedUrl, FileUtils.readFileToByteArray(mockZip), responseJson);
 
         // Act
-        JsonModelRunResponse actualResponse = webService.startRun(ROOT_URL, diseaseGroup, diseaseOccurrences, extentWeightings, requestCovariates, covariateDirectory);
+        JsonModelRunResponse actualResponse = webService.startRun(ROOT_URL, mockZip);
 
         // Assert
-        assertThat(actualResponse).isEqualTo(expectedResponse);
+        assertThat(actualResponse.getErrorText()).isEqualTo("Some Error");
     }
 
     @Test
     public void startRunPropagatesWebServiceClientException() throws IOException, ZipException {
         // Arrange
+        File mockZip = testFolder.newFile();
+        FileUtils.writeStringToFile(mockZip, "Some fake content");
+
         WebServiceClient client = mock(WebServiceClient.class);
         when(client.makePostRequestWithBinary(anyString(), any(byte[].class))).thenThrow(new WebServiceClientException(""));
         ModelWrapperWebService webService = getModelWrapperWebService(client);
-        DiseaseGroup diseaseGroup = getDiseaseGroup();
-        List<DiseaseOccurrence> diseaseOccurrences = getDiseaseOccurrences(diseaseGroup);
-        Map<Integer, Integer> extentWeightings = getExtentWeightings();
 
         // Act
-        catchException(webService).startRun(ROOT_URL, diseaseGroup, diseaseOccurrences, extentWeightings, new ArrayList<CovariateFile>(), "");
+        catchException(webService).startRun(ROOT_URL, mockZip);
 
         // Assert
         assertThat(caughtException()).isInstanceOf(WebServiceClientException.class);
@@ -84,16 +70,16 @@ public class ModelWrapperWebServiceTest {
     @Test
     public void startRunWithInvalidResponseJSONThrowsException() throws IOException, ZipException {
         // Arrange
-        String url = "http://localhost:8080/ModelWrapper/model/run";
-        String requestJson = getStartRunRequestJson();
-        String responseJson = "this is invalid";
-        ModelWrapperWebService webService = getModelWrapperWebService(url, fakeZipData(requestJson, new ArrayList<CovariateFile>()), responseJson);
-        DiseaseGroup diseaseGroup = getDiseaseGroup();
-        List<DiseaseOccurrence> diseaseOccurrences = getDiseaseOccurrences(diseaseGroup);
-        Map<Integer, Integer> extentWeightings = getExtentWeightings();
+        String expectedUrl = "http://localhost:8080/ModelWrapper/model/run";
+        File mockZip = testFolder.newFile();
+        FileUtils.writeStringToFile(mockZip, "Some fake content");
+
+        String responseJson = "{ asdas }";
+
+        ModelWrapperWebService webService = getModelWrapperWebService(expectedUrl, FileUtils.readFileToByteArray(mockZip), responseJson);
 
         // Act
-        catchException(webService).startRun(ROOT_URL, diseaseGroup, diseaseOccurrences, extentWeightings, new ArrayList<CovariateFile>(), "");
+        catchException(webService).startRun(ROOT_URL, mockZip);
 
         // Assert
         assertThat(caughtException()).isInstanceOf(JsonParserException.class);
@@ -107,79 +93,6 @@ public class ModelWrapperWebServiceTest {
     }
 
     private ModelWrapperWebService getModelWrapperWebService(WebServiceClient client) {
-        return new ModelWrapperWebService(client, new AbraidJsonObjectMapper());
-    }
-
-    private Collection<CovariateFile> createMockCovariates(String covariateDirectory, String... files) throws IOException {
-        List<CovariateFile> covariates = new ArrayList<>();
-        for (String file : files) {
-            File cfile = Paths.get(covariateDirectory, file).toFile();
-            FileUtils.writeStringToFile(cfile, file);
-            CovariateFile mock = mock(CovariateFile.class);
-            when(mock.getFile()).thenReturn(file);
-        }
-        return covariates;
-    }
-
-    private DiseaseGroup getDiseaseGroup() {
-        DiseaseGroup diseaseGroup = new DiseaseGroup(188, null, "Leishmaniases", DiseaseGroupType.MICROCLUSTER);
-        diseaseGroup.setAbbreviation("leish");
-        diseaseGroup.setGlobal(true);
-        return diseaseGroup;
-    }
-
-    private List<DiseaseOccurrence> getDiseaseOccurrences(DiseaseGroup diseaseGroup) {
-        Location location1 = new Location("California, United States", -119.7503, 37.2502, LocationPrecision.ADMIN1);
-        location1.setAdminUnitQCGaulCode(100);
-
-        Location location2 = new Location("Bauru, São Paulo, Brazil", -49.06055, -22.31472, LocationPrecision.PRECISE);
-
-        DiseaseOccurrence occurrence1 = new DiseaseOccurrence(1, diseaseGroup, location1,
-                new Alert("occurrence1 title", "feed1"), DiseaseOccurrenceStatus.READY, 0.2, new DateTime("2014-03-01"));
-        DiseaseOccurrence occurrence2 = new DiseaseOccurrence(2, diseaseGroup, location1,
-                new Alert("occurrence2 title", "feed2"), DiseaseOccurrenceStatus.READY, 0.5, new DateTime("2014-03-02"));
-        DiseaseOccurrence occurrence3 = new DiseaseOccurrence(3, diseaseGroup, location2,
-                new Alert("occurrence3 title", "feed3"), DiseaseOccurrenceStatus.READY, 0.8, new DateTime("2014-03-03"));
-
-        return Arrays.asList(occurrence1, occurrence2, occurrence3);
-    }
-
-    private Map<Integer, Integer> getExtentWeightings() {
-        Map<Integer, Integer> map = new HashMap<>();
-        map.put(2, 0);
-        map.put(20, 100);
-        map.put(50, -100);
-        return map;
-    }
-
-    private String getStartRunRequestJson() {
-        String disease = "\"id\":188,\"name\":\"Leishmaniases\",\"abbreviation\":\"leish\",\"global\":true";
-        String occurrencesType = "\"type\":\"FeatureCollection\"";
-        String occurrencesCrs = "\"crs\":{\"type\":\"name\",\"properties\":{\"name\":\"urn:ogc:def:crs:EPSG::4326\"}}";
-        String occurrence1 = "\"type\":\"Feature\",\"id\":1,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-119.7503,37.2502]},\"properties\":{\"locationPrecision\":\"ADMIN1\",\"weighting\":0.2,\"gaulCode\":100}";
-        String occurrence2 = "\"type\":\"Feature\",\"id\":2,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-119.7503,37.2502]},\"properties\":{\"locationPrecision\":\"ADMIN1\",\"weighting\":0.5,\"gaulCode\":100}";
-        String occurrence3 = "\"type\":\"Feature\",\"id\":3,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-49.06055,-22.31472]},\"properties\":{\"locationPrecision\":\"PRECISE\",\"weighting\":0.8}";
-        String extentWeightings = "\"50\":-100,\"2\":0,\"20\":100";
-
-        String jsonFormat = "{\"disease\":{%s},\"occurrences\":{%s,%s,\"features\":[{%s},{%s},{%s}]},\"extentWeightings\":{%s}}";
-        return String.format(jsonFormat, disease, occurrencesType, occurrencesCrs, occurrence1, occurrence2,
-                occurrence3, extentWeightings);
-    }
-
-    private byte[] fakeZipData(String json, Collection<CovariateFile> requestCovariates) throws IOException, ZipException {
-        File file = testFolder.newFile();
-        Files.delete(file.toPath());
-        ZipFile zipFile = new ZipFile(file);
-        File dir = testFolder.newFolder();
-        File metadata = Paths.get(dir.getAbsolutePath(), "metadata.json").toFile();
-        FileUtils.writeStringToFile(metadata, json);
-        for (CovariateFile c : requestCovariates) {
-            File cfile = Paths.get(dir.getAbsolutePath(), "covariates", c.getFile()).toFile();
-            FileUtils.writeStringToFile(cfile, c.getFile());
-        }
-        ZipParameters zipParameters = new ZipParameters();
-        zipParameters.setIncludeRootFolder(false);
-        zipFile.createZipFileFromFolder(dir, zipParameters, false, 0);
-        return FileUtils.readFileToByteArray(file);
+        return new ModelWrapperWebService(client);
     }
 }

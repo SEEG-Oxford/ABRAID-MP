@@ -22,7 +22,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.ModellingJsonView;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.ExecutionRunConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.RunConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.RunConfigurationFactory;
@@ -34,19 +33,17 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractDiseaseOccurrenceGeoJsonTests.getTwoDiseaseOccurrenceFeaturesAsJson;
 
 /**
- * Integration test for the model run ModelWrapper controller.
- * Copyright (c) 2014 University of Oxford
- */
+* Integration test for the model run ModelWrapper controller.
+* Copyright (c) 2014 University of Oxford
+*/
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = SpringockitoWebContextLoader.class, locations = {
         "file:ModelWrapper/web/WEB-INF/abraid-servlet-beans.xml",
@@ -87,9 +84,9 @@ public class ModelRunControllerIntegrationTest extends BaseWebIntegrationTests {
         this.mockMvc
                 .perform(post("/api/model/run")
                         .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                        .content(buildZip("{\"disease\":{\"id\":1,\"name\":\"foo\",\"abbreviation\":\"f\"},\"occurrences\":" + getTwoDiseaseOccurrenceFeaturesAsJson(ModellingJsonView.class) + ",\"extentWeightings\":{\"1\":1,\"2\":2}}")))
+                        .content(buildZip("{\"disease\":{\"id\":1,\"name\":\"foo\",\"abbreviation\":\"f\"},\"runName\":\"" + runName + "\"}")))
                         .andExpect(status().isOk())
-                        .andExpect(content().string("{\"modelRunName\":\"" + runName + "\"}"));
+                        .andExpect(content().string("{}"));
     }
 
     @Test
@@ -104,40 +101,40 @@ public class ModelRunControllerIntegrationTest extends BaseWebIntegrationTests {
         this.mockMvc
                 .perform(post("/api/model/run")
                         .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                        .content(buildZip("{\"disease\":{\"id\":1,\"name\":\"foo\",\"abbreviation\":\"f\"},\"occurrences\":null,\"extentWeightings\":null}")))
+                        .content(buildZip("{\"disease\":{\"id\":1,\"name\":\"foo\",\"abbreviation\":\"f\"}}")))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("{\"errorText\":\"Run data must be provided and be valid.\"}"));
     }
 
     @Test
     public void runPageOnlyAcceptsPOST() throws Exception {
-        setUpExpectedRunName("");
-        this.mockMvc.perform(createRequest(HttpMethod.GET)).andExpect(status().isMethodNotAllowed());
-        this.mockMvc.perform(createRequest(HttpMethod.POST)).andExpect(status().isOk());
-        this.mockMvc.perform(createRequest(HttpMethod.PUT)).andExpect(status().isMethodNotAllowed());
-        this.mockMvc.perform(createRequest(HttpMethod.DELETE)).andExpect(status().isMethodNotAllowed());
-        this.mockMvc.perform(createRequest(HttpMethod.PATCH)).andExpect(status().isMethodNotAllowed());
+        setUpExpectedRunName("run1234");
+        this.mockMvc.perform(createRequest(HttpMethod.GET, "run1234")).andExpect(status().isMethodNotAllowed());
+        this.mockMvc.perform(createRequest(HttpMethod.POST, "run1234")).andExpect(status().isOk());
+        this.mockMvc.perform(createRequest(HttpMethod.PUT, "run1234")).andExpect(status().isMethodNotAllowed());
+        this.mockMvc.perform(createRequest(HttpMethod.DELETE, "run1234")).andExpect(status().isMethodNotAllowed());
+        this.mockMvc.perform(createRequest(HttpMethod.PATCH, "run1234")).andExpect(status().isMethodNotAllowed());
     }
 
     private String setUpExpectedRunName(String runName) throws ConfigurationException, IOException {
         RunConfiguration runConfiguration = mock(RunConfiguration.class);
         when(runConfiguration.getRunName()).thenReturn(runName);
         when(runConfiguration.getExecutionConfig()).thenReturn(mock(ExecutionRunConfiguration.class));
-        when(runConfigurationFactory.createDefaultConfiguration(any(File.class), anyBoolean(), anyString()))
+        when(runConfiguration.getWorkingDirectoryPath()).thenReturn(Paths.get(testFolder.getRoot().toString(), runName));
+        when(runConfigurationFactory.createDefaultConfiguration(runName))
                 .thenReturn(runConfiguration);
         return runName;
     }
 
-    private MockHttpServletRequestBuilder createRequest(HttpMethod method) throws IOException, ZipException {
+    private MockHttpServletRequestBuilder createRequest(HttpMethod method, String runName) throws IOException, ZipException {
         return request(method, "/api/model/run")
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .content(buildZip("{\"disease\":{\"id\":1,\"name\":\"foo\",\"abbreviation\":\"f\"},\"occurrences\":" + getTwoDiseaseOccurrenceFeaturesAsJson(ModellingJsonView.class) + ",\"extentWeightings\":{\"1\":1,\"2\":2,\"3\":3}}"));
+                .content(buildZip("{\"disease\":{\"id\":1,\"name\":\"foo\",\"abbreviation\":\"f\"},\"runName\":\"" + runName + "\"}"));
 
     }
 
     private byte[] buildZip(String content) throws IOException, ZipException {
         File dir = testFolder.newFolder();
-        Files.createDirectory(Paths.get(dir.getAbsolutePath(), "covariates"));
         FileUtils.writeStringToFile(Paths.get(dir.getAbsolutePath(), "metadata.json").toFile(), content);
         File zipFile = testFolder.newFile();
         Files.delete(zipFile.toPath());

@@ -47,6 +47,7 @@
                     <li><a href="<@spring.url "/admin/diseases/"/>">Administration - Diseases</a></li>
                     <li><a href="<@spring.url "/admin/experts/"/>">Administration - Experts</a></li>
                     <li><a href="<@spring.url "/admin/covariates/"/>">Administration - Covariates</a></li>
+                    <li><a href="<@spring.url "/admin/model/"/>">Administration - Model</a></li>
                 </@security.authorize>
             </ul>
         </li>

@@ -8,15 +8,6 @@
        xsi:schemaLocation="
          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="gaulsToAdjust" class="org.springframework.util.StringUtils" factory-method="tokenizeToStringArray">
-        <constructor-arg type="java.lang.String" value="${gaul.codes.to.model.as.precise}"/>
-        <constructor-arg type="java.lang.String" value=" "/>
-    </bean>
-
-    <bean id="modellingLocationPrecisionAdjuster" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModellingLocationPrecisionAdjuster" autowire="constructor" >
-        <constructor-arg name="gaulsToAdjust" ref="gaulsToAdjust" />
-    </bean>
-
     <bean id="smtpConfig" class="uk.ac.ox.zoo.seeg.abraid.mp.common.config.SmtpConfiguration">
         <constructor-arg name="address" value="${email.smtp.host}" />
         <constructor-arg name="port" value="${email.smtp.port}" />
