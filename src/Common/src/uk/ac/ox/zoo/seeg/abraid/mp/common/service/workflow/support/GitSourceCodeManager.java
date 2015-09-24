@@ -21,8 +21,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.List;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
+import java.util.*;
 
 import static ch.lambdaj.Lambda.convert;
 
@@ -40,6 +41,7 @@ public class GitSourceCodeManager implements SourceCodeManager {
     private static final String LOG_COPYING_MODEL_SOURCE_FILES = "Copying model source files";
     private static final String LOG_CHECKING_OUT_REPO_VERSION = "Checking out repo version ";
     private static final String LOG_PROVISIONING_FAILED = "Provisioning model code failed as version not in repository";
+    private static final String LOG_NOT_A_POSIX_FILE_SYSTEM = "Not a posix file system";
 
     private static final String GIT_CONFIG_DIRECTORY = ".git";
     private static final String MASTER_BRANCH_NAME = "master";
@@ -115,9 +117,25 @@ public class GitSourceCodeManager implements SourceCodeManager {
                     LOGGER.info(LOG_UPDATING_LOCAL_REPOSITORY_CACHE);
                     openRepository().pull().call();
                 }
+                checkRepositoryFilePermissions();
             } catch (GitAPIException e) {
                 throw new UnsupportedOperationException(e);
             }
+        }
+    }
+
+    private void checkRepositoryFilePermissions() throws IOException {
+        try {
+            Set<PosixFilePermission> filePerms = PosixFilePermissions.fromString("rwxrwxr--"); // 664
+            Set<PosixFilePermission> dirPerms = PosixFilePermissions.fromString("rwxrwxr-x"); // 665
+
+            Path dir = getRepositoryDirectory();
+            Collection<File> files = FileUtils.listFiles(dir.toFile(), null, true);
+            for (File file : files) {
+                Files.setPosixFilePermissions(file.toPath(), file.isDirectory() ? dirPerms : filePerms);
+            }
+        } catch (UnsupportedOperationException e) {
+            LOGGER.debug(LOG_NOT_A_POSIX_FILE_SYSTEM);
         }
     }
 

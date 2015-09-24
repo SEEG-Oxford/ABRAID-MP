@@ -36,7 +36,6 @@ public class GitSourceCodeManagerTest {
     @Rule
     public TemporaryFolder cacheDir = new TemporaryFolder(); ///CHECKSTYLE:SUPPRESS VisibilityModifier
 
-
     @Test
     public void updateRepositoryClonesRepositoryIfNeeded() throws Exception {
         // Arrange
@@ -76,7 +75,6 @@ public class GitSourceCodeManagerTest {
         // Assert
         assertThat(result).containsOnly("expected_tag");
     }
-
 
     @Test
     public void provisionCopiesCode() throws Exception {

@@ -46,6 +46,7 @@ permissionFix "abraid:abraid" "$ABRAID_SUPPORT_PATH/datamanager/"
 chmod +x "$ABRAID_SUPPORT_PATH/datamanager/datamanager.sh"
 permissionFix "tomcat7:tomcat7" "$ABRAID_SUPPORT_PATH/covariates/"
 permissionFix "tomcat7:tomcat7" "$ABRAID_SUPPORT_PATH/rasters/"
+permissionFix "tomcat7:tomcat7" "$ABRAID_SUPPORT_PATH/repos/"
 
 echo "[[ DM | Done ]]"
 cd "../config/deploy/"

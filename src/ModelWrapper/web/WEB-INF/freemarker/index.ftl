@@ -57,11 +57,6 @@
                         <@f.formGroupBasic "max-duration" "Model run duration limit (ms)" "value" "glyphicon glyphicon-dashboard" />
                     </@f.form>
                 <!-- /ko -->
-                <!-- ko with:CovariateDirectoryViewModel -->
-                    <@f.form "covariate-dir-form">
-                        <@f.formGroupBasic "covariate-directory" "Covariate directory" "value" "glyphicon glyphicon-folder-open" />
-                    </@f.form>
-                <!-- /ko -->
             </div>
         </div>
     </div>
