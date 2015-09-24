@@ -55,11 +55,6 @@ public class GitSourceCodeManager implements SourceCodeManager {
     public GitSourceCodeManager(ConfigurationService configurationService, String repositoryDirectory) {
         this.configurationService = configurationService;
         baseRepositoryCachePath = repositoryDirectory;
-        try {
-            updateRepository();
-        } catch (Exception e) {
-            LOGGER.warn("Initial update of repo failed - it might not be configured yet.");
-        }
     }
 
     /**
