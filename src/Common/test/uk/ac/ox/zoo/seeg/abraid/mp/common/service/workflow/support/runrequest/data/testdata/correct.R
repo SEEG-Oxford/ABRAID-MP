@@ -21,7 +21,7 @@ attempt_model_run <- function() {
     parallel_flag <- TRUE
 
     # Define occurrence data
-    occurrence_path <- "data/occurrence.csv"
+    occurrence_path <- "data/occurrences.csv"
 
     # Define disease extent data
     extent_path <- "data/extent.tif"
@@ -33,9 +33,9 @@ attempt_model_run <- function() {
 
     # Define admin unit rasters to use.
     # If you would like to use these admin unit rasters (or related shape files) please contact abraid@zoo.ox.ac.uk, as we cannot release them in all circumstances.
-    admin0_path <- "admin/admin0.tif"
-    admin1_path <- "admin/admin1.tif"
-    admin2_path <- "admin/admin2.tif"
+    admin0_path <- "admins/admin0.tif"
+    admin1_path <- "admins/admin1.tif"
+    admin2_path <- "admins/admin2.tif"
 
     # Create a temp dir for intermediate rasters
     dir.create('temp')

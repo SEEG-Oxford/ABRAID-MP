@@ -29,6 +29,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.CovariateService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.GeometryService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.GitSourceCodeManager;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunOccurrencesSelectorHelper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunWorkflowException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.RasterFilePathFactory;
@@ -89,6 +90,9 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
     @Autowired
     private ModelRunDao modelRunDao;
 
+    @Autowired
+    private GitSourceCodeManager gitSourceCodeManager;
+
     @ReplaceWithMock
     @Autowired
     private EmailService emailService;
@@ -108,12 +112,14 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
     public void before() throws Exception {
         when(configurationService.getModelRepositoryUrl()).thenReturn("https://github.com/SEEG-Oxford/seegSDM.git");
         when(configurationService.getModelRepositoryVersion()).thenReturn("0.1-5");
+        gitSourceCodeManager.updateRepository();
         when(rasterFilePathFactory.getAdminRaster(0)).thenReturn(new File(DATA_DIR + "admin/a0.tif"));
         when(rasterFilePathFactory.getAdminRaster(1)).thenReturn(new File(DATA_DIR + "admin/a1.tif"));
         when(rasterFilePathFactory.getAdminRaster(2)).thenReturn(new File(DATA_DIR + "admin/a2.tif"));
         when(rasterFilePathFactory.getExtentGaulRaster(false)).thenReturn(new File(DATA_DIR + "SmallRaster.tif"));
         when(rasterFilePathFactory.getExtentGaulRaster(true)).thenReturn(new File("doesnt exist"));
     }
+
     @Test
     public void requestModelRunSucceedsWithBatching() throws IOException {
         requestModelRunSucceeds(DateTime.now(), DateTime.now().plusDays(2));

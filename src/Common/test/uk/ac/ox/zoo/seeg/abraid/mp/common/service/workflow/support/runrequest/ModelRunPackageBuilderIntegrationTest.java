@@ -15,6 +15,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.config.ConfigurationServiceImpl;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.GitSourceCodeManager;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.RasterFilePathFactory;
 
 import java.io.File;
@@ -44,6 +45,9 @@ public class ModelRunPackageBuilderIntegrationTest {
     private ConfigurationServiceImpl configurationServiceImpl;
 
     @Autowired
+    private GitSourceCodeManager gitSourceCodeManager;
+
+    @Autowired
     @ReplaceWithMock
     private RasterFilePathFactory rasterFilePathFactory;
 
@@ -65,6 +69,7 @@ public class ModelRunPackageBuilderIntegrationTest {
         when(rasterFilePathFactory.getExtentGaulRaster(false)).thenReturn(new File("doesnt exist"));
         configurationServiceImpl.setModelRepositoryUrl("https://github.com/SEEG-Oxford/seegSDM.git");
         configurationServiceImpl.setModelRepositoryVersion("0.1-5");
+        gitSourceCodeManager.updateRepository();
 
         String runName = "runName12356";
         DiseaseGroup diseaseGroup = createDiseaseGroup(1234, "disease name", "disease abbr", true);
