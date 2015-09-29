@@ -66,6 +66,10 @@ public class DiseaseGroup {
     @Column
     private Double weighting;
 
+    // The SDM model mode to use for this disease.
+    @Column(name = "model_mode")
+    private String modelMode;
+
     // The date on which the disease extent was last generated, whether a one-off action or preparation for a model run.
     @Column(name = "last_extent_generation_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -258,6 +262,14 @@ public class DiseaseGroup {
 
     public void setWeighting(Double weighting) {
         this.weighting = weighting;
+    }
+
+    public String getModelMode() {
+        return modelMode;
+    }
+
+    public void setModelMode(String modelMode) {
+        this.modelMode = modelMode;
     }
 
     public DateTime getLastExtentGenerationDate() {

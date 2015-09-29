@@ -34,6 +34,7 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         String diseaseClusterPublicName = "Test disease cluster public name";
         String diseaseClusterShortName = "Short name";
         String diseaseClusterAbbreviation = "tdc";
+        String mode = "bhatt";
         int validatorDiseaseGroupId = 2;
         ValidatorDiseaseGroup validatorDiseaseGroup = validatorDiseaseGroupDao.getById(validatorDiseaseGroupId);
         DateTime lastModelRunPrepDate = DateTime.now().minusHours(2);
@@ -61,6 +62,7 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         diseaseGroup.setUseMachineLearning(false);
         diseaseGroup.setGlobal(true);
         diseaseGroup.setDiseaseExtentParameters(parameters);
+        diseaseGroup.setModelMode(mode);
 
         // Act
         diseaseGroupDao.save(diseaseGroup);
@@ -76,6 +78,7 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         assertThat(diseaseGroup.getPublicName()).isEqualTo(diseaseClusterPublicName);
         assertThat(diseaseGroup.getShortName()).isEqualTo(diseaseClusterShortName);
         assertThat(diseaseGroup.getAbbreviation()).isEqualTo(diseaseClusterAbbreviation);
+        assertThat(diseaseGroup.getModelMode()).isEqualTo(mode);
         assertThat(diseaseGroup.getValidatorDiseaseGroup()).isNotNull();
         assertThat(diseaseGroup.getValidatorDiseaseGroup().getId()).isEqualTo(validatorDiseaseGroupId);
         assertThat(diseaseGroup.getLastModelRunPrepDate()).isEqualTo(lastModelRunPrepDate);
