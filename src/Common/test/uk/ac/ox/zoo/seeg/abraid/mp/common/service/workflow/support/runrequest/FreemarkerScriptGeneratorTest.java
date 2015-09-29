@@ -4,6 +4,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.config.ModellingConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,6 +15,8 @@ import static com.googlecode.catchexception.CatchException.caughtException;
 import static java.nio.charset.Charset.defaultCharset;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.util.Files.contentOf;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
 * Tests the FreemarkerScriptGenerator class.
@@ -28,9 +31,10 @@ public class FreemarkerScriptGeneratorTest {
         // Arrange
         ScriptGenerator target = new FreemarkerScriptGenerator();
         ModellingConfiguration conf = createBasicConfiguration();
+        DiseaseGroup dg = createDiseaseGroup();
 
         // Act
-        File result = target.generateScript(conf, testFolder.getRoot());
+        File result = target.generateScript(conf, testFolder.getRoot(), dg);
 
         // Assert
         assertThat(result).isNotNull();
@@ -44,9 +48,10 @@ public class FreemarkerScriptGeneratorTest {
         // Arrange
         ScriptGenerator target = new FreemarkerScriptGenerator();
         ModellingConfiguration conf = createBasicConfiguration();
+        DiseaseGroup dg = createDiseaseGroup();
 
         // Act
-        File result = target.generateScript(conf, testFolder.getRoot());
+        File result = target.generateScript(conf, testFolder.getRoot(), dg);
 
         // Assert
         assertThat(contentOf(result, defaultCharset())).startsWith("# A launch script for the ABRAID-MP disease risk model");
@@ -58,9 +63,10 @@ public class FreemarkerScriptGeneratorTest {
         ScriptGenerator target = new FreemarkerScriptGenerator();
         int maxCPUs = 123;
         ModellingConfiguration conf =  new ModellingConfiguration(maxCPUs, false, false);
+        DiseaseGroup dg = createDiseaseGroup();
 
         // Act
-        File result = target.generateScript(conf, testFolder.getRoot());
+        File result = target.generateScript(conf, testFolder.getRoot(), dg);
 
         // Assert
         assertThat(contentOf(result, Charset.forName("US-ASCII"))).contains("max_cpus <- " + maxCPUs);
@@ -72,9 +78,10 @@ public class FreemarkerScriptGeneratorTest {
         // Arrange
         ScriptGenerator target = new FreemarkerScriptGenerator();
         ModellingConfiguration conf = createBasicConfiguration();
+        DiseaseGroup dg = createDiseaseGroup();
 
         // Act
-        catchException(target).generateScript(conf, new File("non-existent"));
+        catchException(target).generateScript(conf, new File("non-existent"), dg);
         Exception result = caughtException();
 
         // Assert
@@ -86,9 +93,10 @@ public class FreemarkerScriptGeneratorTest {
         // Arrange
         ScriptGenerator target = new FreemarkerScriptGenerator();
         ModellingConfiguration conf = createBasicConfiguration();
+        DiseaseGroup dg = createDiseaseGroup();
 
         // Act
-        catchException(target).generateScript(conf, testFolder.newFile());
+        catchException(target).generateScript(conf, testFolder.newFile(), dg);
         Exception result = caughtException();
 
         // Assert
@@ -97,5 +105,12 @@ public class FreemarkerScriptGeneratorTest {
 
     private ModellingConfiguration createBasicConfiguration() throws IOException {
         return new ModellingConfiguration(1, false, false);
+    }
+
+    private DiseaseGroup createDiseaseGroup() {
+        DiseaseGroup dg = mock(DiseaseGroup.class);
+        when(dg.getId()).thenReturn(123);
+        when(dg.getModelMode()).thenReturn("thismode");
+        return dg;
     }
 }

@@ -20,11 +20,20 @@ attempt_model_run <- function() {
     # Set parallel execution
     parallel_flag <- TRUE
 
+    # Disease ID
+    disease <-  1234
+
+    # Model mode
+    mode <- "bhatt"
+
     # Define occurrence data
     occurrence_path <- "data/occurrences.csv"
 
     # Define disease extent data
     extent_path <- "data/extent.tif"
+
+    # Define supplementary occurrence data
+    supplementary_occurrence_path <- "data/supplementary_occurrences.csv"
 
     # Define covariates to use.
     # If you would like to use these covariate files please contact abraid@zoo.ox.ac.uk, as we cannot release them in all circumstances.
