@@ -652,4 +652,21 @@ public class DiseaseServiceTest {
         // Assert
         assertThat(actualResult).isEqualTo(expectedResult);
     }
+
+    @Test
+    public void getSupplementaryOccurrencesForModelRun() {
+        // Arrange
+        int diseaseGroupId = 123;
+        DateTime startDate = DateTime.now().minusDays(1234);
+        DateTime endDate = DateTime.now().minusDays(234);
+        List<DiseaseOccurrence> expected = Arrays.asList(new DiseaseOccurrence(), new DiseaseOccurrence());
+        when(diseaseOccurrenceDao.getSupplementaryOccurrencesForModelRun(diseaseGroupId, startDate, endDate)).thenReturn(expected);
+
+        // Act
+        List<DiseaseOccurrence> result = diseaseService.getSupplementaryOccurrencesForModelRun(diseaseGroupId, startDate, endDate);
+
+        // Assert
+        verify(diseaseOccurrenceDao).getSupplementaryOccurrencesForModelRun(diseaseGroupId, startDate, endDate);
+        assertThat(result).isEqualTo(expected);
+    }
 }

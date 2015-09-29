@@ -317,9 +317,13 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     }
 
     private DiseaseOccurrence createDiseaseOccurrence(int id, DiseaseGroup diseaseGroup, DiseaseOccurrenceStatus status) {
-        Location location = locationDao.getById(80);
+        return createDiseaseOccurrence(id, diseaseGroup, status, 80, new DateTime());
+    }
+
+    private DiseaseOccurrence createDiseaseOccurrence(int id, DiseaseGroup diseaseGroup, DiseaseOccurrenceStatus status, int locationId, DateTime occurrenceDate) {
+        Location location = locationDao.getById(locationId);
         Alert alert = alertDao.getById(212855);
-        DiseaseOccurrence occurrence = new DiseaseOccurrence(id, diseaseGroup, location, alert, status, 0.7, new DateTime());
+        DiseaseOccurrence occurrence = new DiseaseOccurrence(id, diseaseGroup, location, alert, status, 0.7, occurrenceDate);
         diseaseOccurrenceDao.save(occurrence);
         return occurrence;
     }
@@ -860,6 +864,29 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         // and model_eligible=TRUE
         // and occurrence_date >= '2014-02-25T00:00:00Z' and occurrence_date <= '2014-02-26T15:35:21Z'
         assertThat(count).isEqualTo(28);
+    }
+
+    @Test
+    public void getSupplementaryOccurrencesForModelRun() {
+        // Arrange
+        DiseaseGroup deng = diseaseGroupDao.getById(87);
+        createDiseaseOccurrence(1, deng, DiseaseOccurrenceStatus.DISCARDED_UNREVIEWED, 80, new DateTime("2014-02-26T00:00:00"));
+        createDiseaseOccurrence(2, deng, DiseaseOccurrenceStatus.DISCARDED_UNUSED, 80, new DateTime("2014-02-26T00:00:00"));
+        createDiseaseOccurrence(3, deng, DiseaseOccurrenceStatus.AWAITING_BATCHING, 80, new DateTime("2014-02-26T00:00:00"));
+        createDiseaseOccurrence(4, deng, DiseaseOccurrenceStatus.IN_REVIEW, 80, new DateTime("2014-02-26T00:00:00"));
+        createDiseaseOccurrence(5, deng, DiseaseOccurrenceStatus.READY, 6, new DateTime("2014-02-26T00:00:00")); // model ineligible
+        DateTime startDate = new DateTime("2014-02-25T00:00:00");
+        DateTime endDate = new DateTime("2014-02-27T03:00:00");
+
+        // Act
+        List<DiseaseOccurrence> result202 = diseaseOccurrenceDao.getSupplementaryOccurrencesForModelRun(202, startDate, endDate);
+        List<DiseaseOccurrence> result87 = diseaseOccurrenceDao.getSupplementaryOccurrencesForModelRun(87, startDate, endDate);
+
+        // Assert
+        // There are 60 non-202 occurrences in the test db + 5 from arrange, but 10 are model ineligible, 1 is failed qc & 18 are out of the time window
+        assertThat(result202).hasSize(36);
+        // There are 17 non-dengue occurrences in the test db, but 1 is failed qc and & 9 are out of the time window
+        assertThat(result87).hasSize(7);
     }
 
     private void getDiseaseOccurrencesForDiseaseExtent(int diseaseGroupId, Double minimumValidationWeight,
