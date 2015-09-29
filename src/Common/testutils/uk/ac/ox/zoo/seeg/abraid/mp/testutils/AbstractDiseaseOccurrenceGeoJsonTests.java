@@ -65,11 +65,12 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
     }
 
     public static DiseaseGroup defaultDiseaseGroup() {
-        return mockDiseaseGroup("diseaseGroupPublicName", true);
+        return mockDiseaseGroup("diseaseGroupPublicName", true, 123);
     }
 
-    private static DiseaseGroup mockDiseaseGroup(String diseaseGroupPublicName, boolean isGlobal) {
+    private static DiseaseGroup mockDiseaseGroup(String diseaseGroupPublicName, boolean isGlobal, int diseaseId) {
         DiseaseGroup mockDiseaseGroup = mock(DiseaseGroup.class);
+        when(mockDiseaseGroup.getId()).thenReturn(diseaseId);
         when(mockDiseaseGroup.getPublicNameForDisplay()).thenReturn(diseaseGroupPublicName);
         when(mockDiseaseGroup.isGlobal()).thenReturn(isGlobal);
         return mockDiseaseGroup;

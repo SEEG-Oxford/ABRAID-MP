@@ -17,9 +17,10 @@ public interface InputDataManager {
      * Write the occurrence data to a csv file ready to run the model.
      * @param occurrenceData The data to be written.
      * @param dataDirectory The directory to create the data files in.
+     * @param isSupplementary If this is supplementary occurrence file, instead of the main one.
      * @throws IOException If the data could not be written.
      */
-    void writeOccurrenceData(List<DiseaseOccurrence> occurrenceData, File dataDirectory)
+    void writeOccurrenceData(List<DiseaseOccurrence> occurrenceData, File dataDirectory, boolean isSupplementary)
             throws IOException;
 
     /**

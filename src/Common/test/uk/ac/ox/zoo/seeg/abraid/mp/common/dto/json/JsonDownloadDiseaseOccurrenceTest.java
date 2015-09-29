@@ -33,9 +33,10 @@ public class JsonDownloadDiseaseOccurrenceTest {
         String provenance = "provenance";
         String feed = "feed";
         String url = "url";
+        int disease = 123;
 
         // Act
-        JsonDownloadDiseaseOccurrence result = new JsonDownloadDiseaseOccurrence(createNoopAdjuster(), longitude, latitude, weight, admin, gaul, date, provenance, feed, url);
+        JsonDownloadDiseaseOccurrence result = new JsonDownloadDiseaseOccurrence(createNoopAdjuster(), longitude, latitude, weight, admin, gaul, disease, date, provenance, feed, url);
 
         // Assert
         assertThat(result.getLongitude()).isEqualTo(longitude);
@@ -60,9 +61,10 @@ public class JsonDownloadDiseaseOccurrenceTest {
         String provenance = "provenance";
         String feed = "feed";
         String url = null;
+        int disease = 123;
 
         // Act
-        JsonDownloadDiseaseOccurrence result = new JsonDownloadDiseaseOccurrence(createNoopAdjuster(), longitude, latitude, weight, admin, null, date, provenance, feed, url);
+        JsonDownloadDiseaseOccurrence result = new JsonDownloadDiseaseOccurrence(createNoopAdjuster(), longitude, latitude, weight, admin, null, disease, date, provenance, feed, url);
 
         // Assert
         assertThat(result.getLongitude()).isEqualTo(longitude);
@@ -88,12 +90,13 @@ public class JsonDownloadDiseaseOccurrenceTest {
         String feed = "feed";
         String url = null;
         String gaul = "gaul";
+        int disease = 123;
 
         ModellingLocationPrecisionAdjuster adjuster = mock(ModellingLocationPrecisionAdjuster.class);
         when(adjuster.adjust(admin, gaul)).thenReturn(admin - 1);
 
         // Act
-        JsonDownloadDiseaseOccurrence result = new JsonDownloadDiseaseOccurrence(adjuster, longitude, latitude, weight, admin, gaul, date, provenance, feed, url);
+        JsonDownloadDiseaseOccurrence result = new JsonDownloadDiseaseOccurrence(adjuster, longitude, latitude, weight, admin, gaul, disease, date, provenance, feed, url);
 
         // Assert
         assertThat(result.getLongitude()).isEqualTo(longitude);
@@ -118,8 +121,11 @@ public class JsonDownloadDiseaseOccurrenceTest {
         String provenance = "provenance";
         String feed = "feed";
         String url = "url";
+        int disease = 123;
 
         DiseaseOccurrence mock = mock(DiseaseOccurrence.class);
+        when(mock.getDiseaseGroup()).thenReturn(mock(DiseaseGroup.class));
+        when(mock.getDiseaseGroup().getId()).thenReturn(disease);
         when(mock.getLocation()).thenReturn(mock(Location.class));
         when(mock.getLocation().getGeom()).thenReturn(mock(Point.class));
         when(mock.getLocation().getGeom().getX()).thenReturn(longitude);
@@ -160,8 +166,11 @@ public class JsonDownloadDiseaseOccurrenceTest {
         String provenance = "provenance";
         String feed = "feed";
         String url = "url";
+        int disease = 123;
 
         DiseaseOccurrence mock = mock(DiseaseOccurrence.class);
+        when(mock.getDiseaseGroup()).thenReturn(mock(DiseaseGroup.class));
+        when(mock.getDiseaseGroup().getId()).thenReturn(disease);
         when(mock.getLocation()).thenReturn(mock(Location.class));
         when(mock.getLocation().getGeom()).thenReturn(mock(Point.class));
         when(mock.getLocation().getGeom().getX()).thenReturn(longitude);
@@ -203,8 +212,11 @@ public class JsonDownloadDiseaseOccurrenceTest {
         String provenance = "provenance";
         String feed = "feed";
         String url = "url";
+        int disease = 123;
 
         DiseaseOccurrence mock = mock(DiseaseOccurrence.class);
+        when(mock.getDiseaseGroup()).thenReturn(mock(DiseaseGroup.class));
+        when(mock.getDiseaseGroup().getId()).thenReturn(disease);
         when(mock.getLocation()).thenReturn(mock(Location.class));
         when(mock.getLocation().getGeom()).thenReturn(mock(Point.class));
         when(mock.getLocation().getGeom().getX()).thenReturn(longitude);
@@ -240,25 +252,25 @@ public class JsonDownloadDiseaseOccurrenceTest {
     @Test
     public void serializesCorrectly() throws JsonProcessingException {
         // Arrange
-        JsonDownloadDiseaseOccurrence target = new JsonDownloadDiseaseOccurrence(createNoopAdjuster(), 7, 6, 5, 4, "3", "2015-03-07", "2", "1", "0");
+        JsonDownloadDiseaseOccurrence target = new JsonDownloadDiseaseOccurrence(createNoopAdjuster(), 7, 6, 5, 4, "3", 123, "2015-03-07", "2", "1", "0");
 
         // Act
         String result = new ObjectMapper().writeValueAsString(target);
 
         // Assert
-        assertThat(result).isEqualTo("{\"Longitude\":7.0,\"Latitude\":6.0,\"Weight\":5.0,\"Admin\":4,\"GAUL\":\"3\",\"Date\":\"2015-03-07\",\"Provenance\":\"2\",\"Feed\":\"1\",\"Url\":\"0\"}");
+        assertThat(result).isEqualTo("{\"Longitude\":7.0,\"Latitude\":6.0,\"Weight\":5.0,\"Admin\":4,\"GAUL\":\"3\",\"Disease\":123,\"Date\":\"2015-03-07\",\"Provenance\":\"2\",\"Feed\":\"1\",\"Url\":\"0\"}");
     }
 
     @Test
     public void serializesCorrectlyWithNull() throws JsonProcessingException {
         // Arrange
-        JsonDownloadDiseaseOccurrence target = new JsonDownloadDiseaseOccurrence(createNoopAdjuster(), 7, 6, 5, 4, null, "2015-03-07", "2", "1", null);
+        JsonDownloadDiseaseOccurrence target = new JsonDownloadDiseaseOccurrence(createNoopAdjuster(), 7, 6, 5, 4, null, 123, "2015-03-07", "2", "1", null);
 
         // Act
         String result = new ObjectMapper().writeValueAsString(target);
 
         // Assert
-        assertThat(result).isEqualTo("{\"Longitude\":7.0,\"Latitude\":6.0,\"Weight\":5.0,\"Admin\":4,\"GAUL\":\"NA\",\"Date\":\"2015-03-07\",\"Provenance\":\"2\",\"Feed\":\"1\",\"Url\":\"-\"}");
+        assertThat(result).isEqualTo("{\"Longitude\":7.0,\"Latitude\":6.0,\"Weight\":5.0,\"Admin\":4,\"GAUL\":\"NA\",\"Disease\":123,\"Date\":\"2015-03-07\",\"Provenance\":\"2\",\"Feed\":\"1\",\"Url\":\"-\"}");
     }
 
     private ModellingLocationPrecisionAdjuster createNoopAdjuster() {

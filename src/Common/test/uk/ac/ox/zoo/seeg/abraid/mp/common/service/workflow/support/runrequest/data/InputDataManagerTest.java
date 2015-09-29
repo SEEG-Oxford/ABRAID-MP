@@ -31,10 +31,10 @@ public class InputDataManagerTest {
         File dataDir = testFolder.newFolder();
 
         // Act
-        target.writeOccurrenceData(new ArrayList<DiseaseOccurrence>(), dataDir);
+        target.writeOccurrenceData(new ArrayList<DiseaseOccurrence>(), dataDir, false);
 
         // Assert
-        verify(mockOccurrenceWriter).write(anyListOf(DiseaseOccurrence.class), eq(Paths.get(dataDir.toString(), "occurrences.csv").toFile()));
+        verify(mockOccurrenceWriter).write(anyListOf(DiseaseOccurrence.class), eq(Paths.get(dataDir.toString(), "occurrences.csv").toFile()), eq(true));
     }
 
     @Test
@@ -45,11 +45,40 @@ public class InputDataManagerTest {
         List<DiseaseOccurrence> mockData = new ArrayList<>();
 
         // Act
-        target.writeOccurrenceData(mockData, testFolder.newFolder());
+        target.writeOccurrenceData(mockData, testFolder.newFolder(), false);
 
         // Assert
-        verify(mockOccurrenceWriter).write(same(mockData), any(File.class));
+        verify(mockOccurrenceWriter).write(same(mockData), any(File.class), eq(true));
     }
+
+    @Test
+    public void writeOccurrenceDataCallsOccurrenceDataWriterWithCorrectSupplementaryTargetFile() throws Exception {
+        // Arrange
+        OccurrenceDataWriter mockOccurrenceWriter = mock(OccurrenceDataWriter.class);
+        InputDataManager target = new InputDataManagerImpl(mock(ExtentDataWriter.class), mockOccurrenceWriter);
+        File dataDir = testFolder.newFolder();
+
+        // Act
+        target.writeOccurrenceData(new ArrayList<DiseaseOccurrence>(), dataDir, true);
+
+        // Assert
+        verify(mockOccurrenceWriter).write(anyListOf(DiseaseOccurrence.class), eq(Paths.get(dataDir.toString(), "supplementary_occurrences.csv").toFile()), eq(false));
+    }
+
+    @Test
+    public void writeOccurrenceDataCallsOccurrenceDataWriterWithCorrectSupplementaryData() throws Exception {
+        // Arrange
+        OccurrenceDataWriter mockOccurrenceWriter = mock(OccurrenceDataWriter.class);
+        InputDataManager target = new InputDataManagerImpl(mock(ExtentDataWriter.class), mockOccurrenceWriter);
+        List<DiseaseOccurrence> mockData = new ArrayList<>();
+
+        // Act
+        target.writeOccurrenceData(mockData, testFolder.newFolder(), true);
+
+        // Assert
+        verify(mockOccurrenceWriter).write(same(mockData), any(File.class), eq(false));
+    }
+
 
     @Test
     public void writeExtentDataCallsExtentDataWriterWithCorrectTargetFile() throws Exception {

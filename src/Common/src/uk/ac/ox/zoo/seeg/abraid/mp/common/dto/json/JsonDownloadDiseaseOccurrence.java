@@ -12,7 +12,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModellingLoca
  * Used for CSV serialization of occurrences on public site.
  * Copyright (c) 2014 University of Oxford
  */
-@JsonPropertyOrder({ "longitude", "latitude", "weight", "admin", "gaul", "date", "provenance", "feed", "url" })
+@JsonPropertyOrder({ "longitude", "latitude", "weight", "admin", "gaul", "disease", "date", "provenance", "feed", "url" })
 public class JsonDownloadDiseaseOccurrence extends JsonModellingDiseaseOccurrence {
     @JsonProperty("Date")
     private String date;
@@ -27,9 +27,10 @@ public class JsonDownloadDiseaseOccurrence extends JsonModellingDiseaseOccurrenc
     private String url;
 
     public JsonDownloadDiseaseOccurrence(ModellingLocationPrecisionAdjuster precisionAdjuster,
-                                         double longitude, double latitude, double weight, int admin, String gaul,
+                                         double longitude, double latitude, double weight,
+                                         int admin, String gaul, int disease,
                                          String date, String provenance, String feed, String url) {
-        super(precisionAdjuster, longitude, latitude, weight, admin, gaul);
+        super(precisionAdjuster, longitude, latitude, weight, admin, gaul, disease);
         setDate(date);
         setProvenance(provenance);
         setFeed(feed);
@@ -44,6 +45,7 @@ public class JsonDownloadDiseaseOccurrence extends JsonModellingDiseaseOccurrenc
             inputDiseaseOccurrence.getFinalWeighting(),
             inputDiseaseOccurrence.getLocation().getPrecision().getModelValue(),
             extractGaulString(inputDiseaseOccurrence.getLocation()),
+            inputDiseaseOccurrence.getDiseaseGroup().getId(),
             extractDateString(inputDiseaseOccurrence.getOccurrenceDate()),
             inputDiseaseOccurrence.getAlert().getFeed().getProvenance().getName(),
             inputDiseaseOccurrence.getAlert().getFeed().getName(),

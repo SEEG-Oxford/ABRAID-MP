@@ -15,8 +15,9 @@ public interface OccurrenceDataWriter {
      * Write the occurrence data to a csv file ready to run the model.
      * @param occurrenceData The data to be written.
      * @param targetFile The file to be created.
+     * @param includeWeight If the weight field should be included in the csv output.
      * @throws IOException If the data could not be written.
      */
-    void write(List<DiseaseOccurrence> occurrenceData, File targetFile)
+    void write(List<DiseaseOccurrence> occurrenceData, File targetFile, boolean includeWeight)
             throws IOException;
 }

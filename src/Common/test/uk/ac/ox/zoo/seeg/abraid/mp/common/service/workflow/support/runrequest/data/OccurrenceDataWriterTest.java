@@ -32,64 +32,64 @@ public class OccurrenceDataWriterTest {
     public TemporaryFolder testFolder = new TemporaryFolder(); ///CHECKSTYLE:SUPPRESS VisibilityModifier
 
     @Test
-    public void writeCreatesCorrectCsvForDefaultOccurrencePoint() throws Exception {
-        String result = arrangeAndActWriteDataTest(defaultDiseaseOccurrence(), false);
+    public void writeCreatesCorrectCsvForDefaultOccurrencePointWithWeight() throws Exception {
+        String result = arrangeAndActWriteDataTest(defaultDiseaseOccurrence(), false, true);
 
         // Assert - Values must be in the order: longitude, latitude, occurrence weighting, admin level value, gaul code
-        assertThat(result).isEqualTo("Longitude,Latitude,Weight,Admin,GAUL" + "\n" + "-1.0,1.0,0.5,1,102" + "\n");
+        assertThat(result).isEqualTo("Longitude,Latitude,Weight,Admin,GAUL,Disease" + "\n" + "-1.0,1.0,0.5,1,102,123" + "\n");
     }
 
     @Test
-    public void writeCreatesCorrectCsvForAdjustedPrecision() throws Exception {
+    public void writeCreatesCorrectCsvForAdjustedPrecisionWithWeight() throws Exception {
         // Arrange
         DiseaseOccurrence occurrence = defaultDiseaseOccurrence();
         when(occurrence.getLocation().getPrecision()).thenReturn(LocationPrecision.ADMIN1);
 
         // Act
-        String result = arrangeAndActWriteDataTest(defaultDiseaseOccurrence(), true);
+        String result = arrangeAndActWriteDataTest(defaultDiseaseOccurrence(), true, true);
 
         // Assert - Values must be in the order: longitude, latitude, occurrence weighting, admin level value, gaul code
-        assertThat(result).isEqualTo("Longitude,Latitude,Weight,Admin,GAUL" + "\n" + "-1.0,1.0,0.5,-999,102" + "\n");
+        assertThat(result).isEqualTo("Longitude,Latitude,Weight,Admin,GAUL,Disease" + "\n" + "-1.0,1.0,0.5,-999,102,123" + "\n");
     }
 
     @Test
-    public void writeCreatesCorrectCsvForPrecise() throws Exception {
+    public void writeCreatesCorrectCsvForPreciseWithWeight() throws Exception {
         // Arrange
         DiseaseOccurrence occurrence = defaultDiseaseOccurrence();
         when(occurrence.getLocation().getPrecision()).thenReturn(LocationPrecision.PRECISE);
 
-        String result = arrangeAndActWriteDataTest(occurrence, false);
+        String result = arrangeAndActWriteDataTest(occurrence, false, true);
 
         // Assert
-        assertThat(result).isEqualTo("Longitude,Latitude,Weight,Admin,GAUL" + "\n" + "-1.0,1.0,0.5,-999,NA" + "\n");
+        assertThat(result).isEqualTo("Longitude,Latitude,Weight,Admin,GAUL,Disease" + "\n" + "-1.0,1.0,0.5,-999,NA,123" + "\n");
     }
 
     @Test
-    public void writeCreatesCorrectCsvForAdminLevel1() throws Exception {
+    public void writeCreatesCorrectCsvForAdminLevel1WithWeight() throws Exception {
         // Arrange
         DiseaseOccurrence occurrence = defaultDiseaseOccurrence();
         when(occurrence.getLocation().getPrecision()).thenReturn(LocationPrecision.ADMIN1);
 
-        String result = arrangeAndActWriteDataTest(occurrence, false);
+        String result = arrangeAndActWriteDataTest(occurrence, false, true);
 
         // Assert
-        assertThat(result).isEqualTo("Longitude,Latitude,Weight,Admin,GAUL" + "\n" + "-1.0,1.0,0.5,1,102" + "\n");
+        assertThat(result).isEqualTo("Longitude,Latitude,Weight,Admin,GAUL,Disease" + "\n" + "-1.0,1.0,0.5,1,102,123" + "\n");
     }
 
     @Test
-    public void writeCreatesCorrectCsvForAdminLevel2() throws Exception {
+    public void writeCreatesCorrectCsvForAdminLevel2WithWeight() throws Exception {
         // Arrange
         DiseaseOccurrence occurrence = defaultDiseaseOccurrence();
         when(occurrence.getLocation().getPrecision()).thenReturn(LocationPrecision.ADMIN2);
 
-        String result = arrangeAndActWriteDataTest(occurrence, false);
+        String result = arrangeAndActWriteDataTest(occurrence, false, true);
 
         // Assert
-        assertThat(result).isEqualTo("Longitude,Latitude,Weight,Admin,GAUL" + "\n" + "-1.0,1.0,0.5,2,102" + "\n");
+        assertThat(result).isEqualTo("Longitude,Latitude,Weight,Admin,GAUL,Disease" + "\n" + "-1.0,1.0,0.5,2,102,123" + "\n");
     }
 
     @Test
-    public void writeCreatesCorrectCsvForCountry() throws Exception {
+    public void writeCreatesCorrectCsvForCountryWithWeight() throws Exception {
         // Arrange
         DiseaseOccurrence occurrence = defaultDiseaseOccurrence();
         when(occurrence.getLocation().getPrecision()).thenReturn(LocationPrecision.COUNTRY);
@@ -100,13 +100,88 @@ public class OccurrenceDataWriterTest {
         File targetFile = Paths.get(testFolder.newFolder().toString(), "outbreak.csv").toFile();
 
         // Act
-        String result = arrangeAndActWriteDataTest(occurrence, false);
+        String result = arrangeAndActWriteDataTest(occurrence, false, true);
 
         // Assert
-        assertThat(result).isEqualTo("Longitude,Latitude,Weight,Admin,GAUL" + "\n" + "-1.0,1.0,0.5,0,201" + "\n");
+        assertThat(result).isEqualTo("Longitude,Latitude,Weight,Admin,GAUL,Disease" + "\n" + "-1.0,1.0,0.5,0,201,123" + "\n");
     }
 
-    private String arrangeAndActWriteDataTest(DiseaseOccurrence occurrence, boolean adjustPrecision) throws Exception {
+    @Test
+    public void writeCreatesCorrectCsvForDefaultOccurrencePointWithoutWeight() throws Exception {
+        String result = arrangeAndActWriteDataTest(defaultDiseaseOccurrence(), false, false);
+
+        // Assert - Values must be in the order: longitude, latitude, occurrence weighting, admin level value, gaul code
+        assertThat(result).isEqualTo("Longitude,Latitude,Admin,GAUL,Disease" + "\n" + "-1.0,1.0,1,102,123" + "\n");
+    }
+
+    @Test
+    public void writeCreatesCorrectCsvForAdjustedPrecisionWithoutWeight() throws Exception {
+        // Arrange
+        DiseaseOccurrence occurrence = defaultDiseaseOccurrence();
+        when(occurrence.getLocation().getPrecision()).thenReturn(LocationPrecision.ADMIN1);
+
+        // Act
+        String result = arrangeAndActWriteDataTest(defaultDiseaseOccurrence(), true, false);
+
+        // Assert - Values must be in the order: longitude, latitude, occurrence weighting, admin level value, gaul code
+        assertThat(result).isEqualTo("Longitude,Latitude,Admin,GAUL,Disease" + "\n" + "-1.0,1.0,-999,102,123" + "\n");
+    }
+
+    @Test
+    public void writeCreatesCorrectCsvForPreciseWithoutWeight() throws Exception {
+        // Arrange
+        DiseaseOccurrence occurrence = defaultDiseaseOccurrence();
+        when(occurrence.getLocation().getPrecision()).thenReturn(LocationPrecision.PRECISE);
+
+        String result = arrangeAndActWriteDataTest(occurrence, false, false);
+
+        // Assert
+        assertThat(result).isEqualTo("Longitude,Latitude,Admin,GAUL,Disease" + "\n" + "-1.0,1.0,-999,NA,123" + "\n");
+    }
+
+    @Test
+    public void writeCreatesCorrectCsvForAdminLevel1WithoutWeight() throws Exception {
+        // Arrange
+        DiseaseOccurrence occurrence = defaultDiseaseOccurrence();
+        when(occurrence.getLocation().getPrecision()).thenReturn(LocationPrecision.ADMIN1);
+
+        String result = arrangeAndActWriteDataTest(occurrence, false, false);
+
+        // Assert
+        assertThat(result).isEqualTo("Longitude,Latitude,Admin,GAUL,Disease" + "\n" + "-1.0,1.0,1,102,123" + "\n");
+    }
+
+    @Test
+    public void writeCreatesCorrectCsvForAdminLevel2WithoutWeight() throws Exception {
+        // Arrange
+        DiseaseOccurrence occurrence = defaultDiseaseOccurrence();
+        when(occurrence.getLocation().getPrecision()).thenReturn(LocationPrecision.ADMIN2);
+
+        String result = arrangeAndActWriteDataTest(occurrence, false, false);
+
+        // Assert
+        assertThat(result).isEqualTo("Longitude,Latitude,Admin,GAUL,Disease" + "\n" + "-1.0,1.0,2,102,123" + "\n");
+    }
+
+    @Test
+    public void writeCreatesCorrectCsvForCountryWithoutWeight() throws Exception {
+        // Arrange
+        DiseaseOccurrence occurrence = defaultDiseaseOccurrence();
+        when(occurrence.getLocation().getPrecision()).thenReturn(LocationPrecision.COUNTRY);
+
+        GeoJsonDiseaseOccurrenceFeatureCollection data = new GeoJsonDiseaseOccurrenceFeatureCollection(
+                Arrays.asList(occurrence));
+        OccurrenceDataWriter target = new OccurrenceDataWriterImpl(createNoopAdjuster());
+        File targetFile = Paths.get(testFolder.newFolder().toString(), "outbreak.csv").toFile();
+
+        // Act
+        String result = arrangeAndActWriteDataTest(occurrence, false, false);
+
+        // Assert
+        assertThat(result).isEqualTo("Longitude,Latitude,Admin,GAUL,Disease" + "\n" + "-1.0,1.0,0,201,123" + "\n");
+    }
+
+    private String arrangeAndActWriteDataTest(DiseaseOccurrence occurrence, boolean adjustPrecision, boolean includeWeight) throws Exception {
         // Arrange
         List<DiseaseOccurrence> occurrences = Arrays.asList(occurrence);
         ModellingLocationPrecisionAdjuster adjuster = null;
@@ -120,7 +195,7 @@ public class OccurrenceDataWriterTest {
         File targetFile = Paths.get(testFolder.newFolder().toString(), "outbreak.csv").toFile();
 
         // Act
-        target.write(occurrences, targetFile);
+        target.write(occurrences, targetFile, includeWeight);
         return FileUtils.readFileToString(targetFile);
     }
 

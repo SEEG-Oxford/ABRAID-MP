@@ -1,10 +1,11 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.runrequest.data;
 
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import org.apache.log4j.Logger;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModellingDiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonSupplementaryModellingDiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModellingLocationPrecisionAdjuster;
 
 import java.io.File;
@@ -30,24 +31,36 @@ public class OccurrenceDataWriterImpl implements OccurrenceDataWriter {
      * Write the occurrence data to a csv file ready to run the model.
      * @param occurrenceData The data to be written.
      * @param targetFile The file to be created.
+     * @param includeWeight If the weight field should be included in the csv output.
      * @throws IOException If the data could not be written.
      */
     @Override
-    public void write(List<DiseaseOccurrence> occurrenceData, File targetFile)
+    public void write(List<DiseaseOccurrence> occurrenceData, File targetFile, boolean includeWeight)
             throws IOException {
         LOGGER.info(String.format(
                 LOG_WRITING_OCCURRENCE_DATA, occurrenceData.size(), targetFile.toString()));
 
-        List<JsonModellingDiseaseOccurrence> occurrences = new ArrayList<>();
+        List<JsonSupplementaryModellingDiseaseOccurrence> occurrences = new ArrayList<>();
         for (DiseaseOccurrence occurrence : occurrenceData) {
-            occurrences.add(new JsonModellingDiseaseOccurrence(modellingLocationPrecisionAdjuster, occurrence));
+            if (includeWeight) {
+                occurrences.add(new JsonModellingDiseaseOccurrence(
+                        modellingLocationPrecisionAdjuster, occurrence));
+            } else {
+                occurrences.add(new JsonSupplementaryModellingDiseaseOccurrence(
+                        modellingLocationPrecisionAdjuster, occurrence));
+            }
         }
 
-        CsvMapper csvMapper = new CsvMapper();
-        CsvSchema schema = csvMapper.schemaFor(JsonModellingDiseaseOccurrence.class).withHeader();
         try (FileOutputStream fileStream = new FileOutputStream(targetFile.getAbsoluteFile())) {
-            csvMapper.writer(schema).writeValue(fileStream, occurrences);
+            buildWriter(includeWeight).writeValue(fileStream, occurrences);
             fileStream.flush();
         }
+    }
+
+    private ObjectWriter buildWriter(boolean includeWeight) {
+        CsvMapper csvMapper = new CsvMapper();
+        Class<? extends JsonSupplementaryModellingDiseaseOccurrence> type =
+            includeWeight ? JsonModellingDiseaseOccurrence.class : JsonSupplementaryModellingDiseaseOccurrence.class;
+        return csvMapper.writer(csvMapper.schemaFor(type).withHeader());
     }
 }

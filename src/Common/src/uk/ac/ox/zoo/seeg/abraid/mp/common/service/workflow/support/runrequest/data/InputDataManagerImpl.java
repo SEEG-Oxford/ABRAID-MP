@@ -18,6 +18,7 @@ public class InputDataManagerImpl implements InputDataManager {
     private static final Logger LOGGER = Logger.getLogger(InputDataManagerImpl.class);
 
     private static final String OCCURRENCE_CSV = "occurrences.csv";
+    private static final String SUPPLEMENTARY_OCCURRENCE_CSV = "supplementary_occurrences.csv";
     private static final String EXTENT_RASTER = "extent.tif";
     private final ExtentDataWriter extentDataWriter;
     private final OccurrenceDataWriter occurrenceDataWriter;
@@ -31,13 +32,15 @@ public class InputDataManagerImpl implements InputDataManager {
      * Write the occurrence data to file ready to run the model.
      * @param occurrenceData The data to be written.
      * @param dataDirectory The directory to create the data files in.
+     * @param isSupplementary If this is supplementary occurrence file, instead of the main one.
      * @throws IOException If the data could not be written.
      */
     @Override
-    public void writeOccurrenceData(List<DiseaseOccurrence> occurrenceData, File dataDirectory)
+    public void writeOccurrenceData(List<DiseaseOccurrence> occurrenceData, File dataDirectory, boolean isSupplementary)
             throws IOException {
-        File outbreakFile = Paths.get(dataDirectory.toString(), OCCURRENCE_CSV).toFile();
-        occurrenceDataWriter.write(occurrenceData, outbreakFile);
+        File outbreakFile = Paths.get(dataDirectory.toString(),
+                isSupplementary ? SUPPLEMENTARY_OCCURRENCE_CSV : OCCURRENCE_CSV).toFile();
+        occurrenceDataWriter.write(occurrenceData, outbreakFile, !isSupplementary);
     }
 
     /**
