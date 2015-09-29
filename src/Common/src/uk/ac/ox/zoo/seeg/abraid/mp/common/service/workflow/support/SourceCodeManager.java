@@ -35,5 +35,11 @@ public interface SourceCodeManager {
      */
     void updateRepository() throws IOException, UnsupportedOperationException;
 
-    Set<String> getSupportedModesForCurrentVersion() throws IOException;
+    /**
+     * Retrieves the list of model modes supported by the currently selected version of the source code repository.
+     * @return The list of modes.
+     * @throws IOException Thrown if the operation could not be completed due to issue accessing local resources.
+     * @throws UnsupportedOperationException Thrown if there was an issue interacting with the VCS.
+     */
+    Set<String> getSupportedModesForCurrentVersion() throws IOException, UnsupportedOperationException;
 }

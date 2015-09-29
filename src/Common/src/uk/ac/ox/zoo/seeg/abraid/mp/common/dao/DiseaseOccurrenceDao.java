@@ -189,5 +189,6 @@ public interface DiseaseOccurrenceDao {
      * @param endDate The end date  of the model run input data range.
      * @return The supplementary occurrences.
      */
-    List<DiseaseOccurrence> getSupplementaryOccurrencesForModelRun(int diseaseGroupId, DateTime startDate, DateTime endDate);
+    List<DiseaseOccurrence> getSupplementaryOccurrencesForModelRun(
+            int diseaseGroupId, DateTime startDate, DateTime endDate);
 }

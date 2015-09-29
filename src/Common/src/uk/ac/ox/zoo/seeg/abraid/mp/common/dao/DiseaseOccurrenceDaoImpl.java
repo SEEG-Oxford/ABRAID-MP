@@ -304,7 +304,7 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
      * except those that have been discarded, or points marked as ineligible.
      */
     @Override
-         public long getNumberOfOccurrencesEligibleForModelRun(int diseaseGroupId, DateTime startDate, DateTime endDate) {
+    public long getNumberOfOccurrencesEligibleForModelRun(int diseaseGroupId, DateTime startDate, DateTime endDate) {
         Query query = getParameterisedNamedQuery("getNumberOfDiseaseOccurrencesEligibleForModelRun", "diseaseGroupId",
                 diseaseGroupId, "startDate", startDate, "endDate", endDate);
         return (long) query.uniqueResult();

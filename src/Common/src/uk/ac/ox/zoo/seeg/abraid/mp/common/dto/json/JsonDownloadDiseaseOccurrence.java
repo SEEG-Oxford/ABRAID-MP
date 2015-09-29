@@ -12,7 +12,8 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModellingLoca
  * Used for CSV serialization of occurrences on public site.
  * Copyright (c) 2014 University of Oxford
  */
-@JsonPropertyOrder({ "longitude", "latitude", "weight", "admin", "gaul", "disease", "date", "provenance", "feed", "url" })
+@JsonPropertyOrder({
+        "longitude", "latitude", "weight", "admin", "gaul", "disease", "date", "provenance", "feed", "url" })
 public class JsonDownloadDiseaseOccurrence extends JsonModellingDiseaseOccurrence {
     @JsonProperty("Date")
     private String date;
