@@ -110,8 +110,8 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
 
     @Before
     public void before() throws Exception {
-        when(configurationService.getModelRepositoryUrl()).thenReturn("https://github.com/SEEG-Oxford/seegSDM.git");
-        when(configurationService.getModelRepositoryVersion()).thenReturn("0.1-5");
+        when(configurationService.getModelRepositoryUrl()).thenReturn("https://github.com/laurence-hudson-tessella/seegSDM.git");
+        when(configurationService.getModelRepositoryVersion()).thenReturn("0.1-7");
         gitSourceCodeManager.updateRepository();
         when(rasterFilePathFactory.getAdminRaster(0)).thenReturn(new File(DATA_DIR + "admin/a0.tif"));
         when(rasterFilePathFactory.getAdminRaster(1)).thenReturn(new File(DATA_DIR + "admin/a1.tif"));
@@ -161,6 +161,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         diseaseGroup.setMinDataVolume(27);
         diseaseGroup.setOccursInAfrica(null);
+        diseaseGroup.setModelMode("bhatt");
         List<CovariateFile> covariateFiles = Arrays.asList(
                 createMockCovariateFile("a"),
                 createMockCovariateFile("b"),
@@ -286,34 +287,34 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
     private void assertSplitFeatures(List<String> splitFeatures) {
         assertThat(splitFeatures).hasSize(27 + 1);
         assertThat(splitFeatures).contains(
-                "Longitude,Latitude,Weight,Admin,GAUL",
-                "121.06667,14.53333,0.95,-999,NA",
-                "-46.60972,-20.71889,0.825,-999,NA",
-                "-42.91651,-22.17062,0.775,2,9970",
-                "-42.66564,-22.18996,0.675,1,683",
-                "-43.04112,-22.81555,0.85,2,9966",
-                "-54.66252,-28.05186,0.775,2,10593",
-                "-54.0,-30.0,0.625,1,685",
-                "-67.81,-9.97472,0.8,-999,NA",
-                "-76.42313,8.84621,0.925,-999,NA",
-                "73.85674,18.52043,0.975,-999,NA",
-                "102.25616,2.20569,0.975,-999,NA",
-                "-45.88694,-23.17944,0.8,-999,NA",
-                "114.0,1.0,1.0,-999,NA",
-                "-47.09179,-21.76979,0.775,-999,NA",
-                "-49.06055,-22.31472,0.9,-999,NA",
-                "103.80805,1.29162,0.875,-999,NA",
-                "126.08934,7.30416,0.7,1,67161",
-                "126.33333,7.16667,0.85,2,24269",
-                "126.0,7.5,0.75,2,24266",
-                "126.17626,7.51252,0.975,-999,NA",
-                "-98.28333,26.08333,0.9,-999,NA",
-                "39.21917,21.51694,0.85,-999,NA",
-                "-51.38889,-22.12556,0.85,-999,NA",
-                "177.46666,-17.61667,0.825,-999,NA",
-                "177.41667,-17.8,0.925,-999,NA",
-                "-61.5,-17.5,0.7,1,40449",
-                "-80.63333,-5.2,0.875,-999,NA"
+                "Longitude,Latitude,Weight,Admin,GAUL,Disease",
+                "121.06667,14.53333,0.95,-999,NA,87",
+                "-46.60972,-20.71889,0.825,-999,NA,87",
+                "-42.91651,-22.17062,0.775,2,9970,87",
+                "-42.66564,-22.18996,0.675,1,683,87",
+                "-43.04112,-22.81555,0.85,2,9966,87",
+                "-54.66252,-28.05186,0.775,2,10593,87",
+                "-54.0,-30.0,0.625,1,685,87",
+                "-67.81,-9.97472,0.8,-999,NA,87",
+                "-76.42313,8.84621,0.925,-999,NA,87",
+                "73.85674,18.52043,0.975,-999,NA,87",
+                "102.25616,2.20569,0.975,-999,NA,87",
+                "-45.88694,-23.17944,0.8,-999,NA,87",
+                "114.0,1.0,1.0,-999,NA,87",
+                "-47.09179,-21.76979,0.775,-999,NA,87",
+                "-49.06055,-22.31472,0.9,-999,NA,87",
+                "103.80805,1.29162,0.875,-999,NA,87",
+                "126.08934,7.30416,0.7,1,67161,87",
+                "126.33333,7.16667,0.85,2,24269,87",
+                "126.0,7.5,0.75,2,24266,87",
+                "126.17626,7.51252,0.975,-999,NA,87",
+                "-98.28333,26.08333,0.9,-999,NA,87",
+                "39.21917,21.51694,0.85,-999,NA,87",
+                "-51.38889,-22.12556,0.85,-999,NA,87",
+                "177.46666,-17.61667,0.825,-999,NA,87",
+                "177.41667,-17.8,0.925,-999,NA,87",
+                "-61.5,-17.5,0.7,1,40449,87",
+                "-80.63333,-5.2,0.875,-999,NA,87"
         );
     }
 

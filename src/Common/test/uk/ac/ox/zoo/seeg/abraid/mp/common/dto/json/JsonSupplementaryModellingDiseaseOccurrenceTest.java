@@ -180,7 +180,7 @@ public class JsonSupplementaryModellingDiseaseOccurrenceTest {
     @Test
     public void serializesCorrectly() throws JsonProcessingException {
         // Arrange
-        JsonModellingDiseaseOccurrence target = new JsonModellingDiseaseOccurrence(createNoopAdjuster(), 7, 6, 5, 4, "3", 123);
+        JsonSupplementaryModellingDiseaseOccurrence target = new JsonSupplementaryModellingDiseaseOccurrence(createNoopAdjuster(), 7, 6, 4, "3", 123);
 
         // Act
         String result = new ObjectMapper().writeValueAsString(target);
@@ -192,7 +192,7 @@ public class JsonSupplementaryModellingDiseaseOccurrenceTest {
     @Test
     public void serializesCorrectlyWithNull() throws JsonProcessingException {
         // Arrange
-        JsonModellingDiseaseOccurrence target = new JsonModellingDiseaseOccurrence(createNoopAdjuster(), 7, 6, 5, 4, null, 123);
+        JsonSupplementaryModellingDiseaseOccurrence target = new JsonSupplementaryModellingDiseaseOccurrence(createNoopAdjuster(), 7, 6, 4, null, 123);
 
         // Act
         String result = new ObjectMapper().writeValueAsString(target);
