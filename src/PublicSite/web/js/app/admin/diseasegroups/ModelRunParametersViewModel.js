@@ -4,7 +4,7 @@
 define(["ko"], function (ko) {
     "use strict";
 
-    return function (baseUrl, diseaseGroupSelectedEventName) {
+    return function (baseUrl, diseaseGroupSelectedEventName, supportedModes) {
         var self = this;
 
         self.diseaseGroupId = ko.observable("");
@@ -13,6 +13,7 @@ define(["ko"], function (ko) {
         self.minNewLocations = ko.observable().extend({ digit: true, min: 0 });
         self.maxEnvironmentalSuitabilityForTriggering = ko.observable().extend({ number: true, min: 0, max: 1 });
         self.minDistanceFromDiseaseExtentForTriggering = ko.observable().extend({ number: true });
+        self.modelMode = ko.observable().extend({ required: true, inList: supportedModes });
 
         // Machine Learning
         self.useMachineLearning = ko.observable();
@@ -61,6 +62,7 @@ define(["ko"], function (ko) {
                 ko.utils.normaliseInput(diseaseGroup.maxEnvironmentalSuitabilityForTriggering));
             self.minDistanceFromDiseaseExtentForTriggering(
                 ko.utils.normaliseInput(diseaseGroup.minDistanceFromDiseaseExtentForTriggering));
+            self.modelMode(ko.utils.normaliseInput(diseaseGroup.modelMode));
             self.minDataVolume(ko.utils.normaliseInput(diseaseGroup.minDataVolume));
             self.minDistinctCountries(ko.utils.normaliseInput(diseaseGroup.minDistinctCountries));
             self.minHighFrequencyCountries(ko.utils.normaliseInput(diseaseGroup.minHighFrequencyCountries));

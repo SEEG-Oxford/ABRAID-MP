@@ -35,6 +35,8 @@
                         </div>
                     </div>
                     <@formGroup id="max-environmental-suitability-without-ml" title="Max. Environmental Suitability of Points for the Validator If Not Using Machine Learning" bind="syncValue: maxEnvironmentalSuitabilityWithoutML, bootstrapDisable: find('isSubmitting') || useMachineLearning()"></@formGroup>
+                    SDM:<br>
+                    <@formGroup id="model-mode" title="Model Mode" bind="formValue: modelMode"></@formGroup>
                 </div>
             </div>
             <div class="col-sm-6">

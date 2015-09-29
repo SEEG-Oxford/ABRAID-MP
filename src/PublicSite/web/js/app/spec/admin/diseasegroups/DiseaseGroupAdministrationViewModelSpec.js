@@ -48,6 +48,7 @@ define([
                 minNewLocations: wrap(1),
                 maxEnvironmentalSuitabilityForTriggering: wrap(0.2),
                 minDistanceFromDiseaseExtentForTriggering: wrap(-300),
+                modelMode: wrap("bhatt"),
                 minDataVolume: wrap(2),
                 minDistinctCountries: wrap(3),
                 minHighFrequencyCountries: wrap(4),
@@ -72,6 +73,7 @@ define([
                 "\"abbreviation\":\"ABBREV\"," +
                 "\"groupType\":\"MICROCLUSTER\"," +
                 "\"isGlobal\":true," +
+                "\"modelMode\":\"bhatt\"," +
                 "\"parentDiseaseGroup\":{\"id\":2}," +
                 "\"validatorDiseaseGroup\":{\"id\":3}," +
                 "\"minNewLocations\":1," +
@@ -212,6 +214,7 @@ define([
                 minNewLocations: wrap(""),
                 maxEnvironmentalSuitabilityForTriggering: wrap(""),
                 minDistanceFromDiseaseExtentForTriggering: wrap(""),
+                modelMode: wrap("bhatt"),
                 minDataVolume: wrap(""),
                 minDistinctCountries: wrap(""),
                 minHighFrequencyCountries: wrap(""),
@@ -230,6 +233,7 @@ define([
             };
             var expectedParams = "{\"name\":\"Name\"," +
                 "\"groupType\":\"MICROCLUSTER\"," +
+                "\"modelMode\":\"bhatt\"," +
                 "\"parentDiseaseGroup\":{\"id\":null}," +
                 "\"validatorDiseaseGroup\":{\"id\":null}," +
                 "\"diseaseExtentParameters\":{}}";

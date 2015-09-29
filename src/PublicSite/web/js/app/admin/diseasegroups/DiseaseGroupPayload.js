@@ -26,6 +26,7 @@ define([], function () {
             abbreviation: diseaseGroupSettingsViewModel.abbreviation(),
             groupType: diseaseGroupSettingsViewModel.selectedType(),
             isGlobal: diseaseGroupSettingsViewModel.isGlobal(),
+            modelMode: modelRunParametersViewModel.modelMode(),
             parentDiseaseGroup: { id: getId(diseaseGroupSettingsViewModel.selectedParentDiseaseGroup()) },
             validatorDiseaseGroup: { id: getId(diseaseGroupSettingsViewModel.selectedValidatorDiseaseGroup()) },
             minNewLocations: parseInteger(modelRunParametersViewModel.minNewLocations()),

@@ -25,6 +25,7 @@ public class JsonDiseaseGroupTest {
         diseaseGroup.setShortName("Short name");
         diseaseGroup.setAbbreviation("Abbr");
         diseaseGroup.setGlobal(true);
+        diseaseGroup.setModelMode("test_mode");
         diseaseGroup.setValidatorDiseaseGroup(new ValidatorDiseaseGroup(30, "Validator name"));
         diseaseGroup.setWeighting(0.1);
         diseaseGroup.setAutomaticModelRunsStartDate(DateTime.now());
@@ -50,6 +51,7 @@ public class JsonDiseaseGroupTest {
         assertThat(jsonDiseaseGroup.getShortName()).isEqualTo("Short name");
         assertThat(jsonDiseaseGroup.getAbbreviation()).isEqualTo("Abbr");
         assertThat(jsonDiseaseGroup.getIsGlobal()).isTrue();
+        assertThat(jsonDiseaseGroup.getModelMode()).isEqualTo("test_mode");
         assertThat(jsonDiseaseGroup.getWeighting()).isEqualTo(0.1);
         assertThat(jsonDiseaseGroup.isAutomaticModelRuns()).isEqualTo(true);
         assertThat(jsonDiseaseGroup.getMinNewLocations()).isEqualTo(400);
