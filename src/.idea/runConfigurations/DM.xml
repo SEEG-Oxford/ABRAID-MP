@@ -2,7 +2,7 @@
   <configuration default="false" name="DM" type="Application" factoryName="Application" show_console_on_std_out="true" show_console_on_std_err="true">
     <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
     <option name="MAIN_CLASS_NAME" value="uk.ac.ox.zoo.seeg.abraid.mp.datamanager.Main" />
-    <option name="VM_PARAMETERS" value="-XX:MaxPermSize=256M -Dlog4j.configuration=file:DataManager\src\uk\ac\ox\zoo\seeg\abraid\mp\datamanager\log4j.properties" />
+    <option name="VM_PARAMETERS" value="-XX:MaxPermSize=256M -Dlog4j.configuration=file:DataManager\src\uk\ac\ox\zoo\seeg\abraid\mp\datamanager\log4j.properties -Dapplication.managed.properties.file=classpath:/uk/ac/ox/zoo/seeg/abraid/mp/testutils/config/application-managed-testing.properties" />
     <option name="PROGRAM_PARAMETERS" value="" />
     <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />

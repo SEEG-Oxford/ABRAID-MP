@@ -9,16 +9,10 @@ import java.io.File;
 public class ExecutionRunConfiguration {
     private final File rPath;
     private final int maxRuntime;
-    private final int maxCPUs;
-    private final boolean dryRun;
-    private final boolean verbose;
 
-    public ExecutionRunConfiguration(File rPath, int maxRuntime, int maxCPUs, boolean verbose, boolean dryRun) {
+    public ExecutionRunConfiguration(File rPath, int maxRuntime) {
         this.rPath = rPath;
         this.maxRuntime = maxRuntime;
-        this.maxCPUs = maxCPUs;
-        this.verbose = verbose;
-        this.dryRun = dryRun;
     }
 
     public File getRPath() {
@@ -27,17 +21,5 @@ public class ExecutionRunConfiguration {
 
     public int getMaxRuntime() {
         return maxRuntime;
-    }
-
-    public int getMaxCPUs() {
-        return maxCPUs;
-    }
-
-    public boolean getDryRunFlag() {
-        return dryRun;
-    }
-
-    public boolean getVerboseFlag() {
-        return verbose;
     }
 }

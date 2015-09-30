@@ -41,11 +41,24 @@ dirAsk "$REMOTE_USER@${deploy_props[covariate.source]}/" "$ABRAID_SUPPORT_PATH/c
 echo "[[ DM | Checking admin raster files ]]"
 dirAsk "$REMOTE_USER@${deploy_props[raster.source]}/" "$ABRAID_SUPPORT_PATH/rasters"
 
+# Git clone
+REPO_DIR="https_github_com_SEEG_Oxford_seegSDM_git_cf0db3f50a25bea80468794281f22883"
+if [[ ! -d "$ABRAID_SUPPORT_PATH/repos/$REPO_DIR" ]]; then
+  # Make an inital clone of the target repo
+  # TODO Move to java-side context initialization.
+  mkdir -p "$ABRAID_SUPPORT_PATH/repos/"
+  git clone "https://github.com/SEEG-Oxford/seegSDM.git" "$ABRAID_SUPPORT_PATH/repos/$REPO_DIR"
+else
+  # Update the repo
+  ( cd "$ABRAID_SUPPORT_PATH/repos/$REPO_DIR" && git pull origin master )
+fi
+
 echo "[[ DM | Ensuring correct file permissions ]]"
 permissionFix "abraid:abraid" "$ABRAID_SUPPORT_PATH/datamanager/"
 chmod +x "$ABRAID_SUPPORT_PATH/datamanager/datamanager.sh"
 permissionFix "tomcat7:tomcat7" "$ABRAID_SUPPORT_PATH/covariates/"
 permissionFix "tomcat7:tomcat7" "$ABRAID_SUPPORT_PATH/rasters/"
+permissionFix "tomcat7:tomcat7" "$ABRAID_SUPPORT_PATH/repos/"
 
 echo "[[ DM | Done ]]"
 cd "../config/deploy/"

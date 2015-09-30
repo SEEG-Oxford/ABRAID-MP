@@ -12,14 +12,12 @@ public class JsonModelRunResponseTest {
     @Test
     public void constructorForJsonModelRunBindsParametersCorrectly() {
         // Arrange
-        String modelRunName = "Model run name";
         String errorText = "Error text";
 
         // Act
-        JsonModelRunResponse response = new JsonModelRunResponse(modelRunName, errorText);
+        JsonModelRunResponse response = new JsonModelRunResponse(errorText);
 
         // Assert
-        assertThat(response.getModelRunName()).isEqualTo(modelRunName);
         assertThat(response.getErrorText()).isEqualTo(errorText);
     }
 }

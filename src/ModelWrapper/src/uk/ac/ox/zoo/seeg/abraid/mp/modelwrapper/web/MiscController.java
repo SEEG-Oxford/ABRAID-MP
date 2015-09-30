@@ -10,7 +10,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.AbstractController;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ConfigurationService;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ModelWrapperConfigurationService;
 
 /**
  * Controller for the ModelWrapper misc items configuration forms.
@@ -24,10 +24,10 @@ public class MiscController extends AbstractController {
     private static final String LOG_SUPPLIED_DIRECTORY_NOT_USABLE = "User supplied covariate dir not usable: %s";
 
     private static final int MINIMUM_MAX_RUN_DURATION = 1000;
-    private final ConfigurationService configurationService;
+    private final ModelWrapperConfigurationService configurationService;
 
     @Autowired
-    public MiscController(ConfigurationService configurationService) {
+    public MiscController(ModelWrapperConfigurationService configurationService) {
         this.configurationService = configurationService;
     }
 

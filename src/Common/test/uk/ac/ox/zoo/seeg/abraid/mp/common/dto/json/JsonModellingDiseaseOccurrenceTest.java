@@ -103,7 +103,7 @@ public class JsonModellingDiseaseOccurrenceTest {
         when(mock.getLocation().getAdminUnitQCGaulCode()).thenReturn(1234);
 
         // Act
-        JsonModellingDiseaseOccurrence result = new JsonModellingDiseaseOccurrence(createNoopAdjuster(), new GeoJsonDiseaseOccurrenceFeature(mock));
+        JsonModellingDiseaseOccurrence result = new JsonModellingDiseaseOccurrence(createNoopAdjuster(), mock);
 
         // Assert
         assertThat(result.getLongitude()).isEqualTo(longitude);
@@ -133,7 +133,7 @@ public class JsonModellingDiseaseOccurrenceTest {
         when(mock.getLocation().getAdminUnitQCGaulCode()).thenReturn(null);
 
         // Act
-        JsonModellingDiseaseOccurrence result = new JsonModellingDiseaseOccurrence(createNoopAdjuster(), new GeoJsonDiseaseOccurrenceFeature(mock));
+        JsonModellingDiseaseOccurrence result = new JsonModellingDiseaseOccurrence(createNoopAdjuster(), mock);
 
         // Assert
         assertThat(result.getLongitude()).isEqualTo(longitude);
@@ -167,7 +167,7 @@ public class JsonModellingDiseaseOccurrenceTest {
         when(adjuster.adjust(admin, gaul)).thenReturn(admin - 1);
 
         // Act
-        JsonModellingDiseaseOccurrence result = new JsonModellingDiseaseOccurrence(adjuster, new GeoJsonDiseaseOccurrenceFeature(mock));
+        JsonModellingDiseaseOccurrence result = new JsonModellingDiseaseOccurrence(adjuster, mock);
 
         // Assert
         assertThat(result.getLongitude()).isEqualTo(longitude);

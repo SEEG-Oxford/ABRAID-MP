@@ -6,7 +6,8 @@ import org.kubek2k.springockito.annotations.WrapWithSpy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.CovariateFileDao;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelWrapperWebService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.runrequest.ModelRunPackageBuilder;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.runrequest.ModelWrapperWebService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.RasterFilePathFactory;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
 
@@ -25,6 +26,10 @@ public abstract class AbstractWebServiceClientIntegrationTests extends AbstractD
     @WrapWithSpy
     @Autowired
     protected ModelWrapperWebService modelWrapperWebService;
+
+    @ReplaceWithMock
+    @Autowired
+    protected ModelRunPackageBuilder modelRunPackageBuilder;
 
     @Autowired
     @ReplaceWithMock

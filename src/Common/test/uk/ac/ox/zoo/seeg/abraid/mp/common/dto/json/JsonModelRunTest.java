@@ -2,9 +2,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json;
 
 import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -16,19 +13,17 @@ public class JsonModelRunTest {
     public void constructorForJsonModelRunBindsParametersCorrectly() throws Exception {
         // Arrange
         JsonModelDisease expectedDisease = new JsonModelDisease();
-        GeoJsonDiseaseOccurrenceFeatureCollection expectedOccurrences = new GeoJsonDiseaseOccurrenceFeatureCollection();
-        Map<Integer, Integer> expectedExtentWeightings = new HashMap<>();
+        String expectedName = "name123";
 
         // Act
         JsonModelRun result = new JsonModelRun(
                 expectedDisease,
-                expectedOccurrences,
-                expectedExtentWeightings);
+                expectedName
+        );
 
         // Assert
         assertThat(result.getDisease()).isEqualTo(expectedDisease);
-        assertThat(result.getOccurrences()).isEqualTo(expectedOccurrences);
-        assertThat(result.getExtentWeightings()).isEqualTo(expectedExtentWeightings);
+        assertThat(result.getRunName()).isEqualTo(expectedName);
     }
 
     @Test
@@ -36,8 +31,7 @@ public class JsonModelRunTest {
         // Arrange
         JsonModelRun target = new JsonModelRun(
                 new JsonModelDisease(),
-                new GeoJsonDiseaseOccurrenceFeatureCollection(),
-                new HashMap<Integer, Integer>());
+                "name123");
 
         // Act
         boolean result = target.isValid();
@@ -51,8 +45,7 @@ public class JsonModelRunTest {
         // Arrange
         JsonModelRun target = new JsonModelRun(
                 null,
-                new GeoJsonDiseaseOccurrenceFeatureCollection(),
-                new HashMap<Integer, Integer>());
+                "name123");
 
         // Act
         boolean result = target.isValid();
@@ -62,12 +55,11 @@ public class JsonModelRunTest {
     }
 
     @Test
-    public void isValidReturnsFalseForMissingOccurrences() throws Exception {
+    public void isValidReturnsFalseForMissingName() throws Exception {
         // Arrange
         JsonModelRun target = new JsonModelRun(
                 new JsonModelDisease(),
-                null,
-                new HashMap<Integer, Integer>());
+                "");
 
         // Act
         boolean result = target.isValid();
@@ -77,11 +69,10 @@ public class JsonModelRunTest {
     }
 
     @Test
-    public void isValidReturnsFalseForMissingExtents() throws Exception {
+    public void isValidReturnsFalseForNullName() throws Exception {
         // Arrange
         JsonModelRun target = new JsonModelRun(
                 new JsonModelDisease(),
-                new GeoJsonDiseaseOccurrenceFeatureCollection(),
                 null);
 
         // Act

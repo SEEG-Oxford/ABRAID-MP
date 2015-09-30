@@ -5,7 +5,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ConfigurationService;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ModelWrapperConfigurationService;
 
 import java.io.File;
 
@@ -28,7 +28,7 @@ public class ModelOutputHandlerWebServiceTest {
         File testBodyFile = testFolder.newFile();
         FileUtils.writeByteArrayToFile(testBodyFile, testBody);
 
-        ConfigurationService configurationService = mock(ConfigurationService.class);
+        ModelWrapperConfigurationService configurationService = mock(ModelWrapperConfigurationService.class);
         String rootUrl = "http://localhost:8080/modeloutputhandler/";
         when(configurationService.getModelOutputHandlerRootUrl()).thenReturn(rootUrl);
 
