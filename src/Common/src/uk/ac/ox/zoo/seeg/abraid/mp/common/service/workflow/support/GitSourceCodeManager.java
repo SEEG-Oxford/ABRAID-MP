@@ -121,8 +121,8 @@ public class GitSourceCodeManager implements SourceCodeManager {
 
     private void checkRepositoryFilePermissions() throws IOException {
         try {
-            Set<PosixFilePermission> filePerms = PosixFilePermissions.fromString("rwxrwxr--"); // 664
-            Set<PosixFilePermission> dirPerms = PosixFilePermissions.fromString("rwxrwxr-x"); // 665
+            Set<PosixFilePermission> filePerms = PosixFilePermissions.fromString("rw-rw-r--"); // 664
+            Set<PosixFilePermission> dirPerms = PosixFilePermissions.fromString("rwxrwxr-x"); // 775
 
             Path dir = getRepositoryDirectory();
             Collection<File> files = FileUtils.listFiles(dir.toFile(), null, true);
