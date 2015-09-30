@@ -502,6 +502,19 @@ public class DiseaseServiceImpl implements DiseaseService {
     }
 
     /**
+     * Gets the supplementary occurrences that are should be used with a model run (for sample bias).
+     * @param diseaseGroupId The disease group ID being modelled (will be excluded from supplementary set).
+     * @param startDate The start date of the model run input data range.
+     * @param endDate The end date  of the model run input data range.
+     * @return The supplementary occurrences.
+     */
+    @Override
+    public List<DiseaseOccurrence> getSupplementaryOccurrencesForModelRun(
+            int diseaseGroupId, DateTime startDate, DateTime endDate) {
+        return diseaseOccurrenceDao.getSupplementaryOccurrencesForModelRun(diseaseGroupId, startDate, endDate);
+    }
+
+    /**
      * Returns the input date, with the number of days between scheduled model runs subtracted.
      * @param dateTime The input date.
      * @return The input date minus the number of days between scheduled model runs.

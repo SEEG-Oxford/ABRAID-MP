@@ -4,6 +4,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.config.ModellingConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.runrequest.FreemarkerScriptGenerator;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.runrequest.ScriptGenerator;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.ExecutionRunConfiguration;
@@ -24,6 +25,7 @@ import java.nio.file.Paths;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
 * Integration tests for the commons exec based R script runner.
@@ -134,9 +136,12 @@ public class CommonsExecIntegrationTest {
         // Arrange
         final RunConfiguration config = createRunConfig();
         Files.createDirectories(Paths.get(config.getWorkingDirectoryPath().toString(), "covariates"));
+        DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
+        when(diseaseGroup.getModelMode()).thenReturn("bhatt");
+        when(diseaseGroup.getId()).thenReturn(123);
 
         ScriptGenerator scriptGenerator = new FreemarkerScriptGenerator();
-        scriptGenerator.generateScript(new ModellingConfiguration(1, true, true), config.getWorkingDirectoryPath().toFile());
+        scriptGenerator.generateScript(new ModellingConfiguration(1, true, true), config.getWorkingDirectoryPath().toFile(), diseaseGroup);
 
         ModelRunner runner = new ModelRunnerImpl(new CommonsExecProcessRunnerFactory());
 

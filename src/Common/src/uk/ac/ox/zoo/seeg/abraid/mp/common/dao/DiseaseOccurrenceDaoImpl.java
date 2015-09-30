@@ -309,4 +309,18 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
                 diseaseGroupId, "startDate", startDate, "endDate", endDate);
         return (long) query.uniqueResult();
     }
+
+    /**
+     * Gets the supplementary occurrences that are should be used with a model run (for sample bias).
+     * @param diseaseGroupId The disease group ID being modelled (will be excluded from supplementary set).
+     * @param startDate The start date of the model run input data range.
+     * @param endDate The end date  of the model run input data range.
+     * @return The supplementary occurrences.
+     */
+    @Override
+    public List<DiseaseOccurrence> getSupplementaryOccurrencesForModelRun(
+            int diseaseGroupId, DateTime startDate, DateTime endDate) {
+       return listNamedQuery("getSupplementaryOccurrencesForModelRun", "diseaseGroupId",
+                diseaseGroupId, "startDate", startDate, "endDate", endDate);
+    }
 }

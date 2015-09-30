@@ -1,6 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Before;
@@ -16,9 +15,12 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.ModelRunWorkflowService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.BatchDatesValidator;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunWorkflowException;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.SourceCodeManager;
 import uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain.*;
 
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,6 +39,7 @@ public class AdminDiseaseGroupControllerTest {
     private AdminDiseaseGroupController controller;
     private DiseaseOccurrenceSpreadHelper helper;
     private BatchDatesValidator batchDatesValidator;
+    private SourceCodeManager sourceCodeManager;
 
     @Before
     public void setUp() {
@@ -46,12 +49,13 @@ public class AdminDiseaseGroupControllerTest {
         modelRunService = mock(ModelRunService.class);
         helper = mock(DiseaseOccurrenceSpreadHelper.class);
         batchDatesValidator = mock(BatchDatesValidator.class);
+        sourceCodeManager = mock(SourceCodeManager.class);
         controller = new AdminDiseaseGroupController(diseaseService, objectMapper, modelRunWorkflowService,
-                modelRunService, helper, batchDatesValidator);
+                modelRunService, helper, batchDatesValidator, sourceCodeManager);
     }
 
     @Test
-    public void showPageAddsDiseaseGroupsAndValidatorDiseaseGroupsToModel() throws JsonProcessingException {
+    public void showPageAddsDiseaseGroupsAndValidatorDiseaseGroupsToModel() throws IOException {
         // Arrange
         // NB. Expected JSONs sort disease groups by name, ignoring case.
         Model model = mock(Model.class);
@@ -62,6 +66,7 @@ public class AdminDiseaseGroupControllerTest {
                 "dengue", "dengue", "deng", false, 4, 1);
         List<DiseaseGroup> diseaseGroups = Arrays.asList(diseaseGroup1, diseaseGroup2);
         when(diseaseService.getAllDiseaseGroups()).thenReturn(diseaseGroups);
+        when(sourceCodeManager.getSupportedModesForCurrentVersion()).thenReturn(new HashSet<String>(Arrays.asList("mode1", "mode2", "mode3")));
         String expectedJson = "[" +
                 "{\"id\":87,\"name\":\"dengue\",\"publicName\":\"dengue\",\"shortName\":\"dengue\",\"abbreviation\":\"deng\",\"groupType\":\"SINGLE\",\"isGlobal\":false,\"validatorDiseaseGroup\":{\"id\":4},\"weighting\":1.0,\"automaticModelRuns\":false,\"minDataVolume\":0,\"useMachineLearning\":true}," +
                 "{\"id\":188,\"name\":\"Leishmaniases\",\"publicName\":\"leishmaniases\",\"shortName\":\"leishmaniases\",\"abbreviation\":\"leish\",\"groupType\":\"MICROCLUSTER\",\"isGlobal\":true,\"parentDiseaseGroup\":{\"id\":5,\"name\":\"leishmaniases\"},\"validatorDiseaseGroup\":{\"id\":9},\"weighting\":0.5,\"automaticModelRuns\":false,\"minDataVolume\":0,\"useMachineLearning\":true}]";
@@ -70,6 +75,7 @@ public class AdminDiseaseGroupControllerTest {
         ValidatorDiseaseGroup validator2 = new ValidatorDiseaseGroup(2, "cholera");
         when(diseaseService.getAllValidatorDiseaseGroups()).thenReturn(Arrays.asList(validator1, validator2));
         String expectedValidatorJson = "[{\"id\":2,\"name\":\"cholera\"},{\"id\":3,\"name\":\"Japanese encephalitis\"}]";
+        String expectedModesJson = "[\"mode3\",\"mode1\",\"mode2\"]";
 
         // Act
         String result = controller.showPage(model);
@@ -78,6 +84,7 @@ public class AdminDiseaseGroupControllerTest {
         assertThat(result).isEqualTo("admin/diseasegroups/index");
         verify(model).addAttribute("diseaseGroups", expectedJson);
         verify(model).addAttribute("validatorDiseaseGroups", expectedValidatorJson);
+        verify(model).addAttribute("supportedModes", expectedModesJson);
     }
 
     @Test
@@ -323,7 +330,7 @@ public class AdminDiseaseGroupControllerTest {
         DiseaseGroup diseaseGroup = createDiseaseGroup(diseaseGroupId, 87, "Name", "Parent Name", DiseaseGroupType.SINGLE, "Public name", "Short name", "ABBREV", true, 4, 1.0);
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
         when(diseaseService.getValidatorDiseaseGroupById(4)).thenReturn(new ValidatorDiseaseGroup());
-        JsonDiseaseGroup newValues = createJsonDiseaseGroup("New name", "New public name", "New short name", "NEWABBREV", "CLUSTER", false, 87, 4);
+        JsonDiseaseGroup newValues = createJsonDiseaseGroup("New name", "New public name", "New short name", "NEWABBREV", "CLUSTER", false, 87, 4, "not_bhatt");
 
         // Act
         ResponseEntity result = controller.save(1, newValues);
@@ -337,7 +344,7 @@ public class AdminDiseaseGroupControllerTest {
     public void saveReturnsBadRequestForInvalidDiseaseGroup() throws Exception {
         // Arrange
         when(diseaseService.getDiseaseGroupById(anyInt())).thenReturn(null);
-        JsonDiseaseGroup newValues = createJsonDiseaseGroup("New name", "New public name", "New short name", "NEWABBREV", "CLUSTER", false, 87, 4);
+        JsonDiseaseGroup newValues = createJsonDiseaseGroup("New name", "New public name", "New short name", "NEWABBREV", "CLUSTER", false, 87, 4, "bhatt");
 
         // Act
         ResponseEntity result = controller.save(1, newValues);
@@ -350,7 +357,7 @@ public class AdminDiseaseGroupControllerTest {
     public void saveReturnsBadRequestForMissingName() throws Exception {
         // Arrange
         when(diseaseService.getDiseaseGroupById(anyInt())).thenReturn(new DiseaseGroup());
-        JsonDiseaseGroup newValues = createJsonDiseaseGroup(null, "New public name", "New short name", "NEWABBREV", "CLUSTER", false, 87, 4);
+        JsonDiseaseGroup newValues = createJsonDiseaseGroup(null, "New public name", "New short name", "NEWABBREV", "CLUSTER", false, 87, 4, "bhatt");
 
         // Act
         ResponseEntity result = controller.save(1, newValues);
@@ -363,7 +370,7 @@ public class AdminDiseaseGroupControllerTest {
     public void saveReturnsBadRequestForMissingGroupType() throws Exception {
         // Arrange
         when(diseaseService.getDiseaseGroupById(anyInt())).thenReturn(new DiseaseGroup());
-        JsonDiseaseGroup newValues = createJsonDiseaseGroup("New name", "New public name", "New short name", "NEWABBREV", null, false, 87, 4);
+        JsonDiseaseGroup newValues = createJsonDiseaseGroup("New name", "New public name", "New short name", "NEWABBREV", null, false, 87, 4, "bhatt");
 
         // Act
         ResponseEntity result = controller.save(1, newValues);
@@ -380,7 +387,7 @@ public class AdminDiseaseGroupControllerTest {
         DiseaseGroup diseaseGroup = createDiseaseGroup(diseaseGroupId, parentId, "Name", "Parent name", DiseaseGroupType.SINGLE, "Public name", "Short name", "ABBREV", true, 4, 1.0);
         when(diseaseService.getDiseaseGroupById(1)).thenReturn(diseaseGroup);
         when(diseaseService.getDiseaseGroupById(parentId)).thenReturn(null);
-        JsonDiseaseGroup newValues = createJsonDiseaseGroup("New name", "New public name", "New short name", "NEWABBREV", "MICROCLUSTER", false, parentId, 4);
+        JsonDiseaseGroup newValues = createJsonDiseaseGroup("New name", "New public name", "New short name", "NEWABBREV", "MICROCLUSTER", false, parentId, 4, "bhatt");
 
         // Act
         ResponseEntity result = controller.save(diseaseGroupId, newValues);
@@ -395,7 +402,7 @@ public class AdminDiseaseGroupControllerTest {
         // Arrange
         int validatorId = 4;
         when(diseaseService.getValidatorDiseaseGroupById(validatorId)).thenReturn(null);
-        JsonDiseaseGroup newValues = createJsonDiseaseGroup("New name", "New public name", "New short name", "NEWABBREV", "CLUSTER", false, 87, validatorId);
+        JsonDiseaseGroup newValues = createJsonDiseaseGroup("New name", "New public name", "New short name", "NEWABBREV", "CLUSTER", false, 87, validatorId, "bhatt");
 
         // Act
         ResponseEntity result = controller.save(1, newValues);
@@ -409,7 +416,7 @@ public class AdminDiseaseGroupControllerTest {
         // Arrange
         int validatorId = 4;
         when(diseaseService.getValidatorDiseaseGroupById(validatorId)).thenReturn(null);
-        JsonDiseaseGroup newValues = createJsonDiseaseGroup("New name", "New public name", "New short name", "NEWABBREV", "invalid", false, 87, validatorId);
+        JsonDiseaseGroup newValues = createJsonDiseaseGroup("New name", "New public name", "New short name", "NEWABBREV", "invalid", false, 87, validatorId, "bhatt");
 
         // Act
         ResponseEntity result = controller.save(1, newValues);
@@ -423,7 +430,7 @@ public class AdminDiseaseGroupControllerTest {
         // Arrange
         when(diseaseService.getDiseaseGroupById(87)).thenReturn(new DiseaseGroup());
         when(diseaseService.getValidatorDiseaseGroupById(4)).thenReturn(new ValidatorDiseaseGroup());
-        JsonDiseaseGroup values = createJsonDiseaseGroup("Name", "Public name", "Short name", "ABBREV", "MICROCLUSTER", false, 87, 4);
+        JsonDiseaseGroup values = createJsonDiseaseGroup("Name", "Public name", "Short name", "ABBREV", "MICROCLUSTER", false, 87, 4, "bhatt");
 
         // Act
         ResponseEntity result = controller.add(values);
@@ -438,21 +445,21 @@ public class AdminDiseaseGroupControllerTest {
 
     @Test
     public void addReturnsBadRequestForMissingName() throws Exception {
-        JsonDiseaseGroup values = createJsonDiseaseGroup(null, "Public name", "Short name", "ABBREV", "MICROCLUSTER", false, 87, 4);
+        JsonDiseaseGroup values = createJsonDiseaseGroup(null, "Public name", "Short name", "ABBREV", "MICROCLUSTER", false, 87, 4, "bhatt");
         ResponseEntity result = controller.add(values);
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @Test
     public void addReturnsBadRequestForMissingGroupType() throws Exception {
-        JsonDiseaseGroup values = createJsonDiseaseGroup("Name", "Public name", "Short name", "ABBREV", null, false, 87, 4);
+        JsonDiseaseGroup values = createJsonDiseaseGroup("Name", "Public name", "Short name", "ABBREV", null, false, 87, 4, "bhatt");
         ResponseEntity result = controller.add(values);
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @Test
     public void addReturnsBadRequestForInvalidGroupType() throws Exception {
-        JsonDiseaseGroup values = createJsonDiseaseGroup("Name", "Public name", "Short name", "ABBREV", "invalid", false, 87, 4);
+        JsonDiseaseGroup values = createJsonDiseaseGroup("Name", "Public name", "Short name", "ABBREV", "invalid", false, 87, 4, "bhatt");
         ResponseEntity result = controller.add(values);
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
@@ -462,7 +469,7 @@ public class AdminDiseaseGroupControllerTest {
         // Arrange
         int parentId = 87;
         when(diseaseService.getDiseaseGroupById(parentId)).thenReturn(null);
-        JsonDiseaseGroup values = createJsonDiseaseGroup("Name", "Public name", "Short name", "ABBREV", "MICROCLUSTER", false, parentId, 4);
+        JsonDiseaseGroup values = createJsonDiseaseGroup("Name", "Public name", "Short name", "ABBREV", "MICROCLUSTER", false, parentId, 4, "bhatt");
 
         // Act
         ResponseEntity result = controller.add(values);
@@ -477,7 +484,7 @@ public class AdminDiseaseGroupControllerTest {
         // Arrange
         int validatorId = 4;
         when(diseaseService.getValidatorDiseaseGroupById(validatorId)).thenReturn(null);
-        JsonDiseaseGroup values = createJsonDiseaseGroup("Name", "Public name", "Short name", "ABBREV", "MICROCLUSTER", false, 87, validatorId);
+        JsonDiseaseGroup values = createJsonDiseaseGroup("Name", "Public name", "Short name", "ABBREV", "MICROCLUSTER", false, 87, validatorId, "bhatt");
 
         // Act
         ResponseEntity result = controller.add(values);
@@ -541,7 +548,7 @@ public class AdminDiseaseGroupControllerTest {
     }
 
     private JsonDiseaseGroup createJsonDiseaseGroup(String name, String publicName, String shortName,
-                                                    String abbreviation, String groupType, boolean isGlobal, Integer parentId, Integer validatorId) {
+                                                    String abbreviation, String groupType, boolean isGlobal, Integer parentId, Integer validatorId, String mode) {
         JsonDiseaseGroup json = new JsonDiseaseGroup();
         json.setName(name);
         json.setPublicName(publicName);
@@ -549,6 +556,7 @@ public class AdminDiseaseGroupControllerTest {
         json.setAbbreviation(abbreviation);
         json.setGroupType(groupType);
         json.setIsGlobal(isGlobal);
+        json.setModelMode(mode);
 
         if (parentId != null) {
             JsonParentDiseaseGroup parent = new JsonParentDiseaseGroup();

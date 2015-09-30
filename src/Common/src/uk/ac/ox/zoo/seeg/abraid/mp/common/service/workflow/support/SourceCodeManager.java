@@ -3,6 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Interface to provide interaction with a VCS repository containing the model code.
@@ -34,4 +35,11 @@ public interface SourceCodeManager {
      */
     void updateRepository() throws IOException, UnsupportedOperationException;
 
+    /**
+     * Retrieves the list of model modes supported by the currently selected version of the source code repository.
+     * @return The list of modes.
+     * @throws IOException Thrown if the operation could not be completed due to issue accessing local resources.
+     * @throws UnsupportedOperationException Thrown if there was an issue interacting with the VCS.
+     */
+    Set<String> getSupportedModesForCurrentVersion() throws IOException, UnsupportedOperationException;
 }

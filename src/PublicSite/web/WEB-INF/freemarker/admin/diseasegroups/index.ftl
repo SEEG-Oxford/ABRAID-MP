@@ -10,6 +10,7 @@
     // bootstrapped data for js viewmodels
     var diseaseGroups = ${diseaseGroups};
     var validatorDiseaseGroups = ${validatorDiseaseGroups};
+    var supportedModes = ${supportedModes};
 </script>
 </#assign>
 

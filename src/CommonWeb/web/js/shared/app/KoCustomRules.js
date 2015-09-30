@@ -112,6 +112,15 @@ define([
         message: "Must end with '{0}'"
     };
 
+    ko.validation.rules.inList = {
+        validator: function (value, other) {
+            var theValue = ko.utils.recursiveUnwrap(value);
+            var theOther = ko.utils.recursiveUnwrap(other);
+            return _(theOther).contains(theValue);
+        },
+        message: "Must be one of: '{0}'"
+    };
+
     ko.validation.rules.notContain = {
         validator: function (value, other) {
             var theValue = ko.utils.recursiveUnwrap(value);

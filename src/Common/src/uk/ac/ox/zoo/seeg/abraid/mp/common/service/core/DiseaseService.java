@@ -275,6 +275,16 @@ public interface DiseaseService {
     long getNumberOfDiseaseOccurrencesEligibleForModelRun(int diseaseGroupId, DateTime startDate, DateTime endDate);
 
     /**
+     * Gets the supplementary occurrences that are should be used with a model run (for sample bias).
+     * @param diseaseGroupId The disease group ID being modelled (will be excluded from supplementary set).
+     * @param startDate The start date of the model run input data range.
+     * @param endDate The end date  of the model run input data range.
+     * @return The supplementary occurrences.
+     */
+    List<DiseaseOccurrence> getSupplementaryOccurrencesForModelRun(
+            int diseaseGroupId, DateTime startDate, DateTime endDate);
+
+    /**
      * Returns the input date, with the max number of days on the validator subtracted.
      * @param dateTime The input date.
      * @return The input date minus the max number of days on the validator.

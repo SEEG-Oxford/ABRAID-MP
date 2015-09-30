@@ -13,6 +13,7 @@ public class JsonDiseaseGroup {
     private String shortName;
     private String abbreviation;
     private String groupType;
+    private String modelMode;
     private Boolean isGlobal;
     private JsonParentDiseaseGroup parentDiseaseGroup;
     private JsonValidatorDiseaseGroup validatorDiseaseGroup;
@@ -41,6 +42,7 @@ public class JsonDiseaseGroup {
         setAbbreviation(diseaseGroup.getAbbreviation());
         setGroupType(diseaseGroup.getGroupType().name());
         setIsGlobal(diseaseGroup.isGlobal());
+        setModelMode(diseaseGroup.getModelMode());
         if (diseaseGroup.getParentGroup() != null) {
             setParentDiseaseGroup(new JsonParentDiseaseGroup(diseaseGroup.getParentGroup()));
         }
@@ -118,6 +120,14 @@ public class JsonDiseaseGroup {
 
     public void setIsGlobal(Boolean isGlobal) {
         this.isGlobal = isGlobal;
+    }
+
+    public String getModelMode() {
+        return modelMode;
+    }
+
+    public void setModelMode(String modelMode) {
+        this.modelMode = modelMode;
     }
 
     public JsonValidatorDiseaseGroup getValidatorDiseaseGroup() {

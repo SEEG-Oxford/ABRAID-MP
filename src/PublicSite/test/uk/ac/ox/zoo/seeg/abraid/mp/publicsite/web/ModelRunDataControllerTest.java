@@ -38,6 +38,8 @@ public class ModelRunDataControllerTest extends AbstractDiseaseOccurrenceGeoJson
         String name = "modelRun7";
         DiseaseOccurrence occurrence = mock(DiseaseOccurrence.class);
         when(occurrence.getLocation()).thenReturn(mock(Location.class));
+        when(occurrence.getDiseaseGroup()).thenReturn(mock(DiseaseGroup.class));
+        when(occurrence.getDiseaseGroup().getId()).thenReturn(123);
         when(occurrence.getLocation().getGeom()).thenReturn(mock(Point.class));
         when(occurrence.getLocation().getGeom().getX()).thenReturn(1.0);
         when(occurrence.getLocation().getGeom().getY()).thenReturn(2.0);
@@ -67,6 +69,7 @@ public class ModelRunDataControllerTest extends AbstractDiseaseOccurrenceGeoJson
         assertThat(body.getList().get(0).getWeight()).isEqualTo(3.0);
         assertThat(body.getList().get(0).getAdmin()).isEqualTo(LocationPrecision.ADMIN1.getModelValue());
         assertThat(body.getList().get(0).getGaul()).isEqualTo("1234");
+        assertThat(body.getList().get(0).getDisease()).isEqualTo(123);
         assertThat(body.getList().get(0).getProvenance()).isEqualTo("provenance");
         assertThat(body.getList().get(0).getFeed()).isEqualTo("feed");
         verify(httpServletResponse).setHeader(eq("Content-Disposition"), eq("attachment; filename=\"" + name + "_input.csv\""));

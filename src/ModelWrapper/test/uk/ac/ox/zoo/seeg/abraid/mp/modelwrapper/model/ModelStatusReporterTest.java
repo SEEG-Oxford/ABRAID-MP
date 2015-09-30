@@ -1,7 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model;
 
 import net.lingala.zip4j.exception.ZipException;
-import org.apache.commons.collections.ListUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.junit.Rule;
@@ -16,8 +15,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.testutils.GeneralTestUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import static ch.lambdaj.Lambda.filter;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -62,7 +60,9 @@ public class ModelStatusReporterTest {
 
         addResultsToWorkspace(RESULTS_FILES, workingDirectory);
 
-        List<File> expectedFiles = ListUtils.union(RESULTS_FILES, Arrays.asList(COMPLETED_METADATA_JSON_TEST_FILE));
+        List<File> expectedFiles = new ArrayList<>();
+        expectedFiles.addAll(RESULTS_FILES);
+        expectedFiles.addAll(Arrays.asList(COMPLETED_METADATA_JSON_TEST_FILE));
 
         // This file will have been deleted by the end of "act" so if we want to check it we need to make a copy at the moment when handleOutputs is called
         File handledZip = setupModelOutputServiceHandleOutputsFileRetention(mockOutputServiceClient);

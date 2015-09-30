@@ -24,11 +24,20 @@ attempt_model_run <- function() {
     # Set parallel execution
     parallel_flag <- TRUE
 
+    # Disease ID
+    disease <-  ${disease?c}
+
+    # Model mode
+    mode <- "${mode?string}"
+
     # Define occurrence data
     occurrence_path <- "data/occurrences.csv"
 
     # Define disease extent data
     extent_path <- "data/extent.tif"
+
+    # Define supplementary occurrence data
+    supplementary_occurrence_path <- "data/supplementary_occurrences.csv"
 
     # Define covariates to use.
     # If you would like to use these covariate files please contact abraid@zoo.ox.ac.uk, as we cannot release them in all circumstances.
@@ -156,8 +165,11 @@ attempt_model_run <- function() {
         innerResult <- 0
         <#else>
         innerResult <- runABRAID(
+            mode,
+            disease,
             occurrence_path,
             extent_path,
+            supplementary_occurrence_path,
             admin0_path,
             admin1_path,
             admin2_path,

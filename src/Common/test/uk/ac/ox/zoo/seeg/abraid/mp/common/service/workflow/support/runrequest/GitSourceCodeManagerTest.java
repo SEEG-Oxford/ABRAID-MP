@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import static com.googlecode.catchexception.CatchException.catchException;
@@ -95,6 +96,23 @@ public class GitSourceCodeManagerTest {
     }
 
     @Test
+    public void getSupportedModesForCurrentVersionReturnsCorrectModes() throws Exception {
+        // Arrange
+        ConfigurationService configurationService = setUpFakeRepo();
+        SourceCodeManager target = setupSourceCodeManager(configurationService);
+        File repoCacheDir = getRepoCloneDir();
+        addFileToRepo(repoCacheDir, "data/abraid_modes.txt", "mode1\nmode2\nmode3\n");
+        when(configurationService.getModelRepositoryVersion()).thenReturn("expected_tag");
+        addTagToRepo(repoCacheDir, "expected_tag");
+
+        // Act
+        Set<String> result = target.getSupportedModesForCurrentVersion();
+
+        // Assert
+        assertThat(result).containsOnly("mode1", "mode2", "mode3");
+    }
+
+    @Test
     public void provisionRejectsInvalidVersions() throws Exception {
         // Arrange
         ConfigurationService configurationService = setUpFakeRepo();
@@ -148,6 +166,14 @@ public class GitSourceCodeManagerTest {
         Git git = getGitFacade(repo);
 
         git.tag().setName(id).call();
+    }
+
+    private void addFileToRepo(File repo, String file, String content) throws Exception {
+        Git git = getGitFacade(repo);
+        File newFile = Paths.get(repo.getAbsolutePath(), file).toFile();
+        FileUtils.writeStringToFile(newFile, content);
+        git.add().addFilepattern(file).call();
+        git.commit().setMessage("new file").call();
     }
 
     private Git getGitFacade(File repo) throws IOException {

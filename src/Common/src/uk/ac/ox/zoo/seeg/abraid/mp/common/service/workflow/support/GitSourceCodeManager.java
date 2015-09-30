@@ -119,6 +119,39 @@ public class GitSourceCodeManager implements SourceCodeManager {
         }
     }
 
+    /**
+     * Retrieves the list of model modes supported by the currently selected version of the source code repository.
+     * @return The list of modes.
+     * @throws IOException Thrown if the operation could not be completed due to issue accessing local resources.
+     * @throws UnsupportedOperationException Thrown if there was an issue interacting with the VCS.
+     */
+    @Override
+    public Set<String> getSupportedModesForCurrentVersion() throws IOException, UnsupportedOperationException  {
+        synchronized (GitSourceCodeManager.class) {
+            String versionIdentifier = configurationService.getModelRepositoryVersion();
+
+            try {
+                List<String> tags = getAvailableVersions();
+                if (!tags.contains(versionIdentifier)) {
+                    LOGGER.warn(LOG_PROVISIONING_FAILED);
+                    throw new IllegalArgumentException("No such version");
+                }
+                Git repository = openRepository();
+
+                LOGGER.info(LOG_CHECKING_OUT_REPO_VERSION + versionIdentifier);
+                repository.checkout().setName(versionIdentifier).call();
+
+                List<String> modes = FileUtils.readLines(
+                        Paths.get(getRepositoryDirectory().toString(), "data/abraid_modes.txt").toFile());
+                LOGGER.info(LOG_RETURNING_TO_HEAD_OF_MASTER);
+                repository.checkout().setName(MASTER_BRANCH_NAME).call();
+                return new HashSet<>(modes);
+            } catch (GitAPIException e) {
+                throw new UnsupportedOperationException(e);
+            }
+        }
+    }
+
     private void checkRepositoryFilePermissions() throws IOException {
         try {
             Set<PosixFilePermission> filePerms = PosixFilePermissions.fromString("rw-rw-r--"); // 664

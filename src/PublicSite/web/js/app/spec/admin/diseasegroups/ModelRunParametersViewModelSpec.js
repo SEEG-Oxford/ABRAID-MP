@@ -27,15 +27,17 @@ define([
 
     describe("The 'model run parameters' view model", function () {
         var eventName = "disease-group-selected";
+        var modesList = ["a", "b", "c"];
 
         describe("holds the expected properties of a disease group", function () {
-            var vm = new ModelRunParametersViewModel(baseUrl, "");
+            var vm = new ModelRunParametersViewModel(baseUrl, "", modesList);
             it("as observables", function () {
                 expect(vm.diseaseGroupId).toBeObservable();
                 expect(vm.minNewLocations).toBeObservable();
                 expect(vm.maxEnvironmentalSuitabilityForTriggering).toBeObservable();
                 expect(vm.minDistanceFromDiseaseExtentForTriggering).toBeObservable();
                 expect(vm.minDataVolume).toBeObservable();
+                expect(vm.modelMode).toBeObservable();
                 expect(vm.minDistinctCountries).toBeObservable();
                 expect(vm.minHighFrequencyCountries).toBeObservable();
                 expect(vm.highFrequencyThreshold).toBeObservable();
@@ -54,6 +56,8 @@ define([
                 expectValidationRulesForNumberBetweenZeroAndOne(vm.maxEnvironmentalSuitabilityForTriggering);
                 expectValidationRulesForNumberBetweenZeroAndOne(vm.maxEnvironmentalSuitabilityWithoutML);
 
+                expect(vm.modelMode).toHaveValidationRule({name: "required", params: true});
+                expect(vm.modelMode).toHaveValidationRule({name: "inList", params: modesList});
                 expect(vm.minDistanceFromDiseaseExtentForTriggering)
                     .toHaveValidationRule({name: "number", params: true});
                 expect(vm.minDataVolume).toHaveValidationRule({name: "required", params: true});
@@ -69,6 +73,7 @@ define([
                     maxEnvironmentalSuitabilityForTriggering: "0.2",
                     minDistanceFromDiseaseExtentForTriggering: "-300",
                     minDataVolume: "2",
+                    modelMode: "b",
                     minDistinctCountries: "3",
                     minHighFrequencyCountries: "4",
                     highFrequencyThreshold: "5",
@@ -76,7 +81,7 @@ define([
                     useMachineLearning: true,
                     maxEnvironmentalSuitabilityWithoutML: "0.7"
                 };
-                var vm = new ModelRunParametersViewModel(baseUrl, eventName);
+                var vm = new ModelRunParametersViewModel(baseUrl, eventName, modesList);
 
                 // Act
                 ko.postbox.publish(eventName, diseaseGroup);
@@ -89,6 +94,7 @@ define([
                 expect(vm.minDistanceFromDiseaseExtentForTriggering())
                     .toBe(diseaseGroup.minDistanceFromDiseaseExtentForTriggering);
                 expect(vm.minDataVolume()).toBe(diseaseGroup.minDataVolume);
+                expect(vm.modelMode()).toBe(diseaseGroup.modelMode);
                 expect(vm.minDistinctCountries()).toBe(diseaseGroup.minDistinctCountries);
                 expect(vm.minHighFrequencyCountries()).toBe(diseaseGroup.minHighFrequencyCountries);
                 expect(vm.highFrequencyThreshold()).toBe(diseaseGroup.highFrequencyThreshold);
@@ -110,6 +116,7 @@ define([
                     maxEnvironmentalSuitabilityForTriggering: undefined,
                     minDistanceFromDiseaseExtentForTriggering: 0,
                     minDataVolume: "",
+                    modelMode: "",
                     minDistinctCountries: NaN,
                     minHighFrequencyCountries: undefined,
                     highFrequencyThreshold: 0,
@@ -117,7 +124,7 @@ define([
                     useMachineLearning: false,
                     maxEnvironmentalSuitabilityWithoutML: ""
                 };
-                var vm = new ModelRunParametersViewModel(baseUrl, eventName);
+                var vm = new ModelRunParametersViewModel(baseUrl, eventName, modesList);
 
                 // Act
                 ko.postbox.publish(eventName, diseaseGroup);
@@ -129,6 +136,7 @@ define([
                 expect(vm.minDistanceFromDiseaseExtentForTriggering()).toBe(0);
                 expect(vm.minDataVolume()).toBe("");
                 expect(vm.minDistinctCountries()).toBe("");
+                expect(vm.modelMode()).toBe("");
                 expect(vm.minHighFrequencyCountries()).toBe("");
                 expect(vm.highFrequencyThreshold()).toBe(0);
                 expect(vm.occursInAfrica()).toBe(diseaseGroup.occursInAfrica);
@@ -141,7 +149,7 @@ define([
         describe("holds the computed 'high frequency threshold' which", function () {
             it("returns the 'high frequency threshold' value when disease group occurs in Africa", function () {
                 // Arrange
-                var vm = new ModelRunParametersViewModel(baseUrl, eventName);
+                var vm = new ModelRunParametersViewModel(baseUrl, eventName, modesList);
                 var value = 1;
                 vm.highFrequencyThresholdValue(value);
                 // Act
@@ -152,7 +160,7 @@ define([
 
             it("returns null when disease group does not occur in Africa", function () {
                 // Arrange
-                var vm = new ModelRunParametersViewModel(baseUrl, eventName);
+                var vm = new ModelRunParametersViewModel(baseUrl, eventName, modesList);
                 var value = 1;
                 vm.highFrequencyThresholdValue(value);
                 // Act
@@ -176,7 +184,7 @@ define([
 
             it("returns null when disease group does not occur in Africa", function () {
                 // Arrange
-                var vm = new ModelRunParametersViewModel(baseUrl, eventName);
+                var vm = new ModelRunParametersViewModel(baseUrl, eventName, modesList);
                 var value = 1;
                 vm.minHighFrequencyCountriesValue(value);
                 // Act

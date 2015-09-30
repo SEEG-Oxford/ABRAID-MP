@@ -5,6 +5,8 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import org.apache.log4j.Logger;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.config.ModellingConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
+
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Paths;
@@ -30,11 +32,13 @@ public class FreemarkerScriptGenerator implements ScriptGenerator {
      * Creates a model run script file in the working directory for the given configuration.
      * @param modellingConfiguration The model run configuration.
      * @param workingDirectory The directory in which the script should be created.
+     * @param diseaseGroup The disease group being modelled.
      * @return The script file.
      * @throws IOException Thrown in response to issues creating the script file.
      */
     @Override
-    public File generateScript(ModellingConfiguration modellingConfiguration, File workingDirectory)
+    public File generateScript(ModellingConfiguration modellingConfiguration, File workingDirectory,
+                               DiseaseGroup diseaseGroup)
             throws IOException {
         LOGGER.info(String.format(LOG_ADDING_SCRIPT_FILE_TO_WORKSPACE, workingDirectory.toString()));
 
@@ -42,7 +46,8 @@ public class FreemarkerScriptGenerator implements ScriptGenerator {
         Template template = loadTemplate();
 
         // Build the data-model
-        Map<String, Object> data = buildDataModel(modellingConfiguration);
+        Map<String, Object> data = buildDataModel(
+                modellingConfiguration, diseaseGroup.getId(), diseaseGroup.getModelMode());
 
         // File output
         File scriptFile = applyTemplate(workingDirectory, template, data);
@@ -79,11 +84,14 @@ public class FreemarkerScriptGenerator implements ScriptGenerator {
         return config.getTemplate(TEMPLATE_FILE_NAME);
     }
 
-    private static Map<String, Object> buildDataModel(ModellingConfiguration modellingConfiguration) {
+    private static Map<String, Object> buildDataModel(ModellingConfiguration modellingConfiguration,
+                                                      int diseaseGroupId, String mode) {
         Map<String, Object> data = new HashMap<>();
         data.put("dry_run", modellingConfiguration.getDryRunFlag());
         data.put("max_cpu", modellingConfiguration.getMaxCPUs());
         data.put("verbose", modellingConfiguration.getVerboseFlag());
+        data.put("disease", diseaseGroupId);
+        data.put("mode", mode);
         return data;
     }
 }

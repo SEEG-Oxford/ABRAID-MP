@@ -14,6 +14,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelDisease;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelRun;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunWorkflowException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.SourceCodeManager;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.runrequest.data.InputDataManager;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.RasterFilePathFactory;
@@ -41,6 +42,8 @@ public class ModelRunPackageBuilder {
     private static final String ADMIN_UNIT_DATA_DIRECTORY_NAME = "admins";
     private static final String LOG_PROVISIONING_WORKSPACE = "Provisioning workspace at %s";
     private static final String LOG_WORKSPACE_SUCCESSFULLY_PROVISIONED = "Workspace successfully provisioned at %s";
+    private static final String UNSUPPORTED_MODEL_MODE =
+           "Disease group (%s) is configured for a model mode (%s) that is not supported by the current model version.";
 
     private final SourceCodeManager sourceCodeManager;
     private final ScriptGenerator scriptGenerator;
@@ -69,6 +72,7 @@ public class ModelRunPackageBuilder {
      * @param diseaseGroup The disease group being modelled
      * @param occurrencesForModelRun The occurrences to be modelled.
      * @param diseaseExtent The extent to be modelled.
+     * @param supplementaryOccurrences The supplementary occurrences to be used by the model.
      * @param covariateFiles The covariate files to use in the model.
      * @param covariateDirectory The directory where the covariates can be found.
      * @return The zip file.
@@ -77,34 +81,49 @@ public class ModelRunPackageBuilder {
     public File buildPackage(String name, DiseaseGroup diseaseGroup,
                              List<DiseaseOccurrence> occurrencesForModelRun,
                              Collection<AdminUnitDiseaseExtentClass> diseaseExtent,
-                             Collection<CovariateFile> covariateFiles, String covariateDirectory) throws IOException {
+                             List<DiseaseOccurrence> supplementaryOccurrences,
+                             Collection<CovariateFile> covariateFiles,
+                             String covariateDirectory) throws IOException {
+        // Check the mode
+        if (!sourceCodeManager.getSupportedModesForCurrentVersion().contains(diseaseGroup.getModelMode())) {
+            throw new ModelRunWorkflowException(String.format(
+                    UNSUPPORTED_MODEL_MODE, diseaseGroup.getId(), diseaseGroup.getModelMode()));
+        }
+
         // Determine paths
-        Path workingDirectoryPath = Paths.get(FileUtils.getTempDirectoryPath(), name);
-        Path zipFilePath = Paths.get(FileUtils.getTempDirectoryPath(), name + ".zip");
+        Path workingDirectory = Paths.get(FileUtils.getTempDirectoryPath(), name);
+        Path zipFile = Paths.get(FileUtils.getTempDirectoryPath(), name + ".zip");
 
         try {
             // create metadata
             JsonModelRun metadata = createJsonModelRun(diseaseGroup, name);
 
             // provision workspace
-            provisionWorkspace(workingDirectoryPath, metadata, occurrencesForModelRun, diseaseExtent,
-                    covariateFiles, covariateDirectory);
+            LOGGER.info(String.format(LOG_PROVISIONING_WORKSPACE, workingDirectory.toString()));
+            buildDirectories(workingDirectory);
+            addMetadata(workingDirectory, metadata);
+            addData(workingDirectory, diseaseGroup, occurrencesForModelRun, diseaseExtent, supplementaryOccurrences);
+            addCovariates(workingDirectory, covariateFiles, covariateDirectory);
+            addGaulLayers(workingDirectory);
+            addRModelCode(workingDirectory, diseaseGroup);
+
+            LOGGER.info(String.format(LOG_WORKSPACE_SUCCESSFULLY_PROVISIONED, workingDirectory.toString()));
 
             // build zip
-            zipWorkspace(workingDirectoryPath, zipFilePath);
+            zipWorkspace(workingDirectory, zipFile);
         } catch (Exception e) {
             // clean up zip
-            if (zipFilePath != null && zipFilePath.toFile().exists()) {
-                Files.delete(zipFilePath);
+            if (zipFile != null && zipFile.toFile().exists()) {
+                Files.delete(zipFile);
             }
             throw new IOException(e);
         } finally {
             // clean up dir
-            if (workingDirectoryPath != null && workingDirectoryPath.toFile().exists()) {
-                FileUtils.deleteDirectory(workingDirectoryPath.toFile());
+            if (workingDirectory != null && workingDirectory.toFile().exists()) {
+                FileUtils.deleteDirectory(workingDirectory.toFile());
             }
         }
-        return zipFilePath.toFile();
+        return zipFile.toFile();
     }
 
     private JsonModelRun createJsonModelRun(DiseaseGroup diseaseGroup, String name) {
@@ -112,17 +131,9 @@ public class ModelRunPackageBuilder {
         return new JsonModelRun(jsonModelDisease, name);
     }
 
-    private File provisionWorkspace(
-            Path workingDirectoryPath,
-            JsonModelRun metadata,
-            List<DiseaseOccurrence> occurrenceData,
-            Collection<AdminUnitDiseaseExtentClass> extentData,
-            Collection<CovariateFile> covariateFiles, String covariateStorageDirectory)
-            throws IOException {
+    private void buildDirectories(Path workingDirectoryPath) throws IOException {
         // Create directories
-        LOGGER.info(String.format(LOG_PROVISIONING_WORKSPACE, workingDirectoryPath.toString()));
-        File workingDirectory = workingDirectoryPath.toFile();
-        boolean workingDirectoryCreated = workingDirectory.mkdirs();
+        boolean workingDirectoryCreated = workingDirectoryPath.toFile().mkdirs();
 
         File modelDirectory = null;
         if (workingDirectoryCreated) {
@@ -156,21 +167,35 @@ public class ModelRunPackageBuilder {
             LOGGER.warn(String.format(LOG_DIRECTORY_ERROR, workingDirectoryPath.toString()));
             throw new IOException("Directory structure could not be created.");
         }
+    }
 
+    private void addMetadata(Path workingDirectory, JsonModelRun metadata) throws IOException {
         // Write metadata
-        Path metadataPath = Paths.get(workingDirectoryPath.toString(), "metadata.json");
+        Path metadataPath = Paths.get(workingDirectory.toString(), "metadata.json");
         ObjectWriter writer = objectMapper.writer();
         try {
             writer.writeValue(metadataPath.toFile(), metadata);
         } catch (IOException e) {
             throw new IOException("Metadata file could not be created.");
         }
+    }
 
+    private void addData(Path workingDirectory,
+                         DiseaseGroup disease,
+                         List<DiseaseOccurrence> occurrenceData,
+                         Collection<AdminUnitDiseaseExtentClass> extentData,
+                         List<DiseaseOccurrence> supplementaryOccurrenceData) throws IOException {
+        File dataDirectory = Paths.get(workingDirectory.toString(), MODEL_DATA_DIRECTORY_NAME).toFile();
         // Copy input data
-        inputDataManager.writeOccurrenceData(occurrenceData, dataDirectory);
-        File baseExtentRaster = rasterFilePathFactory.getExtentGaulRaster(metadata.getDisease().isGlobal());
+        inputDataManager.writeOccurrenceData(occurrenceData, dataDirectory, false);
+        inputDataManager.writeOccurrenceData(supplementaryOccurrenceData, dataDirectory, true);
+        File baseExtentRaster = rasterFilePathFactory.getExtentGaulRaster(disease.isGlobal());
         inputDataManager.writeExtentData(extentData, baseExtentRaster, dataDirectory);
+    }
 
+    private void addCovariates(Path workingDirectory, Collection<CovariateFile> covariateFiles,
+                               String covariateStorageDirectory) throws IOException {
+        File covariatesDirectory = Paths.get(workingDirectory.toString(), COVARIATES_DATA_DIRECTORY_NAME).toFile();
         // Covariate data
         for (CovariateFile file : covariateFiles) {
             FileUtils.copyFile(
@@ -178,29 +203,33 @@ public class ModelRunPackageBuilder {
                     Paths.get(covariatesDirectory.toString(), file.getFile()).toFile()
             );
         }
+    }
 
+    private void addGaulLayers(Path workingDirectory) throws IOException {
+        File adminDirectory = Paths.get(workingDirectory.toString(), ADMIN_UNIT_DATA_DIRECTORY_NAME).toFile();
         //Admin units
         FileUtils.copyFile(
-                    rasterFilePathFactory.getAdminRaster(0),
-                    Paths.get(adminUnitsDirectory.toString(), "admin0.tif").toFile()
+                rasterFilePathFactory.getAdminRaster(0),
+                Paths.get(adminDirectory.toString(), "admin0.tif").toFile()
         );
         FileUtils.copyFile(
                 rasterFilePathFactory.getAdminRaster(1),
-                Paths.get(adminUnitsDirectory.toString(), "admin1.tif").toFile()
+                Paths.get(adminDirectory.toString(), "admin1.tif").toFile()
         );
         FileUtils.copyFile(
                 rasterFilePathFactory.getAdminRaster(2),
-                Paths.get(adminUnitsDirectory.toString(), "admin2.tif").toFile()
+                Paths.get(adminDirectory.toString(), "admin2.tif").toFile()
         );
+    }
 
+    private void addRModelCode(Path workingDirectory, DiseaseGroup diseaseGroup)
+            throws IOException {
+        File modelDirectory = Paths.get(workingDirectory.toString(), MODEL_CODE_DIRECTORY_NAME).toFile();
         // Copy model
         sourceCodeManager.provision(modelDirectory);
 
         // Template script
-        File runScript = scriptGenerator.generateScript(modellingConfiguration, workingDirectory);
-
-        LOGGER.info(String.format(LOG_WORKSPACE_SUCCESSFULLY_PROVISIONED, workingDirectoryPath.toString()));
-        return runScript;
+        scriptGenerator.generateScript(modellingConfiguration, workingDirectory.toFile(), diseaseGroup);
     }
 
     private void zipWorkspace(Path workingDirectoryPath, Path zipFilePath) throws ZipException {

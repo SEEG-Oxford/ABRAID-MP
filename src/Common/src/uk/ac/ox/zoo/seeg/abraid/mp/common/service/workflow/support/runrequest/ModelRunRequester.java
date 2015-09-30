@@ -82,6 +82,10 @@ public class ModelRunRequester {
                     diseaseService.getDiseaseExtentByDiseaseGroupId(diseaseGroupId);
             Collection<CovariateFile> covariateFiles = covariateService.getCovariateFilesByDiseaseGroup(diseaseGroup);
             String covariateDirectory = covariateService.getCovariateDirectory();
+            DateTime startDate = min(occurrencesForModelRun, on(DiseaseOccurrence.class).getOccurrenceDate());
+            DateTime endDate = max(occurrencesForModelRun, on(DiseaseOccurrence.class).getOccurrenceDate());
+            List<DiseaseOccurrence> supplementaryOccurrences =
+                    diseaseService.getSupplementaryOccurrencesForModelRun(diseaseGroupId, startDate, endDate);
 
             // Pick a blade
             URI modelWrapperUrl = selectLeastBusyModelWrapperUrl();
@@ -90,13 +94,14 @@ public class ModelRunRequester {
             try {
                 // Build the work package
                 String name = buildRunName(diseaseGroup.getAbbreviation());
-                runPackage = modelRunPackageBuilder.buildPackage(
-                        name, diseaseGroup, occurrencesForModelRun, diseaseExtent, covariateFiles, covariateDirectory);
+                runPackage = modelRunPackageBuilder.buildPackage(name, diseaseGroup, occurrencesForModelRun,
+                        diseaseExtent, supplementaryOccurrences, covariateFiles, covariateDirectory);
 
                 // Submit the run
                 logRequest(diseaseGroup, occurrencesForModelRun);
-                ModelRun modelRun = createPreliminaryModelRun(name, diseaseGroup, modelWrapperUrl,
-                        batchStartDate, batchEndDate, occurrencesForModelRun, diseaseExtent);
+                ModelRun modelRun = createPreliminaryModelRun(name, diseaseGroup, modelWrapperUrl, startDate, endDate);
+                setModelRunProperties(
+                        modelRun, diseaseGroup, batchStartDate, batchEndDate, occurrencesForModelRun, diseaseExtent);
 
                 JsonModelRunResponse response = modelWrapperWebService.startRun(modelWrapperUrl, runPackage);
 
@@ -115,14 +120,15 @@ public class ModelRunRequester {
         }
     }
 
-    private ModelRun createPreliminaryModelRun(String name, DiseaseGroup diseaseGroup,
-                                               URI modelWrapperUrl,
-                                               DateTime batchStartDate, DateTime batchEndDate,
-                                               List<DiseaseOccurrence> occurrencesForModelRun,
-                                               Collection<AdminUnitDiseaseExtentClass> diseaseExtent) {
-        final ModelRun modelRun = new ModelRun(name, diseaseGroup, modelWrapperUrl.getHost(), DateTime.now(),
-                min(occurrencesForModelRun, on(DiseaseOccurrence.class).getOccurrenceDate()),
-                max(occurrencesForModelRun, on(DiseaseOccurrence.class).getOccurrenceDate()));
+    private ModelRun createPreliminaryModelRun(String name, DiseaseGroup diseaseGroup, URI modelWrapperUrl,
+                                               DateTime startDate, DateTime endDate) {
+        return new ModelRun(name, diseaseGroup, modelWrapperUrl.getHost(), DateTime.now(), startDate, endDate);
+    }
+
+    private void setModelRunProperties(final ModelRun modelRun, DiseaseGroup diseaseGroup,
+                                       DateTime batchStartDate, DateTime batchEndDate,
+                                       List<DiseaseOccurrence> occurrencesForModelRun,
+                                       Collection<AdminUnitDiseaseExtentClass> diseaseExtent) {
         modelRun.setBatchStartDate(batchStartDate);
         modelRun.setBatchEndDate(batchEndDate);
         modelRun.setInputDiseaseExtent(convert(diseaseExtent,
@@ -136,7 +142,6 @@ public class ModelRunRequester {
         if (diseaseGroup.isAutomaticModelRunsEnabled()) {
             modelRun.setInputDiseaseOccurrences(occurrencesForModelRun);
         }
-        return modelRun;
     }
 
     private URI selectLeastBusyModelWrapperUrl() {
