@@ -75,7 +75,7 @@ public class AdminDiseaseGroupControllerTest {
         ValidatorDiseaseGroup validator2 = new ValidatorDiseaseGroup(2, "cholera");
         when(diseaseService.getAllValidatorDiseaseGroups()).thenReturn(Arrays.asList(validator1, validator2));
         String expectedValidatorJson = "[{\"id\":2,\"name\":\"cholera\"},{\"id\":3,\"name\":\"Japanese encephalitis\"}]";
-        String expectedModesJson = "[\"mode1\",\"mode2\",\"mode3\"]";
+        String expectedModesJson = "[\"mode3\",\"mode1\",\"mode2\"]";
 
         // Act
         String result = controller.showPage(model);
