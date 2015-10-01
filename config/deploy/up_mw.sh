@@ -22,6 +22,9 @@ if [[ ! -d "$ABRAID_SUPPORT_PATH/r/libs/" ]]; then
 fi
 
 echo "[[ MW | Ensuring correct file permissions ]]"
+if [[ ! -d "$ABRAID_SUPPORT_PATH/modelwrapper/" ]]; then
+  mkdir -p "$ABRAID_SUPPORT_PATH/modelwrapper/"
+fi
 permissionFix "tomcat7:tomcat7" "$ABRAID_SUPPORT_PATH/modelwrapper/"
 
 echo "[[ MW | Done ]]"
