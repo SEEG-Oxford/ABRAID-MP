@@ -130,8 +130,8 @@ public class DataValidationControllerTest {
         boolean isSeeg = false;
         wireUpExpert(1, isSeeg, true);
         wireUpValidatorDiseaseGroups();
-        wireUpDiseasesNeedingExtentReview(expert, diseaseService, 1, 3, 4, 5);
-        wireUpDiseasesNeedingOccurrenceReview(expert, diseaseService, 1, 3, 2, 5);
+        wireUpDiseasesNeedingExtentReview(1, 3, 4, 5);
+        wireUpDiseasesNeedingOccurrenceReview(1, 3, 2, 5);
         Model model = mock(Model.class);
         DataValidationController target = createTarget();
 
@@ -161,8 +161,8 @@ public class DataValidationControllerTest {
         boolean isSeeg = true;
         wireUpExpert(1, isSeeg, true);
         wireUpValidatorDiseaseGroups();
-        wireUpDiseasesNeedingExtentReview(expert, diseaseService, 1, 3, 4, 5);
-        wireUpDiseasesNeedingOccurrenceReview(expert, diseaseService, 1, 3, 2, 5);
+        wireUpDiseasesNeedingExtentReview(1, 3, 4, 5);
+        wireUpDiseasesNeedingOccurrenceReview(1, 3, 2, 5);
         Model model = mock(Model.class);
         DataValidationController target = createTarget();
 
@@ -1048,27 +1048,27 @@ public class DataValidationControllerTest {
         when(diseaseService.getAllValidatorDiseaseGroups()).thenReturn(list);
     }
 
-    private void wireUpDiseasesNeedingExtentReview(Expert expert, DiseaseService diseaseService, Integer... diseaseIds) {
+    private void wireUpDiseasesNeedingExtentReview(Integer... diseaseIds) {
         diseaseService = mockIfNull(diseaseService, DiseaseService.class);
 
         List<DiseaseGroup> list = new ArrayList<>();
         for (Integer id : diseaseIds) {
-            DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
-            when(diseaseGroup.getId()).thenReturn(id);
-            list.add(diseaseGroup);
+            DiseaseGroup dg = mock(DiseaseGroup.class);
+            when(dg.getId()).thenReturn(id);
+            list.add(dg);
         }
 
         when(diseaseService.getDiseaseGroupsNeedingExtentReviewByExpert(eq(expert))).thenReturn(list);
     }
 
-    private void wireUpDiseasesNeedingOccurrenceReview(Expert expert, DiseaseService diseaseService, Integer... diseaseIds) {
+    private void wireUpDiseasesNeedingOccurrenceReview(Integer... diseaseIds) {
         diseaseService = mockIfNull(diseaseService, DiseaseService.class);
 
         List<DiseaseGroup> list = new ArrayList<>();
         for (Integer id : diseaseIds) {
-            DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
-            when(diseaseGroup.getId()).thenReturn(id);
-            list.add(diseaseGroup);
+            DiseaseGroup dg = mock(DiseaseGroup.class);
+            when(dg.getId()).thenReturn(id);
+            list.add(dg);
         }
 
         when(diseaseService.getDiseaseGroupsNeedingOccurrenceReviewByExpert(eq(expert))).thenReturn(list);

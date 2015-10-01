@@ -35,10 +35,12 @@ define([
             });
 
 
-            it("is initially 'disease occurrences', if there are only diseases requiring occurrence input", function () {
-                var vm1 = new SelectedLayerViewModel(diseaseInterests, [], [], [87]);
-                expect(vm1.selectedType()).toBe("disease occurrences");
-            });
+            it("is initially 'disease occurrences', if there are only diseases requiring occurrence input",
+                function () {
+                    var vm1 = new SelectedLayerViewModel(diseaseInterests, [], [], [87]);
+                    expect(vm1.selectedType()).toBe("disease occurrences");
+                }
+            );
 
             it("fires the 'layers-changed' event when its value changes", function () {
                 // Arrange
