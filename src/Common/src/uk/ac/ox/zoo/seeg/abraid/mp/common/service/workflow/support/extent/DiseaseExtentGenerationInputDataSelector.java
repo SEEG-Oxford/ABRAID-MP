@@ -41,7 +41,7 @@ public class DiseaseExtentGenerationInputDataSelector {
         return new DiseaseExtentGenerationInputData(
                 retrieveDiseaseExtentClasses(),
                 adminUnits,
-                retrieveReviews(diseaseGroup, isInitial),
+                retrieveReviews(diseaseGroup),
                 retrieveOccurrencesForValidatorExtent(diseaseGroup, isInitial, minimumOccurrenceDate, process));
     }
 
@@ -67,8 +67,9 @@ public class DiseaseExtentGenerationInputDataSelector {
         return diseaseService.getAllDiseaseExtentClasses();
     }
 
-    private Collection<AdminUnitReview> retrieveReviews(DiseaseGroup diseaseGroup, boolean isInitial) {
-        return (isInitial) ? null : expertService.getCurrentAdminUnitReviewsForDiseaseGroup(diseaseGroup.getId());
+    private Collection<AdminUnitReview> retrieveReviews(DiseaseGroup diseaseGroup) {
+        // For an initial run this is likely to be empty, but if they have been provided they might as well be used.
+        return expertService.getCurrentAdminUnitReviewsForDiseaseGroup(diseaseGroup.getId());
     }
 
     private Collection<DiseaseOccurrence> retrieveOccurrencesForValidatorExtent(

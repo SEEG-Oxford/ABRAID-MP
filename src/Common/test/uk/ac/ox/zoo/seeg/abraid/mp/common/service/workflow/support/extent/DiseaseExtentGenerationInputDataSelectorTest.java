@@ -60,7 +60,7 @@ public class DiseaseExtentGenerationInputDataSelectorTest {
         // Assert
         assertThat(result.getDiseaseExtentClasses()).isSameAs(diseaseExtentClasses);
         assertThat(result.getAdminUnits()).isSameAs(adminUnits);
-        assertThat(result.getReviews()).isNull();
+        assertThat(result.getReviews()).isSameAs(reviews);
         assertThat(result.getOccurrences()).isSameAs(occurrences);
     }
 
@@ -98,7 +98,7 @@ public class DiseaseExtentGenerationInputDataSelectorTest {
         // Assert
         assertThat(result.getDiseaseExtentClasses()).isSameAs(diseaseExtentClasses);
         assertThat(result.getAdminUnits()).isSameAs(adminUnits);
-        assertThat(result.getReviews()).isNull();
+        assertThat(result.getReviews()).isSameAs(reviews);
         assertThat(result.getOccurrences()).isSameAs(occurrences);
     }
 
@@ -155,7 +155,7 @@ public class DiseaseExtentGenerationInputDataSelectorTest {
         // Assert
         assertThat(result.getDiseaseExtentClasses()).isSameAs(diseaseExtentClasses);
         assertThat(result.getAdminUnits()).isSameAs(adminUnits);
-        assertThat(result.getReviews()).isNull();
+        assertThat(result.getReviews()).isSameAs(reviews);
         assertThat(result.getOccurrences()).isSameAs(occurrences);
     }
 
