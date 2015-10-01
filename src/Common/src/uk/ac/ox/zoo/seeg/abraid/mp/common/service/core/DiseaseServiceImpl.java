@@ -137,6 +137,26 @@ public class DiseaseServiceImpl implements DiseaseService {
         return map;
     }
 
+    /**
+     * Gets a list of the disease groups for which there are occurrences waiting to be reviewed, by the given expert.
+     * @param expert The expert.
+     * @return A list of disease groups.
+     */
+    @Override
+    public List<DiseaseGroup> getDiseaseGroupsNeedingOccurrenceReviewByExpert(Expert expert) {
+        return diseaseGroupDao.getDiseaseGroupsNeedingOccurrenceReviewByExpert(expert.getId());
+    }
+
+    /**
+     * Gets a list of the disease groups for which there are admin units waiting to be reviewed, by the given expert.
+     * @param expert The expert.
+     * @return A list of disease groups.
+     */
+    @Override
+    public List<DiseaseGroup> getDiseaseGroupsNeedingExtentReviewByExpert(Expert expert) {
+        return diseaseGroupDao.getDiseaseGroupsNeedingExtentReviewByExpert(expert.getId());
+    }
+
     private void sortMapValueListsByName(Map<String, List<DiseaseGroup>> map) {
         for (Entry<String, List<DiseaseGroup>> entry : map.entrySet()) {
             sortOnName(entry.getValue());

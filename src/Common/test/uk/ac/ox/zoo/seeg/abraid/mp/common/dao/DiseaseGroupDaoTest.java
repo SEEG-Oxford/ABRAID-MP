@@ -10,6 +10,8 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.List;
 
+import static ch.lambdaj.Lambda.extract;
+import static ch.lambdaj.Lambda.on;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -26,6 +28,33 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
 
     @Autowired
     private ValidatorDiseaseGroupDao validatorDiseaseGroupDao;
+
+    @Autowired
+    private DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao;
+
+    @Autowired
+    private AdminUnitReviewDao adminUnitReviewDao;
+
+    @Autowired
+    private AdminUnitTropicalDao adminUnitTropicalDao;
+
+    @Autowired
+    private AdminUnitGlobalDao adminUnitGlobalDao;
+
+    @Autowired
+    private DiseaseExtentClassDao diseaseExtentClassDao;
+
+    @Autowired
+    private AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao;
+
+    @Autowired
+    private ExpertDao expertDao;
+
+    @Autowired
+    private LocationDao locationDao;
+
+    @Autowired
+    private AlertDao alertDao;
 
     @Test
     public void saveAndReloadDiseaseCluster() {
@@ -187,6 +216,121 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         List<Integer> ids = diseaseGroupDao.getIdsForAutomaticModelRuns();
         assertThat(ids).hasSize(1);
         assertThat(ids.get(0)).isEqualTo(id);
+    }
+
+    @Test
+    public void getDiseaseGroupsNeedingOccurrenceReviewByExpert() {
+        // Arrange
+        setAuto(31);
+        setAuto(112);
+        setAuto(14);
+        flushAndClear();
+        int id1 = createOccurrenceNeedingReview(31); // reviewed
+        int id2 = createOccurrenceNeedingReview(112); // reviewed
+        int id3 = createOccurrenceNeedingReview(112); // only reviewed by other experts
+        int id4 = createOccurrenceNeedingReview(22);  // not reviewed, but not auto
+        int id5 = createOccurrenceNeedingReview(14); // not review
+        flushAndClear();
+        createOccurrenceReview(1, id1);
+        createOccurrenceReview(1, id2);
+        createOccurrenceReview(2, id3);
+        flushAndClear();
+
+        // Act
+        List<DiseaseGroup> result = diseaseGroupDao.getDiseaseGroupsNeedingOccurrenceReviewByExpert(1);
+
+        // Assert
+        assertThat(extract(result, on(DiseaseGroup.class).getId())).containsOnly(112, 14);
+    }
+
+    private void createOccurrenceReview(int expertId, int occurrenceId) {
+        DiseaseOccurrenceReview review = new DiseaseOccurrenceReview(
+                expertDao.getById(expertId),
+                diseaseOccurrenceDao.getById(occurrenceId),
+                DiseaseOccurrenceReviewResponse.UNSURE
+        );
+        diseaseOccurrenceReviewDao.save(review);
+    }
+
+    private int createOccurrenceNeedingReview(int diseaseGroupId) {
+        DiseaseOccurrence occurrence = new DiseaseOccurrence(
+                diseaseGroupDao.getById(diseaseGroupId),
+                DateTime.now(),
+                locationDao.getById(6),
+                alertDao.getById(212855));
+        occurrence.setStatus(DiseaseOccurrenceStatus.IN_REVIEW);
+        diseaseOccurrenceDao.save(occurrence);
+        return occurrence.getId();
+    }
+
+    @Test
+    public void getDiseaseGroupsNeedingExtentReviewByExpert() {
+        // Arrange
+        setAuto(31);
+        setAuto(112);
+        setAuto(14);
+        setAuto(52);
+        flushAndClear();
+        createAdminUnitDiseaseExtentClass(2, null, 31); // reviewed
+        createAdminUnitDiseaseExtentClass(14, null, 112); // reviewed
+        createAdminUnitDiseaseExtentClass(null, 13, 112); // only reviewed by other experts
+        createAdminUnitDiseaseExtentClass(null, 13, 22);  // not reviewed, but not auto
+        createAdminUnitDiseaseExtentClass(null, 21, 52);  // not reviewed
+        AdminUnitDiseaseExtentClass toChange = createAdminUnitDiseaseExtentClass(null, 13, 14); // reviewed
+        flushAndClear();
+        createAdminUnitReview(1, 2, null, 31);
+        createAdminUnitReview(1, 14, null, 112);
+        createAdminUnitReview(2, null, 13, 112);
+        createAdminUnitReview(1, null, 13, 14);
+        flushAndClear();
+        toChange = adminUnitDiseaseExtentClassDao.getById(toChange.getId());
+        toChange.setClassChangedDate(DateTime.now().plusHours(1));
+        adminUnitDiseaseExtentClassDao.save(toChange); // review is now too old
+        flushAndClear();
+
+        // Act
+        List<DiseaseGroup> result = diseaseGroupDao.getDiseaseGroupsNeedingExtentReviewByExpert(1);
+
+        // Assert
+        assertThat(extract(result, on(DiseaseGroup.class).getId())).containsOnly(112, 14, 52);
+    }
+
+    private void setAuto(int diseaseGroupId) {
+        DiseaseGroup diseaseGroup = diseaseGroupDao.getById(diseaseGroupId);
+        diseaseGroup.setAutomaticModelRunsStartDate(DateTime.now());
+        diseaseGroupDao.save(diseaseGroup);
+    }
+
+    private AdminUnitReview createAdminUnitReview(int expertId, Integer adminUnitGlobalGaulCode, Integer adminUnitTropicalGaulCode, int diseaseGroupId) {
+        AdminUnitReview review = new AdminUnitReview(
+                expertDao.getById(expertId),
+                adminUnitGlobalGaulCode, adminUnitTropicalGaulCode,
+                diseaseGroupDao.getById(diseaseGroupId),
+                diseaseExtentClassDao.getByName(DiseaseExtentClass.UNCERTAIN));
+        adminUnitReviewDao.save(review);
+        return review;
+    }
+
+    private AdminUnitDiseaseExtentClass createAdminUnitDiseaseExtentClass(Integer adminUnitGlobalGaulCode, Integer adminUnitTropicalGaulCode, int diseaseGroupId) {
+        AdminUnitDiseaseExtentClass extentClass = null;
+        if (adminUnitGlobalGaulCode == null) {
+            extentClass = new AdminUnitDiseaseExtentClass(
+                    adminUnitTropicalDao.getByGaulCode(adminUnitTropicalGaulCode),
+                    diseaseGroupDao.getById(diseaseGroupId),
+                    diseaseExtentClassDao.getByName(DiseaseExtentClass.PRESENCE),
+                    diseaseExtentClassDao.getByName(DiseaseExtentClass.PRESENCE),
+                    3);
+        } else {
+            extentClass = new AdminUnitDiseaseExtentClass(
+                    adminUnitGlobalDao.getByGaulCode(adminUnitGlobalGaulCode),
+                    diseaseGroupDao.getById(diseaseGroupId),
+                    diseaseExtentClassDao.getByName(DiseaseExtentClass.PRESENCE),
+                    diseaseExtentClassDao.getByName(DiseaseExtentClass.PRESENCE),
+                    3);
+        }
+        extentClass.setClassChangedDate(DateTime.now().minusDays(1));
+        adminUnitDiseaseExtentClassDao.save(extentClass);
+        return extentClass;
     }
 
     @Test(expected = ConstraintViolationException.class)

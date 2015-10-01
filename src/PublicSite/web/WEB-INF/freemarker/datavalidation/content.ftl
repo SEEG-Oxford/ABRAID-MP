@@ -52,6 +52,8 @@
             wmsUrl: "${baseWmsUrl}",
             loggedIn: ${userLoggedIn?c},
             showHelpText: ${showHelpText?c},
+            diseasesRequiringExtentInput: [<#list diseasesRequiringExtentInput as disease>${disease?c},</#list>],
+            diseasesRequiringOccurrenceInput: [<#list diseasesRequiringOccurrenceInput as disease>${disease?c},</#list>],
             diseaseOccurrenceReviewCount: ${diseaseOccurrenceReviewCount?c},
             adminUnitReviewCount: ${adminUnitReviewCount?c},
             diseaseInterests: [
@@ -75,6 +77,7 @@
                         name: "${defaultValidatorDiseaseGroupName?js_string}",
                         diseaseGroups: [
                             {
+                                id: 87,
                                 name: "${defaultDiseaseGroupShortName?js_string}"
                             }
                         ]

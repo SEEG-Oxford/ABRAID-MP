@@ -19,6 +19,26 @@ public class DiseaseGroupDaoImpl extends AbstractDao<DiseaseGroup, Integer> impl
     }
 
     /**
+     * Gets a list of the disease groups for which there are occurrences waiting to be reviewed, by the given expert.
+     * @param expertId The expert's id.
+     * @return A list of disease groups.
+     */
+    @Override
+    public List<DiseaseGroup> getDiseaseGroupsNeedingOccurrenceReviewByExpert(int expertId) {
+        return listNamedQuery("getDiseaseGroupsNeedingOccurrenceReviewByExpert", "expertId", expertId);
+    }
+
+    /**
+     * Gets a list of the disease groups for which there are admin units waiting to be reviewed, by the given expert.
+     * @param expertId The expert's id.
+     * @return A list of disease groups.
+     */
+    @Override
+    public List<DiseaseGroup> getDiseaseGroupsNeedingExtentReviewByExpert(int expertId) {
+        return listNamedQuery("getDiseaseGroupsNeedingExtentReviewByExpert", "expertId", expertId);
+    }
+
+    /**
      * Gets the IDs of disease groups that have automatic model runs enabled.
      * @return The IDs of relevant disease groups.
      */

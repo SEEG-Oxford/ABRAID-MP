@@ -28,6 +28,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import static ch.lambdaj.Lambda.extract;
+import static ch.lambdaj.Lambda.on;
+
 /**
  * Controller for the expert data validation map page.
  * Copyright (c) 2014 University of Oxford
@@ -89,6 +92,8 @@ public class DataValidationController extends AbstractController {
         Integer diseaseOccurrenceReviewCount = 0;
         Integer adminUnitReviewCount = 0;
 
+        List<DiseaseGroup> diseasesRequiringExtentInput = new ArrayList<>();
+        List<DiseaseGroup> diseasesRequiringOccurrenceInput = new ArrayList<>();
         if (userLoggedIn) {
             Expert expert = getExpert(expertId);
             userIsSeeg = expert.isSeegMember();
@@ -97,6 +102,9 @@ public class DataValidationController extends AbstractController {
                 expert.setHasSeenHelpText(true);
                 expertService.saveExpert(expert);
             }
+
+            diseasesRequiringExtentInput = diseaseService.getDiseaseGroupsNeedingExtentReviewByExpert(expert);
+            diseasesRequiringOccurrenceInput =  diseaseService.getDiseaseGroupsNeedingOccurrenceReviewByExpert(expert);
 
             diseaseOccurrenceReviewCount = expertService.getDiseaseOccurrenceReviewCount(expertId).intValue();
             adminUnitReviewCount = expertService.getAdminUnitReviewCount(expertId).intValue();
@@ -111,6 +119,8 @@ public class DataValidationController extends AbstractController {
             model.addAttribute("defaultDiseaseGroupShortName", DEFAULT_DISEASE_GROUP_SHORT_NAME);
         }
 
+        model.addAttribute("diseasesRequiringExtentInput", extractIds(diseasesRequiringExtentInput));
+        model.addAttribute("diseasesRequiringOccurrenceInput", extractIds(diseasesRequiringOccurrenceInput));
         model.addAttribute("userLoggedIn", userLoggedIn);
         model.addAttribute("userSeeg", userIsSeeg);
         model.addAttribute("showHelpText", showHelpText);
@@ -118,6 +128,10 @@ public class DataValidationController extends AbstractController {
         model.addAttribute("adminUnitReviewCount", adminUnitReviewCount);
 
         return "datavalidation/content";
+    }
+
+    private List<Integer> extractIds(List<DiseaseGroup> diseaseGroups) {
+        return extract(diseaseGroups, on(DiseaseGroup.class).getId());
     }
 
     private List<ValidatorDiseaseGroup> getSortedDiseaseInterests(int expertId) {

@@ -9,10 +9,10 @@ define([
     "use strict";
 
     describe("The 'selected layer' view model", function () {
-        var diseaseInterests = [ { name: "dengue", diseaseGroups: [ { name: "dengue" } ] } ];
+        var diseaseInterests = [ { name: "dengue", diseaseGroups: [ { id: 87, name: "dengue" } ] } ];
         var vm = {};
         beforeEach(function () {
-            vm = new SelectedLayerViewModel(diseaseInterests, []);
+            vm = new SelectedLayerViewModel(diseaseInterests, [], [], []);
         });
 
         describe("holds the validation type which", function () {
@@ -20,9 +20,27 @@ define([
                 expect(vm.selectedType).toBeObservable();
             });
 
-            it("is initially 'disease extent'", function () {
+            it("is initially 'disease extent', if there are no diseases requiring input", function () {
                 expect(vm.selectedType()).toBe("disease extent");
             });
+
+            it("is initially 'disease extent', if there are only diseases requiring extent input", function () {
+                var vm1 = new SelectedLayerViewModel(diseaseInterests, [], [87], []);
+                expect(vm1.selectedType()).toBe("disease extent");
+            });
+
+            it("is initially 'disease extent', if there are diseases requiring both types of input", function () {
+                var vm1 = new SelectedLayerViewModel(diseaseInterests, [], [87], [87]);
+                expect(vm1.selectedType()).toBe("disease extent");
+            });
+
+
+            it("is initially 'disease occurrences', if there are only diseases requiring occurrence input",
+                function () {
+                    var vm1 = new SelectedLayerViewModel(diseaseInterests, [], [], [87]);
+                    expect(vm1.selectedType()).toBe("disease occurrences");
+                }
+            );
 
             it("fires the 'layers-changed' event when its value changes", function () {
                 // Arrange
@@ -57,24 +75,59 @@ define([
             });
 
             describe("is initially", function () {
-                it("the first disease group from the 'Disease Interests' list, if the list exists", function () {
-                    expect(vm.selectedDiseaseSet()).toBe(diseaseInterests[0]);
-                });
+                it("the first disease group from the 'Disease Interests' list which needs reviews, if the list exists",
+                    function () {
+                        var diseaseInterests = [
+                            { id: 1, name: "a", diseaseGroups: [ { id: 2, name: "b" }, { id: 3, name: "c" }] },
+                            { id: 4, name: "d", diseaseGroups: [ { id: 5, name: "e" }, { id: 6, name: "f" }] }
+                        ];
+                        var allOtherDiseases = [];
+                        vm = new SelectedLayerViewModel(diseaseInterests, allOtherDiseases, [5], []);
+                        expect(vm.selectedDiseaseSet().id).toBe(4);
+                    }
+                );
 
-                it("or the first disease group from the 'Other Diseases' list, otherwise", function () {
-                    var diseaseInterests = [];
-                    var allOtherDiseases = [ {name: "ascariasis", diseaseGroups: [ { name: "ascariasis" } ] } ];
-                    vm = new SelectedLayerViewModel(diseaseInterests, allOtherDiseases);
+                it("or the first disease group from the 'Other Diseases' list which needs reviews, otherwise",
+                    function () {
+                        var allOtherDiseases = [
+                            { id: 1, name: "a", diseaseGroups: [ { id: 2, name: "b" }, { id: 3, name: "c" }] },
+                            { id: 4, name: "d", diseaseGroups: [ { id: 5, name: "e" }, { id: 6, name: "f" }] }
+                        ];
+                        var diseaseInterests = [];
+                        vm = new SelectedLayerViewModel(diseaseInterests, allOtherDiseases, [5], []);
+                        expect(vm.selectedDiseaseSet().id).toBe(4);
+                    }
+                );
+                it("the first disease group from the 'Disease Interests' if non-need reviews, and the list exists",
+                    function () {
+                        var diseaseInterests = [
+                            { id: 1, name: "a", diseaseGroups: [ { id: 2, name: "b" }, { id: 3, name: "c" }] },
+                            { id: 4, name: "d", diseaseGroups: [ { id: 5, name: "e" }, { id: 6, name: "f" }] }
+                        ];
+                        var allOtherDiseases = [];
+                        vm = new SelectedLayerViewModel(diseaseInterests, allOtherDiseases, [], []);
+                        expect(vm.selectedDiseaseSet().id).toBe(1);
+                    }
+                );
 
-                    expect(vm.selectedDiseaseSet()).toBe(allOtherDiseases[0]);
-                });
+                it("or the first disease group from the 'Other Diseases'  if non-need reviews, otherwise",
+                    function () {
+                        var allOtherDiseases = [
+                            { id: 1, name: "a", diseaseGroups: [ { id: 2, name: "b" }, { id: 3, name: "c" }] },
+                            { id: 4, name: "d", diseaseGroups: [ { id: 5, name: "e" }, { id: 6, name: "f" }] }
+                        ];
+                        var diseaseInterests = [];
+                        vm = new SelectedLayerViewModel(diseaseInterests, allOtherDiseases, [], []);
+                        expect(vm.selectedDiseaseSet().id).toBe(1);
+                    }
+                );
             });
 
             it("fires the 'layers-changed' event when its value changes, for 'disease occurrences'", function () {
                 // Arrange
                 var diseaseId = 0;
                 var diseaseName = "abc";
-                var newDiseaseSet = { id: diseaseId, name: diseaseName };
+                var newDiseaseSet = { id: diseaseId, name: diseaseName, diseaseGroups: [{ id: 1, name: "abc" }] };
                 vm.selectedType("disease occurrences");
 
                 // Arrange assertions
@@ -88,15 +141,39 @@ define([
                 subscription.dispose();
             });
 
-            it("does not fire the 'layers-changed' event when its value changes, for 'disease extent'", function () {
+            it("updates the subdisease, to the first needing review, when changed", function () {
                 // Arrange
                 var diseaseId = 0;
-                var newDiseaseSet = { id: diseaseId };
+                var diseaseName = "abc";
+                var vm1 = new SelectedLayerViewModel(diseaseInterests, [], [87, 2], []);
+                var newDiseaseSet = {
+                    id: diseaseId,
+                    name: diseaseName,
+                    diseaseGroups: [{ id: 1, name: "abc" }, { id: 2, name: "abcd" }]
+                };
+
+                // Act
+                vm1.selectedDiseaseSet(newDiseaseSet);
+
+                // Assert
+                expect(vm1.selectedDisease().id).toBe(2);
+
+            });
+
+            it("fires the 'layers-changed' event when its value changes, for 'disease extent'", function () {
+                // Arrange
+                var diseaseId = 0;
+                var subdiseaseId = 1;
+                var subdiseaseName = "abc";
+                var diseaseName = "name";
+                var newDiseaseSet =
+                    { id: diseaseId, name: diseaseName, diseaseGroups: [{ id: subdiseaseId, name: subdiseaseName }] };
                 vm.selectedType("disease extent");
 
                 // Arrange assertions
-                var subscription = ko.postbox.subscribe("layers-changed", function () {
-                    expect().toNotExecuteThisLine("The 'layers-changed' event should not be fired here.");
+                var subscription = ko.postbox.subscribe("layers-changed", function (value) {
+                    expect(value.diseaseId).toBe(subdiseaseId);
+                    expect(value.diseaseName).toBe(subdiseaseName);
                 });
 
                 // Act

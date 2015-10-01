@@ -167,6 +167,38 @@ public class DiseaseServiceTest {
     }
 
     @Test
+     public void getDiseaseGroupsNeedingOccurrenceReviewByExpert() {
+        // Arrange
+        Expert expert = mock(Expert.class);
+        when(expert.getId()).thenReturn(123);
+        List<DiseaseGroup> diseaseGroups = Arrays.asList(mock(DiseaseGroup.class), mock(DiseaseGroup.class), mock(DiseaseGroup.class));
+        when(diseaseGroupDao.getDiseaseGroupsNeedingOccurrenceReviewByExpert(123)).thenReturn(diseaseGroups);
+
+        // Act
+        List<DiseaseGroup> result = diseaseService.getDiseaseGroupsNeedingOccurrenceReviewByExpert(expert);
+
+        // Assert
+        assertThat(result).isSameAs(diseaseGroups);
+        verify(diseaseGroupDao).getDiseaseGroupsNeedingOccurrenceReviewByExpert(123);
+    }
+
+    @Test
+    public void getDiseaseGroupsNeedingExtentReviewByExpert() {
+        // Arrange
+        Expert expert = mock(Expert.class);
+        when(expert.getId()).thenReturn(123);
+        List<DiseaseGroup> diseaseGroups = Arrays.asList(mock(DiseaseGroup.class), mock(DiseaseGroup.class), mock(DiseaseGroup.class));
+        when(diseaseGroupDao.getDiseaseGroupsNeedingExtentReviewByExpert(123)).thenReturn(diseaseGroups);
+
+        // Act
+        List<DiseaseGroup> result = diseaseService.getDiseaseGroupsNeedingExtentReviewByExpert(expert);
+
+        // Assert
+        assertThat(result).isSameAs(diseaseGroups);
+        verify(diseaseGroupDao).getDiseaseGroupsNeedingExtentReviewByExpert(123);
+    }
+
+    @Test
     public void getDiseaseOccurrencesById() {
         // Arrange
         List<Integer> ids = new ArrayList<>();
