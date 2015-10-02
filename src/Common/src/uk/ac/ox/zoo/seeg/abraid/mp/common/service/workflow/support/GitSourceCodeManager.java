@@ -3,15 +3,13 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 import ch.lambdaj.function.convert.Converter;
 import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.AndFileFilter;
-import org.apache.commons.io.filefilter.DirectoryFileFilter;
-import org.apache.commons.io.filefilter.NameFileFilter;
-import org.apache.commons.io.filefilter.NotFileFilter;
+import org.apache.commons.io.filefilter.*;
 import org.apache.log4j.Logger;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.lib.StoredConfig;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.springframework.util.DigestUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.config.ConfigurationService;
@@ -154,13 +152,14 @@ public class GitSourceCodeManager implements SourceCodeManager {
 
     private void checkRepositoryFilePermissions() throws IOException {
         try {
-            Set<PosixFilePermission> filePerms = PosixFilePermissions.fromString("rw-rw-r--"); // 664
-            Set<PosixFilePermission> dirPerms = PosixFilePermissions.fromString("rwxrwxr-x"); // 775
+            Set<PosixFilePermission> filePerms = PosixFilePermissions.fromString("rw-rw-r--");       // 664
+            Set<PosixFilePermission> directoryPerms = PosixFilePermissions.fromString("rwxrwxr-x");  // 775
 
-            Path dir = getRepositoryDirectory();
-            Collection<File> files = FileUtils.listFiles(dir.toFile(), null, true);
+            Path directory = getRepositoryDirectory();
+            Collection<File> files =
+                    FileUtils.listFilesAndDirs(directory.toFile(), TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
             for (File file : files) {
-                Files.setPosixFilePermissions(file.toPath(), file.isDirectory() ? dirPerms : filePerms);
+                Files.setPosixFilePermissions(file.toPath(), file.isDirectory() ? directoryPerms : filePerms);
             }
         } catch (UnsupportedOperationException e) {
             LOGGER.debug(LOG_NOT_A_POSIX_FILE_SYSTEM);
@@ -232,7 +231,7 @@ public class GitSourceCodeManager implements SourceCodeManager {
      * Clones a new copy of the git repository.
      * @throws GitAPIException
      */
-    private void cloneRepository() throws GitAPIException {
+    private void cloneRepository() throws IOException, GitAPIException {
         String repositoryUrl = configurationService.getModelRepositoryUrl();
 
         LOGGER.info(String.format(LOG_ATTEMPTING_CLONE_REPOSITORY, repositoryUrl));
@@ -241,5 +240,9 @@ public class GitSourceCodeManager implements SourceCodeManager {
                 .setURI(repositoryUrl)
                 .setDirectory(getRepositoryDirectory().toFile())
                 .call();
+
+        StoredConfig config = openRepository().getRepository().getConfig();
+        config.setString("core", null, "sharedRepository", "group");
+        config.save();
     }
 }

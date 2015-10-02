@@ -47,6 +47,8 @@ public class GitSourceCodeManagerTest {
         assertThat(baseRepoCacheDir.listFiles()).hasSize(1);
         File repoCacheDir = baseRepoCacheDir.listFiles()[0];
         assertThat(getGitLogMessages(repoCacheDir)).containsOnly("foobar");
+        assertThat(FileUtils.readFileToString(Paths.get(repoCacheDir.getAbsolutePath(), ".git/config").toFile()))
+                .contains("sharedRepository = group");
     }
 
     @Test

@@ -48,6 +48,9 @@ if [[ ! -d "$ABRAID_SUPPORT_PATH/repos/$REPO_DIR" ]]; then
   # TODO Move to java-side context initialization.
   mkdir -p "$ABRAID_SUPPORT_PATH/repos/"
   git clone "https://github.com/SEEG-Oxford/seegSDM.git" "$ABRAID_SUPPORT_PATH/repos/$REPO_DIR"
+  permissionFix "tomcat7:tomcat7" "$ABRAID_SUPPORT_PATH/repos/$REPO_DIR"
+  ( cd "$ABRAID_SUPPORT_PATH/repos/$REPO_DIR" && git config core.sharedRepository group )
+  permissionFix "tomcat7:tomcat7" "$ABRAID_SUPPORT_PATH/repos/$REPO_DIR"
 else
   # Update the repo
   ( cd "$ABRAID_SUPPORT_PATH/repos/$REPO_DIR" && git pull origin master )

@@ -222,8 +222,8 @@ export -f dirAsk
 
 permissionFix() {
   chown -R "$1" "$2"
-  chmod -R 664 "$2"
-  find "$2" -type d -exec chmod +x {} \;
+  find "$2" -type f -exec chmod 664 {} \;
+  find "$2" -type d -exec chmod 775 {} \;
 }
 export -f permissionFix
 
