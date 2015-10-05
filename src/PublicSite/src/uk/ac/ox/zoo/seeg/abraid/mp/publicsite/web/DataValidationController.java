@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.GeoJsonDiseaseExtentFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.GeoJsonDiseaseOccurrenceFeatureCollection;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.DisplayJsonView;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.support.ResponseView;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.GeometryService;
@@ -169,7 +167,6 @@ public class DataValidationController extends AbstractController {
             value = DATA_VALIDATION_BASE_URL + "/diseases/{validatorDiseaseGroupId}/occurrences",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseView(DisplayJsonView.class)
     @ResponseBody
     public ResponseEntity<GeoJsonDiseaseOccurrenceFeatureCollection> getDiseaseOccurrencesForReviewByCurrentUser(
             @PathVariable Integer validatorDiseaseGroupId) {
@@ -243,7 +240,6 @@ public class DataValidationController extends AbstractController {
             value = DATA_VALIDATION_BASE_URL + "/diseases/{diseaseGroupId}/adminunits",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseView(DisplayJsonView.class)
     @ResponseBody
     public ResponseEntity<GeoJsonDiseaseExtentFeatureCollection> getDiseaseExtentForDiseaseGroup(
             @PathVariable Integer diseaseGroupId) {
@@ -280,7 +276,6 @@ public class DataValidationController extends AbstractController {
             value = DATA_VALIDATION_BASE_URL + "/defaultadminunits",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseView(DisplayJsonView.class)
     @ResponseBody
     public ResponseEntity<GeoJsonDiseaseExtentFeatureCollection> getDefaultDiseaseExtent() {
         List<AdminUnitDiseaseExtentClass> diseaseExtent =
@@ -301,7 +296,6 @@ public class DataValidationController extends AbstractController {
             value = DATA_VALIDATION_BASE_URL + "/diseases/{diseaseGroupId}/adminunits/{gaulCode}/occurrences",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseView(DisplayJsonView.class)
     @ResponseBody
     public ResponseEntity<GeoJsonDiseaseOccurrenceFeatureCollection>
         getLatestDiseaseOccurrencesForAdminUnitDiseaseExtentClass(@PathVariable Integer diseaseGroupId,
@@ -325,7 +319,6 @@ public class DataValidationController extends AbstractController {
             value = DATA_VALIDATION_BASE_URL + "/defaultadminunits/{gaulCode}/occurrences",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseView(DisplayJsonView.class)
     @ResponseBody
     public ResponseEntity<GeoJsonDiseaseOccurrenceFeatureCollection>
     getLatestDiseaseOccurrencesForAdminUnitDiseaseExtentClassForDefaultDiseaseGroup(@PathVariable Integer gaulCode) {

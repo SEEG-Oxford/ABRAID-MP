@@ -68,18 +68,16 @@
 
     <mvc:annotation-driven content-negotiation-manager="contentNegotiationManager">
         <mvc:message-converters register-defaults="true" >
-            <bean class="uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.support.ViewAwareJsonMessageConverter">
+            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
                 <property name="objectMapper" ref="objectMapper" />
             </bean>
-            <bean class="uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.support.CSVMessageConverter">
+            <bean class="uk.ac.ox.zoo.seeg.abraid.mp.common.dto.CSVMessageConverter">
                 <constructor-arg name="csvMapper">
                     <bean class="com.fasterxml.jackson.dataformat.csv.CsvMapper" />
                 </constructor-arg>
             </bean>
         </mvc:message-converters>
     </mvc:annotation-driven>
-    <bean class="uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.support.JsonViewSupportFactoryBean" />
-    <context:component-scan base-package="uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.support" />
 
     <bean id="currentUserService" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserServiceImpl" />
 
