@@ -1,6 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model;
 
-import org.apache.commons.io.FileUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ModelWrapperConfigurationService;
@@ -36,8 +35,7 @@ public class ModelOutputHandlerWebService {
      */
     public String handleOutputs(File outputZipFile) throws IOException, WebServiceClientException {
         String url = buildUrl();
-        byte[] body = FileUtils.readFileToByteArray(outputZipFile);
-        return webServiceClient.makePostRequestWithBinary(url, body);
+        return webServiceClient.makePostRequestWithBinary(url, outputZipFile);
     }
 
     private String buildUrl() {

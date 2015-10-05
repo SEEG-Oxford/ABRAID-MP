@@ -1,6 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.runrequest;
 
-import jersey.repackaged.com.google.common.collect.Iterables;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import org.apache.commons.io.FileUtils;
@@ -234,13 +233,11 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
     }
 
     private void mockPostRequest(final String responseJson) {
-        when(webServiceClient.makePostRequestWithBinary(eq(URL), any(byte[].class))).thenAnswer(new Answer<Object>() {
+        when(webServiceClient.makePostRequestWithBinary(eq(URL), any(File.class))).thenAnswer(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocationOnMock) throws IOException, ZipException {
-                byte[] data = (byte[]) invocationOnMock.getArguments()[1];
-                File file = testFolder.newFile();
-                FileUtils.writeByteArrayToFile(file, data);
-                ZipFile zipFile = new ZipFile(file);
+                File data = (File) invocationOnMock.getArguments()[1];
+                ZipFile zipFile = new ZipFile(data);
                 File unzipped = testFolder.newFile();
                 unzipped.delete();
                 zipFile.extractAll(unzipped.getAbsolutePath());
@@ -271,13 +268,14 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
 
     private void assertRequestCovariates(File covariatesDir) {
         Collection<File> files = FileUtils.listFiles(covariatesDir, null, true);
+        List<File> indexable = new ArrayList<>(files);
         assertThat(files).hasSize(3);
-        assertThat(Iterables.get(files, 0).getAbsolutePath()).isEqualTo(Paths.get(covariatesDir.getAbsolutePath(), "a").toString());
-        assertThat(Iterables.get(files, 0)).hasContent("a");
-        assertThat(Iterables.get(files, 1).getAbsolutePath()).isEqualTo(Paths.get(covariatesDir.getAbsolutePath(), "b").toString());
-        assertThat(Iterables.get(files, 1)).hasContent("b");
-        assertThat(Iterables.get(files, 2).getAbsolutePath()).isEqualTo(Paths.get(covariatesDir.getAbsolutePath(), "c", "d").toString());
-        assertThat(Iterables.get(files, 2)).hasContent("c/d");
+        assertThat(indexable.get(0).getAbsolutePath()).isEqualTo(Paths.get(covariatesDir.getAbsolutePath(), "a").toString());
+        assertThat(indexable.get(0)).hasContent("a");
+        assertThat(indexable.get(1).getAbsolutePath()).isEqualTo(Paths.get(covariatesDir.getAbsolutePath(), "b").toString());
+        assertThat(indexable.get(1)).hasContent("b");
+        assertThat(indexable.get(2).getAbsolutePath()).isEqualTo(Paths.get(covariatesDir.getAbsolutePath(), "c", "d").toString());
+        assertThat(indexable.get(2)).hasContent("c/d");
     }
 
     private List<String> getSplitFeatures(String features) {
@@ -324,12 +322,13 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
 
     private void assertRequestAdminRasters(File dir) {
         Collection<File> files = FileUtils.listFiles(dir, null, true);
+        List<File> indexable = new ArrayList<>(files);
         assertThat(files).hasSize(3);
-        assertThat(Iterables.get(files, 0).getAbsolutePath()).isEqualTo(Paths.get(dir.toString(), "admin0.tif").toString());
-        assertThat(Iterables.get(files, 0)).hasContentEqualTo(Paths.get(DATA_DIR, "admin", "a0.tif").toFile());
-        assertThat(Iterables.get(files, 1).getAbsolutePath()).isEqualTo(Paths.get(dir.toString(), "admin1.tif").toString());
-        assertThat(Iterables.get(files, 1)).hasContentEqualTo(Paths.get(DATA_DIR, "admin", "a1.tif").toFile());
-        assertThat(Iterables.get(files, 2).getAbsolutePath()).isEqualTo(Paths.get(dir.toString(), "admin2.tif").toString());
-        assertThat(Iterables.get(files, 2)).hasContentEqualTo(Paths.get(DATA_DIR, "admin", "a2.tif").toFile());
+        assertThat(indexable.get(0).getAbsolutePath()).isEqualTo(Paths.get(dir.toString(), "admin0.tif").toString());
+        assertThat(indexable.get(0)).hasContentEqualTo(Paths.get(DATA_DIR, "admin", "a0.tif").toFile());
+        assertThat(indexable.get(1).getAbsolutePath()).isEqualTo(Paths.get(dir.toString(), "admin1.tif").toString());
+        assertThat(indexable.get(1)).hasContentEqualTo(Paths.get(DATA_DIR, "admin", "a1.tif").toFile());
+        assertThat(indexable.get(2).getAbsolutePath()).isEqualTo(Paths.get(dir.toString(), "admin2.tif").toString());
+        assertThat(indexable.get(2)).hasContentEqualTo(Paths.get(DATA_DIR, "admin", "a2.tif").toFile());
     }
 }

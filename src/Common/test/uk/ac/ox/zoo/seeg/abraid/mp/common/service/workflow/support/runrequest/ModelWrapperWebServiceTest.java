@@ -41,7 +41,7 @@ public class ModelWrapperWebServiceTest {
         FileUtils.writeStringToFile(mockZip, "Some fake content");
         String responseJson = "{ \"errorText\": \"Some Error\" }";
 
-        ModelWrapperWebService webService = getModelWrapperWebService(expectedUrl, FileUtils.readFileToByteArray(mockZip), responseJson);
+        ModelWrapperWebService webService = getModelWrapperWebService(expectedUrl, mockZip, responseJson);
 
         // Act
         JsonModelRunResponse actualResponse = webService.startRun(ROOT_URL, mockZip);
@@ -57,7 +57,7 @@ public class ModelWrapperWebServiceTest {
         FileUtils.writeStringToFile(mockZip, "Some fake content");
 
         WebServiceClient client = mock(WebServiceClient.class);
-        when(client.makePostRequestWithBinary(anyString(), any(byte[].class))).thenThrow(new WebServiceClientException(""));
+        when(client.makePostRequestWithBinary(anyString(), any(File.class))).thenThrow(new WebServiceClientException(""));
         ModelWrapperWebService webService = getModelWrapperWebService(client);
 
         // Act
@@ -76,7 +76,7 @@ public class ModelWrapperWebServiceTest {
 
         String responseJson = "{ asdas }";
 
-        ModelWrapperWebService webService = getModelWrapperWebService(expectedUrl, FileUtils.readFileToByteArray(mockZip), responseJson);
+        ModelWrapperWebService webService = getModelWrapperWebService(expectedUrl, mockZip, responseJson);
 
         // Act
         catchException(webService).startRun(ROOT_URL, mockZip);
@@ -85,7 +85,7 @@ public class ModelWrapperWebServiceTest {
         assertThat(caughtException()).isInstanceOf(JsonParserException.class);
     }
 
-    private ModelWrapperWebService getModelWrapperWebService(String expectedUrl, byte[] expectedRequestBody, String responseJson) throws IOException, ZipException {
+    private ModelWrapperWebService getModelWrapperWebService(String expectedUrl, File expectedRequestBody, String responseJson) throws IOException, ZipException {
         WebServiceClient client = mock(WebServiceClient.class);
 
         when(client.makePostRequestWithBinary(expectedUrl, expectedRequestBody)).thenReturn(responseJson);

@@ -1,16 +1,15 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRunStatus;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
@@ -53,23 +52,20 @@ public class MainController extends AbstractController {
 
     /**
      * Handles the output of a model run.
-     * @param modelRunZip The model run's outputs, as a zip file.
+     * @param file The model run's outputs, as a zip file.
      * @return 204 for success, 400 for invalid parameters or 500 if server cannot start model run.
      */
     @RequestMapping(value = "/handleoutputs", method = RequestMethod.POST,
-                    consumes = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+                    consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseBody
-    public ResponseEntity<String> handleModelOutputs(@RequestBody byte[] modelRunZip) {
+    public ResponseEntity<String> handleModelOutputs(MultipartFile file) {
         File modelRunZipFile = null;
 
         try {
-            LOGGER.info(String.format(LOG_RECEIVED_OUTPUTS, modelRunZip.length));
+            LOGGER.info(String.format(LOG_RECEIVED_OUTPUTS, file.getSize()));
 
             // Save the request body to a temporary file
-            modelRunZipFile = saveRequestBodyToTemporaryFile(modelRunZip);
-
-            // Ensure the request body is eligible for garbage collection
-            modelRunZip = null;
+            modelRunZipFile = saveRequestBodyToTemporaryFile(file);
 
             // Continue handling the outputs
             ModelRun modelRun = mainHandler.handleOutputs(modelRunZipFile);
@@ -114,9 +110,9 @@ public class MainController extends AbstractController {
                 CLEANUP_FAILURE_EMAIL_SUBJECT, CLEANUP_FAILURE_EMAIL_TEMPLATE, data);
     }
 
-    private File saveRequestBodyToTemporaryFile(byte[] modelRunZip) throws IOException {
+    private File saveRequestBodyToTemporaryFile(MultipartFile modelRunZip) throws IOException {
         File modelRunZipFile = Files.createTempFile("model_run_outputs", ".zip").toFile();
-        FileUtils.writeByteArrayToFile(modelRunZipFile, modelRunZip);
+        modelRunZip.transferTo(modelRunZipFile);
         return modelRunZipFile;
     }
 

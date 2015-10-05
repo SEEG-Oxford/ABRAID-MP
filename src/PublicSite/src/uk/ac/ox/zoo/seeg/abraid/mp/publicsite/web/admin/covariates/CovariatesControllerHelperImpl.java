@@ -19,9 +19,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.util.raster.RangeRasterSummaryCollator
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.raster.RasterUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.raster.ValuesRasterSummaryCollator;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -181,9 +179,7 @@ public class CovariatesControllerHelperImpl implements CovariatesControllerHelpe
         createDirectoryForCovariate(path);
 
         File serverFile = Paths.get(path).toFile();
-        BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
-        stream.write(file.getBytes());
-        stream.close();
+        file.transferTo(serverFile);
         return serverFile;
     }
 

@@ -1,6 +1,12 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.web;
 
+import org.apache.commons.io.FileUtils;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+
+import java.io.File;
+import java.io.IOException;
 
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
@@ -12,6 +18,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Copyright (c) 2014 University of Oxford
  */
 public class WebServiceClientTest {
+    @Rule
+    public TemporaryFolder testFolder = new TemporaryFolder(); ///CHECKSTYLE:SUPPRESS VisibilityModifier
+
     private static final String GET_URL = "http://www.google.co.uk";
 
     // This is a POST data echo service
@@ -183,42 +192,47 @@ public class WebServiceClientTest {
         assertThat(response).containsIgnoringCase("\"url\": \"" + PUT_URL + "\"");
     }
 
-
     @Test
-    public void makePostRequestWithByteArrayThrowsExceptionIfUnknownHost() {
+    public void makePostRequestWithBinaryThrowsExceptionIfUnknownHost() throws IOException {
         // Arrange
         WebServiceClient client = new WebServiceClient();
 
         // Act
-        catchException(client).makePostRequestWithBinary("http://uywnevoweiumoiunasdkjhaskjdhiouyncwiuec.be", new byte[]{});
+        catchException(client).makePostRequestWithBinary("http://uywnevoweiumoiunasdkjhaskjdhiouyncwiuec.be", getFile(null));
 
         // Assert
         assertThat(caughtException()).isInstanceOf(WebServiceClientException.class);
     }
 
     @Test
-    public void makePostRequestWithByteArrayThrowsExceptionIfMalformedURL() {
+    public void makePostRequestWithBinaryThrowsExceptionIfMalformedURL() throws IOException {
         // Arrange
         WebServiceClient client = new WebServiceClient();
 
         // Act
-        catchException(client).makePostRequestWithBinary("this is malformed", new byte[]{});
+        catchException(client).makePostRequestWithBinary("this is malformed", getFile(null));
 
         // Assert
         assertThat(caughtException()).isInstanceOf(WebServiceClientException.class);
     }
 
     @Test
-    public void makePostRequestWithByteArraySuccessfullyPostsToValidURL() {
+    public void makePostRequestWithBinarySuccessfullyPostsToValidURL() throws IOException {
         // Arrange
         WebServiceClient client = new WebServiceClient();
         String bodyAsString = "Test body";
 
         // Act
-        String response = client.makePostRequestWithBinary(POST_URL, bodyAsString.getBytes());
+        String response = client.makePostRequestWithBinary(POST_URL, getFile(bodyAsString));
 
         // Assert
-        assertThat(response).containsIgnoringCase("application/octet-stream");
-        assertThat(response).containsIgnoringCase(bodyAsString);
+        assertThat(response).containsIgnoringCase("multipart/form-data");
+        assertThat(response).containsIgnoringCase("\"file\": \"" + bodyAsString + "\"");
+    }
+
+    private File getFile(String content) throws IOException {
+        File file = testFolder.newFile();
+        FileUtils.writeStringToFile(file, content == null ? "1234" : content);
+        return file;
     }
 }
