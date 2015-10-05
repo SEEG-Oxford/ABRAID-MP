@@ -12,10 +12,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelRunResponse;
@@ -63,21 +63,21 @@ public class ModelRunController extends AbstractController {
 
     /**
      * Triggers a new model run with the given occurrences.
-     * @param data The run data to model (metadata & covariates).
+     * @param file The run data to model as a zip file.
      * @return 204 for success, 400 for invalid parameters or 500 if server cannot start model run.
      */
     @RequestMapping(value = "/api/model/run",
-            method = RequestMethod.POST, consumes = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+            method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseBody
-    public ResponseEntity<JsonModelRunResponse> startRun(@RequestBody byte[] data) {
-        if (data == null) {
+    public ResponseEntity<JsonModelRunResponse> startRun(MultipartFile file) {
+        if (file == null || file.getSize() == 0) {
             return createErrorResponse("Run data must be provided and be valid.", HttpStatus.BAD_REQUEST);
         }
 
         JsonModelRun runData = null;
         File tempDataDir = null;
         try {
-            tempDataDir = saveRequestBodyToTemporaryDir(data);
+            tempDataDir = saveRequestBodyToTemporaryDir(file);
             runData = readMetadata(tempDataDir);
         } catch (ZipException|JsonParseException|JsonMappingException e) {
             return createErrorResponse("Run data must be provided and be valid.", HttpStatus.BAD_REQUEST);
@@ -128,12 +128,12 @@ public class ModelRunController extends AbstractController {
         return objectMapper.readValue(json, JsonModelRun.class);
     }
 
-    private File saveRequestBodyToTemporaryDir(byte[] modelRunZip) throws IOException, ZipException {
+    private File saveRequestBodyToTemporaryDir(MultipartFile modelRunZip) throws IOException, ZipException {
         File tempDataDir = null;
         File zipFile = null;
         try {
             zipFile = Files.createTempFile("run", ".zip").toFile();
-            FileUtils.writeByteArrayToFile(zipFile, modelRunZip);
+            modelRunZip.transferTo(zipFile);
             ZipFile zip = new ZipFile(zipFile);
             tempDataDir = Files.createTempDirectory("run").toFile();
             zip.extractAll(tempDataDir.toString());

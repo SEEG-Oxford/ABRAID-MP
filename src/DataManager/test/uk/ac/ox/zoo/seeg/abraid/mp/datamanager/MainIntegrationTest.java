@@ -169,7 +169,7 @@ public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTest
         insertTestDiseaseExtent(87, GeometryUtils.createMultiPolygon(getFivePointedPolygon()), GeometryUtils.createMultiPolygon(getShiftedFivePointedPolygon()));
         setDiseaseGroupParametersToEnsureHelperReturnsOccurrences(87);
         setFixedCountryAreas();
-        when(webServiceClient.makePostRequestWithBinary(startsWith(MODELWRAPPER_URL_PREFIX), any(byte[].class)))
+        when(webServiceClient.makePostRequestWithBinary(startsWith(MODELWRAPPER_URL_PREFIX), any(File.class)))
                 .thenThrow(new ModelRunWorkflowException("Test message"));
 
         // Act
@@ -237,7 +237,7 @@ public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTest
         );
 
         verify(webServiceClient, atLeastOnce()).makePostRequestWithBinary(
-                startsWith(MODELWRAPPER_URL_PREFIX), eq("Expected content".getBytes()));
+                startsWith(MODELWRAPPER_URL_PREFIX), eq(expectedZip));
     }
 
     private void assertThatRelevantDiseaseOccurrencesHaveFinalWeightings() {
@@ -279,7 +279,7 @@ public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTest
     }
 
     private void mockModelWrapperRequest() {
-        when(webServiceClient.makePostRequestWithBinary(startsWith(MODELWRAPPER_URL_PREFIX), any(byte[].class)))
+        when(webServiceClient.makePostRequestWithBinary(startsWith(MODELWRAPPER_URL_PREFIX), any(File.class)))
                 .thenReturn("{\"modelRunName\":\"testname\"}");
     }
 

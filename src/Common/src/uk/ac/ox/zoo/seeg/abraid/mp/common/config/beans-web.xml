@@ -15,6 +15,11 @@
         <property name="readTimeoutMilliseconds" value="${webserviceclient.readTimeoutMilliseconds}"/>
     </bean>
 
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- setting maximum upload size (1073741824 bytes = 1GiB) -->
+        <property name="maxUploadSize" value="1073741824" />
+    </bean>
+
     <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
 
 </beans>

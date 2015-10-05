@@ -1,6 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.runrequest;
 
-import org.apache.commons.io.FileUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelRunResponse;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParser;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParserException;
@@ -37,8 +36,7 @@ public class ModelWrapperWebService {
     public JsonModelRunResponse startRun(URI modelWrapperUrl, File modelRunPackage)
             throws WebServiceClientException, IOException {
         String url = buildStartRunUrl(modelWrapperUrl);
-        byte[] data = FileUtils.readFileToByteArray(modelRunPackage);
-        String response = webServiceClient.makePostRequestWithBinary(url, data);
+        String response = webServiceClient.makePostRequestWithBinary(url, modelRunPackage);
         return parseResponseJson(response);
     }
 

@@ -6,6 +6,9 @@ import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.RequestEntityProcessing;
+import org.glassfish.jersey.media.multipart.MultiPart;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 
@@ -16,6 +19,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.SyncInvoker;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.File;
 
 /**
  * Acts as a web service client.
@@ -92,16 +96,18 @@ public class WebServiceClient {
      * @throws WebServiceClientException If a response could not be obtained from the web service for whatever reason,
      * or if a response status code other than "successful" is returned.
      */
-    public String makePostRequestWithBinary(String url, final byte[] body) throws WebServiceClientException {
-        if (body == null) {
+    public String makePostRequestWithBinary(String url, final File body) throws WebServiceClientException {
+        if (body == null || body.length() == 0) {
             throw new IllegalArgumentException("POST body must be non-null");
         }
 
-        LOGGER.debug(String.format(POST_WEB_SERVICE_MESSAGE, url, body.length, "bytes"));
+        LOGGER.debug(String.format(POST_WEB_SERVICE_MESSAGE, url, body.length(), "bytes"));
         return request(url, new SyncInvokerAction() {
             @Override
             public Response invoke(SyncInvoker invoker) {
-                return invoker.post(Entity.entity(body, MediaType.APPLICATION_OCTET_STREAM_TYPE));
+                MultiPart multiPart = new MultiPart();
+                multiPart.bodyPart(new FileDataBodyPart("file", body));
+                return invoker.post(Entity.entity(multiPart, MediaType.MULTIPART_FORM_DATA));
             }
         });
     }
@@ -177,6 +183,7 @@ public class WebServiceClient {
             ClientConfig clientConfig = new ClientConfig();
             clientConfig.connectorProvider(new ApacheConnectorProvider());
             Client client = ClientBuilder.newClient(clientConfig);
+            client.register(MultiPartFeature.class);
             client.property(ClientProperties.CONNECT_TIMEOUT, connectTimeoutMilliseconds);
             client.property(ClientProperties.READ_TIMEOUT, readTimeoutMilliseconds);
 

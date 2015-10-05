@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelDisease;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelRun;
@@ -110,7 +111,7 @@ public class ModelRunControllerTest {
         assertThat(responseBody.getErrorText()).isEqualTo(expectedErrorText);
     }
 
-    private byte[] fakeData() throws IOException, ZipException {
+    private MockMultipartFile fakeData() throws IOException, ZipException {
         File file = testFolder.newFile();
         Files.delete(file.toPath());
         ZipFile zipFile = new ZipFile(file);
@@ -126,6 +127,7 @@ public class ModelRunControllerTest {
         ZipParameters zipParameters = new ZipParameters();
         zipParameters.setIncludeRootFolder(false);
         zipFile.createZipFileFromFolder(dir, zipParameters, false, 0);
-        return FileUtils.readFileToByteArray(file);
+        MockMultipartFile mock = new MockMultipartFile("file", Files.newInputStream(zipFile.getFile().toPath()));
+        return mock;
     }
 }

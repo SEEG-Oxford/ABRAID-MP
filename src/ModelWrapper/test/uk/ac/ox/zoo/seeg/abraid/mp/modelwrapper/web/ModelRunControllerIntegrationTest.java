@@ -14,6 +14,7 @@ import org.kubek2k.springockito.annotations.ReplaceWithMock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -35,7 +36,7 @@ import java.nio.file.Paths;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.fileUpload;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -82,9 +83,7 @@ public class ModelRunControllerIntegrationTest extends BaseWebIntegrationTests {
         setUpExpectedRunName(runName);
 
         this.mockMvc
-                .perform(post("/api/model/run")
-                        .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                        .content(buildZip("{\"disease\":{\"id\":1,\"name\":\"foo\",\"abbreviation\":\"f\"},\"runName\":\"" + runName + "\"}")))
+                .perform(buildPost(buildZip("{\"disease\":{\"id\":1,\"name\":\"foo\",\"abbreviation\":\"f\"},\"runName\":\"" + runName + "\"}")))
                         .andExpect(status().isOk())
                         .andExpect(content().string("{}"));
     }
@@ -92,28 +91,32 @@ public class ModelRunControllerIntegrationTest extends BaseWebIntegrationTests {
     @Test
     public void runRejectsRequestWithNoContent() throws Exception {
         this.mockMvc
-                .perform(post("/api/model/run").contentType(MediaType.APPLICATION_OCTET_STREAM).content(new byte[0]))
+                .perform(buildPost(new byte[0]))
                 .andExpect(status().isBadRequest());
+    }
+
+    private MockHttpServletRequestBuilder buildPost(byte[] body) {
+        MockMultipartFile file = new MockMultipartFile("file", body);
+        return fileUpload("/api/model/run").file(file);
     }
 
     @Test
     public void runRejectsRequestWithInvalidContent() throws Exception {
         this.mockMvc
-                .perform(post("/api/model/run")
-                        .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                        .content(buildZip("{\"disease\":{\"id\":1,\"name\":\"foo\",\"abbreviation\":\"f\"}}")))
+                .perform(buildPost(buildZip("{\"disease\":{\"id\":1,\"name\":\"foo\",\"abbreviation\":\"f\"}}")))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("{\"errorText\":\"Run data must be provided and be valid.\"}"));
     }
 
     @Test
     public void runPageOnlyAcceptsPOST() throws Exception {
-        setUpExpectedRunName("run1234");
-        this.mockMvc.perform(createRequest(HttpMethod.GET, "run1234")).andExpect(status().isMethodNotAllowed());
-        this.mockMvc.perform(createRequest(HttpMethod.POST, "run1234")).andExpect(status().isOk());
-        this.mockMvc.perform(createRequest(HttpMethod.PUT, "run1234")).andExpect(status().isMethodNotAllowed());
-        this.mockMvc.perform(createRequest(HttpMethod.DELETE, "run1234")).andExpect(status().isMethodNotAllowed());
-        this.mockMvc.perform(createRequest(HttpMethod.PATCH, "run1234")).andExpect(status().isMethodNotAllowed());
+        String runName = "run1234";
+        setUpExpectedRunName(runName);
+        this.mockMvc.perform(createRequest(HttpMethod.GET)).andExpect(status().isMethodNotAllowed());
+        this.mockMvc.perform(buildPost(buildZip("{\"disease\":{\"id\":1,\"name\":\"foo\",\"abbreviation\":\"f\"},\"runName\":\"" + runName + "\"}"))).andExpect(status().isOk());
+        this.mockMvc.perform(createRequest(HttpMethod.PUT)).andExpect(status().isMethodNotAllowed());
+        this.mockMvc.perform(createRequest(HttpMethod.DELETE)).andExpect(status().isMethodNotAllowed());
+        this.mockMvc.perform(createRequest(HttpMethod.PATCH)).andExpect(status().isMethodNotAllowed());
     }
 
     private String setUpExpectedRunName(String runName) throws ConfigurationException, IOException {
@@ -126,11 +129,9 @@ public class ModelRunControllerIntegrationTest extends BaseWebIntegrationTests {
         return runName;
     }
 
-    private MockHttpServletRequestBuilder createRequest(HttpMethod method, String runName) throws IOException, ZipException {
+    private MockHttpServletRequestBuilder createRequest(HttpMethod method) throws IOException, ZipException {
         return request(method, "/api/model/run")
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .content(buildZip("{\"disease\":{\"id\":1,\"name\":\"foo\",\"abbreviation\":\"f\"},\"runName\":\"" + runName + "\"}"));
-
+                .contentType(MediaType.MULTIPART_FORM_DATA);
     }
 
     private byte[] buildZip(String content) throws IOException, ZipException {

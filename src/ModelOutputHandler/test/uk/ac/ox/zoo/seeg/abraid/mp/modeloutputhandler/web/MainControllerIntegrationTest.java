@@ -14,10 +14,12 @@ import org.junit.rules.TemporaryFolder;
 import org.kubek2k.springockito.annotations.ReplaceWithMock;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseGroupDao;
@@ -132,7 +134,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
 
         // Act and assert
         this.mockMvc
-                .perform(post(OUTPUT_HANDLER_PATH).content(body))
+                .perform(buildPost(body))
                 .andExpect(status().isOk())
                 .andExpect(content().string(""));
 
@@ -167,7 +169,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
 
         // Act and assert
         this.mockMvc
-                .perform(post(OUTPUT_HANDLER_PATH).content(body))
+                .perform(buildPost(body))
                 .andExpect(status().isOk())
                 .andExpect(content().string(""));
 
@@ -202,7 +204,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
 
         // Act and assert
         this.mockMvc
-                .perform(post(OUTPUT_HANDLER_PATH).content(body))
+                .perform(buildPost(body))
                 .andExpect(status().isOk())
                 .andExpect(content().string(""));
 
@@ -223,9 +225,14 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
 
         // Act and assert
         this.mockMvc
-                .perform(post(OUTPUT_HANDLER_PATH).content(malformedZipFile))
+                .perform(buildPost(malformedZipFile))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().string("Model outputs handler failed with error \"Probably not a zip file or a corrupted zip file\". See ModelOutputHandler server logs for more details."));
+    }
+
+    private MockHttpServletRequestBuilder buildPost(byte[] data) {
+        MockMultipartFile file = new MockMultipartFile("file", data);
+        return fileUpload(OUTPUT_HANDLER_PATH).file(file);
     }
 
     @Test
@@ -236,7 +243,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
 
         // Act and assert
         this.mockMvc
-                .perform(post(OUTPUT_HANDLER_PATH).content(body))
+                .perform(buildPost(body))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().string("Model outputs handler failed with error \"File metadata.json missing from model run outputs\". See ModelOutputHandler server logs for more details."));
     }
@@ -249,7 +256,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
 
         // Act and assert
         this.mockMvc
-                .perform(post(OUTPUT_HANDLER_PATH).content(body))
+                .perform(buildPost(body))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().string("Model outputs handler failed with error \"Model run with name deng_2014-05-13-11-26-37_0469aac2-d9b2-4104-907e-2886eff11682 does not exist\". See ModelOutputHandler server logs for more details."));
     }
@@ -262,7 +269,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
 
         // Act and assert
         this.mockMvc
-                .perform(post(OUTPUT_HANDLER_PATH).content(body))
+                .perform(buildPost(body))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().string("Model outputs handler failed with error \"File mean_prediction.tif missing from model run outputs\". See ModelOutputHandler server logs for more details."));
     }
@@ -275,7 +282,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
 
         // Act and assert
         this.mockMvc
-                .perform(post(OUTPUT_HANDLER_PATH).content(body))
+                .perform(buildPost(body))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().string("Model outputs handler failed with error \"File prediction_uncertainty.tif missing from model run outputs\". See ModelOutputHandler server logs for more details."));
     }
@@ -288,7 +295,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
 
         // Act and assert
         this.mockMvc
-                .perform(post(OUTPUT_HANDLER_PATH).content(body))
+                .perform(buildPost(body))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().string("Model outputs handler failed with error \"File extent.tif missing from model run outputs\". See ModelOutputHandler server logs for more details."));
     }
@@ -301,7 +308,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
 
         // Act and assert
         this.mockMvc
-                .perform(post(OUTPUT_HANDLER_PATH).content(body))
+                .perform(buildPost(body))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().string("Model outputs handler failed with error \"File statistics.csv missing from model run outputs\". See ModelOutputHandler server logs for more details."));
     }
@@ -314,7 +321,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
 
         // Act and assert
         this.mockMvc
-                .perform(post(OUTPUT_HANDLER_PATH).content(body))
+                .perform(buildPost(body))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().string("Model outputs handler failed with error \"File effect_curves.csv missing from model run outputs\". See ModelOutputHandler server logs for more details."));
     }
@@ -327,7 +334,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
 
         // Act and assert
         this.mockMvc
-                .perform(post(OUTPUT_HANDLER_PATH).content(body))
+                .perform(buildPost(body))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().string("Model outputs handler failed with error \"File relative_influence.csv missing from model run outputs\". See ModelOutputHandler server logs for more details."));
     }
