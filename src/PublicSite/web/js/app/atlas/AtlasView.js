@@ -59,8 +59,10 @@ define([
                             self.currentGeoJsonLayer =
                                 geoJsonLayerFactory.buildGeoJsonLayer(featureCollection, layer);
                             self.map.addLayer(self.currentGeoJsonLayer);
-                        }).fail(function () {
-                            alert("Error fetching occurrences");
+                        }).fail(function (xhr, status) {
+                            if (status !== "abort") {
+                                alert("Error fetching occurrences");
+                            }
                         }).always(function () {
                             self.geoJsonAjax = undefined;
                         });

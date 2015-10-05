@@ -63,7 +63,7 @@ public class CovariatesControllerTest {
         target.showCovariatesPage(model);
 
         // Assert
-        verify(model).addAttribute("initialData", "{\"diseases\":[{\"id\":23,\"name\":\"aaa\"},{\"id\":25,\"name\":\"ggg\"},{\"id\":24,\"name\":\"zzz\"}],\"files\":[]}");
+        verify(model).addAttribute("initialData", "{\"diseases\":[{\"id\":23,\"name\":\"aaa\",\"global\":false},{\"id\":25,\"name\":\"ggg\",\"global\":false},{\"id\":24,\"name\":\"zzz\",\"global\":false}],\"files\":[]}");
     }
 
     @Test

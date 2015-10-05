@@ -213,8 +213,10 @@ define([
                         ko.postbox.publish("no-features-to-review", true);
                         map.fitWorld();
                     }
-                }).fail(function () {
-                    alert("Error fetching occurrences");
+                }).fail(function (xhr, status) {
+                    if (status !== "abort") {
+                        alert("Error fetching occurrences");
+                    }
                 }).always(function () {
                     ko.postbox.publish("map-view-update-in-progress", false);
                 });
@@ -421,8 +423,10 @@ define([
                     adminUnitsReviewedLayer.addData(featureCollectionReviewed);
 
                     publishDiseaseExtentEvents(featuresNeedReview);
-                }).fail(function () {
-                    alert("Error fetching disease extent");
+                }).fail(function (xhr, status) {
+                    if (status !== "abort") {
+                        alert("Error fetching disease extent");
+                    }
                 }).always(function () {
                     ko.postbox.publish("map-view-update-in-progress", false);
                 });

@@ -5,8 +5,6 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.ISODateTimeFormat;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.DisplayJsonView;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.ModellingJsonView;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -76,7 +74,7 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
         return mockDiseaseGroup;
     }
 
-    public static String getTwoDiseaseOccurrenceFeaturesAsJson(Class view) {
+    public static String getTwoDiseaseOccurrenceFeaturesAsJson() {
 
         String displayViewProperties =
            "            \"diseaseGroupPublicName\":\"diseaseGroupPublicName\"," +
@@ -89,11 +87,6 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
            "               \"feedLanguage\":\"feedLanguage\"" +
            "            }," +
            "            \"occurrenceDate\":\"" + ISODateTimeFormat.dateTime().withZoneUTC().print(new DateTime(0)) + "\"";
-
-        String modellingViewProperties =
-           "            \"locationPrecision\":\"ADMIN1\"," +
-           "            \"weighting\":0.5," +
-           "            \"gaulCode\":102";
 
         return (
             "{" +
@@ -116,8 +109,7 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
                     "            ]" +
                     "         }," +
                     "         \"properties\":{" +
-                    ((view == DisplayJsonView.class) ? displayViewProperties : "") +
-                    ((view == ModellingJsonView.class) ? modellingViewProperties : "") +
+                    displayViewProperties +
                     "         }" +
                     "      }," +
                     "      {" +
@@ -131,8 +123,7 @@ public abstract class AbstractDiseaseOccurrenceGeoJsonTests {
                     "            ]" +
                     "         }," +
                     "         \"properties\":{" +
-                    ((view == DisplayJsonView.class) ? displayViewProperties : "") +
-                    ((view == ModellingJsonView.class) ? modellingViewProperties : "") +
+                    displayViewProperties +
                     "         }" +
                     "      }" +
                     "   ]" +

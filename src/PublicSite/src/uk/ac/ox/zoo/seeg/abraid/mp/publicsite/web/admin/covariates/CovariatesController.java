@@ -17,7 +17,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonFileUploadResponse;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelDisease;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.CovariateConfigurationJsonView;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -67,8 +66,7 @@ public class CovariatesController {
         try {
             JsonCovariateConfiguration covariateConfig = covariatesControllerHelper.getCovariateConfiguration();
             covariateConfig.setDiseases(with(covariateConfig.getDiseases()).sort(on(JsonModelDisease.class).getName()));
-            String covariateJson = objectMapper.writerWithView(CovariateConfigurationJsonView.class)
-                    .writeValueAsString(covariateConfig);
+            String covariateJson = objectMapper.writer().writeValueAsString(covariateConfig);
             model.addAttribute("initialData", covariateJson);
             return "admin/covariates";
         } catch (IOException e) {

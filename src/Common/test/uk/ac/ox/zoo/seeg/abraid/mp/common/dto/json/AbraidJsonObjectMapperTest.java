@@ -63,6 +63,6 @@ public class AbraidJsonObjectMapperTest {
 
         // Assert
         assertThat(result).isEqualTo(
-                "{\"type\":\"FeatureCollection\",\"crs\":{\"type\":\"name\",\"properties\":{\"name\":\"urn:ogc:def:crs:EPSG::4326\"}},\"features\":[{\"type\":\"Feature\",\"id\":1,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-1.0,1.0]},\"properties\":{\"diseaseGroupPublicName\":\"diseaseGroupPublicName\",\"locationName\":\"locationName\",\"alert\":{\"title\":\"title\",\"summary\":\"summary\",\"url\":\"url\",\"feedName\":\"feedName\",\"feedLanguage\":\"feedLanguage\"},\"occurrenceDate\":\"1970-01-01T00:00:00.000Z\",\"locationPrecision\":\"ADMIN1\",\"weighting\":0.5,\"gaulCode\":102}}]}");
+                "{\"type\":\"FeatureCollection\",\"crs\":{\"type\":\"name\",\"properties\":{\"name\":\"urn:ogc:def:crs:EPSG::4326\"}},\"features\":[{\"type\":\"Feature\",\"id\":1,\"geometry\":{\"type\":\"Point\",\"coordinates\":[-1.0,1.0]},\"properties\":{\"diseaseGroupPublicName\":\"diseaseGroupPublicName\",\"locationName\":\"locationName\",\"alert\":{\"title\":\"title\",\"summary\":\"summary\",\"url\":\"url\",\"feedName\":\"feedName\",\"feedLanguage\":\"feedLanguage\"},\"occurrenceDate\":\"1970-01-01T00:00:00.000Z\"}}]}");
     }
 }

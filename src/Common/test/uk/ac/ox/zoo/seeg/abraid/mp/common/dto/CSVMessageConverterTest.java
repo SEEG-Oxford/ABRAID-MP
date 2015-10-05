@@ -1,4 +1,4 @@
-package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.support;
+package uk.ac.ox.zoo.seeg.abraid.mp.common.dto;
 
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import org.junit.Test;
