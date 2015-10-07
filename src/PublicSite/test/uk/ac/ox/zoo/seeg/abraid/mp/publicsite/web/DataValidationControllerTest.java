@@ -633,9 +633,9 @@ public class DataValidationControllerTest {
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(result.getBody().getFeatures()).hasSize(2);
         assertThat(result.getBody().getFeatures().get(0).getId()).isEqualTo(1);
-        assertThat(result.getBody().getFeatures().get(0).getProperties().needsReview()).isFalse();
+        assertThat(result.getBody().getFeatures().get(0).getProperties().getNeedsReview()).isFalse();
         assertThat(result.getBody().getFeatures().get(1).getId()).isEqualTo(2);
-        assertThat(result.getBody().getFeatures().get(1).getProperties().needsReview()).isTrue();
+        assertThat(result.getBody().getFeatures().get(1).getProperties().getNeedsReview()).isTrue();
     }
 
     @Test
@@ -657,9 +657,9 @@ public class DataValidationControllerTest {
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(result.getBody().getFeatures()).hasSize(2);
         assertThat(result.getBody().getFeatures().get(0).getId()).isEqualTo(1);
-        assertThat(result.getBody().getFeatures().get(0).getProperties().needsReview()).isFalse();
+        assertThat(result.getBody().getFeatures().get(0).getProperties().getNeedsReview()).isFalse();
         assertThat(result.getBody().getFeatures().get(1).getId()).isEqualTo(2);
-        assertThat(result.getBody().getFeatures().get(1).getProperties().needsReview()).isTrue();
+        assertThat(result.getBody().getFeatures().get(1).getProperties().getNeedsReview()).isTrue();
     }
 
     @Test
@@ -681,9 +681,9 @@ public class DataValidationControllerTest {
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(result.getBody().getFeatures()).hasSize(2);
         assertThat(result.getBody().getFeatures().get(0).getId()).isEqualTo(1);
-        assertThat(result.getBody().getFeatures().get(0).getProperties().needsReview()).isFalse();
+        assertThat(result.getBody().getFeatures().get(0).getProperties().getNeedsReview()).isFalse();
         assertThat(result.getBody().getFeatures().get(1).getId()).isEqualTo(2);
-        assertThat(result.getBody().getFeatures().get(1).getProperties().needsReview()).isTrue();
+        assertThat(result.getBody().getFeatures().get(1).getProperties().getNeedsReview()).isTrue();
     }
 
     @Test
@@ -701,9 +701,9 @@ public class DataValidationControllerTest {
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(result.getBody().getFeatures()).hasSize(2);
         assertThat(result.getBody().getFeatures().get(0).getId()).isEqualTo(1);
-        assertThat(result.getBody().getFeatures().get(0).getProperties().needsReview()).isTrue();
+        assertThat(result.getBody().getFeatures().get(0).getProperties().getNeedsReview()).isTrue();
         assertThat(result.getBody().getFeatures().get(1).getId()).isEqualTo(2);
-        assertThat(result.getBody().getFeatures().get(1).getProperties().needsReview()).isTrue();
+        assertThat(result.getBody().getFeatures().get(1).getProperties().getNeedsReview()).isTrue();
     }
 
     @Test

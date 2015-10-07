@@ -1,10 +1,13 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json;
 
+import com.fasterxml.jackson.databind.ObjectWriter;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractDiseaseExtentGeoJsonTests;
 
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +41,7 @@ public class GeoJsonDiseaseExtentFeaturePropertiesTest extends AbstractDiseaseEx
         assertThat(result.getName()).isEqualTo(adminUnitName);
         assertThat(result.getDiseaseExtentClass()).isEqualTo(validatorDiseaseExtentClassName);
         assertThat(result.getOccurrenceCount()).isEqualTo(0);
-        assertThat(result.needsReview()).isTrue();  // since the admin unit has never been reviewed
+        assertThat(result.getNeedsReview()).isTrue();  // since the admin unit has never been reviewed
     }
 
     @Test
@@ -60,6 +63,29 @@ public class GeoJsonDiseaseExtentFeaturePropertiesTest extends AbstractDiseaseEx
 
         // Assert
         assertThat(result.getDiseaseExtentClass()).isEqualTo(outputName);
+    }
+
+    @Test
+    public void serializingAGeoJsonDiseaseExtentFeaturePropertiesGivesCorrectOutput() throws Exception {
+        // Arrange
+        GeoJsonDiseaseExtentFeatureProperties obj = new GeoJsonDiseaseExtentFeatureProperties(
+            new AdminUnitDiseaseExtentClass(
+                 defaultAdminUnitGlobal(),
+                 new DiseaseGroup(),
+                 new DiseaseExtentClass("NotUSED"),
+                 new DiseaseExtentClass("POSSIBLE_PRESENCE"),
+                 0),
+            new ArrayList<AdminUnitReview>()
+        );
+        AbraidJsonObjectMapper objectMapper = new AbraidJsonObjectMapper();
+        OutputStream stream = new ByteArrayOutputStream();
+        ObjectWriter writer = objectMapper.writer();
+
+        // Act
+        writer.writeValue(stream, obj);
+
+        // Assert
+        assertThat(stream.toString()).isEqualTo("{\"name\":\"Admin Unit\",\"diseaseExtentClass\":\"Possible presence\",\"occurrenceCount\":0,\"needsReview\":true}");
     }
 
     @Test
@@ -128,7 +154,7 @@ public class GeoJsonDiseaseExtentFeaturePropertiesTest extends AbstractDiseaseEx
         GeoJsonDiseaseExtentFeatureProperties result =
                 new GeoJsonDiseaseExtentFeatureProperties(adminUnitDiseaseExtentClass, new ArrayList<AdminUnitReview>());
         // Assert
-        assertThat(result.needsReview()).isTrue();
+        assertThat(result.getNeedsReview()).isTrue();
     }
 
     private DiseaseGroup mockDiseaseGroupWithComparisonDate(DateTime comparisonDate) {
@@ -148,7 +174,7 @@ public class GeoJsonDiseaseExtentFeaturePropertiesTest extends AbstractDiseaseEx
         GeoJsonDiseaseExtentFeatureProperties result = new GeoJsonDiseaseExtentFeatureProperties(extentClass, reviews);
 
         // Assert
-        assertThat(result.needsReview()).isFalse();
+        assertThat(result.getNeedsReview()).isFalse();
     }
 
     @Test
@@ -161,7 +187,7 @@ public class GeoJsonDiseaseExtentFeaturePropertiesTest extends AbstractDiseaseEx
         GeoJsonDiseaseExtentFeatureProperties result = new GeoJsonDiseaseExtentFeatureProperties(extentClass, reviews);
 
         // Assert
-        assertThat(result.needsReview()).isTrue();
+        assertThat(result.getNeedsReview()).isTrue();
     }
 
     @Test
@@ -174,7 +200,7 @@ public class GeoJsonDiseaseExtentFeaturePropertiesTest extends AbstractDiseaseEx
         GeoJsonDiseaseExtentFeatureProperties result = new GeoJsonDiseaseExtentFeatureProperties(extentClass, reviews);
 
         // Assert
-        assertThat(result.needsReview()).isFalse();
+        assertThat(result.getNeedsReview()).isFalse();
     }
 
 }

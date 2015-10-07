@@ -96,11 +96,7 @@ public class GeoJsonDiseaseExtentFeatureProperties {
         this.occurrenceCount = occurrenceCount;
     }
 
-    /**
-     * Getter for boolean property needsReview.
-     * @return needsReview.
-     */
-    public boolean needsReview() {
+    public boolean getNeedsReview() {
         return needsReview;
     }
 
