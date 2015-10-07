@@ -8,7 +8,7 @@
             </optgroup>
         </select>
         <span data-bind="if: showDiseaseExtentLayer">
-            <select data-bind="options: selectedDiseaseSet().diseaseGroups, optionsText: 'name', value: selectedDisease, preventBubble: true"></select>
+            <select data-bind="options: selectedDiseaseSet().diseaseGroups, optionsText: 'name', value: selectedDisease, valueAllowUnset: true, preventBubble: true"></select>
         </span>
     </h4>
 
