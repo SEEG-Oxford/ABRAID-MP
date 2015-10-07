@@ -14,7 +14,7 @@
 
     <div class="alert alert-info" style="display: none" data-bind="visible: noFeaturesToReview()">
         <div data-bind="text: showDiseaseExtentLayer() ?
-            'There are no administrative units in need of review for this disease' :
+            'Use the right-hand dropdown box to select the specific disease of interest.' :
             'There are no occurrences in need of review for this disease'">
         </div>
     </div>
