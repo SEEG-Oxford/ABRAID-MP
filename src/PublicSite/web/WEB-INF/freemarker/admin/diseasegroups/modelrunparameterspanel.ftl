@@ -22,12 +22,13 @@
             <div class="col-sm-6">
                 <div class="form-horizontal">
                     Triggering a Model Run:
-                    <br><br>
+                    <br>
+                    <@formGroup id="max-days-between-runs" title="Max. Number of Days Between Runs" bind="formValue: maxDaysBetweenModelRuns"></@formGroup>
                     <@formGroup id="min-new-locations" title="Min. Number of New Locations" bind="formValue: minNewLocations"></@formGroup>
                     <@formGroup id="max-environmental-suitability-for-triggering" title="Max. Environmental Suitability" bind="formValue: maxEnvironmentalSuitabilityForTriggering"></@formGroup>
                     <@formGroup id="min-distance-from-extent-for-triggering" title="Min. Distance from Disease Extent" bind="formValue: minDistanceFromDiseaseExtentForTriggering"></@formGroup>
                     Machine Learning:
-                    <br><br>
+                    <br>
                     <div class="form-group">
                         <label for="use-machine-learning" class="col-sm-8 control-label">Use Machine Learning</label>
                         <div class="col-sm-4">
@@ -35,14 +36,14 @@
                         </div>
                     </div>
                     <@formGroup id="max-environmental-suitability-without-ml" title="Max. Environmental Suitability of Points for the Validator If Not Using Machine Learning" bind="syncValue: maxEnvironmentalSuitabilityWithoutML, bootstrapDisable: find('isSubmitting') || useMachineLearning()"></@formGroup>
-                    SDM:<br>
-                    <@formGroup id="model-mode" title="Model Mode" bind="formValue: modelMode"></@formGroup>
                 </div>
             </div>
             <div class="col-sm-6">
                 <div class="form-horizontal">
+                    SDM:<br>
+                    <@formGroup id="model-mode" title="Model Mode" bind="formValue: modelMode"></@formGroup>
                     Minimum Data Volume and Minimum Data Spread:
-                    <br><br>
+                    <br>
                     <@formGroup id="min-data-volume" title="Min. Data Volume" bind="formValue: minDataVolume"></@formGroup>
                     <@formGroup id="min-distinct-countries" title="Min. Number of Distinct Countries" bind="formValue: minDistinctCountries"></@formGroup>
                     <div class="form-group">

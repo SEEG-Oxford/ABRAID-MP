@@ -10,6 +10,7 @@ define(["ko"], function (ko) {
         self.diseaseGroupId = ko.observable("");
 
         // Triggering a Model Run
+        self.maxDaysBetweenModelRuns = ko.observable().extend({ required: true, digit: true, min: 1 });
         self.minNewLocations = ko.observable().extend({ digit: true, min: 0 });
         self.maxEnvironmentalSuitabilityForTriggering = ko.observable().extend({ number: true, min: 0, max: 1 });
         self.minDistanceFromDiseaseExtentForTriggering = ko.observable().extend({ number: true });
@@ -57,6 +58,7 @@ define(["ko"], function (ko) {
 
         ko.postbox.subscribe(diseaseGroupSelectedEventName, function (diseaseGroup) {
             self.diseaseGroupId(ko.utils.normaliseInput(diseaseGroup.id));
+            self.maxDaysBetweenModelRuns(ko.utils.normaliseInput(diseaseGroup.maxDaysBetweenModelRuns));
             self.minNewLocations(ko.utils.normaliseInput(diseaseGroup.minNewLocations));
             self.maxEnvironmentalSuitabilityForTriggering(
                 ko.utils.normaliseInput(diseaseGroup.maxEnvironmentalSuitabilityForTriggering));
