@@ -344,6 +344,7 @@ public class AdminDiseaseGroupController extends AbstractController {
         diseaseGroup.setGroupType(DiseaseGroupType.valueOf(settings.getGroupType()));
         diseaseGroup.setGlobal(settings.getIsGlobal());
         diseaseGroup.setModelMode(settings.getModelMode());
+        diseaseGroup.setMaxDaysBetweenModelRuns(settings.getMaxDaysBetweenModelRuns());
         diseaseGroup.setMinNewLocationsTrigger(settings.getMinNewLocations());
         diseaseGroup.setMaxEnvironmentalSuitabilityForTriggering(
                 settings.getMaxEnvironmentalSuitabilityForTriggering());
