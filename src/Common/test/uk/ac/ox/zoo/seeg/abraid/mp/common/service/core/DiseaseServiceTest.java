@@ -30,7 +30,6 @@ public class DiseaseServiceTest {
     private DiseaseExtentClassDao diseaseExtentClassDao;
     private NativeSQL nativeSQL;
     private int maxDaysOnValidator;
-    private int daysBetweenModelRuns;
 
     @Before
     public void setUp() {
@@ -45,10 +44,9 @@ public class DiseaseServiceTest {
         diseaseExtentClassDao = mock(DiseaseExtentClassDao.class);
         nativeSQL = mock(NativeSQL.class);
         maxDaysOnValidator = 5;
-        daysBetweenModelRuns = 6;
         diseaseService = new DiseaseServiceImpl(diseaseOccurrenceDao, diseaseOccurrenceReviewDao, diseaseGroupDao,
                 healthMapDiseaseDao, healthMapSubDiseaseDao, validatorDiseaseGroupDao, adminUnitDiseaseExtentClassDao,
-                modelRunDao, diseaseExtentClassDao, maxDaysOnValidator, daysBetweenModelRuns, nativeSQL);
+                modelRunDao, diseaseExtentClassDao, maxDaysOnValidator, nativeSQL);
     }
 
     @Test
@@ -667,19 +665,6 @@ public class DiseaseServiceTest {
 
         // Act
         LocalDate actualResult = diseaseService.subtractMaxDaysOnValidator(inputDateTime);
-
-        // Assert
-        assertThat(actualResult).isEqualTo(expectedResult);
-    }
-
-    @Test
-    public void subtractDaysBetweenModelRuns() {
-        // Arrange
-        DateTime inputDateTime = new DateTime("2014-10-09T12:13:14");
-        LocalDate expectedResult = new LocalDate("2014-10-03"); // minus 6 (daysBetweenModelRuns field)
-
-        // Act
-        LocalDate actualResult = diseaseService.subtractDaysBetweenModelRuns(inputDateTime);
 
         // Assert
         assertThat(actualResult).isEqualTo(expectedResult);
