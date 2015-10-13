@@ -95,6 +95,10 @@ public class DiseaseGroup {
     @Column(name = "model_mode")
     private String modelMode;
 
+    // The max number of days between model runs that are triggered by the Data Manager.
+    @Column(name = "max_days_between_runs")
+    private int maxDaysBetweenModelRuns;
+
     // The date on which the disease extent was last generated, whether a one-off action or preparation for a model run.
     @Column(name = "last_extent_generation_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -295,6 +299,14 @@ public class DiseaseGroup {
 
     public void setModelMode(String modelMode) {
         this.modelMode = modelMode;
+    }
+
+    public int getMaxDaysBetweenModelRuns() {
+        return maxDaysBetweenModelRuns;
+    }
+
+    public void setMaxDaysBetweenModelRuns(int maxDaysBetweenModelRuns) {
+        this.maxDaysBetweenModelRuns = maxDaysBetweenModelRuns;
     }
 
     public DateTime getLastExtentGenerationDate() {
