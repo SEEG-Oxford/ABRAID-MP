@@ -55,7 +55,7 @@ public class DiseaseProcessGatekeeper {
 
         boolean dueToRun =
                 neverBeenRun(lastModelRunTimestamp) ||
-                maxDaysBetweenProcessingElapsed(lastModelRunTimestamp) ||
+                maxDaysBetweenProcessingElapsed(lastModelRunTimestamp, diseaseGroup) ||
                 extentHasChanged(lastModelRunTimestamp, diseaseGroup) ||
                 enoughNewLocations(lastModelRunTimestamp, diseaseGroup);
 
@@ -85,7 +85,7 @@ public class DiseaseProcessGatekeeper {
 
         boolean dueToRun =
                 neverBeenRun(lastExtentGenerationTimestamp) ||
-                maxDaysBetweenProcessingElapsed(lastExtentGenerationTimestamp) ||
+                maxDaysBetweenProcessingElapsed(lastExtentGenerationTimestamp, diseaseGroup) ||
                 enoughNewLocations(lastModelRunTimestamp, diseaseGroup);
 
         LOGGER.info(dueToRun ? STARTING_EXTENT_GENERATION : NOT_STARTING_EXTENT_GENERATION);
@@ -100,8 +100,9 @@ public class DiseaseProcessGatekeeper {
         return false;
     }
 
-    private boolean maxDaysBetweenProcessingElapsed(DateTime lastProcessTimestamp) {
-        LocalDate comparisonDate = diseaseService.subtractDaysBetweenModelRuns(DateTime.now());
+    private boolean maxDaysBetweenProcessingElapsed(DateTime lastProcessTimestamp, DiseaseGroup diseaseGroup) {
+        LocalDate comparisonDate =
+                DateTime.now().toLocalDate().minusDays(diseaseGroup.getMaxDaysBetweenModelRuns());
         LocalDate lastProcessDate = lastProcessTimestamp.toLocalDate();
         boolean maxDaysBetweenRunsElapsed = !comparisonDate.isBefore(lastProcessDate);
         LOGGER.info(String.format(maxDaysBetweenRunsElapsed ? ELAPSED : NOT_ELAPSED, lastProcessDate));

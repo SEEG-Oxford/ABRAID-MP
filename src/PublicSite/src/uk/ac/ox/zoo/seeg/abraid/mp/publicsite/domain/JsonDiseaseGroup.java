@@ -14,6 +14,7 @@ public class JsonDiseaseGroup {
     private String abbreviation;
     private String groupType;
     private String modelMode;
+    private int maxDaysBetweenModelRuns;
     private Boolean isGlobal;
     private JsonParentDiseaseGroup parentDiseaseGroup;
     private JsonValidatorDiseaseGroup validatorDiseaseGroup;
@@ -51,6 +52,7 @@ public class JsonDiseaseGroup {
         }
         setWeighting(diseaseGroup.getWeighting());
         setAutomaticModelRuns(diseaseGroup.isAutomaticModelRunsEnabled());
+        setMaxDaysBetweenModelRuns(diseaseGroup.getMaxDaysBetweenModelRuns());
         setMinNewLocations(diseaseGroup.getMinNewLocationsTrigger());
         setMinDataVolume(diseaseGroup.getMinDataVolume());
         setMaxEnvironmentalSuitabilityForTriggering(diseaseGroup.getMaxEnvironmentalSuitabilityForTriggering());
@@ -128,6 +130,14 @@ public class JsonDiseaseGroup {
 
     public void setModelMode(String modelMode) {
         this.modelMode = modelMode;
+    }
+
+    public int getMaxDaysBetweenModelRuns() {
+        return maxDaysBetweenModelRuns;
+    }
+
+    public void setMaxDaysBetweenModelRuns(int maxDaysBetweenModelRuns) {
+        this.maxDaysBetweenModelRuns = maxDaysBetweenModelRuns;
     }
 
     public JsonValidatorDiseaseGroup getValidatorDiseaseGroup() {

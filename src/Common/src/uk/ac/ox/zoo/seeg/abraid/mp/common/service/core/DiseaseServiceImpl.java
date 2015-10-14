@@ -30,7 +30,6 @@ public class DiseaseServiceImpl implements DiseaseService {
     private ModelRunDao modelRunDao;
     private DiseaseExtentClassDao diseaseExtentClassDao;
     private int maxDaysOnValidator;
-    private int daysBetweenModelRuns;
     private NativeSQL nativeSQL;
 
     public DiseaseServiceImpl(DiseaseOccurrenceDao diseaseOccurrenceDao,
@@ -43,7 +42,6 @@ public class DiseaseServiceImpl implements DiseaseService {
                               ModelRunDao modelRunDao,
                               DiseaseExtentClassDao diseaseExtentClassDao,
                               int maxDaysOnValidator,
-                              int daysBetweenModelRuns,
                               NativeSQL nativeSQL) {
         this.diseaseOccurrenceDao = diseaseOccurrenceDao;
         this.diseaseOccurrenceReviewDao = diseaseOccurrenceReviewDao;
@@ -55,7 +53,6 @@ public class DiseaseServiceImpl implements DiseaseService {
         this.modelRunDao = modelRunDao;
         this.diseaseExtentClassDao = diseaseExtentClassDao;
         this.maxDaysOnValidator = maxDaysOnValidator;
-        this.daysBetweenModelRuns = daysBetweenModelRuns;
         this.nativeSQL = nativeSQL;
     }
 
@@ -542,16 +539,6 @@ public class DiseaseServiceImpl implements DiseaseService {
     @Override
     public LocalDate subtractMaxDaysOnValidator(DateTime dateTime) {
         return dateTime.toLocalDate().minusDays(maxDaysOnValidator);
-    }
-
-    /**
-     * Returns the input date, with the number of days between scheduled model runs subtracted.
-     * @param dateTime The input date.
-     * @return The input date minus the number of days between scheduled model runs.
-     */
-    @Override
-    public LocalDate subtractDaysBetweenModelRuns(DateTime dateTime) {
-        return dateTime.toLocalDate().minusDays(daysBetweenModelRuns);
     }
 
     private boolean isDiseaseGroupGlobal(Integer diseaseGroupId) {

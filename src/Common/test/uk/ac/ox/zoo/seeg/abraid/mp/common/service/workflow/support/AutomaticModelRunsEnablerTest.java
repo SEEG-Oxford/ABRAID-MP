@@ -2,11 +2,8 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
-import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceStatus;
@@ -31,14 +28,8 @@ public class AutomaticModelRunsEnablerTest {
     @Before
     public void setUp() {
         diseaseService = mock(DiseaseService.class);
-        when(diseaseService.subtractDaysBetweenModelRuns(any(DateTime.class))).thenAnswer(new Answer<LocalDate>() {
-            @Override
-            public LocalDate answer(InvocationOnMock invocationOnMock) throws Throwable {
-                return ((DateTime) invocationOnMock.getArguments()[0]).toLocalDate().minusDays(7);
-            }
-        });
         diseaseOccurrenceValidationService = mock(DiseaseOccurrenceValidationService.class);
-        automaticModelRunsEnabler = new AutomaticModelRunsEnabler(diseaseService, diseaseOccurrenceValidationService);
+        automaticModelRunsEnabler = new AutomaticModelRunsEnabler(diseaseService, diseaseOccurrenceValidationService, 7);
 
         DateTimeUtils.setCurrentMillisFixed(DateTime.now().getMillis());
     }

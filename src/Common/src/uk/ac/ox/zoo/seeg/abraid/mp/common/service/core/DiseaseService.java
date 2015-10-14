@@ -304,11 +304,4 @@ public interface DiseaseService {
      * @return The input date minus the max number of days on the validator.
      */
     LocalDate subtractMaxDaysOnValidator(DateTime dateTime);
-
-    /**
-     * Returns the input date, with the number of days between scheduled model runs subtracted.
-     * @param dateTime The input date.
-     * @return The input date minus the number of days between scheduled model runs.
-     */
-    LocalDate subtractDaysBetweenModelRuns(DateTime dateTime);
 }

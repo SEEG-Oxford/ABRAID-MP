@@ -29,6 +29,7 @@ define([], function () {
             modelMode: modelRunParametersViewModel.modelMode(),
             parentDiseaseGroup: { id: getId(diseaseGroupSettingsViewModel.selectedParentDiseaseGroup()) },
             validatorDiseaseGroup: { id: getId(diseaseGroupSettingsViewModel.selectedValidatorDiseaseGroup()) },
+            maxDaysBetweenModelRuns:  parseInteger(modelRunParametersViewModel.maxDaysBetweenModelRuns()),
             minNewLocations: parseInteger(modelRunParametersViewModel.minNewLocations()),
             maxEnvironmentalSuitabilityForTriggering:
                 parseNumber(modelRunParametersViewModel.maxEnvironmentalSuitabilityForTriggering()),

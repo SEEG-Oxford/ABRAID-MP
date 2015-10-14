@@ -61,15 +61,15 @@ public class AdminDiseaseGroupControllerTest {
         Model model = mock(Model.class);
 
         DiseaseGroup diseaseGroup1 = createDiseaseGroup(188, 5, "Leishmaniases", "leishmaniases", DiseaseGroupType.MICROCLUSTER,
-                "leishmaniases", "leishmaniases", "leish", true, 9, 0.5);
+                "leishmaniases", "leishmaniases", "leish", true, 9, 0.5, 7);
         DiseaseGroup diseaseGroup2 = createDiseaseGroup(87, null, "dengue", null, DiseaseGroupType.SINGLE,
-                "dengue", "dengue", "deng", false, 4, 1);
+                "dengue", "dengue", "deng", false, 4, 1, 6);
         List<DiseaseGroup> diseaseGroups = Arrays.asList(diseaseGroup1, diseaseGroup2);
         when(diseaseService.getAllDiseaseGroups()).thenReturn(diseaseGroups);
         when(sourceCodeManager.getSupportedModesForCurrentVersion()).thenReturn(new HashSet<String>(Arrays.asList("mode1", "mode2", "mode3")));
         String expectedJson = "[" +
-                "{\"id\":87,\"name\":\"dengue\",\"publicName\":\"dengue\",\"shortName\":\"dengue\",\"abbreviation\":\"deng\",\"groupType\":\"SINGLE\",\"isGlobal\":false,\"validatorDiseaseGroup\":{\"id\":4},\"weighting\":1.0,\"automaticModelRuns\":false,\"minDataVolume\":0,\"useMachineLearning\":true}," +
-                "{\"id\":188,\"name\":\"Leishmaniases\",\"publicName\":\"leishmaniases\",\"shortName\":\"leishmaniases\",\"abbreviation\":\"leish\",\"groupType\":\"MICROCLUSTER\",\"isGlobal\":true,\"parentDiseaseGroup\":{\"id\":5,\"name\":\"leishmaniases\"},\"validatorDiseaseGroup\":{\"id\":9},\"weighting\":0.5,\"automaticModelRuns\":false,\"minDataVolume\":0,\"useMachineLearning\":true}]";
+                "{\"id\":87,\"name\":\"dengue\",\"publicName\":\"dengue\",\"shortName\":\"dengue\",\"abbreviation\":\"deng\",\"groupType\":\"SINGLE\",\"maxDaysBetweenModelRuns\":6,\"isGlobal\":false,\"validatorDiseaseGroup\":{\"id\":4},\"weighting\":1.0,\"automaticModelRuns\":false,\"minDataVolume\":0,\"useMachineLearning\":true}," +
+                "{\"id\":188,\"name\":\"Leishmaniases\",\"publicName\":\"leishmaniases\",\"shortName\":\"leishmaniases\",\"abbreviation\":\"leish\",\"groupType\":\"MICROCLUSTER\",\"maxDaysBetweenModelRuns\":7,\"isGlobal\":true,\"parentDiseaseGroup\":{\"id\":5,\"name\":\"leishmaniases\"},\"validatorDiseaseGroup\":{\"id\":9},\"weighting\":0.5,\"automaticModelRuns\":false,\"minDataVolume\":0,\"useMachineLearning\":true}]";
 
         ValidatorDiseaseGroup validator1 = new ValidatorDiseaseGroup(3, "Japanese encephalitis");
         ValidatorDiseaseGroup validator2 = new ValidatorDiseaseGroup(2, "cholera");
@@ -327,7 +327,7 @@ public class AdminDiseaseGroupControllerTest {
     public void saveCallsSaveForDiseaseGroupAndReturnsNoContent() throws Exception {
         // Arrange
         int diseaseGroupId = 1;
-        DiseaseGroup diseaseGroup = createDiseaseGroup(diseaseGroupId, 87, "Name", "Parent Name", DiseaseGroupType.SINGLE, "Public name", "Short name", "ABBREV", true, 4, 1.0);
+        DiseaseGroup diseaseGroup = createDiseaseGroup(diseaseGroupId, 87, "Name", "Parent Name", DiseaseGroupType.SINGLE, "Public name", "Short name", "ABBREV", true, 4, 1.0, 7);
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
         when(diseaseService.getValidatorDiseaseGroupById(4)).thenReturn(new ValidatorDiseaseGroup());
         JsonDiseaseGroup newValues = createJsonDiseaseGroup("New name", "New public name", "New short name", "NEWABBREV", "CLUSTER", false, 87, 4, "not_bhatt");
@@ -384,7 +384,7 @@ public class AdminDiseaseGroupControllerTest {
         // Arrange
         int diseaseGroupId = 1;
         int parentId = 87;
-        DiseaseGroup diseaseGroup = createDiseaseGroup(diseaseGroupId, parentId, "Name", "Parent name", DiseaseGroupType.SINGLE, "Public name", "Short name", "ABBREV", true, 4, 1.0);
+        DiseaseGroup diseaseGroup = createDiseaseGroup(diseaseGroupId, parentId, "Name", "Parent name", DiseaseGroupType.SINGLE, "Public name", "Short name", "ABBREV", true, 4, 1.0, 7);
         when(diseaseService.getDiseaseGroupById(1)).thenReturn(diseaseGroup);
         when(diseaseService.getDiseaseGroupById(parentId)).thenReturn(null);
         JsonDiseaseGroup newValues = createJsonDiseaseGroup("New name", "New public name", "New short name", "NEWABBREV", "MICROCLUSTER", false, parentId, 4, "bhatt");
@@ -520,7 +520,7 @@ public class AdminDiseaseGroupControllerTest {
     private DiseaseGroup createDiseaseGroup(int id, Integer parentGroupId, String name, String parentName,
                                             DiseaseGroupType groupType, String publicName, String shortName,
                                             String abbreviation, boolean isGlobal, Integer validatorDiseaseGroupId,
-                                            double weighting) {
+                                            double weighting, int maxDaysBetweenModelRuns) {
         DiseaseGroup diseaseGroup = new DiseaseGroup(id);
         if (parentGroupId != null) {
             DiseaseGroup parentGroup = createParentDiseaseGroup(parentGroupId, parentName);
@@ -532,6 +532,7 @@ public class AdminDiseaseGroupControllerTest {
         diseaseGroup.setShortName(shortName);
         diseaseGroup.setAbbreviation(abbreviation);
         diseaseGroup.setGlobal(isGlobal);
+        diseaseGroup.setMaxDaysBetweenModelRuns(maxDaysBetweenModelRuns);
         if (validatorDiseaseGroupId != null) {
             ValidatorDiseaseGroup validatorDiseaseGroup = new ValidatorDiseaseGroup(validatorDiseaseGroupId);
             diseaseGroup.setValidatorDiseaseGroup(validatorDiseaseGroup);

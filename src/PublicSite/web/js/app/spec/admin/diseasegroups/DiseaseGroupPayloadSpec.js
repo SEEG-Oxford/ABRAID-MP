@@ -22,6 +22,7 @@ define(["app/admin/diseasegroups/DiseaseGroupPayload"], function (DiseaseGroupPa
                 selectedValidatorDiseaseGroup: wrap({ id: 3 })
             };
             var modelRunParametersViewModel = {
+                maxDaysBetweenModelRuns: wrap(7),
                 minNewLocations: wrap(1),
                 maxEnvironmentalSuitabilityForTriggering: wrap(0.2),
                 minDistanceFromDiseaseExtentForTriggering: wrap(-300),
@@ -52,6 +53,7 @@ define(["app/admin/diseasegroups/DiseaseGroupPayload"], function (DiseaseGroupPa
                 modelMode: "bhatt",
                 parentDiseaseGroup: { id: 2 },
                 validatorDiseaseGroup: { id: 3 },
+                maxDaysBetweenModelRuns: 7,
                 minNewLocations: 1,
                 maxEnvironmentalSuitabilityForTriggering: 0.2,
                 minDistanceFromDiseaseExtentForTriggering: -300,
@@ -91,6 +93,7 @@ define(["app/admin/diseasegroups/DiseaseGroupPayload"], function (DiseaseGroupPa
                 selectedValidatorDiseaseGroup: wrap(undefined)
             };
             var modelRunParametersViewModel = {
+                maxDaysBetweenModelRuns: wrap(""),
                 minNewLocations: wrap(""),
                 maxEnvironmentalSuitabilityForTriggering: wrap(""),
                 minDistanceFromDiseaseExtentForTriggering: wrap(""),
@@ -121,6 +124,7 @@ define(["app/admin/diseasegroups/DiseaseGroupPayload"], function (DiseaseGroupPa
                 modelMode: "bhatt",
                 parentDiseaseGroup: { id: null },
                 validatorDiseaseGroup: { id: null },
+                maxDaysBetweenModelRuns: undefined,
                 minNewLocations: undefined,
                 maxEnvironmentalSuitabilityForTriggering: undefined,
                 minDistanceFromDiseaseExtentForTriggering: undefined,

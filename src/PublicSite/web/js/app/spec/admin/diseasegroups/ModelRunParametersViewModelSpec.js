@@ -33,6 +33,7 @@ define([
             var vm = new ModelRunParametersViewModel(baseUrl, "", modesList);
             it("as observables", function () {
                 expect(vm.diseaseGroupId).toBeObservable();
+                expect(vm.maxDaysBetweenModelRuns).toBeObservable();
                 expect(vm.minNewLocations).toBeObservable();
                 expect(vm.maxEnvironmentalSuitabilityForTriggering).toBeObservable();
                 expect(vm.minDistanceFromDiseaseExtentForTriggering).toBeObservable();
@@ -47,6 +48,7 @@ define([
             });
 
             it("with appropriate validation rules", function () {
+                expectValidationRulesForPositiveInteger(vm.maxDaysBetweenModelRuns);
                 expectValidationRulesForNonNegativeInteger(vm.minNewLocations);
                 expectValidationRulesForPositiveInteger(vm.minDataVolume);
                 expectValidationRulesForNonNegativeInteger(vm.minDistinctCountries);
@@ -69,6 +71,7 @@ define([
                 // Arrange
                 var diseaseGroup = {
                     id: "50",
+                    maxDaysBetweenModelRuns: "7",
                     minNewLocations: "1",
                     maxEnvironmentalSuitabilityForTriggering: "0.2",
                     minDistanceFromDiseaseExtentForTriggering: "-300",
@@ -88,6 +91,7 @@ define([
 
                 // Assert
                 expect(vm.diseaseGroupId()).toBe(diseaseGroup.id);
+                expect(vm.maxDaysBetweenModelRuns()).toBe(diseaseGroup.maxDaysBetweenModelRuns);
                 expect(vm.minNewLocations()).toBe(diseaseGroup.minNewLocations);
                 expect(vm.maxEnvironmentalSuitabilityForTriggering())
                     .toBe(diseaseGroup.maxEnvironmentalSuitabilityForTriggering);
@@ -112,6 +116,7 @@ define([
                 // Arrange
                 var diseaseGroup = {
                     id: undefined,
+                    maxDaysBetweenModelRuns: null,
                     minNewLocations: null,
                     maxEnvironmentalSuitabilityForTriggering: undefined,
                     minDistanceFromDiseaseExtentForTriggering: 0,
@@ -131,6 +136,7 @@ define([
 
                 // Assert
                 expect(vm.diseaseGroupId()).toBe("");
+                expect(vm.maxDaysBetweenModelRuns()).toBe("");
                 expect(vm.minNewLocations()).toBe("");
                 expect(vm.maxEnvironmentalSuitabilityForTriggering()).toBe("");
                 expect(vm.minDistanceFromDiseaseExtentForTriggering()).toBe(0);
