@@ -39,7 +39,7 @@ public class JsonDiseaseGroupTest {
         diseaseGroup.setOccursInAfrica(true);
         diseaseGroup.setUseMachineLearning(true);
         diseaseGroup.setMaxEnvironmentalSuitabilityWithoutML(0.8);
-        diseaseGroup.setDiseaseExtentParameters(new DiseaseExtent(diseaseGroup, 0.6, 2, 1, 60, 1, 2));
+        diseaseGroup.setDiseaseExtentParameters(new DiseaseExtent(diseaseGroup, 0.6, 60, 1, 2));
 
         // Act
         JsonDiseaseGroup jsonDiseaseGroup = new JsonDiseaseGroup(diseaseGroup);
@@ -76,8 +76,6 @@ public class JsonDiseaseGroupTest {
         JsonDiseaseExtent diseaseExtentParameters = jsonDiseaseGroup.getDiseaseExtentParameters();
         assertThat(diseaseExtentParameters).isNotNull();
         assertThat(diseaseExtentParameters.getMinValidationWeighting()).isEqualTo(0.6);
-        assertThat(diseaseExtentParameters.getMinOccurrencesForPresence()).isEqualTo(2);
-        assertThat(diseaseExtentParameters.getMinOccurrencesForPossiblePresence()).isEqualTo(1);
         assertThat(diseaseExtentParameters.getLowerOccurrenceScore()).isEqualTo(1);
         assertThat(diseaseExtentParameters.getHigherOccurrenceScore()).isEqualTo(2);
     }

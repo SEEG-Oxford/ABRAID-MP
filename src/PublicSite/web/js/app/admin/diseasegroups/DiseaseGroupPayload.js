@@ -52,10 +52,6 @@ define([], function () {
                     parseInteger(diseaseExtentParametersViewModel.higherOccurrenceScore()),
                 minValidationWeighting:
                     parseNumber(diseaseExtentParametersViewModel.minValidationWeighting()),
-                minOccurrencesForPresence:
-                    parseInteger(diseaseExtentParametersViewModel.minOccurrencesForPresence()),
-                minOccurrencesForPossiblePresence:
-                    parseInteger(diseaseExtentParametersViewModel.minOccurrencesForPossiblePresence())
             }
         };
     };

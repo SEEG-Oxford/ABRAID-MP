@@ -62,9 +62,7 @@ define([
                 maxMonthsAgoForHigherOccurrenceScore: wrap(24),
                 higherOccurrenceScore: wrap(2),
                 lowerOccurrenceScore: wrap(1),
-                minValidationWeighting: wrap(0.6),
-                minOccurrencesForPossiblePresence: wrap(2),
-                minOccurrencesForPresence: wrap(5)
+                minValidationWeighting: wrap(0.6)
             };
             var expectedParams =
             "{" +
@@ -92,9 +90,7 @@ define([
                     "\"maxMonthsAgoForHigherOccurrenceScore\":24," +
                     "\"lowerOccurrenceScore\":1," +
                     "\"higherOccurrenceScore\":2," +
-                    "\"minValidationWeighting\":0.6," +
-                    "\"minOccurrencesForPresence\":5," +
-                    "\"minOccurrencesForPossiblePresence\":2" +
+                    "\"minValidationWeighting\":0.6" +
                 "}" +
             "}";
 
@@ -230,9 +226,7 @@ define([
                 maxMonthsAgoForHigherOccurrenceScore: wrap(""),
                 higherOccurrenceScore: wrap(""),
                 lowerOccurrenceScore: wrap(""),
-                minValidationWeighting: wrap(""),
-                minOccurrencesForPossiblePresence: wrap(""),
-                minOccurrencesForPresence: wrap("")
+                minValidationWeighting: wrap("")
             };
             var expectedParams = "{\"name\":\"Name\"," +
                 "\"groupType\":\"MICROCLUSTER\"," +

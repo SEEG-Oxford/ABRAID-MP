@@ -68,8 +68,6 @@ public abstract class BaseDiseaseExtentGenerationTests {
     protected DiseaseExtent createParameters() {
         DiseaseExtent diseaseExtent = mock(DiseaseExtent.class);
         when(diseaseExtent.getMinValidationWeighting()).thenReturn(0.2);
-        when(diseaseExtent.getMinOccurrencesForPresence()).thenReturn(5);
-        when(diseaseExtent.getMinOccurrencesForPossiblePresence()).thenReturn(1);
         when(diseaseExtent.getMaxMonthsAgoForHigherOccurrenceScore()).thenReturn(12);
         when(diseaseExtent.getLowerOccurrenceScore()).thenReturn(1);
         when(diseaseExtent.getHigherOccurrenceScore()).thenReturn(2);

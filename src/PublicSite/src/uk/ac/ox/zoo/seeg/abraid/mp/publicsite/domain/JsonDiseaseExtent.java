@@ -11,8 +11,6 @@ public class JsonDiseaseExtent {
     private Integer higherOccurrenceScore;
     private Integer lowerOccurrenceScore;
     private Double minValidationWeighting;
-    private Integer minOccurrencesForPresence;
-    private Integer minOccurrencesForPossiblePresence;
 
     public JsonDiseaseExtent() {
     }
@@ -22,8 +20,6 @@ public class JsonDiseaseExtent {
         setHigherOccurrenceScore(parameters.getHigherOccurrenceScore());
         setLowerOccurrenceScore(parameters.getLowerOccurrenceScore());
         setMinValidationWeighting(parameters.getMinValidationWeighting());
-        setMinOccurrencesForPresence(parameters.getMinOccurrencesForPresence());
-        setMinOccurrencesForPossiblePresence(parameters.getMinOccurrencesForPossiblePresence());
     }
 
     public Integer getMaxMonthsAgoForHigherOccurrenceScore() {
@@ -56,21 +52,5 @@ public class JsonDiseaseExtent {
 
     public void setMinValidationWeighting(Double minValidationWeighting) {
         this.minValidationWeighting = minValidationWeighting;
-    }
-
-    public Integer getMinOccurrencesForPresence() {
-        return minOccurrencesForPresence;
-    }
-
-    public void setMinOccurrencesForPresence(Integer minOccurrencesForPresence) {
-        this.minOccurrencesForPresence = minOccurrencesForPresence;
-    }
-
-    public Integer getMinOccurrencesForPossiblePresence() {
-        return minOccurrencesForPossiblePresence;
-    }
-
-    public void setMinOccurrencesForPossiblePresence(Integer minOccurrencesForPossiblePresence) {
-        this.minOccurrencesForPossiblePresence = minOccurrencesForPossiblePresence;
     }
 }

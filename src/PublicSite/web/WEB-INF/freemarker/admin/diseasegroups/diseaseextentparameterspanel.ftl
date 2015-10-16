@@ -20,15 +20,13 @@
             <div class="col-sm-6">
                 <div class="form-horizontal">
                     <@formGroup id="max-months-ago-for-higher-score" title="Max. Months Ago for Higher Occurrence Score" bind="maxMonthsAgoForHigherOccurrenceScore"></@formGroup>
-                    <@formGroup id="higher-occurrence-score" title="Higher Occurrence Score" bind="higherOccurrenceScore"></@formGroup>
-                    <@formGroup id="lower-occurrence-score" title="Lower Occurrence Score" bind="lowerOccurrenceScore"></@formGroup>
+                    <@formGroup id="min-validation-weighting" title="Min. Validation Weighting" bind="minValidationWeighting"></@formGroup>
                 </div>
             </div>
             <div class="col-sm-6">
                 <div class="form-horizontal">
-                    <@formGroup id="min-validation-weighting" title="Min. Validation Weighting" bind="minValidationWeighting"></@formGroup>
-                    <@formGroup id="min-occurrences-for-presence" title="Min. Occurrences for Presence" bind="minOccurrencesForPresence"></@formGroup>
-                    <@formGroup id="min-occurrences-for-possible-presence" title="Min. Occurrences for Possible Presence" bind="minOccurrencesForPossiblePresence"></@formGroup>
+                    <@formGroup id="higher-occurrence-score" title="Higher Occurrence Score" bind="higherOccurrenceScore"></@formGroup>
+                    <@formGroup id="lower-occurrence-score" title="Lower Occurrence Score" bind="lowerOccurrenceScore"></@formGroup>
                 </div>
             </div>
         </div>
