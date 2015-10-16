@@ -68,8 +68,6 @@ public abstract class BaseDiseaseExtentGenerationTests {
     protected DiseaseExtent createParameters() {
         DiseaseExtent diseaseExtent = mock(DiseaseExtent.class);
         when(diseaseExtent.getMinValidationWeighting()).thenReturn(0.2);
-        when(diseaseExtent.getMinOccurrencesForPresence()).thenReturn(5);
-        when(diseaseExtent.getMinOccurrencesForPossiblePresence()).thenReturn(1);
         when(diseaseExtent.getMaxMonthsAgoForHigherOccurrenceScore()).thenReturn(12);
         when(diseaseExtent.getLowerOccurrenceScore()).thenReturn(1);
         when(diseaseExtent.getHigherOccurrenceScore()).thenReturn(2);
@@ -276,7 +274,7 @@ public abstract class BaseDiseaseExtentGenerationTests {
         DiseaseExtentGenerationOutputData data = createEmptyResult();
         addAdminUnitResults(data, 100, uncertainDiseaseExtentClass, 0);
         addAdminUnitResults(data, 125, possiblePresenceDiseaseExtentClass, 0);
-        addAdminUnitResults(data, 130, presenceDiseaseExtentClass, 0);
+        addAdminUnitResults(data, 130, possiblePresenceDiseaseExtentClass, 0);
         addAdminUnitResults(data, 150, possiblePresenceDiseaseExtentClass, 1);
         addAdminUnitResults(data, 200, presenceDiseaseExtentClass, 4);
         addAdminUnitResults(data, 250, possiblePresenceDiseaseExtentClass, 5);

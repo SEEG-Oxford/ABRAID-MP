@@ -17,34 +17,6 @@ public class DiseaseExtentGeneratorHelperTest extends BaseDiseaseExtentGeneratio
     }
 
     @Test
-    public void computeDiseaseExtentReturnsCorrectResultForInitialExtent() throws Exception {
-        // Arrange
-        DiseaseExtentGenerationInputData inputData = createInputData(createReviews(), createOccurrences());
-        DiseaseExtentGenerationOutputData expectedResult = createInitialDiseaseExtentResults();
-
-        // Act
-        DiseaseExtentGeneratorHelper target = new DiseaseExtentGeneratorHelper(inputData, parameters);
-        DiseaseExtentGenerationOutputData result = target.computeDiseaseExtent(true);
-
-        // Assert
-        assertThatExtentsMatch(result, expectedResult);
-    }
-
-    @Test
-    public void computeDiseaseExtentReturnsCorrectResultForInitialExtentWithZeroOccurrences() throws Exception {
-        // Arrange
-        DiseaseExtentGenerationInputData inputData = createInputData(createReviews(), null);
-        DiseaseExtentGenerationOutputData expectedResult = createAllUncertainExtentResults();
-
-        // Act
-        DiseaseExtentGeneratorHelper target = new DiseaseExtentGeneratorHelper(inputData, parameters);
-        DiseaseExtentGenerationOutputData result = target.computeDiseaseExtent(true);
-
-        // Assert
-        assertThatExtentsMatch(result, expectedResult);
-    }
-
-    @Test
     public void computeDiseaseExtentReturnsCorrectResultForUpdatedExtent() throws Exception {
         // Arrange
         DiseaseExtentGenerationInputData inputData = createInputData(createReviews(), createOccurrences());
@@ -52,7 +24,7 @@ public class DiseaseExtentGeneratorHelperTest extends BaseDiseaseExtentGeneratio
 
         // Act
         DiseaseExtentGeneratorHelper target = new DiseaseExtentGeneratorHelper(inputData, parameters);
-        DiseaseExtentGenerationOutputData result = target.computeDiseaseExtent(false);
+        DiseaseExtentGenerationOutputData result = target.computeDiseaseExtent();
 
         // Assert
         assertThatExtentsMatch(result, expectedResult);
@@ -66,7 +38,7 @@ public class DiseaseExtentGeneratorHelperTest extends BaseDiseaseExtentGeneratio
 
         // Act
         DiseaseExtentGeneratorHelper target = new DiseaseExtentGeneratorHelper(inputData, parameters);
-        DiseaseExtentGenerationOutputData result = target.computeDiseaseExtent(false);
+        DiseaseExtentGenerationOutputData result = target.computeDiseaseExtent();
 
         // Assert
         assertThatExtentsMatch(result, expectedResult);
@@ -80,7 +52,7 @@ public class DiseaseExtentGeneratorHelperTest extends BaseDiseaseExtentGeneratio
 
         // Act
         DiseaseExtentGeneratorHelper target = new DiseaseExtentGeneratorHelper(inputData, parameters);
-        DiseaseExtentGenerationOutputData result = target.computeDiseaseExtent(false);
+        DiseaseExtentGenerationOutputData result = target.computeDiseaseExtent();
 
         // Assert
         assertThatExtentsMatch(result, expectedResult);
@@ -94,7 +66,7 @@ public class DiseaseExtentGeneratorHelperTest extends BaseDiseaseExtentGeneratio
 
         // Act
         DiseaseExtentGeneratorHelper target = new DiseaseExtentGeneratorHelper(inputData, parameters);
-        DiseaseExtentGenerationOutputData result = target.computeDiseaseExtent(false);
+        DiseaseExtentGenerationOutputData result = target.computeDiseaseExtent();
 
         // Assert
         assertThatExtentsMatch(result, expectedResult);

@@ -5,7 +5,8 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import java.util.*;
 
-import static ch.lambdaj.Lambda.*;
+import static ch.lambdaj.Lambda.index;
+import static ch.lambdaj.Lambda.on;
 
 /**
  * A helper for the DiseaseExtentGenerator class.
@@ -23,7 +24,7 @@ public class DiseaseExtentGeneratorHelper {
     private final Map<String, DiseaseExtentClass> classesByName;
     private final Map<Integer, AdminUnitGlobalOrTropical> adminUnitsByGaulCode;
     private final Map<Integer, List<DiseaseOccurrence>> occurrencesByAdminUnit;
-    private final Map<Integer, Integer> numberOfOccurrencesByCountry;
+    private final Map<Integer, List<DiseaseOccurrence>> occurrencesByParentCountry;
     private final Map<Integer, List<AdminUnitReview>> reviewsByAdminUnit;
 
     public DiseaseExtentGeneratorHelper(DiseaseExtentGenerationInputData inputData, DiseaseExtent parameters) {
@@ -34,7 +35,7 @@ public class DiseaseExtentGeneratorHelper {
         this.classesByName = indexDiseaseExtentClassesOnName();
         this.adminUnitsByGaulCode = indexAdminUnitsByGaulCode();
         this.occurrencesByAdminUnit = groupOccurrencesByAdminUnit();
-        this.numberOfOccurrencesByCountry = groupOccurrencesByCountry();
+        this.occurrencesByParentCountry = groupOccurrencesByParentCountry();
         this.reviewsByAdminUnit = groupReviewsByAdminUnit();
     }
 
@@ -79,19 +80,24 @@ public class DiseaseExtentGeneratorHelper {
     }
 
     /**
-     * Groups the occurrences by country (strictly, it groups the number of occurrences by country GAUL code).
+     * Groups the occurrences by country (only for countries that are split into sub admin units).
      * The country GAUL code is taken from the admin unit global/tropical entity.
      */
-    private Map<Integer, Integer>  groupOccurrencesByCountry() {
-        Map<Integer, Integer> groups = new HashMap<>();
+    private Map<Integer, List<DiseaseOccurrence>> groupOccurrencesByParentCountry() {
+        Map<Integer, List<DiseaseOccurrence>> groups = new HashMap<>();
+        for (AdminUnitGlobalOrTropical adminUnit : inputData.getAdminUnits()) {
+            Integer countryGaulCode = adminUnit.getCountryGaulCode();
+            if (countryGaulCode != null && !groups.containsKey(countryGaulCode)) {
+                groups.put(countryGaulCode, new ArrayList<DiseaseOccurrence>());
+            }
+        }
+
         if (inputData.getOccurrences() != null) {
             for (DiseaseOccurrence occurrence : inputData.getOccurrences()) {
                 AdminUnitGlobalOrTropical adminUnit = adminUnitsByGaulCode.get(extractGaulCode(occurrence));
                 Integer countryGaulCode = adminUnit.getCountryGaulCode();
                 if (countryGaulCode != null) {
-                    // Country GAUL code found, so add 1 to the number of occurrences for this country
-                    Integer numberOfOccurrences = groups.get(countryGaulCode);
-                    groups.put(countryGaulCode, nullSafeAdd(numberOfOccurrences, 1));
+                    groups.get(countryGaulCode).add(occurrence);
                 }
             }
         }
@@ -121,63 +127,12 @@ public class DiseaseExtentGeneratorHelper {
     }
 
     /**
-     * Computes the new disease extent.
-     * @param isInitial If this is an initial disease extent.
-     * @return The extent generation results set.
-     */
-    public DiseaseExtentGenerationOutputData computeDiseaseExtent(boolean isInitial) {
-        return isInitial ? computeInitialDiseaseExtent() : computeUpdatedDiseaseExtent();
-    }
-
-    /**
-     * Computes the disease extent classes for an initial disease extent.
-     * @return The extent generation results set.
-     */
-    private DiseaseExtentGenerationOutputData computeInitialDiseaseExtent() {
-        return computeDiseaseExtent(new DiseaseExtentClassComputer() {
-            @Override
-            public String compute(List<DiseaseOccurrence> occurrencesForAdminUnit,
-                                  List<AdminUnitReview> reviewsForAdminUnit,
-                                  Integer countForCountry) {
-                // Computes the initial disease extent class for one admin unit
-                int occurrenceCount = occurrencesForAdminUnit.size();
-                if (occurrenceCount == 0) {
-                    return computeDiseaseExtentClassForCountry(countForCountry);
-                } else {
-                    return computeDiseaseExtentClassUsingOccurrenceCount(occurrenceCount, 1);
-                }
-            }
-        });
-    }
-
-    /**
-     * Computes the disease extent classes for updating a existing disease extent.
-     * @return The extent generation results set.
-     */
-    private DiseaseExtentGenerationOutputData computeUpdatedDiseaseExtent() {
-        return computeDiseaseExtent(new DiseaseExtentClassComputer() {
-            @Override
-            public String compute(List<DiseaseOccurrence> occurrencesForAdminUnit,
-                                  List<AdminUnitReview> reviewsForAdminUnit,
-                                  Integer countForCountry) {
-                // Computes the updated disease extent class for one admin unit
-                if (occurrencesForAdminUnit.size() == 0 && reviewsForAdminUnit.size() == 0) {
-                    return computeDiseaseExtentClassForCountry(countForCountry);
-                } else {
-                    return computeDiseaseExtentClassUsingOccurrencesAndReviews(occurrencesForAdminUnit,
-                            reviewsForAdminUnit);
-                }
-            }
-        });
-    }
-
-    /**
+     * Computes the disease extent classes.
      * For each admin unit, convert its list of disease occurrences and reviews into a disease extent class.
      * Also collate the count of occurrences and most recent occurrences for each admin unit.
-     * @param computer A method for converting the disease occurrences for 1 admin unit into a disease extent class.
      * @return The extent generation results set.
      */
-    private DiseaseExtentGenerationOutputData computeDiseaseExtent(DiseaseExtentClassComputer computer) {
+    public DiseaseExtentGenerationOutputData computeDiseaseExtent() {
         final Map<Integer, DiseaseExtentClass> classesByAdminUnit = new HashMap<>();
         final Map<Integer, Integer> occurrenceCountByAdminUnit = new HashMap<>();
         final Map<Integer, Collection<DiseaseOccurrence>> latestOccurrencesByAdminUnit = new HashMap<>();
@@ -186,11 +141,12 @@ public class DiseaseExtentGeneratorHelper {
         for (AdminUnitGlobalOrTropical adminUnit : inputData.getAdminUnits()) {
             final List<DiseaseOccurrence> occurrencesForAdminUnit = occurrencesByAdminUnit.get(adminUnit.getGaulCode());
             final List<AdminUnitReview> reviewsForAdminUnit = reviewsByAdminUnit.get(adminUnit.getGaulCode());
-            final Integer occurrencesCountForCountry = numberOfOccurrencesByCountry.get(adminUnit.getCountryGaulCode());
+            final List<DiseaseOccurrence> occurrencesForParentCountry =
+                    occurrencesByParentCountry.get(adminUnit.getCountryGaulCode());
 
 
-            String extentClassNameForAdminUnit = computer.compute(
-                    occurrencesForAdminUnit, reviewsForAdminUnit, occurrencesCountForCountry);
+            String extentClassNameForAdminUnit = computeAdminUnit(
+                    occurrencesForAdminUnit, reviewsForAdminUnit, occurrencesForParentCountry);
 
             classesByAdminUnit.put(adminUnit.getGaulCode(), classesByName.get(extentClassNameForAdminUnit));
             occurrenceCountByAdminUnit.put(adminUnit.getGaulCode(), occurrencesForAdminUnit.size());
@@ -213,18 +169,24 @@ public class DiseaseExtentGeneratorHelper {
     }
 
     /**
-     * Computes a disease extent class, based on the number of occurrences and a scaling factor.
-     * @param occurrenceCount The number of occurrences.
-     * @param factor A scaling factor that is multiplied by the number of occurrences when doing the comparison.
-     * @return The computed disease extent class name.
+     * Compute the disease extent class for an admin unit.
+     * @param occurrencesForAdminUnit The occurrences in the admin unit.
+     * @param reviewsForAdminUnit The occurrences of the admin unit.
+     * @param occurrencesForParentCountry The number occurrences in parent country (null if there is no parent country).
+     * @return The name of the disease extent class.
      */
-    private String computeDiseaseExtentClassUsingOccurrenceCount(int occurrenceCount, int factor) {
-        // Convert an occurrence count into a disease extent class, using the disease extent parameters
-        if (occurrenceCount >= parameters.getMinOccurrencesForPresence() * factor) {
-            return DiseaseExtentClass.PRESENCE;
-        } else if (occurrenceCount >= parameters.getMinOccurrencesForPossiblePresence() * factor) {
-            return DiseaseExtentClass.POSSIBLE_PRESENCE;
+    private String computeAdminUnit(List<DiseaseOccurrence> occurrencesForAdminUnit,
+                          List<AdminUnitReview> reviewsForAdminUnit,
+                          List<DiseaseOccurrence> occurrencesForParentCountry) {
+        // Computes the updated disease extent class for one admin unit
+        if (occurrencesForAdminUnit.size() != 0 || reviewsForAdminUnit.size() != 0) {
+            // The are occurrences and/or reviews, use the score for the admin unit, using reviews, without a factor
+            return computeDiseaseExtentClass(occurrencesForAdminUnit, reviewsForAdminUnit, 1);
+        } else if (occurrencesForParentCountry != null) {
+            // There are no occurrences or reviews, so use the score for the parent country, without reviews, halved
+            return computeDiseaseExtentClass(occurrencesForParentCountry, new ArrayList<AdminUnitReview>(), 0.5); ///CHECKSTYLE:SUPPRESS LineLengthCheck|MagicNumberCheck
         } else {
+            // There are no occurrences or reviews and the admin unit doesn't have a parent country (it is a country)
             return DiseaseExtentClass.UNCERTAIN;
         }
     }
@@ -235,9 +197,10 @@ public class DiseaseExtentGeneratorHelper {
      * @param reviewsList The list of reviews.
      * @return The computed disease extent class name.
      */
-    private String computeDiseaseExtentClassUsingOccurrencesAndReviews(
-            List<DiseaseOccurrence> occurrencesList, List<AdminUnitReview> reviewsList) {
+    private String computeDiseaseExtentClass(
+            List<DiseaseOccurrence> occurrencesList, List<AdminUnitReview> reviewsList, double factor) {
         double overallScore = computeScoreForOccurrencesAndReviews(occurrencesList, reviewsList);
+        overallScore = overallScore * factor;
 
         if (overallScore > 1) {
             return DiseaseExtentClass.PRESENCE;
@@ -267,20 +230,6 @@ public class DiseaseExtentGeneratorHelper {
         double totalScore = occurrencesScore + reviewsScore;
         double totalCount = occurrencesList.size() + reviewsList.size();
         return (totalCount == 0) ? 0 : (totalScore / totalCount);
-    }
-
-    /**
-     * Computes a disease extent class for a country.
-     * @param countForCountry The count of occurrences in the country.
-     * @return The computed disease extent class name.
-     */
-    private String computeDiseaseExtentClassForCountry(Integer countForCountry) {
-        // The disease extent class for a country uses the "occurrence count" method, but with the parameters
-        // multiplied by a factor of 2
-        if (countForCountry == null) {
-            return DiseaseExtentClass.UNCERTAIN;
-        }
-        return computeDiseaseExtentClassUsingOccurrenceCount(countForCountry, 2);
     }
 
     private int computeOccurrencesScore(List<DiseaseOccurrence> occurrenceList) {
@@ -320,25 +269,5 @@ public class DiseaseExtentGeneratorHelper {
     private boolean isACountryPointInANonCountryAdminUnit(DiseaseOccurrence occurrence, Integer gaulCode) {
         return (occurrence.getLocation().getPrecision() == LocationPrecision.COUNTRY) &&
                 (adminUnitsByGaulCode.get(gaulCode).getLevel() != '0');
-    }
-
-    private int nullSafeAdd(Integer a, Integer b) {
-        return ((a != null) ? a : 0) + ((b != null) ? b : 0);
-    }
-
-    /**
-     * Computes the disease extent class for one admin unit.
-     */
-    private interface DiseaseExtentClassComputer {
-        /**
-         * Compute the disease extent class for an admin unit.
-         * @param occurrencesForAdminUnit The occurrences in the admin unit.
-         * @param reviewsForAdminUnit The occurrences of the admin unit.
-         * @param countForCountry The number occurrences in parent country.
-         * @return The name of the disease extent class.
-         */
-        String compute(List<DiseaseOccurrence> occurrencesForAdminUnit,
-                                   List<AdminUnitReview> reviewsForAdminUnit,
-                                   Integer countForCountry);
     }
 }

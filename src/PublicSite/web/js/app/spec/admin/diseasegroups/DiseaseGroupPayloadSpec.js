@@ -39,9 +39,7 @@ define(["app/admin/diseasegroups/DiseaseGroupPayload"], function (DiseaseGroupPa
                 maxMonthsAgoForHigherOccurrenceScore: wrap(24),
                 higherOccurrenceScore: wrap(2),
                 lowerOccurrenceScore: wrap(1),
-                minValidationWeighting: wrap(0.6),
-                minOccurrencesForPossiblePresence: wrap(2),
-                minOccurrencesForPresence: wrap(5)
+                minValidationWeighting: wrap(0.6)
             };
             var expectedPayload = {
                 name : "Name",
@@ -68,9 +66,7 @@ define(["app/admin/diseasegroups/DiseaseGroupPayload"], function (DiseaseGroupPa
                     maxMonthsAgoForHigherOccurrenceScore: 24,
                     higherOccurrenceScore: 2,
                     lowerOccurrenceScore: 1,
-                    minValidationWeighting: 0.6,
-                    minOccurrencesForPossiblePresence: 2,
-                    minOccurrencesForPresence: 5
+                    minValidationWeighting: 0.6
                 }
             };
             // Act
@@ -110,9 +106,7 @@ define(["app/admin/diseasegroups/DiseaseGroupPayload"], function (DiseaseGroupPa
                 maxMonthsAgoForHigherOccurrenceScore: wrap(""),
                 higherOccurrenceScore: wrap(""),
                 lowerOccurrenceScore: wrap(""),
-                minValidationWeighting: wrap(""),
-                minOccurrencesForPossiblePresence: wrap(""),
-                minOccurrencesForPresence: wrap("")
+                minValidationWeighting: wrap("")
             };
             var expectedPayload = {
                 name : "Name",
@@ -139,9 +133,7 @@ define(["app/admin/diseasegroups/DiseaseGroupPayload"], function (DiseaseGroupPa
                     maxMonthsAgoForHigherOccurrenceScore: undefined,
                     higherOccurrenceScore: undefined,
                     lowerOccurrenceScore: undefined,
-                    minValidationWeighting: undefined,
-                    minOccurrencesForPossiblePresence: undefined,
-                    minOccurrencesForPresence: undefined
+                    minValidationWeighting: undefined
                 }
             };
             // Act

@@ -26,14 +26,6 @@ public class DiseaseExtent {
     @Column(name = "min_validation_weighting")
     private Double minValidationWeighting;
 
-    // The minimum number of occurrences in an admin unit to indicate presence (initial extent generation)
-    @Column(name = "min_occurrences_for_presence")
-    private Integer minOccurrencesForPresence;
-
-    // The minimum number of occurrences in an admin unit to indicate possible presence (initial extent generation)
-    @Column(name = "min_occurrences_for_possible_presence")
-    private Integer minOccurrencesForPossiblePresence;
-
     // Occurrences up to this age are given the higher occurrence score, older ones are given the lower score
     @Column(name = "max_months_ago_for_higher_occurrence_score")
     private Integer maxMonthsAgoForHigherOccurrenceScore;
@@ -66,13 +58,10 @@ public class DiseaseExtent {
     }
 
     public DiseaseExtent(DiseaseGroup diseaseGroup, Double minValidationWeighting,
-                         Integer minOccurrencesForPresence, Integer minOccurrencesForPossiblePresence,
                          Integer maxMonthsAgoForHigherOccurrenceScore,
                          Integer lowerOccurrenceScore, Integer higherOccurrenceScore) {
         this(diseaseGroup);
         this.minValidationWeighting = minValidationWeighting;
-        this.minOccurrencesForPresence = minOccurrencesForPresence;
-        this.minOccurrencesForPossiblePresence = minOccurrencesForPossiblePresence;
         this.maxMonthsAgoForHigherOccurrenceScore = maxMonthsAgoForHigherOccurrenceScore;
         this.lowerOccurrenceScore = lowerOccurrenceScore;
         this.higherOccurrenceScore = higherOccurrenceScore;
@@ -88,22 +77,6 @@ public class DiseaseExtent {
 
     public void setMinValidationWeighting(Double minimumValidationWeighting) {
         this.minValidationWeighting = minimumValidationWeighting;
-    }
-
-    public Integer getMinOccurrencesForPresence() {
-        return minOccurrencesForPresence;
-    }
-
-    public void setMinOccurrencesForPresence(Integer minimumOccurrencesForPresence) {
-        this.minOccurrencesForPresence = minimumOccurrencesForPresence;
-    }
-
-    public Integer getMinOccurrencesForPossiblePresence() {
-        return minOccurrencesForPossiblePresence;
-    }
-
-    public void setMinOccurrencesForPossiblePresence(Integer minimumOccurrencesForPossiblePresence) {
-        this.minOccurrencesForPossiblePresence = minimumOccurrencesForPossiblePresence;
     }
 
     public Integer getMaxMonthsAgoForHigherOccurrenceScore() {
@@ -156,10 +129,6 @@ public class DiseaseExtent {
             return false;
         if (maxMonthsAgoForHigherOccurrenceScore != null ? !maxMonthsAgoForHigherOccurrenceScore.equals(that.maxMonthsAgoForHigherOccurrenceScore) : that.maxMonthsAgoForHigherOccurrenceScore != null)
             return false;
-        if (minOccurrencesForPossiblePresence != null ? !minOccurrencesForPossiblePresence.equals(that.minOccurrencesForPossiblePresence) : that.minOccurrencesForPossiblePresence != null)
-            return false;
-        if (minOccurrencesForPresence != null ? !minOccurrencesForPresence.equals(that.minOccurrencesForPresence) : that.minOccurrencesForPresence != null)
-            return false;
         if (minValidationWeighting != null ? !minValidationWeighting.equals(that.minValidationWeighting) : that.minValidationWeighting != null)
             return false;
 
@@ -170,8 +139,6 @@ public class DiseaseExtent {
     public int hashCode() {
         int result = diseaseGroupId != null ? diseaseGroupId.hashCode() : 0;
         result = 31 * result + (minValidationWeighting != null ? minValidationWeighting.hashCode() : 0);
-        result = 31 * result + (minOccurrencesForPresence != null ? minOccurrencesForPresence.hashCode() : 0);
-        result = 31 * result + (minOccurrencesForPossiblePresence != null ? minOccurrencesForPossiblePresence.hashCode() : 0);
         result = 31 * result + (maxMonthsAgoForHigherOccurrenceScore != null ? maxMonthsAgoForHigherOccurrenceScore.hashCode() : 0);
         result = 31 * result + (lowerOccurrenceScore != null ? lowerOccurrenceScore.hashCode() : 0);
         result = 31 * result + (higherOccurrenceScore != null ? higherOccurrenceScore.hashCode() : 0);
