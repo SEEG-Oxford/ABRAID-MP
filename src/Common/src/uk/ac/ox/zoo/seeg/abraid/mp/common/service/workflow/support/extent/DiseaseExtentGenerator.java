@@ -65,7 +65,7 @@ public class DiseaseExtentGenerator {
         DiseaseExtentGenerationInputData validatorExtentInputs = extentDataSelector.selectForValidatorExtent(
                 diseaseGroup, adminUnits, isInitial, process, minimumOccurrenceDate);
         DiseaseExtentGenerationOutputData validatorExtentResults = generateExtent(
-                diseaseGroup, validatorExtentInputs, isInitial);
+                diseaseGroup, validatorExtentInputs);
 
         // Calculate new modelling extent (if required)
         DiseaseExtentGenerationOutputData modellingExtentResults;
@@ -74,7 +74,7 @@ public class DiseaseExtentGenerator {
         } else {
             DiseaseExtentGenerationInputData modellingExtentInputs = extentDataSelector.selectForModellingExtent(
                     diseaseGroup, validatorExtentInputs);
-            modellingExtentResults = generateExtent(diseaseGroup, modellingExtentInputs, false);
+            modellingExtentResults = generateExtent(diseaseGroup, modellingExtentInputs);
         }
 
         // Save everything
@@ -93,13 +93,13 @@ public class DiseaseExtentGenerator {
     }
 
     private DiseaseExtentGenerationOutputData generateExtent(
-            DiseaseGroup diseaseGroup, DiseaseExtentGenerationInputData extentInputs, boolean isInitial) {
+            DiseaseGroup diseaseGroup, DiseaseExtentGenerationInputData extentInputs) {
         logDataMessage(extentInputs);
 
         DiseaseExtentGeneratorHelper helper =
                 helperFactory.createHelper(diseaseGroup, extentInputs);
 
-        return helper.computeDiseaseExtent(isInitial);
+        return helper.computeDiseaseExtent();
     }
 
     private void saveExtent(DiseaseGroup diseaseGroup,

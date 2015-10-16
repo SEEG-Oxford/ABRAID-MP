@@ -68,7 +68,7 @@ public class DiseaseExtentGeneratorTest extends BaseDiseaseExtentGenerationTests
 
         // Assert
         verify(dataSelector).selectForValidatorExtent(diseaseGroup, adminUnits, true, DiseaseProcessType.AUTOMATIC, minimumOccurrenceDate);
-        verify(helper).computeDiseaseExtent(true);
+        verify(helper).computeDiseaseExtent();
     }
 
     @Test
@@ -85,7 +85,7 @@ public class DiseaseExtentGeneratorTest extends BaseDiseaseExtentGenerationTests
         // Assert
         verify(dataSelector).selectForValidatorExtent(diseaseGroup, adminUnits, false, DiseaseProcessType.AUTOMATIC, minimumOccurrenceDate);
         verify(helperFactory).createHelper(diseaseGroup, validatorInputData);
-        verify(helper).computeDiseaseExtent(false);
+        verify(helper).computeDiseaseExtent();
     }
 
     @Test
@@ -102,7 +102,7 @@ public class DiseaseExtentGeneratorTest extends BaseDiseaseExtentGenerationTests
         // Assert
         verify(dataSelector).selectForModellingExtent(diseaseGroup, validatorInputData);
         verify(helperFactory).createHelper(diseaseGroup, modellingInputData);
-        verify(helper).computeDiseaseExtent(false);
+        verify(helper).computeDiseaseExtent();
     }
 
     @Test
@@ -119,7 +119,7 @@ public class DiseaseExtentGeneratorTest extends BaseDiseaseExtentGenerationTests
         // Assert
         verify(dataSelector, never()).selectForModellingExtent(diseaseGroup, validatorInputData);
         verify(helperFactory, never()).createHelper(diseaseGroup, modellingInputData);
-        verify(helper, never()).computeDiseaseExtent(false);
+        verify(helper, never()).computeDiseaseExtent();
     }
 
     @Test
@@ -136,7 +136,7 @@ public class DiseaseExtentGeneratorTest extends BaseDiseaseExtentGenerationTests
         // Assert
         verify(dataSelector, never()).selectForModellingExtent(diseaseGroup, validatorInputData);
         verify(helperFactory, never()).createHelper(diseaseGroup, modellingInputData);
-        verify(helper, never()).computeDiseaseExtent(false);
+        verify(helper, never()).computeDiseaseExtent();
     }
 
     @Test
@@ -153,7 +153,7 @@ public class DiseaseExtentGeneratorTest extends BaseDiseaseExtentGenerationTests
         // Assert
         verify(dataSelector, never()).selectForModellingExtent(diseaseGroup, validatorInputData);
         verify(helperFactory, never()).createHelper(diseaseGroup, modellingInputData);
-        verify(helper, never()).computeDiseaseExtent(false);
+        verify(helper, never()).computeDiseaseExtent();
     }
 
     @Test
@@ -262,7 +262,7 @@ public class DiseaseExtentGeneratorTest extends BaseDiseaseExtentGenerationTests
 
     private void setupHelperFactory(DiseaseExtentGenerationInputData inputData, DiseaseExtentGeneratorHelper helperResult, DiseaseExtentGenerationOutputData result) {
         when(helperFactory.createHelper(diseaseGroup, inputData)).thenReturn(helperResult);
-        when(helperResult.computeDiseaseExtent(anyBoolean())).thenReturn(result);
+        when(helperResult.computeDiseaseExtent()).thenReturn(result);
     }
 
     private void setupExistingExtent(List<AdminUnitDiseaseExtentClass> existingDiseaseExtent) {
