@@ -34,11 +34,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static ch.lambdaj.Lambda.group;
-import static ch.lambdaj.Lambda.on;
-import static ch.lambdaj.Lambda.sort;
+import static ch.lambdaj.Lambda.*;
 import static ch.lambdaj.collection.LambdaCollections.with;
 import static ch.lambdaj.group.Groups.by;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.not;
 
 /**
  * Main model output handler.
@@ -145,7 +145,11 @@ public class MainHandler {
     public boolean handleOldRasterDeletion(int diseaseGroupId) {
         ModelRun runToKeep = modelRunService.getMostRecentlyRequestedModelRunWhichCompleted(diseaseGroupId);
         Collection<ModelRun> runsToDelete = modelRunService.getModelRunsForDiseaseGroup(diseaseGroupId);
-        runsToDelete.remove(runToKeep);
+        if (runToKeep != null) {
+            // Note: we have to use filter here instead of a simple ".remove" as the model run objects might not be the same
+            // (i.e. if the hibernate cache hasn't been retained)
+            runsToDelete = filter(having(on(ModelRun.class).getId(), not(equalTo(runToKeep.getId()))), runsToDelete);
+        }
 
         boolean result = true;
         for (ModelRun runToDelete : runsToDelete) {
