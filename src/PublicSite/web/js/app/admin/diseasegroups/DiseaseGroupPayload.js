@@ -51,7 +51,7 @@ define([], function () {
                 higherOccurrenceScore:
                     parseInteger(diseaseExtentParametersViewModel.higherOccurrenceScore()),
                 minValidationWeighting:
-                    parseNumber(diseaseExtentParametersViewModel.minValidationWeighting()),
+                    parseNumber(diseaseExtentParametersViewModel.minValidationWeighting())
             }
         };
     };

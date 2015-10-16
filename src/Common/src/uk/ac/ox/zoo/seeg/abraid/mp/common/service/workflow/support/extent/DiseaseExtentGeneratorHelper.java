@@ -184,7 +184,7 @@ public class DiseaseExtentGeneratorHelper {
             return computeDiseaseExtentClass(occurrencesForAdminUnit, reviewsForAdminUnit, 1);
         } else if (occurrencesForParentCountry != null) {
             // There are no occurrences or reviews, so use the score for the parent country, without reviews, halved
-            return computeDiseaseExtentClass(occurrencesForParentCountry, new ArrayList<AdminUnitReview>(), 0.5);
+            return computeDiseaseExtentClass(occurrencesForParentCountry, new ArrayList<AdminUnitReview>(), 0.5); ///CHECKSTYLE:SUPPRESS LineLengthCheck|MagicNumberCheck
         } else {
             // There are no occurrences or reviews and the admin unit doesn't have a parent country (it is a country)
             return DiseaseExtentClass.UNCERTAIN;
