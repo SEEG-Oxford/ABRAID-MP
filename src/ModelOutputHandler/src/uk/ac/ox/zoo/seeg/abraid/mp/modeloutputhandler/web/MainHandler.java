@@ -146,8 +146,8 @@ public class MainHandler {
         ModelRun runToKeep = modelRunService.getMostRecentlyRequestedModelRunWhichCompleted(diseaseGroupId);
         Collection<ModelRun> runsToDelete = modelRunService.getModelRunsForDiseaseGroup(diseaseGroupId);
         if (runToKeep != null) {
-            // Note: we have to use filter here instead of a simple ".remove" as the model run objects might not be the same
-            // (i.e. if the hibernate cache hasn't been retained)
+            // Note: we have to use filter here instead of a simple ".remove" as the model run objects might not be
+            // the same (i.e. if the hibernate cache hasn't been retained)
             runsToDelete = filter(having(on(ModelRun.class).getId(), not(equalTo(runToKeep.getId()))), runsToDelete);
         }
 
