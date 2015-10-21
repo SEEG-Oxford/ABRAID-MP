@@ -49,7 +49,13 @@ public final class RasterUtils {
     private static final String CANNOT_FIND_FILE_MESSAGE = "Cannot find raster file %s";
 
     private static final AbstractGridFormat GEOTIFF_FORMAT = new GeoTiffFormat();
-    private static final float GEOTIFF_COMPRESSION_LEVEL = 0.9F;
+
+    private static final float GEOTIFF_COMPRESSION_QUALITY = 1F;
+    // This equates to "level 9" (level = (int)(1 + 8*quality))
+    // https://github.com/geosolutions-it/imageio-ext/blob/master/plugin/tiff/src/main/java/it/geosolutions/imageioimpl
+    // /plugins/tiff/TIFFDeflater.java#L105
+    // The compression is loss less. The level is a speed vs compression trade-off.
+
     private static final String GEOTIFF_COMPRESSION_TYPE = "Deflate";
     private static final Hints RASTER_READ_HINTS =
             new Hints(Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, GeometryUtils.WGS_84_CRS);
@@ -188,12 +194,24 @@ public final class RasterUtils {
     public static void saveRaster(File location, WritableRaster raster,
                                   Envelope2D extents, GridSampleDimension[] properties) throws IOException {
         GridCoverage2D targetRaster = null;
-        GridCoverageWriter writer = null;
-
         try {
             GridCoverageFactory factory = new GridCoverageFactory();
             targetRaster = factory.create(location.getName(), raster, extents, properties);
+            saveRaster(location, targetRaster);
+        } finally {
+            disposeRaster(targetRaster);
+        }
+    }
 
+    /**
+     * Save a set of raster data at a given location.
+     * @param location The file location at which to save the raster.
+     * @param targetRaster The raw pixel values & metadata for the raster.
+     * @throws IOException thrown if unable to save the raster.
+     */
+    public static void saveRaster(File location, GridCoverage2D targetRaster) throws IOException {
+        GridCoverageWriter writer = null;
+        try {
             writer = GEOTIFF_FORMAT.getWriter(location);
             writer.write(targetRaster, getGeoTiffWriteParameters());
         } catch (Exception e) {
@@ -201,7 +219,6 @@ public final class RasterUtils {
             LOGGER.error(message, e);
             throw new IOException(message, e);
         } finally {
-            disposeRaster(targetRaster);
             disposeResource(writer);
         }
     }
@@ -243,7 +260,7 @@ public final class RasterUtils {
         GeoTiffWriteParams writeParams = new GeoTiffWriteParams();
         writeParams.setCompressionMode(GeoTiffWriteParams.MODE_EXPLICIT);
         writeParams.setCompressionType(GEOTIFF_COMPRESSION_TYPE);
-        writeParams.setCompressionQuality(GEOTIFF_COMPRESSION_LEVEL);
+        writeParams.setCompressionQuality(GEOTIFF_COMPRESSION_QUALITY);
         ParameterValue parameterValue = AbstractGridFormat.GEOTOOLS_WRITE_PARAMS.createValue();
         parameterValue.setValue(writeParams);
         return new GeneralParameterValue[] {
