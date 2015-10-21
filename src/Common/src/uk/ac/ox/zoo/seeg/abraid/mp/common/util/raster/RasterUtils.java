@@ -209,6 +209,9 @@ public final class RasterUtils {
     /**
      * Correctly dispose of a GridCoverage2D raster object.
      * This includes disposing the PlanarImage object that has a read lock on the raster file.
+     * It also invokes a forced garbage collection, as something in the JAI stack doesn't properly release the image
+     * until the next GC. Without this there are intermittent unit test failures (rasters being reopened by different
+     * tests before the image is released).
      * @param raster The raster to be disposed.
      */
     public static void disposeRaster(GridCoverage2D raster) {
@@ -218,6 +221,7 @@ public final class RasterUtils {
                 ImageUtilities.disposePlanarImageChain((PlanarImage) image);
             }
             raster.dispose(true);
+            System.gc();
         }
     }
 
