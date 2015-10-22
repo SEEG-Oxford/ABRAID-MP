@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.util.raster;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.log4j.Logger;
 import org.geotools.coverage.GridSampleDimension;
 import org.geotools.coverage.grid.GridCoverage2D;
@@ -231,6 +232,7 @@ public final class RasterUtils {
      * tests before the image is released).
      * @param raster The raster to be disposed.
      */
+    @SuppressFBWarnings("DM_GC")
     public static void disposeRaster(GridCoverage2D raster) {
         if (raster != null) {
             RenderedImage image = raster.getRenderedImage();
