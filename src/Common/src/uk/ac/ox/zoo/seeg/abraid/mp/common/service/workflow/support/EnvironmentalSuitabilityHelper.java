@@ -4,17 +4,11 @@ import com.vividsolutions.jts.geom.Point;
 import org.apache.log4j.Logger;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridEnvelope2D;
-import org.geotools.coverage.grid.io.AbstractGridFormat;
 import org.geotools.coverage.processing.Operations;
-import org.geotools.gce.geotiff.GeoTiffFormat;
-import org.geotools.gce.geotiff.GeoTiffWriteParams;
 import org.geotools.geometry.Envelope2D;
 import org.geotools.geometry.jts.JTS;
 import org.opengis.coverage.PointOutsideCoverageException;
-import org.opengis.coverage.grid.GridCoverageWriter;
 import org.opengis.geometry.DirectPosition;
-import org.opengis.parameter.GeneralParameterValue;
-import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.TransformException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
@@ -301,7 +295,7 @@ public class EnvironmentalSuitabilityHelper {
 
         // Cut to masked pixel bounds
         GridCoverage2D maskedRaster = null;
-        GridCoverage2D croppedRaster = null;
+        GridCoverage2D virtualCroppedRaster = null;
         try {
             maskedRaster = RasterUtils.loadRaster(maskedFile);
             Envelope2D cropEnvelope = null;
@@ -310,28 +304,15 @@ public class EnvironmentalSuitabilityHelper {
             } catch (TransformException e) {
                 throw new IOException(e);
             }
-            croppedRaster = (GridCoverage2D) (new Operations(null)).crop(maskedRaster, cropEnvelope);
+            virtualCroppedRaster = (GridCoverage2D) (new Operations(null)).crop(maskedRaster, cropEnvelope);
 
             // Save as compressed geotiff
-            final GeoTiffFormat format = new GeoTiffFormat();
-            final GridCoverageWriter writer = format.getWriter(croppedFile);
-            final GeoTiffWriteParams writeParams = new GeoTiffWriteParams();
-            writeParams.setCompressionMode(GeoTiffWriteParams.MODE_EXPLICIT);
-            writeParams.setCompressionType("Deflate");
-            writeParams.setCompressionQuality(1); // this equates to "level 9" (level = (int)(1 + 8*quality))
-            // https://github.com/geosolutions-it/imageio-ext/blob/master/plugin/tiff/src
-            // /main/java/it/geosolutions/imageioimpl/plugins/tiff/TIFFDeflater.java#L105
-            final ParameterValueGroup params = format.getWriteParameters();
-            params.parameter(
-                    AbstractGridFormat.GEOTOOLS_WRITE_PARAMS.getName().toString())
-                    .setValue(writeParams);
-            writer.write(croppedRaster, params.values()
-                    .toArray(new GeneralParameterValue[1]));
+            RasterUtils.saveRaster(croppedFile, virtualCroppedRaster);
 
             // Clean up
         } finally {
             RasterUtils.disposeRaster(maskedRaster);
-            RasterUtils.disposeRaster(croppedRaster);
+            RasterUtils.disposeRaster(virtualCroppedRaster);
         }
 
         if (maskedFile.exists() && !maskedFile.delete()) {

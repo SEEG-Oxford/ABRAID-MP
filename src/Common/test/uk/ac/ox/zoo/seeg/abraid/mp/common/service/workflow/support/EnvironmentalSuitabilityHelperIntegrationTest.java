@@ -13,6 +13,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ValidationParameterCacheService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.util.raster.RasterUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.RasterFilePathFactory;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
 
@@ -149,16 +150,23 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractSprin
         DiseaseOccurrence occurrence = createOccurrence(1, 1, 1, LocationPrecision.PRECISE);
         ModelRun modelRun = createAndSaveModelRun("test name", diseaseGroup.getId(), ModelRunStatus.COMPLETED);
         mockGetRasterFileForModelRun(modelRun);
-        GridCoverage2D suitabilityRaster = helper.getLatestMeanPredictionRaster(diseaseGroup);
-        GridCoverage2D[] adminRasters = helper.getSingleAdminRaster(LocationPrecision.PRECISE);
+        GridCoverage2D suitabilityRaster = null;
+        GridCoverage2D[] adminRasters = null;
+        try {
+            suitabilityRaster = helper.getLatestMeanPredictionRaster(diseaseGroup);
+            adminRasters = helper.getSingleAdminRaster(LocationPrecision.PRECISE);
 
-        when(cacheService.getEnvironmentalSuitabilityFromCache(occurrence.getDiseaseGroup().getId(), occurrence.getLocation().getId())).thenReturn(12345d);
+            when(cacheService.getEnvironmentalSuitabilityFromCache(occurrence.getDiseaseGroup().getId(), occurrence.getLocation().getId())).thenReturn(12345d);
 
-        // Act
-        Double suitability = helper.findEnvironmentalSuitability(occurrence, suitabilityRaster, adminRasters);
+            // Act
+            Double suitability = helper.findEnvironmentalSuitability(occurrence, suitabilityRaster, adminRasters);
 
-        // Assert
-        assertThat(suitability).isEqualTo(12345d);
+            // Assert
+            assertThat(suitability).isEqualTo(12345d);
+        } finally {
+            RasterUtils.disposeRaster(suitabilityRaster);
+            RasterUtils.disposeRasters(adminRasters);
+        }
     }
 
     @Test
@@ -174,7 +182,7 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractSprin
         // Assert
         File adminRasterCroppedBy321 = new File("Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/service/workflow/support/testdata/test_raster_large_double_cropped_by_321.tif");
         assertThat(cropped).hasContentEqualTo(adminRasterCroppedBy321);
-        cropped.delete();
+        assertThat(cropped.delete()).isTrue();
     }
 
     @Test
@@ -190,7 +198,7 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractSprin
         // Assert
         File adminRasterCroppedBy654 = new File("Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/service/workflow/support/testdata/test_raster_large_double_cropped_by_654.tif");
         assertThat(cropped).hasContentEqualTo(adminRasterCroppedBy654);
-        cropped.delete();
+        assertThat(cropped.delete()).isTrue();
     }
 
     @Test
@@ -231,23 +239,31 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractSprin
         DiseaseOccurrence occurrence = createOccurrence(x, y, 1, LocationPrecision.PRECISE);
         ModelRun modelRun = createAndSaveModelRun("test name", diseaseGroup.getId(), ModelRunStatus.COMPLETED);
         mockGetRasterFileForModelRun(modelRun);
-        GridCoverage2D suitabilityRaster = helper.getLatestMeanPredictionRaster(diseaseGroup);
-        GridCoverage2D[] adminRasters = helper.getSingleAdminRaster(LocationPrecision.PRECISE);
+        GridCoverage2D suitabilityRaster = null;
+        GridCoverage2D[] adminRasters = null;
+        try {
+            suitabilityRaster = helper.getLatestMeanPredictionRaster(diseaseGroup);
+            adminRasters = helper.getSingleAdminRaster(LocationPrecision.PRECISE);
 
-        // Act
-        Double suitability = helper.findEnvironmentalSuitability(occurrence, suitabilityRaster, adminRasters);
 
-        // Assert
-        assertThat(suitabilityRaster).isNotNull();
-        assertThat(adminRasters).isNotNull();
-        assertThat(adminRasters[0]).isNull();
-        assertThat(adminRasters[1]).isNull();
-        assertThat(adminRasters[2]).isNull();
-        if (expectedEnvironmentalSuitability != null) {
-            assertThat(suitability).isEqualTo(expectedEnvironmentalSuitability, offset(0.0000005));
-            verify(cacheService).saveEnvironmentalSuitabilityCacheEntry(occurrence.getDiseaseGroup().getId(), occurrence.getLocation().getId(), suitability);
-        } else {
-            assertThat(suitability).isNull();
+            // Act
+            Double suitability = helper.findEnvironmentalSuitability(occurrence, suitabilityRaster, adminRasters);
+
+            // Assert
+            assertThat(suitabilityRaster).isNotNull();
+            assertThat(adminRasters).isNotNull();
+            assertThat(adminRasters[0]).isNull();
+            assertThat(adminRasters[1]).isNull();
+            assertThat(adminRasters[2]).isNull();
+            if (expectedEnvironmentalSuitability != null) {
+                assertThat(suitability).isEqualTo(expectedEnvironmentalSuitability, offset(0.0000005));
+                verify(cacheService).saveEnvironmentalSuitabilityCacheEntry(occurrence.getDiseaseGroup().getId(), occurrence.getLocation().getId(), suitability);
+            } else {
+                assertThat(suitability).isNull();
+            }
+        } finally {
+            RasterUtils.disposeRaster(suitabilityRaster);
+            RasterUtils.disposeRasters(adminRasters);
         }
     }
 
@@ -277,21 +293,29 @@ public class EnvironmentalSuitabilityHelperIntegrationTest extends AbstractSprin
         ModelRun modelRun = createAndSaveModelRun("test name", diseaseGroup.getId(), ModelRunStatus.COMPLETED);
         mockGetRasterFileForModelRun(modelRun);
         mockGetAdminRasterFileForLevel(precision.getModelValue());
-        GridCoverage2D suitabilityRaster = helper.getLatestMeanPredictionRaster(diseaseGroup);
-        GridCoverage2D[] adminRasters = helper.getSingleAdminRaster(precision);
+        mockGetRasterFileForModelRun(modelRun);
+        GridCoverage2D suitabilityRaster = null;
+        GridCoverage2D[] adminRasters = null;
+        try {
+            suitabilityRaster = helper.getLatestMeanPredictionRaster(diseaseGroup);
+            adminRasters = helper.getSingleAdminRaster(precision);
 
-        // Act
-        Double suitability = helper.findEnvironmentalSuitability(occurrence, suitabilityRaster, adminRasters);
+            // Act
+            Double suitability = helper.findEnvironmentalSuitability(occurrence, suitabilityRaster, adminRasters);
 
-        // Assert
-        assertThat(suitabilityRaster).isNotNull();
-        assertThat(adminRasters).isNotNull();
-        assertThat(adminRasters[precision.getModelValue()]).isNotNull();
-        if (expectedEnvironmentalSuitability != null) {
-            assertThat(suitability).isEqualTo(expectedEnvironmentalSuitability, offset(0.0000005));
-            verify(cacheService).saveEnvironmentalSuitabilityCacheEntry(occurrence.getDiseaseGroup().getId(), occurrence.getLocation().getId(), suitability);
-        } else {
-            assertThat(suitability).isNull();
+            // Assert
+            assertThat(suitabilityRaster).isNotNull();
+            assertThat(adminRasters).isNotNull();
+            assertThat(adminRasters[precision.getModelValue()]).isNotNull();
+            if (expectedEnvironmentalSuitability != null) {
+                assertThat(suitability).isEqualTo(expectedEnvironmentalSuitability, offset(0.0000005));
+                verify(cacheService).saveEnvironmentalSuitabilityCacheEntry(occurrence.getDiseaseGroup().getId(), occurrence.getLocation().getId(), suitability);
+            } else {
+                assertThat(suitability).isNull();
+            }
+        } finally {
+            RasterUtils.disposeRaster(suitabilityRaster);
+            RasterUtils.disposeRasters(adminRasters);
         }
     }
 
