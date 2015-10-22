@@ -54,7 +54,7 @@ public final class RasterUtils {
     // This equates to "level 9" (level = (int)(1 + 8*quality))
     // https://github.com/geosolutions-it/imageio-ext/blob/master/plugin/tiff/src/main/java/it/geosolutions/imageioimpl
     // /plugins/tiff/TIFFDeflater.java#L105
-    // The compression is loss less. The level is a speed vs compression trade-off.
+    // The compression is lossless. The level is a speed vs compression trade-off.
 
     private static final String GEOTIFF_COMPRESSION_TYPE = "Deflate";
     private static final Hints RASTER_READ_HINTS =
