@@ -13,7 +13,7 @@ import java.util.List;
  * Copyright (c) 2014 University of Oxford
  */
 @Repository
-public class CountryDaoImpl extends AbstractDao<Country, String> implements CountryDao {
+public class CountryDaoImpl extends AbstractDao<Country, Integer> implements CountryDao {
     public CountryDaoImpl(SessionFactory sessionFactory) {
         super(sessionFactory);
     }
@@ -28,6 +28,16 @@ public class CountryDaoImpl extends AbstractDao<Country, String> implements Coun
     @Override
     public Country getByName(String name) {
         return uniqueResultNamedQuery("getCountryByName", "name", name);
+    }
+
+    /**
+     * Gets an country unit GAUL code.
+     * @param gaulCode The GAUL code.
+     * @return The country with the specified GAUL code, or null if it does not exist.
+     */
+    @Override
+    public Country getByGaulCode(Integer gaulCode) {
+        return getById(gaulCode);
     }
 
     /**

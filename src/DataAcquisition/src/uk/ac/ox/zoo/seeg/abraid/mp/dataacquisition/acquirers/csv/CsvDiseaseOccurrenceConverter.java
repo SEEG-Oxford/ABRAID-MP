@@ -68,7 +68,7 @@ public class CsvDiseaseOccurrenceConverter {
         location.setName(csvDiseaseOccurrence.getSite());
         location.setGeom(csvDiseaseOccurrence.getLongitude(), csvDiseaseOccurrence.getLatitude());
         location.setPrecision(convertPrecision(csvDiseaseOccurrence.getPrecision()));
-        location.setCountryGaulCode(convertCountry(csvDiseaseOccurrence.getCountryName()));
+        location.setCountry(convertCountry(csvDiseaseOccurrence.getCountryName()));
         return location;
     }
 
@@ -115,10 +115,10 @@ public class CsvDiseaseOccurrenceConverter {
         }
     }
 
-    private int convertCountry(String countryName) {
+    private Country convertCountry(String countryName) {
         Country country = csvLookupData.getCountryMap().get(countryName.toLowerCase());
         if (country != null) {
-            return country.getGaulCode();
+            return country;
         }
         throw new DataAcquisitionException(String.format(COUNTRY_NAME_INVALID_MESSAGE, countryName));
     }

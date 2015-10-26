@@ -41,6 +41,24 @@ public class CountryDaoTest extends AbstractCommonSpringIntegrationTests {
         assertThat(country).isNull();
     }
 
+
+    @Test
+    public void getCountryByValidGaul() {
+        String countryName = "Australia";
+        int gaulCode = 17;
+        Country country = countryDao.getByGaulCode(gaulCode);
+        assertThat(country).isNotNull();
+        assertThat(country.getGaulCode()).isEqualTo(gaulCode);
+        assertThat(country.getName()).isEqualTo(countryName);
+    }
+
+    @Test
+    public void getCountryByInvalidGAUL() {
+        int gaulCode = 17777;
+        Country country = countryDao.getByGaulCode(gaulCode);
+        assertThat(country).isNull();
+    }
+
     @Test
     public void getCountriesForMinDataSpreadCalculationReturnsExpectedNumber() {
         // Act

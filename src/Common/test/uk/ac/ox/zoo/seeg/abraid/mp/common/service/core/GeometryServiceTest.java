@@ -215,13 +215,15 @@ public class GeometryServiceTest {
         // Arrange
         Point point = GeometryUtils.createPoint(1, 2);
         Integer expectedGaulCode = 123;
+        Country expectedCountry = mock(Country.class);
         when(nativeSQL.findCountryThatContainsPoint(point)).thenReturn(expectedGaulCode);
+        when(countryDao.getByGaulCode(expectedGaulCode)).thenReturn(expectedCountry);
 
         // Act
-        Integer actualGaulCode = geometryService.findCountryThatContainsPoint(point);
+        Country actualCountry = geometryService.findCountryThatContainsPoint(point);
 
         // Assert
-        assertThat(actualGaulCode).isEqualTo(expectedGaulCode);
+        assertThat(actualCountry).isSameAs(expectedCountry);
     }
 
     @Test

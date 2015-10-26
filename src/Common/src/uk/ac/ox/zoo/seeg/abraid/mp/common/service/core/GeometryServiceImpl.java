@@ -131,10 +131,11 @@ public class GeometryServiceImpl implements GeometryService {
     /**
      * Finds the country that contains the specified point.
      * @param point The point.
-     * @return The GAUL code of the country that contains the specified point.
+     * @return The country that contains the specified point.
      */
-    public Integer findCountryThatContainsPoint(Point point) {
-        return nativeSQL.findCountryThatContainsPoint(point);
+    public Country findCountryThatContainsPoint(Point point) {
+        Integer gaul = nativeSQL.findCountryThatContainsPoint(point);
+        return (gaul == null) ? null : countryDao.getByGaulCode(gaul);
     }
 
     /**

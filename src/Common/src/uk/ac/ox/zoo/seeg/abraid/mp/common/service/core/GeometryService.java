@@ -72,9 +72,9 @@ public interface GeometryService {
     /**
      * Finds the country that contains the specified point.
      * @param point The point.
-     * @return The GAUL code of the country that contains the specified point.
+     * @return The country that contains the specified point.
      */
-    Integer findCountryThatContainsPoint(Point point);
+    Country findCountryThatContainsPoint(Point point);
 
     /**
      * Determines whether one of the land-sea border geometries contains the point.

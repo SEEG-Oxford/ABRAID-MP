@@ -14,7 +14,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import static ch.lambdaj.Lambda.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.*;
 
 /**
@@ -145,7 +147,7 @@ public class DiseaseOccurrenceSpreadHelperTest {
         DiseaseOccurrence occurrence = new DiseaseOccurrence(id);
         occurrence.setOccurrenceDate(new DateTime(occurrenceDate));
         Location location = new Location();
-        location.setCountryGaulCode(countryGaulCode);
+        location.setCountry((Country) selectFirst(countries, having(on(Country.class).getGaulCode(), equalTo(countryGaulCode))));
         location.setPrecision(precision);
         location.setIsModelEligible(modelEligible);
         occurrence.setLocation(location);
