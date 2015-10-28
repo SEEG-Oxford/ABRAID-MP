@@ -32,18 +32,17 @@ public class HealthMapReportEntryDaoImpl implements HealthMapReportEntryDao {
             ") " +
             "from DiseaseOccurrence as o " +
             "    inner join o.location location" +
-            "    inner join location.country country" +
             "    inner join o.alert alert " +
             "    inner join alert.feed feed " +
             "    inner join feed.provenance provenance " +
-            "    inner join o.diseaseGroup diseaseGroup " +
+            "    inner join qualifierJoin qualifier " +
             "where " +
             "    provenance.name='HealthMap' and " +
             "    location.hasPassedQc is TRUE " +
             "group by " +
             "    year(o.createdDate)," +
             "    month(o.createdDate), " +
-            "    qualifier";
+            "    qualifier.id";
 
     private final SessionFactory sessionFactory;
 
@@ -59,7 +58,7 @@ public class HealthMapReportEntryDaoImpl implements HealthMapReportEntryDao {
     @SuppressWarnings("unchecked")
     public List<HealthMapReportEntry> getHealthMapDiseaseReportEntries() {
         return sessionFactory.getCurrentSession().createQuery(
-                BASE_HEALTH_MAP_REPORT_QUERY.replaceAll("qualifier", "diseaseGroup")
+                BASE_HEALTH_MAP_REPORT_QUERY.replaceAll("qualifierJoin", "o.diseaseGroup")
         ).list();
     }
 
@@ -71,7 +70,7 @@ public class HealthMapReportEntryDaoImpl implements HealthMapReportEntryDao {
     @SuppressWarnings("unchecked")
     public List<HealthMapReportEntry> getHealthMapCountryReportEntries() {
         return sessionFactory.getCurrentSession().createQuery(
-                BASE_HEALTH_MAP_REPORT_QUERY.replaceAll("qualifier", "country")
+                BASE_HEALTH_MAP_REPORT_QUERY.replaceAll("qualifierJoin", "location.country")
         ).list();
     }
 }
