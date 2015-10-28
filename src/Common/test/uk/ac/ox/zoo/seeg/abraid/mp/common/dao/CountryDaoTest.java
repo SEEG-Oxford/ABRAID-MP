@@ -25,6 +25,17 @@ public class CountryDaoTest extends AbstractCommonSpringIntegrationTests {
     }
 
     @Test
+    public void getCountryNamesForHealthMapReport() {
+        // In the test data non of the country geoms are large enough. We could insert/update some, but the abraid user
+        // doesn't have insert/update access to the static readonly table.
+        // Act
+        List<String> actual = countryDao.getCountryNamesForHealthMapReport();
+
+        // Assert
+        assertThat(actual).hasSize(0);
+    }
+
+    @Test
     public void getCountryByValidName() {
         String countryName = "Australia";
         int gaulCode = 17;

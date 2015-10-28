@@ -17,6 +17,12 @@ public interface CountryDao {
     List<Country> getAll();
 
     /**
+     * Gets the names of all countries to be shown in the HealthMap country report (sorted).
+     * @return The country names.
+     */
+    List<String> getCountryNamesForHealthMapReport();
+
+    /**
      * Gets a country by name.
      * @param name The name.
      * @return The country, or null if not found.

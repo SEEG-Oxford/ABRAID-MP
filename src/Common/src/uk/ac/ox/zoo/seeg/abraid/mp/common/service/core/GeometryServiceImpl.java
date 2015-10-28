@@ -53,6 +53,15 @@ public class GeometryServiceImpl implements GeometryService {
     }
 
     /**
+     * Gets the names of all countries to be shown in the HealthMap country report (sorted).
+     * @return The country names.
+     */
+    @Override
+    public List<String> getCountryNamesForHealthMapReport() {
+        return countryDao.getCountryNamesForHealthMapReport();
+    }
+
+    /**
      * Gets a list of admin units for global or tropical diseases, depending on whether the specified disease group
      * is a global or a tropical disease.
      * @param diseaseGroup The disease group.

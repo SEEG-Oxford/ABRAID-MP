@@ -68,6 +68,19 @@ public class GeometryServiceTest {
     }
 
     @Test
+    public void getCountryNamesForHealthMapReport() {
+        // Arrange
+        List<String> expected = Arrays.asList("A", "B", "C");
+        when(countryDao.getCountryNamesForHealthMapReport()).thenReturn(expected);
+
+        // Act
+        List<String> actual = geometryService.getCountryNamesForHealthMapReport();
+
+        // Assert
+        assertThat(actual).isSameAs(expected);
+    }
+
+    @Test
     public void getAllAdminUnits() {
         // Arrange
         List<AdminUnitQC> adminUnits = Arrays.asList(new AdminUnitQC());

@@ -23,6 +23,12 @@ public interface GeometryService {
     List<HealthMapCountry> getAllHealthMapCountries();
 
     /**
+     * Gets the names of all countries to be shown in the HealthMap country report (sorted).
+     * @return The country names.
+     */
+    List<String> getCountryNamesForHealthMapReport();
+
+    /**
      * Gets a list of admin units for global or tropical diseases, depending on whether the specified disease group
      * is a global or a tropical disease.
      * @param diseaseGroup The disease group.
