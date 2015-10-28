@@ -82,6 +82,10 @@ public class DiseaseGroup {
     @Column(name = "is_global")
     private Boolean isGlobal;
 
+    // True if the disease group is an ABRAID priority disease.
+    @Column(name = "is_priority_disease", nullable = false)
+    private boolean isPriorityDisease = false;
+
     // A link to a further grouping of diseases for use by experts in the Data Validator.
     @ManyToOne
     @JoinColumn(name = "validator_disease_group_id")
@@ -275,6 +279,14 @@ public class DiseaseGroup {
 
     public void setGlobal(Boolean isGlobal) {
         this.isGlobal = isGlobal;
+    }
+
+    public boolean isPriorityDisease() {
+        return isPriorityDisease;
+    }
+
+    public void setPriorityDisease(boolean isPriorityDisease) {
+        this.isPriorityDisease = isPriorityDisease;
     }
 
     public ValidatorDiseaseGroup getValidatorDiseaseGroup() {
