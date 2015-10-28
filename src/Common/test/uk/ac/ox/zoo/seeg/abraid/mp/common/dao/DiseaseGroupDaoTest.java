@@ -473,6 +473,18 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
     }
 
     @Test
+    public void getDiseaseGroupNamesForHealthMapReport() {
+        // Act
+        List<String> actual = diseaseGroupDao.getDiseaseGroupNamesForHealthMapReport();
+
+        // Assert
+        assertThat(actual).hasSize(34);
+        assertThat(actual.get(0)).isEqualTo("Ascariasis");
+        assertThat(actual.get(1)).isEqualTo("Chikungunya");
+        assertThat(actual.get(2)).isEqualTo("Cholera");
+    }
+
+    @Test
     public void saveNewDiseaseGroupSavesDiseaseExtentWithSameId() {
         // Arrange
         DiseaseGroup diseaseGroup = initialiseDiseaseGroup();

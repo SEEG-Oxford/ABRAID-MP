@@ -532,6 +532,14 @@ public class DiseaseServiceImpl implements DiseaseService {
     }
 
     /**
+     * Gets the names of all disease groups to be shown in the HealthMap disease report (sorted).
+     * @return The disease groups names.
+     */
+    public List<String> getDiseaseGroupNamesForHealthMapReport() {
+        return diseaseGroupDao.getDiseaseGroupNamesForHealthMapReport();
+    }
+
+    /**
      * Returns the input date, with the number of days between scheduled model runs subtracted.
      * @param dateTime The input date.
      * @return The input date minus the number of days between scheduled model runs.

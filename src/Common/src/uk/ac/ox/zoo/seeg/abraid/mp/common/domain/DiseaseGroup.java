@@ -43,6 +43,10 @@ import javax.persistence.*;
                         "   and r.expert.id=:expertId" +
                         ") " +
                         "and dec.diseaseGroup.automaticModelRunsStartDate is not null"
+        ),
+        @NamedQuery(
+                name = "getDiseaseGroupNamesForHealthMapReport",
+                query = "select name from DiseaseGroup where isPriorityDisease is TRUE order by name asc"
         )
 })
 @Entity

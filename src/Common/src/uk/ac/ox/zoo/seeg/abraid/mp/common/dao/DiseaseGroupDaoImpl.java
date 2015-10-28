@@ -39,6 +39,17 @@ public class DiseaseGroupDaoImpl extends AbstractDao<DiseaseGroup, Integer> impl
     }
 
     /**
+     * Gets the names of all disease groups to be shown in the HealthMap disease report (sorted).
+     * @return The disease groups names.
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<String> getDiseaseGroupNamesForHealthMapReport() {
+        Query query = getParameterisedNamedQuery("getDiseaseGroupNamesForHealthMapReport");
+        return query.list();
+    }
+
+    /**
      * Gets the IDs of disease groups that have automatic model runs enabled.
      * @return The IDs of relevant disease groups.
      */

@@ -38,6 +38,12 @@ public interface DiseaseGroupDao {
     DiseaseGroup getById(Integer id);
 
     /**
+     * Gets the names of all disease groups to be shown in the HealthMap disease report (sorted).
+     * @return The disease groups names.
+     */
+    List<String> getDiseaseGroupNamesForHealthMapReport();
+
+    /**
      * Saves the specified diseaseGroup.
      * @param diseaseGroup The diseaseGroup to save.
      */
