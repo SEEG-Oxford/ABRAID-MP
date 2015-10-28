@@ -14,22 +14,35 @@ import java.util.List;
 public class HealthMapReportEntryDaoImpl implements HealthMapReportEntryDao {
     private static final String BASE_HEALTH_MAP_REPORT_QUERY =
             "select new uk.ac.ox.zoo.seeg.abraid.mp.common.domain.HealthMapReportEntry( " +
-            "    concat(year(o.createdDate),'-',month(o.createdDate)), " +
-            "    qualifier, " +
-            "    count(distinct case when o.location.precision='COUNTRY' then o.id else null end), " +
-            "    count(distinct case when o.location.precision='ADMIN1' then o.id else null end), " +
-            "    count(distinct case when o.location.precision='ADMIN2' then o.id else null end), " +
-            "    count(distinct case when o.location.precision='PRECISE' then o.id else null end)," +
-            "    count(distinct case when o.location.precision='COUNTRY' then o.location.id else null end), " +
-            "    count(distinct case when o.location.precision='ADMIN1' then o.location.id else null end), " +
-            "    count(distinct case when o.location.precision='ADMIN2' then o.location.id else null end), " +
-            "    count(distinct case when o.location.precision='PRECISE' then o.location.id else null end)" +
-            ") from DiseaseOccurrence as o " +
+            "    concat(" +
+            "        year(o.createdDate)," +
+            "        '-', " +
+            "        case when month(o.createdDate)<10 then '0' else '' end, " +
+            "        month(o.createdDate)" +
+            "    ), " +
+            "    qualifier.name, " +
+            "    sum(case when location.precision='COUNTRY' then 1 else 0 end), " +
+            "    sum(case when location.precision='ADMIN1' then 1 else 0 end), " +
+            "    sum(case when location.precision='ADMIN2' then 1 else 0 end), " +
+            "    sum(case when location.precision='PRECISE' then 1 else 0 end)," +
+            "    count(distinct case when location.precision='COUNTRY' then location.id else null end), " +
+            "    count(distinct case when location.precision='ADMIN1' then location.id else null end), " +
+            "    count(distinct case when location.precision='ADMIN2' then location.id else null end), " +
+            "    count(distinct case when location.precision='PRECISE' then location.id else null end)" +
+            ") " +
+            "from DiseaseOccurrence as o " +
+            "    inner join o.location location" +
+            "    inner join location.country country" +
+            "    inner join o.alert alert " +
+            "    inner join alert.feed feed " +
+            "    inner join feed.provenance provenance " +
+            "    inner join o.diseaseGroup diseaseGroup " +
             "where " +
-            "    o.alert.feed.provenance.name='HealthMap' and " +
-            "    o.location.hasPassedQc is TRUE " +
+            "    provenance.name='HealthMap' and " +
+            "    location.hasPassedQc is TRUE " +
             "group by " +
-            "    concat(year(o.createdDate),'-',month(o.createdDate)), " +
+            "    year(o.createdDate)," +
+            "    month(o.createdDate), " +
             "    qualifier";
 
     private final SessionFactory sessionFactory;
@@ -46,7 +59,7 @@ public class HealthMapReportEntryDaoImpl implements HealthMapReportEntryDao {
     @SuppressWarnings("unchecked")
     public List<HealthMapReportEntry> getHealthMapDiseaseReportEntries() {
         return sessionFactory.getCurrentSession().createQuery(
-                BASE_HEALTH_MAP_REPORT_QUERY.replaceAll("qualifier", "o.diseaseGroup.name")
+                BASE_HEALTH_MAP_REPORT_QUERY.replaceAll("qualifier", "diseaseGroup")
         ).list();
     }
 
@@ -58,7 +71,7 @@ public class HealthMapReportEntryDaoImpl implements HealthMapReportEntryDao {
     @SuppressWarnings("unchecked")
     public List<HealthMapReportEntry> getHealthMapCountryReportEntries() {
         return sessionFactory.getCurrentSession().createQuery(
-                BASE_HEALTH_MAP_REPORT_QUERY.replaceAll("qualifier", "o.location.country.name")
+                BASE_HEALTH_MAP_REPORT_QUERY.replaceAll("qualifier", "country")
         ).list();
     }
 }
