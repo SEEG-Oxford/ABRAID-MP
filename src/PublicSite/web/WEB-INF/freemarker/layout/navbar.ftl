@@ -48,6 +48,8 @@
                     <li><a href="<@spring.url "/admin/experts/"/>">Administration - Experts</a></li>
                     <li><a href="<@spring.url "/admin/covariates/"/>">Administration - Covariates</a></li>
                     <li><a href="<@spring.url "/admin/model/"/>">Administration - Model</a></li>
+                    <li><a href="<@spring.url "/admin/report/healthMapByCountry/"/>">Report - HealthMap Country</a></li>
+                    <li><a href="<@spring.url "/admin/report/healthMapByDisease/"/>">Report - HealthMap Disease</a></li>
                 </@security.authorize>
             </ul>
         </li>
