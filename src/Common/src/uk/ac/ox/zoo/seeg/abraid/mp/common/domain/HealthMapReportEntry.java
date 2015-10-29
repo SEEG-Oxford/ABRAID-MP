@@ -118,4 +118,21 @@ public class HealthMapReportEntry {
     }
     ///CHECKSTYLE:ON
     ///COVERAGE:ON
+
+
+    @Override
+    public String toString() {
+        return "HealthMapReportEntry{" +
+                "month='" + month + '\'' +
+                ", qualifier='" + qualifier + '\'' +
+                ", dataCountryCount=" + dataCountryCount +
+                ", dataAdmin1Count=" + dataAdmin1Count +
+                ", dataAdmin2Count=" + dataAdmin2Count +
+                ", dataPreciseCount=" + dataPreciseCount +
+                ", locationCountryCount=" + locationCountryCount +
+                ", locationAdmin1Count=" + locationAdmin1Count +
+                ", locationAdmin2Count=" + locationAdmin2Count +
+                ", locationPreciseCount=" + locationPreciseCount +
+                '}';
+    }
 }

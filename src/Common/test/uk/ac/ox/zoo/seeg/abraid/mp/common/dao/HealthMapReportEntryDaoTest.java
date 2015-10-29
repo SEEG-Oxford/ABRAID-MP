@@ -30,7 +30,6 @@ public class HealthMapReportEntryDaoTest extends AbstractCommonSpringIntegration
         assertThat(entries).containsOnly(
                 new HealthMapReportEntry(month, "Cholera", 0L, 3L, 0L, 0L, 0L, 2L, 0L, 0L),
                 new HealthMapReportEntry(month, "Dengue", 18L, 4L, 5L, 18L, 11L, 4L, 5L, 18L),
-                new HealthMapReportEntry(month, "Malarias", 2L, 2L, 0L, 0L, 2L, 2L, 0L, 0L),
                 new HealthMapReportEntry(month, "Poliomyelitis", 2L, 3L, 1L, 3L, 2L, 1L, 1L, 3L)
         );
     }
@@ -50,7 +49,6 @@ public class HealthMapReportEntryDaoTest extends AbstractCommonSpringIntegration
                 new HealthMapReportEntry(month, "Colombia",                 0L, 0L, 0L, 1L, 0L, 0L, 0L, 1L),
                 new HealthMapReportEntry(month, "Cook Islands",             2L, 0L, 0L, 0L, 1L, 0L, 0L, 0L),
                 new HealthMapReportEntry(month, "Fiji",                     2L, 0L, 0L, 2L, 1L, 0L, 0L, 2L),
-                new HealthMapReportEntry(month, "Ghana",                    1L, 0L, 0L, 0L, 1L, 0L, 0L, 0L),
                 new HealthMapReportEntry(month, "India",                    0L, 0L, 0L, 1L, 0L, 0L, 0L, 1L),
                 new HealthMapReportEntry(month, "Indonesia",                1L, 0L, 0L, 1L, 1L, 0L, 0L, 1L),
                 new HealthMapReportEntry(month, "Malaysia",                 4L, 0L, 0L, 1L, 1L, 0L, 0L, 1L),
@@ -63,8 +61,7 @@ public class HealthMapReportEntryDaoTest extends AbstractCommonSpringIntegration
                 new HealthMapReportEntry(month, "Singapore",                0L, 0L, 0L, 1L, 0L, 0L, 0L, 1L),
                 new HealthMapReportEntry(month, "Somalia",                  1L, 0L, 0L, 1L, 1L, 0L, 0L, 1L),
                 new HealthMapReportEntry(month, "Thailand",                 2L, 0L, 0L, 0L, 1L, 0L, 0L, 0L),
-                new HealthMapReportEntry(month, "United States of America", 0L, 3L, 0L, 0L, 0L, 1L, 0L, 0L),
-                new HealthMapReportEntry(month, "Zimbabwe",                 1L, 2L, 0L, 0L, 1L, 2L, 0L, 0L)
+                new HealthMapReportEntry(month, "United States of America", 0L, 3L, 0L, 0L, 0L, 1L, 0L, 0L)
         );
     }
 }

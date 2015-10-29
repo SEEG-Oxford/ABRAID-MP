@@ -50,7 +50,8 @@ public class ReportingController extends AbstractController {
         return getHealthMapReport(
                 model,
                 reportingService.getHealthMapDiseaseReportEntries(),
-                diseaseService.getDiseaseGroupNamesForHealthMapReport());
+                diseaseService.getDiseaseGroupNamesForHealthMapReport(),
+                false);
     }
 
     /**
@@ -64,20 +65,24 @@ public class ReportingController extends AbstractController {
         return getHealthMapReport(
                 model,
                 reportingService.getHealthMapCountryReportEntries(),
-                geometryService.getCountryNamesForHealthMapReport());
+                geometryService.getCountryNamesForHealthMapReport(),
+                true);
     }
 
     /**
      * Setup the template data for a HealthMap report.
      */
-    private String getHealthMapReport(Model model, List<HealthMapReportEntry> data, List<String> qualifiers) {
+    private String getHealthMapReport(
+            Model model, List<HealthMapReportEntry> data, List<String> qualifiers, boolean includeOtherRow) {
         List<String> months = getMonths();
-        Map<String, Map<String, HealthMapReportEntry>> processed = process(data, qualifiers, months);
+        Map<String, Map<String, HealthMapReportEntry>> processed = process(data, qualifiers, months, includeOtherRow);
 
         List<String> columns = new ArrayList<>(months);
         columns.add("Total");
         List<String> rows = new ArrayList<>(qualifiers);
-        rows.add("Other");
+        if (includeOtherRow) {
+            rows.add("Other");
+        }
         rows.add("Total");
 
         model.addAttribute("data", processed);
@@ -90,8 +95,8 @@ public class ReportingController extends AbstractController {
     /**
      * Index the data by month and qualifier, fill in the gaps with 0, add "Other" and "Total" rows/columns.
      */
-    private Map<String, Map<String, HealthMapReportEntry>> process(List<HealthMapReportEntry> data,
-                                                                 List<String> qualifiers, List<String> months) {
+    private Map<String, Map<String, HealthMapReportEntry>> process(
+            List<HealthMapReportEntry> data, List<String> qualifiers, List<String> months, boolean includeOtherRow) {
         Map<String, Map<String, HealthMapReportEntry>> unprocessed = indexData(data, months);
         Map<String, Map<String, HealthMapReportEntry>> processed = new HashMap<>();
 
@@ -111,8 +116,10 @@ public class ReportingController extends AbstractController {
             }
 
             // Add other row
-            HealthMapReportEntry otherEntry = sumDataForUnknownQualifiers(month, qualifiers, unprocessed);
-            processedForMonth.put("Other", otherEntry);
+            if (includeOtherRow) {
+                HealthMapReportEntry otherEntry = sumDataForUnknownQualifiers(month, qualifiers, unprocessed);
+                processedForMonth.put("Other", otherEntry);
+            }
 
             // Add totals row
             HealthMapReportEntry totalEntry = sumDataForAllQualifiers(month, unprocessed);
@@ -124,7 +131,9 @@ public class ReportingController extends AbstractController {
         for (String qualifier : qualifiers) {
             processedTotals.put(qualifier, sumDataForAllMonths(months, qualifier, processed));
         }
-        processedTotals.put("Other", sumDataForAllMonths(months, "Other", processed));
+        if (includeOtherRow) {
+            processedTotals.put("Other", sumDataForAllMonths(months, "Other", processed));
+        }
         processedTotals.put("Total", sumDataForAllMonths(months, "Total", processed));
         processed.put("Total", processedTotals);
 
