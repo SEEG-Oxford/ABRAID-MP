@@ -658,6 +658,19 @@ public class DiseaseServiceTest {
     }
 
     @Test
+    public void getDiseaseGroupNamesForHealthMapReport() {
+        // Arrange
+        List<String> expected = Arrays.asList("A", "B", "C");
+        when(diseaseGroupDao.getDiseaseGroupNamesForHealthMapReport()).thenReturn(expected);
+
+        // Act
+        List<String> actual = diseaseService.getDiseaseGroupNamesForHealthMapReport();
+
+        // Assert
+        assertThat(actual).isSameAs(expected);
+    }
+
+    @Test
     public void subtractMaxDaysOnValidator() {
         // Arrange
         DateTime inputDateTime = new DateTime("2014-10-09T12:13:14");

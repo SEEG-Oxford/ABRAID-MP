@@ -299,6 +299,12 @@ public interface DiseaseService {
             int diseaseGroupId, DateTime startDate, DateTime endDate);
 
     /**
+     * Gets the names of all disease groups to be shown in the HealthMap disease report (sorted).
+     * @return The disease groups names.
+     */
+    List<String> getDiseaseGroupNamesForHealthMapReport();
+
+    /**
      * Returns the input date, with the max number of days on the validator subtracted.
      * @param dateTime The input date.
      * @return The input date minus the max number of days on the validator.

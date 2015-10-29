@@ -43,6 +43,10 @@ import javax.persistence.*;
                         "   and r.expert.id=:expertId" +
                         ") " +
                         "and dec.diseaseGroup.automaticModelRunsStartDate is not null"
+        ),
+        @NamedQuery(
+                name = "getDiseaseGroupNamesForHealthMapReport",
+                query = "select name from DiseaseGroup where isPriorityDisease is TRUE order by name asc"
         )
 })
 @Entity
@@ -81,6 +85,10 @@ public class DiseaseGroup {
     // True if the disease group is global, false if tropical, null if unknown.
     @Column(name = "is_global")
     private Boolean isGlobal;
+
+    // True if the disease group is an ABRAID priority disease.
+    @Column(name = "is_priority_disease", nullable = false)
+    private boolean isPriorityDisease = false;
 
     // A link to a further grouping of diseases for use by experts in the Data Validator.
     @ManyToOne
@@ -275,6 +283,14 @@ public class DiseaseGroup {
 
     public void setGlobal(Boolean isGlobal) {
         this.isGlobal = isGlobal;
+    }
+
+    public boolean isPriorityDisease() {
+        return isPriorityDisease;
+    }
+
+    public void setPriorityDisease(boolean isPriorityDisease) {
+        this.isPriorityDisease = isPriorityDisease;
     }
 
     public ValidatorDiseaseGroup getValidatorDiseaseGroup() {

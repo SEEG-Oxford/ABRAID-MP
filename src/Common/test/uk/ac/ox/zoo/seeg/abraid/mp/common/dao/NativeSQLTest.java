@@ -33,6 +33,8 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
     @Autowired
     private DiseaseGroupDao diseaseGroupDao;
     @Autowired
+    private CountryDao countryDao;
+    @Autowired
     private NativeSQLImpl nativeSQL;
     @Autowired
     private LocationDao locationDao;
@@ -333,7 +335,7 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
         Location location = new Location(x, y, precision);
         if (precision == LocationPrecision.COUNTRY) {
             executeSQLUpdate("UPDATE country SET geom=:geom WHERE gaul_code=93", "geom", linkedGeom);
-            location.setCountryGaulCode(93);
+            location.setCountry(countryDao.getByName("Germany")); // GAUL 93 = "Germany"
             if (subLinkedGeom1 != null || subLinkedGeom2 != null) {
                 executeSQLUpdate("UPDATE admin_unit_" + (isGlobal ? "global" : "tropical") + " SET geom=:geom WHERE gaul_code=27", "geom", subLinkedGeom1);
                 executeSQLUpdate("UPDATE admin_unit_" + (isGlobal ? "global" : "tropical") + " SET geom=:geom WHERE gaul_code=18", "geom", subLinkedGeom2);

@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Country;
+
 import java.util.List;
 
 /**
@@ -16,6 +17,12 @@ public interface CountryDao {
     List<Country> getAll();
 
     /**
+     * Gets the names of all countries to be shown in the HealthMap country report (sorted).
+     * @return The country names.
+     */
+    List<String> getCountryNamesForHealthMapReport();
+
+    /**
      * Gets a country by name.
      * @param name The name.
      * @return The country, or null if not found.
@@ -23,6 +30,13 @@ public interface CountryDao {
      * occur as names are unique)
      */
     Country getByName(String name);
+
+    /**
+     * Gets an country unit GAUL code.
+     * @param gaulCode The GAUL code.
+     * @return The country with the specified GAUL code, or null if it does not exist.
+     */
+    Country getByGaulCode(Integer gaulCode);
 
     /**
      * Gets the list of African countries that should be considered when calculating

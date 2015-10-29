@@ -90,6 +90,7 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         diseaseGroup.setWeighting(weighting);
         diseaseGroup.setUseMachineLearning(false);
         diseaseGroup.setGlobal(true);
+        diseaseGroup.setPriorityDisease(true);
         diseaseGroup.setDiseaseExtentParameters(parameters);
         diseaseGroup.setModelMode(mode);
 
@@ -119,6 +120,7 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         assertThat(diseaseGroup.useMachineLearning()).isFalse();
         assertThat(diseaseGroup.getWeighting()).isEqualTo(weighting);
         assertThat(diseaseGroup.isGlobal()).isTrue();
+        assertThat(diseaseGroup.isPriorityDisease()).isTrue();
         assertThat(diseaseGroup.getParentGroup()).isNull();
         assertThat(diseaseGroup.getCreatedDate()).isNotNull();
         assertThat(diseaseGroup.getDiseaseExtentParameters()).isEqualToIgnoringGivenFields(parameters, "lastValidatorExtentUpdateInputOccurrences");
@@ -468,6 +470,18 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         diseaseGroup = diseaseGroupDao.getById(diseaseGroupId);
         assertThat(diseaseGroup.getDiseaseExtentParameters()).isNotNull();
         assertThat(diseaseGroup.getDiseaseExtentParameters().getDiseaseGroupId()).isEqualTo(diseaseGroupId);
+    }
+
+    @Test
+    public void getDiseaseGroupNamesForHealthMapReport() {
+        // Act
+        List<String> actual = diseaseGroupDao.getDiseaseGroupNamesForHealthMapReport();
+
+        // Assert
+        assertThat(actual).hasSize(34);
+        assertThat(actual.get(0)).isEqualTo("Ascariasis");
+        assertThat(actual.get(1)).isEqualTo("Chikungunya");
+        assertThat(actual.get(2)).isEqualTo("Cholera");
     }
 
     @Test
