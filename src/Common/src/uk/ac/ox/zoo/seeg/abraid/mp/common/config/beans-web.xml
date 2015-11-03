@@ -11,8 +11,8 @@
     <bean id="objectMapper" class="uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper" />
 
     <bean id="webServiceClient" class="uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient" autowire="constructor">
-        <property name="connectTimeoutMilliseconds" value="${webserviceclient.connectTimeoutMilliseconds}"/>
-        <property name="readTimeoutMilliseconds" value="${webserviceclient.readTimeoutMilliseconds}"/>
+        <constructor-arg name="connectTimeoutMilliseconds" value="${webserviceclient.connectTimeoutMilliseconds}"/>
+        <constructor-arg name="readTimeoutMilliseconds" value="${webserviceclient.readTimeoutMilliseconds}"/>
     </bean>
 
     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">

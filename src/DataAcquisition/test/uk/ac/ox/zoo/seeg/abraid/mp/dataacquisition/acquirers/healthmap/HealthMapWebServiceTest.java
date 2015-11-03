@@ -348,7 +348,7 @@ public class HealthMapWebServiceTest {
         String startDateString = "2014-04-21 15:29:03+0100";
 
         // Act
-        HealthMapWebService webService = new HealthMapWebService(new WebServiceClient());
+        HealthMapWebService webService = new HealthMapWebService(null);
         webService.setDefaultStartDate(startDateString);
 
         // Assert
@@ -361,7 +361,7 @@ public class HealthMapWebServiceTest {
         String startDateString = "2014-04-21 15:29:03";
 
         // Act
-        HealthMapWebService webService = new HealthMapWebService(new WebServiceClient());
+        HealthMapWebService webService = new HealthMapWebService(null);
         catchException(webService).setDefaultStartDate(startDateString);
 
         // Assert
@@ -382,7 +382,7 @@ public class HealthMapWebServiceTest {
                 "]" +
                 "}]";
 
-        HealthMapWebService webService = getHealthMapWebService(new WebServiceClient());
+        HealthMapWebService webService = getHealthMapWebService(null);
         List<HealthMapLocation> locations = webService.parseJson(alertJson);
 
         assertThat(locations).hasSize(1);
