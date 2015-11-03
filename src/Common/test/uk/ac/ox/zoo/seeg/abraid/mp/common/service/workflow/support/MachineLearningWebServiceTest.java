@@ -55,7 +55,7 @@ public class MachineLearningWebServiceTest {
         DiseaseOccurrence occurrence = mock(DiseaseOccurrence.class);
         when(occurrence.getDiseaseGroup()).thenReturn(null);
 
-        MachineLearningWebService webService = new MachineLearningWebService(mock(WebServiceClient.class), mock(AbraidJsonObjectMapper.class), "");
+        MachineLearningWebService webService = new MachineLearningWebService(mock(WebServiceClient.class), mock(AbraidJsonObjectMapper.class), rootUrl);
 
         // Act
         catchException(webService).getPrediction(occurrence);
@@ -99,7 +99,7 @@ public class MachineLearningWebServiceTest {
         double expectedPrediction = 0.6;
         when(webServiceClient.makePostRequestWithJSON(anyString(), anyString())).thenReturn(expectedPrediction + "");
 
-        MachineLearningWebService webService = new MachineLearningWebService(webServiceClient, new AbraidJsonObjectMapper(), "");
+        MachineLearningWebService webService = new MachineLearningWebService(webServiceClient, new AbraidJsonObjectMapper(), rootUrl);
         DiseaseOccurrence occurrence = createDefaultOccurrence();
 
         // Act
@@ -115,7 +115,7 @@ public class MachineLearningWebServiceTest {
         WebServiceClient webServiceClient = mock(WebServiceClient.class);
         when(webServiceClient.makePostRequestWithJSON(anyString(), anyString())).thenReturn("fdsa");
 
-        MachineLearningWebService webService = new MachineLearningWebService(webServiceClient, new AbraidJsonObjectMapper(), "");
+        MachineLearningWebService webService = new MachineLearningWebService(webServiceClient, new AbraidJsonObjectMapper(), rootUrl);
         DiseaseOccurrence occurrence = createDefaultOccurrence();
 
         // Act
@@ -131,7 +131,7 @@ public class MachineLearningWebServiceTest {
         WebServiceClient webServiceClient = mock(WebServiceClient.class);
         when(webServiceClient.makePostRequestWithJSON(anyString(), anyString())).thenReturn("No prediction");
 
-        MachineLearningWebService webService = new MachineLearningWebService(webServiceClient, new AbraidJsonObjectMapper(), "");
+        MachineLearningWebService webService = new MachineLearningWebService(webServiceClient, new AbraidJsonObjectMapper(), rootUrl);
         DiseaseOccurrence occurrence = createDefaultOccurrence();
 
         // Act

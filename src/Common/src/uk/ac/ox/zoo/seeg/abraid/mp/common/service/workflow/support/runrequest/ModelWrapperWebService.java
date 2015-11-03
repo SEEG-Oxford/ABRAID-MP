@@ -1,12 +1,12 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.runrequest;
 
+import org.springframework.web.util.UriComponentsBuilder;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelRunResponse;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParser;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.JsonParserException;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
 
-import javax.ws.rs.core.UriBuilder;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -41,7 +41,7 @@ public class ModelWrapperWebService {
     }
 
     private String buildStartRunUrl(URI rootUrl) {
-        return UriBuilder.fromUri(rootUrl)
+        return UriComponentsBuilder.fromUri(rootUrl)
                 .path(MODEL_RUN_URL_PATH)
                 .build().toString();
     }
