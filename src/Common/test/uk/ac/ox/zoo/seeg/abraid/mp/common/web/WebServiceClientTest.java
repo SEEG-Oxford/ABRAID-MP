@@ -148,7 +148,7 @@ public class WebServiceClientTest {
         String response = client.makePostRequestWithXML(POST_URL, xml);
 
         // Assert
-        assertThat(response).containsIgnoringCase("\"Content-Type\": \"text/xml; charset=ISO-8859-1\"");
+        assertThat(response).containsIgnoringCase("\"Content-Type\": \"application/xml\"");
         assertThat(response).containsIgnoringCase("\"data\": \"" + xml + "\"");
         assertThat(response).containsIgnoringCase("\"url\": \"" + POST_URL + "\"");
     }
@@ -187,7 +187,7 @@ public class WebServiceClientTest {
         String response = client.makePutRequestWithXML(PUT_URL, xml);
 
         // Assert
-        assertThat(response).containsIgnoringCase("\"Content-Type\": \"text/xml; charset=ISO-8859-1\"");
+        assertThat(response).containsIgnoringCase("\"Content-Type\": \"application/xml\"");
         assertThat(response).containsIgnoringCase("\"data\": \"" + xml + "\"");
         assertThat(response).containsIgnoringCase("\"url\": \"" + PUT_URL + "\"");
     }

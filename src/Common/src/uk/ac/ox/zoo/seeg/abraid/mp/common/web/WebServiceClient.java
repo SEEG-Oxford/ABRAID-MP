@@ -151,7 +151,7 @@ public class WebServiceClient {
         }
 
         LOGGER.debug(String.format(POST_WEB_SERVICE_MESSAGE, url, body.length(), "characters"));
-        return request(createRequest(url, HttpMethod.POST, body, ContentType.TEXT_XML).build());
+        return request(createRequest(url, HttpMethod.POST, body, ContentType.APPLICATION_XML.withCharset("")).build());
     }
 
     /**
@@ -168,7 +168,7 @@ public class WebServiceClient {
         }
 
         LOGGER.debug(String.format(PUT_WEB_SERVICE_MESSAGE, url, body.length(), "characters"));
-        return request(createRequest(url, HttpMethod.PUT, body, ContentType.TEXT_XML).build());
+        return request(createRequest(url, HttpMethod.PUT, body, ContentType.APPLICATION_XML.withCharset("")).build());
     }
 
     private RequestBuilder createRequest(String url, HttpMethod method) {
