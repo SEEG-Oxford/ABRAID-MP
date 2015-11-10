@@ -79,7 +79,7 @@
 
 <script type="text/html" id="no-selected-point-template">
     <ul>
-        <div class="sidePanelText">Select a feature on the map to view more details here...</div>
+        <div class="sidePanelText">Select a point on the map to view more details here...</div>
     </ul>
     <div id="submitReviewSuccess" style="display:none">
         <button type="button" class="btn btn-primary" disabled="disabled">Review submitted</button>
