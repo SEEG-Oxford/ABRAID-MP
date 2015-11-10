@@ -200,6 +200,8 @@ button.btn[type=submit] {
     margin-bottom: 20px;
     padding: 10px 5px;
 }
+#about .row li {
+    padding: 3px 0;
 }
 @media (max-width: 768px) {
     #about-img {
