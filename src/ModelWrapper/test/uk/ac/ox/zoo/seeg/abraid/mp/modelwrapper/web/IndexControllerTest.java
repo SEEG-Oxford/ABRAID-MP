@@ -14,6 +14,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
+import static uk.ac.ox.zoo.seeg.abraid.mp.testutils.GeneralTestUtils.captorForClass;
 
 /**
 * Tests for IndexController.
@@ -82,8 +83,8 @@ public class IndexControllerTest {
         ResponseEntity result = target.updateAuthenticationDetails(expectedUser, expectedPassword, expectedPassword);
 
         // Assert
-        ArgumentCaptor<String> usernameCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> passwordCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> usernameCaptor = captorForClass(String.class);
+        ArgumentCaptor<String> passwordCaptor = captorForClass(String.class);
         verify(mockConfService).setAuthenticationDetails(usernameCaptor.capture(), passwordCaptor.capture());
         assertThat(usernameCaptor.getValue()).isEqualTo(expectedUser);
         assertThat(BCrypt.checkpw(expectedPassword, passwordCaptor.getValue())).isTrue();

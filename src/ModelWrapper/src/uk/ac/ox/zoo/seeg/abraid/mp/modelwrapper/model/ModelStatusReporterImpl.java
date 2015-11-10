@@ -121,7 +121,7 @@ public class ModelStatusReporterImpl implements ModelStatusReporter {
         zipParameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);
 
         // Add files to zip file
-        ArrayList filesToAdd = new ArrayList();
+        ArrayList<File> filesToAdd = new ArrayList<>();
         for (String outputFilename : outputFilenames) {
             File fileToAdd = getFileInWorkingDirectory(outputFilename);
             if (fileToAdd.exists()) {

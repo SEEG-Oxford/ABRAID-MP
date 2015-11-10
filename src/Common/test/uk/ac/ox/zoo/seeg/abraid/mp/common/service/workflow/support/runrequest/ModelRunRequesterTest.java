@@ -25,6 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
+import static uk.ac.ox.zoo.seeg.abraid.mp.testutils.GeneralTestUtils.captorForClass;
 
 /**
 * Tests for ModelRunRequester.
@@ -88,7 +89,7 @@ public class ModelRunRequesterTest {
         target.requestModelRun(87, Arrays.asList(mock(DiseaseOccurrence.class), mock(DiseaseOccurrence.class), mock(DiseaseOccurrence.class)), null, null);
 
         // Assert
-        ArgumentCaptor<ModelRun> modelRunArgumentCaptor = ArgumentCaptor.forClass(ModelRun.class);
+        ArgumentCaptor<ModelRun> modelRunArgumentCaptor = captorForClass(ModelRun.class);
         verify(runService).saveModelRun(modelRunArgumentCaptor.capture());
         ModelRun value = modelRunArgumentCaptor.getValue();
         assertThat(value.getInputDiseaseOccurrences()).hasSize(3);
@@ -105,7 +106,7 @@ public class ModelRunRequesterTest {
         target.requestModelRun(87, Arrays.asList(mock(DiseaseOccurrence.class), mock(DiseaseOccurrence.class), mock(DiseaseOccurrence.class)), null, null);
 
         // Assert
-        ArgumentCaptor<ModelRun> modelRunArgumentCaptor = ArgumentCaptor.forClass(ModelRun.class);
+        ArgumentCaptor<ModelRun> modelRunArgumentCaptor = captorForClass(ModelRun.class);
         verify(runService).saveModelRun(modelRunArgumentCaptor.capture());
         ModelRun value = modelRunArgumentCaptor.getValue();
         assertThat(value.getInputDiseaseOccurrences()).isNull();
@@ -127,7 +128,7 @@ public class ModelRunRequesterTest {
         target.requestModelRun(87, Arrays.asList(mock(DiseaseOccurrence.class)), null, null);
 
         // Assert
-        ArgumentCaptor<ModelRun> modelRunArgumentCaptor = ArgumentCaptor.forClass(ModelRun.class);
+        ArgumentCaptor<ModelRun> modelRunArgumentCaptor = captorForClass(ModelRun.class);
         verify(runService).saveModelRun(modelRunArgumentCaptor.capture());
         ModelRun value = modelRunArgumentCaptor.getValue();
         assertThat(value.getInputDiseaseExtent()).hasSize(4);
@@ -151,7 +152,7 @@ public class ModelRunRequesterTest {
         target.requestModelRun(87, occurrencesForModelRun, null, null);
 
         // Assert
-        ArgumentCaptor<ModelRun> modelRunArgumentCaptor = ArgumentCaptor.forClass(ModelRun.class);
+        ArgumentCaptor<ModelRun> modelRunArgumentCaptor = captorForClass(ModelRun.class);
         verify(runService).saveModelRun(modelRunArgumentCaptor.capture());
         ModelRun value = modelRunArgumentCaptor.getValue();
         assertThat(value.getOccurrenceDataRangeStartDate()).isEqualTo(oldDate);
@@ -179,7 +180,7 @@ public class ModelRunRequesterTest {
         target.requestModelRun(87, Arrays.asList(mock(DiseaseOccurrence.class), mock(DiseaseOccurrence.class), mock(DiseaseOccurrence.class)), null, null);
 
         // Assert
-        ArgumentCaptor<ModelRun> modelRunArgumentCaptor = ArgumentCaptor.forClass(ModelRun.class);
+        ArgumentCaptor<ModelRun> modelRunArgumentCaptor = captorForClass(ModelRun.class);
         verify(runService).saveModelRun(modelRunArgumentCaptor.capture());
         ModelRun value = modelRunArgumentCaptor.getValue();
         assertThat(value.getName()).startsWith(expectedRunNameStart);

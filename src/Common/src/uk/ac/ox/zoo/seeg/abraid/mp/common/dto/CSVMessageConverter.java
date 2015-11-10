@@ -92,7 +92,7 @@ public class CSVMessageConverter
     @Override
     protected void writeInternal(WrappedList<?> t, HttpOutputMessage outputMessage)
             throws IOException, HttpMessageNotWritableException {
-        Iterator it = t.getList().iterator();
+        Iterator<?> it = t.getList().iterator();
         Class<?> listType = null;
         while (it.hasNext()) {
             Object entry = it.next();

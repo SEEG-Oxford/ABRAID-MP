@@ -18,7 +18,6 @@ import static org.mockito.Mockito.when;
  * Copyright (c) 2014 University of Oxford
  */
 public class JsonModelRunLayerTest {
-    @SuppressWarnings("ConstantConditions")
     @Test
     public void constructorBindsFieldsCorrectly() {
         // Arrange

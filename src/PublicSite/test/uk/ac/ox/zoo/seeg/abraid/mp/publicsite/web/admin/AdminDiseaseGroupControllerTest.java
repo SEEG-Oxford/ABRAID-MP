@@ -26,6 +26,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
+import static uk.ac.ox.zoo.seeg.abraid.mp.testutils.GeneralTestUtils.captorForClass;
 
 /**
  * Tests the AdminDiseaseGroupController class.
@@ -437,7 +438,7 @@ public class AdminDiseaseGroupControllerTest {
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
-        ArgumentCaptor<DiseaseGroup> diseaseGroupArgumentCaptor = ArgumentCaptor.forClass(DiseaseGroup.class);
+        ArgumentCaptor<DiseaseGroup> diseaseGroupArgumentCaptor = captorForClass(DiseaseGroup.class);
         verify(diseaseService).saveDiseaseGroup(diseaseGroupArgumentCaptor.capture());
         DiseaseGroup value = diseaseGroupArgumentCaptor.getValue();
         assertThat(value.getName()).isEqualTo("Name");

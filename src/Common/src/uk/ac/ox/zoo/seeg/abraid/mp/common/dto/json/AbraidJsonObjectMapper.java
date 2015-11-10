@@ -25,4 +25,5 @@ public class AbraidJsonObjectMapper extends ObjectMapper {
         this.configure(MapperFeature.DEFAULT_VIEW_INCLUSION, true);
         this.setSerializationInclusion(JsonInclude.Include.NON_NULL);
     }
+
 }

@@ -21,6 +21,7 @@ import java.io.Writer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
+import static uk.ac.ox.zoo.seeg.abraid.mp.testutils.GeneralTestUtils.captorForClass;
 
 /**
  * Tests for GeoserverRestService.
@@ -75,7 +76,7 @@ public class GeoserverRestServiceTest {
 
         // Act
         target.publishGeoTIFF(file);
-        ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> argumentCaptor = captorForClass(String.class);
         verify(webServiceClient).makePostRequestWithXML(
                 eq("url/rest/workspaces/abraid/coveragestores/" + fileName + "/coverages.xml"),
                 argumentCaptor.capture());
@@ -106,7 +107,7 @@ public class GeoserverRestServiceTest {
 
         // Act
         target.publishGeoTIFF(file);
-        ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> argumentCaptor = captorForClass(String.class);
         verify(webServiceClient).makePutRequestWithXML(
                 eq("url/rest/layers/abraid:" + fileName),
                 argumentCaptor.capture());

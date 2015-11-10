@@ -16,6 +16,8 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
+import static uk.ac.ox.zoo.seeg.abraid.mp.testutils.GeneralTestUtils.captorForListClass;
+import static uk.ac.ox.zoo.seeg.abraid.mp.testutils.GeneralTestUtils.captorForMapClass;
 
 /**
  * Tests for ModelRepositoryController.
@@ -40,9 +42,9 @@ public class ReportingControllerTest {
         ReportingController target = new ReportingController(reportingService, geometryService, diseaseService);
         Model model = mock(Model.class);
 
-        ArgumentCaptor<List<String>> monthCaptor = ArgumentCaptor.forClass((Class<List<String>>) (Class) List.class);
-        ArgumentCaptor<List<String>> qualifierCaptor = ArgumentCaptor.forClass((Class<List<String>>) (Class) List.class);
-        ArgumentCaptor<Map<String, Map<String, HealthMapReportEntry>>> dataCaptor = ArgumentCaptor.forClass((Class<Map<String, Map<String, HealthMapReportEntry>>>) (Class) Map.class);
+        ArgumentCaptor<List<String>> monthCaptor = captorForListClass();
+        ArgumentCaptor<List<String>> qualifierCaptor = captorForListClass();
+        ArgumentCaptor<Map<String, Map<String, HealthMapReportEntry>>> dataCaptor = captorForMapClass();
 
         // Act
         String template = target.getHealthMapDiseaseReport(model);
@@ -95,9 +97,9 @@ public class ReportingControllerTest {
         ReportingController target = new ReportingController(reportingService, geometryService, diseaseService);
         Model model = mock(Model.class);
 
-        ArgumentCaptor<List<String>> monthCaptor = ArgumentCaptor.forClass((Class<List<String>>) (Class) List.class);
-        ArgumentCaptor<List<String>> qualifierCaptor = ArgumentCaptor.forClass((Class<List<String>>) (Class) List.class);
-        ArgumentCaptor<Map<String, Map<String, HealthMapReportEntry>>> dataCaptor = ArgumentCaptor.forClass((Class<Map<String, Map<String, HealthMapReportEntry>>>) (Class) Map.class);
+        ArgumentCaptor<List<String>> monthCaptor = captorForListClass();
+        ArgumentCaptor<List<String>> qualifierCaptor = captorForListClass();
+        ArgumentCaptor<Map<String, Map<String, HealthMapReportEntry>>> dataCaptor = captorForMapClass();
 
         // Act
         String template = target.getHealthMapCountryReport(model);

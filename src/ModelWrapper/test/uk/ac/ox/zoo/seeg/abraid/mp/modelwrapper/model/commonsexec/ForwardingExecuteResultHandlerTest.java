@@ -9,6 +9,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ProcessHandler;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static uk.ac.ox.zoo.seeg.abraid.mp.testutils.GeneralTestUtils.captorForClass;
 
 /**
  * Tests the ForwardingExecuteResultHandler class.
@@ -39,7 +40,7 @@ public class ForwardingExecuteResultHandlerTest {
         target.onProcessFailed(expectedCause);
 
         // Assert
-        ArgumentCaptor<ProcessException> captor = ArgumentCaptor.forClass(ProcessException.class);
+        ArgumentCaptor<ProcessException> captor = captorForClass(ProcessException.class);
         verify(mockProcessHandler).onProcessFailed(captor.capture());
         Throwable cause = captor.getValue().getCause();
         assertThat(cause).isEqualTo(expectedCause);

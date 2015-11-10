@@ -23,6 +23,7 @@ public class CountryDaoImpl extends AbstractDao<Country, Integer> implements Cou
      * @return The country names.
      */
     @Override
+    @SuppressWarnings("unchecked")
     public List<String> getCountryNamesForHealthMapReport() {
         Query query = getParameterisedNamedQuery("getCountryNamesForHealthMapReport");
         return query.list();

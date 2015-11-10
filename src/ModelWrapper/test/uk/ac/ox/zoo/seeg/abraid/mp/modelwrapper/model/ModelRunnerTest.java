@@ -19,6 +19,8 @@ import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyMapOf;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.*;
+import static uk.ac.ox.zoo.seeg.abraid.mp.testutils.GeneralTestUtils.captorForClass;
+import static uk.ac.ox.zoo.seeg.abraid.mp.testutils.GeneralTestUtils.captorForMapClass;
 
 /**
 * Tests the ModelRunnerImpl class.
@@ -69,9 +71,8 @@ public class ModelRunnerTest {
         target.runModel(config, null);
 
         // Assert
-        ArgumentCaptor<String[]> stringArgsCaptor = ArgumentCaptor.forClass(String[].class);
-        @SuppressWarnings("unchecked")
-        ArgumentCaptor<Map<String, File>> fileArgsCaptor = (ArgumentCaptor<Map<String, File>>) (Object) ArgumentCaptor.forClass(Map.class);
+        ArgumentCaptor<String[]> stringArgsCaptor = captorForClass(String[].class);
+        ArgumentCaptor<Map<String, File>> fileArgsCaptor = captorForMapClass();
 
         verify(mockProcessRunnerFactory)
                 .createProcessRunner(eq(Paths.get(expectedBase.toString(), runName).toFile()), eq(expectedR), stringArgsCaptor.capture(), fileArgsCaptor.capture(), eq(expectedTimeout));

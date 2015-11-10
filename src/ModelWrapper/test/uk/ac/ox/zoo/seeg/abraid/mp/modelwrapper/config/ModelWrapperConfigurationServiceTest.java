@@ -278,7 +278,7 @@ public class ModelWrapperConfigurationServiceTest {
     public void getModelOutputHandlerRootUrlReturnsCorrectValue() throws Exception {
         // Arrange
         File testFile = testFolder.newFile();
-        Map pairs = new HashMap();
+        Map<String, String> pairs = new HashMap<String, String>();
         pairs.put("model.output.api.key", "password");
         pairs.put("model.output.handler.host", "localhost:8080");
         pairs.put("model.output.handler.path", "/modeloutputhandler");

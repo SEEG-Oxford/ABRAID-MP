@@ -18,6 +18,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
+import static uk.ac.ox.zoo.seeg.abraid.mp.testutils.GeneralTestUtils.captorForClass;
 
 /**
  * Tests for ModelRepositoryController.
@@ -74,7 +75,7 @@ public class ModelRepositoryControllerTest {
         target.showPage(model);
 
         // Assert
-        ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
+        ArgumentCaptor<List> captor = captorForClass(List.class);
         verify(model).addAttribute(eq("available_versions"), captor.capture());
         assertThat(captor.getValue()).hasSize(0);
     }

@@ -21,7 +21,7 @@ public class JodaCustomDateTimeDeserializer extends DateTimeDeserializer {
     private static final long serialVersionUID = 4530909041442821333L;
     private transient DateTimeFormatter dateTimeFormatter;
 
-    @SuppressWarnings("unchecked")
+
     public JodaCustomDateTimeDeserializer(Class<? extends ReadableInstant> cls, DateTimeFormatter dateTimeFormatter) {
         super(cls);
         this.dateTimeFormatter = dateTimeFormatter;
@@ -51,7 +51,6 @@ public class JodaCustomDateTimeDeserializer extends DateTimeDeserializer {
      * @return The deserialized DateTime.
      * @throws IOException If an error occurs
      */
-    @SuppressWarnings("deprecation")
     @Override
     public ReadableDateTime deserialize(com.fasterxml.jackson.core.JsonParser jsonParser,
                                         DeserializationContext context) throws IOException {

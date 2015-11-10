@@ -20,7 +20,6 @@ public class ExpertDaoTest extends AbstractCommonSpringIntegrationTests {
     @Autowired
     private ExpertDao expertDao;
 
-    @SuppressWarnings("ConstantConditions")
     @Test
     public void saveAndReloadExpert() {
         // Arrange

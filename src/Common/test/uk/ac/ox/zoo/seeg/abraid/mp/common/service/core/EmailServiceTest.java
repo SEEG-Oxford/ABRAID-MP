@@ -19,6 +19,7 @@ import java.util.concurrent.Future;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
+import static uk.ac.ox.zoo.seeg.abraid.mp.testutils.GeneralTestUtils.captorForClass;
 
 /**
  * Tests for EmailServiceImpl.
@@ -44,7 +45,7 @@ public class EmailServiceTest {
         verify(email).setSslSmtpPort("" + expectation.getPort());
         verify(email).setStartTLSRequired(expectation.useSSL());
 
-        ArgumentCaptor<DefaultAuthenticator> captor = ArgumentCaptor.forClass(DefaultAuthenticator.class);
+        ArgumentCaptor<DefaultAuthenticator> captor = captorForClass(DefaultAuthenticator.class);
         verify(email).setAuthenticator(captor.capture());
         DefaultAuthenticator authenticator = captor.getValue();
         Field protectedField = DefaultAuthenticator.class.getDeclaredField("authentication");

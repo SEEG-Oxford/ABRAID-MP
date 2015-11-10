@@ -32,12 +32,16 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ValidationParameterCacheService;
 import uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.geoserver.GeoserverRestService;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
+import uk.ac.ox.zoo.seeg.abraid.mp.testutils.GeneralTestUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.SpringockitoWebContextLoader;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.extractProperty;
@@ -456,8 +460,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
     }
 
     private void assertThatFailureEmailSent(String outputText, String errorText) {
-        Class<Map<String, String>> argType = (Class<Map<String, String>>) (Class) Map.class;
-        ArgumentCaptor<Map<String, String>> captor = ArgumentCaptor.forClass(argType);
+        ArgumentCaptor<Map<String, String>> captor = GeneralTestUtils.captorForMapClass();
 
         verify(emailService).sendEmailInBackground(
                 eq("Failed Model Run"),

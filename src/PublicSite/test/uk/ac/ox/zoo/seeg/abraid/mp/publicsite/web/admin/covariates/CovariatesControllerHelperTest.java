@@ -23,6 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.extractProperty;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
+import static uk.ac.ox.zoo.seeg.abraid.mp.testutils.GeneralTestUtils.captorForClass;
 
 /**
  * Tests for CovariatesControllerHelper.
@@ -110,7 +111,7 @@ public class CovariatesControllerHelperTest extends BaseCovariatesControllerTest
 
         // Assert
         assertThat(new File(covariateService.getCovariateDirectory() + "/asd/fas")).hasContentEqualTo(refFile);
-        ArgumentCaptor<CovariateFile> captor = ArgumentCaptor.forClass(CovariateFile.class);
+        ArgumentCaptor<CovariateFile> captor = captorForClass(CovariateFile.class);
         verify(covariateService).saveCovariateFile(captor.capture());
         CovariateFile saved = captor.getValue();
         assertThat(saved.getName()).isEqualTo("name");
@@ -141,7 +142,7 @@ public class CovariatesControllerHelperTest extends BaseCovariatesControllerTest
 
         // Assert
         assertThat(new File(covariateService.getCovariateDirectory() + "/asd/fas")).hasContentEqualTo(refFile);
-        ArgumentCaptor<CovariateFile> captor = ArgumentCaptor.forClass(CovariateFile.class);
+        ArgumentCaptor<CovariateFile> captor = captorForClass(CovariateFile.class);
         verify(covariateService).saveCovariateFile(captor.capture());
         CovariateFile saved = captor.getValue();
         assertThat(saved.getName()).isEqualTo("name");

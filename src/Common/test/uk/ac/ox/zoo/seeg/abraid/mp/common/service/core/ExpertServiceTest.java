@@ -18,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
+import static uk.ac.ox.zoo.seeg.abraid.mp.testutils.GeneralTestUtils.captorForClass;
 
 /**
  * Tests the ExpertService class.
@@ -258,7 +259,7 @@ public class ExpertServiceTest {
         expertService.createAndSavePasswordResetRequest(email, key);
 
         // Assert
-        ArgumentCaptor<PasswordResetRequest> captor = ArgumentCaptor.forClass(PasswordResetRequest.class);
+        ArgumentCaptor<PasswordResetRequest> captor = captorForClass(PasswordResetRequest.class);
         verify(passwordResetRequestDao).save(captor.capture());
         PasswordResetRequest value = captor.getValue();
         assertThat(value.getHashedKey()).isEqualTo(key);
@@ -279,7 +280,7 @@ public class ExpertServiceTest {
         expertService.createAndSavePasswordResetRequest(email, key);
 
         // Assert
-        ArgumentCaptor<PasswordResetRequest> captor = ArgumentCaptor.forClass(PasswordResetRequest.class);
+        ArgumentCaptor<PasswordResetRequest> captor = captorForClass(PasswordResetRequest.class);
         verify(passwordEncoder).encode(key);
         verify(passwordResetRequestDao).save(captor.capture());
         PasswordResetRequest value = captor.getValue();
@@ -666,8 +667,7 @@ public class ExpertServiceTest {
         DiseaseOccurrence occurrence = new DiseaseOccurrence();
         when(diseaseOccurrenceDao.getById(2)).thenReturn(occurrence);
         DiseaseOccurrenceReviewResponse response = DiseaseOccurrenceReviewResponse.YES;
-        ArgumentCaptor<DiseaseOccurrenceReview> reviewArgumentCaptor =
-                ArgumentCaptor.forClass(DiseaseOccurrenceReview.class);
+        ArgumentCaptor<DiseaseOccurrenceReview> reviewArgumentCaptor = captorForClass(DiseaseOccurrenceReview.class);
         doNothing().when(diseaseOccurrenceReviewDao).save(reviewArgumentCaptor.capture());
 
         // Act
@@ -687,8 +687,7 @@ public class ExpertServiceTest {
         when(expertDao.getById(1)).thenReturn(expert);
         DiseaseOccurrence occurrence = new DiseaseOccurrence();
         when(diseaseOccurrenceDao.getById(2)).thenReturn(occurrence);
-        ArgumentCaptor<DiseaseOccurrenceReview> reviewArgumentCaptor =
-                ArgumentCaptor.forClass(DiseaseOccurrenceReview.class);
+        ArgumentCaptor<DiseaseOccurrenceReview> reviewArgumentCaptor = captorForClass(DiseaseOccurrenceReview.class);
         doNothing().when(diseaseOccurrenceReviewDao).save(reviewArgumentCaptor.capture());
 
         // Act

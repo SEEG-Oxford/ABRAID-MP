@@ -19,6 +19,7 @@ import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
+import static uk.ac.ox.zoo.seeg.abraid.mp.testutils.GeneralTestUtils.captorForClass;
 
 /**
  * Tests the CommonsExecProcessRunner class.
@@ -45,7 +46,7 @@ public class CommonsExecProcessRunnerTest {
         target.run(mock(ProcessHandler.class));
 
         // Assert
-        ArgumentCaptor<CommandLine> commandLineCaptor = ArgumentCaptor.forClass(CommandLine.class);
+        ArgumentCaptor<CommandLine> commandLineCaptor = captorForClass(CommandLine.class);
         verify(mockExecutor).execute(commandLineCaptor.capture(), any(ExecuteResultHandler.class));
         assertThat(commandLineCaptor.getValue().toString()).isEqualTo(expectation);
     }

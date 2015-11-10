@@ -18,6 +18,7 @@ import java.util.Arrays;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
+import static uk.ac.ox.zoo.seeg.abraid.mp.testutils.GeneralTestUtils.captorForClass;
 
 /**
  * Tests the Atlas controller.
@@ -97,7 +98,7 @@ public class AtlasControllerTest {
         target.showAtlas(model);
 
         // Assert
-        ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> argumentCaptor = captorForClass(String.class);
         verify(model).addAttribute(eq("layers"), argumentCaptor.capture());
         String value = argumentCaptor.getValue();
         assertThat(value).contains(expectation);
