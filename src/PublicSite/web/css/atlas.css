@@ -108,7 +108,7 @@ html, body {
     font-weight: bold
 }
 .legendText p.help {
-    margin-top: 3px;
+    margin-bottom: 3px;
     text-align: justify;
     font-style: italic;
     font-weight: normal;
