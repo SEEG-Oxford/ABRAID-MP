@@ -23,7 +23,7 @@ public class JsonApiModelRunTest {
         // Arrange
         DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
         when(diseaseGroup.getId()).thenReturn(123);
-        when(diseaseGroup.getPublicName()).thenReturn("dg 123");
+        when(diseaseGroup.getName()).thenReturn("dg 123");
 
         CovariateInfluence covariateInfluence1 = mock(CovariateInfluence.class);
         when(covariateInfluence1.getMeanInfluence()).thenReturn(1.5);

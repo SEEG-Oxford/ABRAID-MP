@@ -22,7 +22,7 @@ public class JsonModelRunSimpleTest {
         DateTime now = DateTime.now();
         when(run.getRequestDate()).thenReturn(now);
         when(run.getDiseaseGroup()).thenReturn(mock(DiseaseGroup.class));
-        when(run.getDiseaseGroup().getPublicName()).thenReturn("DISEASE");
+        when(run.getDiseaseGroup().getShortNameForDisplay()).thenReturn("DISEASE");
 
         // Act
         JsonModelRunSimple result = new JsonModelRunSimple(run);

@@ -19,7 +19,7 @@ public class JsonApiDiseaseGroupTest {
         String name = "qwe";
         DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
         when(diseaseGroup.getId()).thenReturn(id);
-        when(diseaseGroup.getPublicName()).thenReturn(name);
+        when(diseaseGroup.getName()).thenReturn(name);
 
         // Act
         JsonApiDiseaseGroup dto = new JsonApiDiseaseGroup(diseaseGroup);

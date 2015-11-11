@@ -14,7 +14,7 @@ public class JsonModelRunSimple {
 
     public JsonModelRunSimple(ModelRun modelRun) {
         this.name = modelRun.getName();
-        this.disease = modelRun.getDiseaseGroup().getPublicName();
+        this.disease = modelRun.getDiseaseGroup().getShortNameForDisplay();
         this.date = modelRun.getRequestDate().toLocalDate();
     }
 

@@ -81,7 +81,7 @@ public class DataExtractorControllerTest {
         when(run.getName()).thenReturn(name);
         when(run.getRequestDate()).thenReturn(dateTime);
         when(run.getDiseaseGroup()).thenReturn(mock(DiseaseGroup.class));
-        when(run.getDiseaseGroup().getPublicName()).thenReturn(disease);
+        when(run.getDiseaseGroup().getShortNameForDisplay()).thenReturn(disease);
         return run;
     }
 

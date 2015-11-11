@@ -12,7 +12,7 @@ public class JsonApiDiseaseGroup {
 
     public JsonApiDiseaseGroup(DiseaseGroup diseaseGroup) {
         this.id = diseaseGroup.getId();
-        this.name = diseaseGroup.getPublicName();
+        this.name = diseaseGroup.getName();
     }
 
     public int getId() {
