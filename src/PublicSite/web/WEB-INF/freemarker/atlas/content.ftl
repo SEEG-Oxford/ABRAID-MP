@@ -66,7 +66,7 @@
     <!-- Bootstrapped JS data for KO view models -->
     <script>
         var data = {
-            wmsUrl: "${baseWmsUrl}",
+            wmsUrl: "${baseWmsUrl?js_string}",
             layers: ${layers},
             seegMember: ${seegMember?c}
         };

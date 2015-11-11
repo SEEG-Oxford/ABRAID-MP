@@ -48,11 +48,11 @@
                             <div>
                                 <div class="full-width">
                                     <div class="full-width">
-                                    <h4>${expert.name}</h4>
+                                    <h4>${expert.name?html}</h4>
                                         <ul class="fa-ul" >
-                                            <li><i class="text-muted fa fa-briefcase"></i><span class="fixed-width">Job Title:&nbsp;</span><span>${expert.jobTitle}</span></li>
-                                            <li><i class="text-muted fa fa-institution"></i><span class="fixed-width">Institution:&nbsp;</span><span>${expert.institution}</span></li>
-                                            <li><i class="text-muted fa fa-heart"></i><span class="fixed-width">Joined:&nbsp;</span><span>${expert.createdDate.toString("MMMM dd yyyy")}</span></li>
+                                            <li><i class="text-muted fa fa-briefcase"></i><span class="fixed-width">Job Title:&nbsp;</span><span>${expert.jobTitle?html}</span></li>
+                                            <li><i class="text-muted fa fa-institution"></i><span class="fixed-width">Institution:&nbsp;</span><span>${expert.institution?html}</span></li>
+                                            <li><i class="text-muted fa fa-heart"></i><span class="fixed-width">Joined:&nbsp;</span><span>${expert.createdDate.toString("MMMM dd yyyy")?html}</span></li>
                                         </ul>
                                     </div>
                                 </div>

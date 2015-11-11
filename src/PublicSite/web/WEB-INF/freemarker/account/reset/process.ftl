@@ -10,8 +10,8 @@
 <script type="text/javascript">
     // bootstrapped data for js viewmodels
     var data = {
-        id: ${id},
-        key: "${key}"
+        id: ${id?c},
+        key: "${key?js_string}"
     };
 </script>
 </#assign>

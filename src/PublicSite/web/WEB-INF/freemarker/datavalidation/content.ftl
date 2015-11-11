@@ -49,7 +49,7 @@
     <!-- Bootstrapped JS data for KO view models -->
     <script>
         var data = {
-            wmsUrl: "${baseWmsUrl}",
+            wmsUrl: "${baseWmsUrl?js_string}",
             loggedIn: ${userLoggedIn?c},
             showHelpText: ${showHelpText?c},
             diseasesRequiringExtentInput: [<#list diseasesRequiringExtentInput as disease>${disease?c},</#list>],

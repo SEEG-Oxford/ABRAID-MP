@@ -12,7 +12,7 @@
         <div class="row">
             <div id="about-img">
                 <img src="<@spring.url '/static/logo.jpg'/>" alt="ABRAID Logo">
-                <div><strong>v${applicationVersion}</strong></div>
+                <div><strong>v${applicationVersion?html}</strong></div>
             </div>
             <div id="about-text">
                 <p>The Atlas of Baseline Risk Assessment for Infectious Diseases (ABRAID) aims to produce continually updated maps of disease risk. The online ABRAID prototype was established in 2014 by Professor Simon Hay and Dr Catherine Moyes of the <a target="_blank" href="http://seeg.zoo.ox.ac.uk/">Spatial Ecology &amp; Epidemiology Group</a> (SEEG) at the University of Oxford with funding from the <a target="_blank" href="http://www.gatesfoundation.org/">Bill &amp; Melinda Gates Foundation</a> (B&amp;MGF). The current system, built by <a target="_blank" href="https://tessella.com/">Tessella</a> in collaboration with SEEG, uses data provided by <a target="_blank" href="http://healthmap.org/en/">HealthMap</a> and datasets collated by SEEG.</p>
