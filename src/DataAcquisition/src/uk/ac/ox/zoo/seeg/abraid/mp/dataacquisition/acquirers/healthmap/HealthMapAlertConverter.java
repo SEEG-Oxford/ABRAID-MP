@@ -14,6 +14,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.domain.He
 import java.util.*;
 
 import static ch.lambdaj.Lambda.*;
+import static org.hamcrest.core.IsNull.notNullValue;
 
 /**
  * Converts a HealthMap alert into an ABRAID disease occurrence.
@@ -178,8 +179,8 @@ public class HealthMapAlertConverter {
         diseaseGroups.addAll(extract(healthMapSubDiseases, on(HealthMapSubDisease.class).getDiseaseGroup()));
 
         // Add disease groups associated with diseases
-        Set<HealthMapDisease> parentDiseasesOfSubDiseases = new HashSet<>(
-                extract(healthMapSubDiseases, on(HealthMapSubDisease.class).getHealthMapDisease()));
+        Set<HealthMapDisease> parentDiseasesOfSubDiseases = new HashSet<>(filter(notNullValue(),
+                extract(healthMapSubDiseases, on(HealthMapSubDisease.class).getHealthMapDisease())));
         List<HealthMapDisease> healthMapDiseases = retrieveHealthMapDiseases(healthMapAlert,
                 parentDiseasesOfSubDiseases);
         diseaseGroups.addAll(extract(healthMapDiseases, on(HealthMapDisease.class).getDiseaseGroup()));
