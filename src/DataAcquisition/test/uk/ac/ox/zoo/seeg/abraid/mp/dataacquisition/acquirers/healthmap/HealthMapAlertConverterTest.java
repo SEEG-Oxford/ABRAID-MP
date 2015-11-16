@@ -393,6 +393,52 @@ public class HealthMapAlertConverterTest {
     }
 
     @Test
+    public void healthMapSubDiseaseDoesNotExist() {
+        // Arrange
+        String feedName = "Test feed";
+        String summary = "Test summary";
+        String feedLanguage = null;
+        String originalUrl = "http://promedmail.org/direct.php?id=20140106.2154965";
+        int diseaseId = 1;
+        int feedId = 1;
+        DateTime publicationDate = DateTime.now();
+        String link = "http://healthmap.org/ln.php?2154965";
+        String healthMapDiseaseName = "Test disease";
+        String existingHealthMapDiseaseName = "Test existing disease";
+        String description = "Test description";
+        int healthMapAlertId = 2154965;
+
+        Location location = new Location();
+        DiseaseGroup existingDiseaseGroup = new DiseaseGroup(1);
+        Alert alert = new Alert();
+        Feed feed = new Feed(feedName, null, 0, feedLanguage, feedId);
+        String subDiseaseName = "new";
+
+        HealthMapAlert healthMapAlert = new HealthMapAlert(feedName, feedId, healthMapDiseaseName, diseaseId, summary,
+                publicationDate, link, description, originalUrl, feedLanguage);
+        healthMapAlert.setComment(subDiseaseName);
+        HealthMapSubDisease newHealthMapSubDisease = new HealthMapSubDisease(null, subDiseaseName, null);
+
+        // Prepare mock objects
+        mockOutGetAlertByID(healthMapAlertId, alert);
+        mockOutGetFeed(feed);
+        mockOutGetExistingHealthMapDisease(diseaseId, existingHealthMapDiseaseName, existingDiseaseGroup);
+
+        // Act
+        List<DiseaseOccurrence> occurrences = alertConverter.convert(healthMapAlert, location);
+
+        // Assert
+        assertThat(occurrences).hasSize(1);
+        DiseaseOccurrence occurrence = occurrences.get(0);
+        assertThat(occurrence.getDiseaseGroup()).isEqualTo(existingDiseaseGroup);
+        assertThat(occurrence.getAlert()).isSameAs(alert);
+        assertThat(occurrence.getLocation()).isSameAs(location);
+        assertThat(occurrence.getOccurrenceDate()).isEqualTo(publicationDate);
+        verify(healthMapService).saveHealthMapSubDisease(eq(newHealthMapSubDisease));
+        assertThat(lookupData.getSubDiseaseMap().get(subDiseaseName)).isEqualTo(newHealthMapSubDisease);
+    }
+
+    @Test
     public void invalidAlert() {
         // Arrange
         String feedName = "Test feed";

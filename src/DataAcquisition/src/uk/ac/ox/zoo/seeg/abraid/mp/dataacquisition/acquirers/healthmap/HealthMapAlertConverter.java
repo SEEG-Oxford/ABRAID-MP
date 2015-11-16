@@ -30,12 +30,12 @@ public class HealthMapAlertConverter {
             "Disease occurrence not of interest (HealthMap disease \"%s\", alert ID %d)";
     private static final String SUB_DISEASE_NOT_OF_INTEREST_MESSAGE =
             "Disease occurrence not of interest (HealthMap sub-disease \"%s\", alert ID %d)";
-    private static final String IGNORING_UNKNOWN_SUB_DISEASE = "Ignoring unknown HealthMap sub-disease \"%s\" (alert " +
-            "ID %d)";
     private static final String FOUND_NEW_FEED = "Found new HealthMap feed \"%s\" - adding it to the database";
     private static final String NEW_DISEASE_NAME = "NEW FROM HEALTHMAP: %s";
     private static final String FOUND_NEW_DISEASE_SUBJECT = "New HealthMap disease discovered: \"%s\"";
+    private static final String FOUND_NEW_SUBDISEASE_SUBJECT = "New HealthMap disease abbreviation discovered: \"%s\"";
     private static final String FOUND_NEW_DISEASE_TEMPLATE = "newDiseaseEmail.ftl";
+    private static final String FOUND_NEW_SUBDISEASE_TEMPLATE = "newSubdiseaseEmail.ftl";
     private static final String FOUND_NEW_DISEASE_TEMPLATE_DISEASE_KEY = "disease";
     private static final String FOUND_NEW_DISEASE_TEMPLATE_GROUP_KEY = "cluster";
 
@@ -242,22 +242,19 @@ public class HealthMapAlertConverter {
 
     private HealthMapSubDisease retrieveHealthMapSubDisease(HealthMapAlert healthMapAlert, String subDiseaseName) {
         HealthMapSubDisease subDisease = lookupData.getSubDiseaseMap().get(subDiseaseName);
-        if (subDisease != null) {
-            if (subDisease.getDiseaseGroup() == null) {
-                // HealthMap sub-disease is not linked to a disease group, which means that it is not of interest
-                LOGGER.warn(String.format(SUB_DISEASE_NOT_OF_INTEREST_MESSAGE, subDiseaseName,
-                        healthMapAlert.getAlertId()));
-                return null;
-            }
-        } else {
-            // HealthMap sub-disease does not exist in database, so ignore it. Unlike diseases, we don't automatically
-            // add the sub-disease, because:
-            // (a) if there are multiple diseases then we don't know which one to associate it with
-            // (b) sub-disease names are entered into a free-text comment field, so there is opportunity for miskeying
-            LOGGER.warn(String.format(IGNORING_UNKNOWN_SUB_DISEASE, subDiseaseName, healthMapAlert.getAlertId()));
+        if (subDisease == null) {
+            // HealthMap sub-disease does not exist in database, create one (will act like subdisease "not of interest")
+            subDisease = createAndSaveHealthMapSubDisease(subDiseaseName);
+            notifyAboutNewHealthMapSubDisease(subDisease);
+            LOGGER.warn(String.format(SUB_DISEASE_NOT_OF_INTEREST_MESSAGE, subDiseaseName,
+                    healthMapAlert.getAlertId()));
+            return null;
+        } else if (subDisease.getDiseaseGroup() == null) {
+            // HealthMap sub-disease is not linked to a disease group, which means that it is not of interest
+            LOGGER.warn(String.format(SUB_DISEASE_NOT_OF_INTEREST_MESSAGE, subDiseaseName,
+                    healthMapAlert.getAlertId()));
             return null;
         }
-
         return subDisease;
     }
 
@@ -289,6 +286,16 @@ public class HealthMapAlertConverter {
         return healthMapDisease;
     }
 
+    private HealthMapSubDisease createAndSaveHealthMapSubDisease(String diseaseName) {
+        HealthMapSubDisease healthMapSubDisease = new HealthMapSubDisease(null, diseaseName, null);
+        healthMapService.saveHealthMapSubDisease(healthMapSubDisease);
+
+        // Add the new HealthMap subdisease to the cached map
+        lookupData.getSubDiseaseMap().put(diseaseName, healthMapSubDisease);
+
+        return healthMapSubDisease;
+    }
+
     private void notifyAboutNewHealthMapDisease(HealthMapDisease healthMapDisease) {
         final String disease = healthMapDisease.getName();
         final String groupName = healthMapDisease.getDiseaseGroup().getName();
@@ -300,6 +307,19 @@ public class HealthMapAlertConverter {
         templateData.put(FOUND_NEW_DISEASE_TEMPLATE_GROUP_KEY, groupName);
 
         emailService.sendEmailInBackground(subject, FOUND_NEW_DISEASE_TEMPLATE, templateData);
+
+        LOGGER.warn(subject);
+    }
+
+    private void notifyAboutNewHealthMapSubDisease(HealthMapSubDisease healthMapSubDisease) {
+        final String disease = healthMapSubDisease.getName();
+
+        final String subject = String.format(FOUND_NEW_SUBDISEASE_SUBJECT, disease);
+
+        Map<String, Object> templateData = new HashMap<>();
+        templateData.put(FOUND_NEW_DISEASE_TEMPLATE_DISEASE_KEY, disease);
+
+        emailService.sendEmailInBackground(subject, FOUND_NEW_SUBDISEASE_TEMPLATE, templateData);
 
         LOGGER.warn(subject);
     }
