@@ -5,8 +5,6 @@ import org.joda.time.DateTime;
 
 import javax.persistence.*;
 import javax.persistence.Entity;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 /**
@@ -14,12 +12,6 @@ import javax.persistence.Table;
  *
  * Copyright (c) 2014 University of Oxford
  */
-@NamedQueries({
-        @NamedQuery(
-                name = "getHealthMapSubDiseaseByName",
-                query = "from HealthMapSubDisease where name=:name"
-        )
-})
 @Entity
 @Table(name = "healthmap_subdisease")
 @Immutable

@@ -23,16 +23,4 @@ public class HealthMapSubDiseaseDaoTest extends AbstractCommonSpringIntegrationT
         List<HealthMapSubDisease> subDiseases = healthMapSubDiseaseDao.getAll();
         assertThat(subDiseases).hasSize(45);
     }
-
-    @Test
-    public void getHealthMapSubDiseaseByName() {
-        String name = "pf";
-        HealthMapSubDisease subDisease = healthMapSubDiseaseDao.getByName(name);
-        assertThat(subDisease).isNotNull();
-        assertThat(subDisease.getName()).isEqualTo(name);
-        assertThat(subDisease.getHealthMapDisease()).isNotNull();
-        assertThat(subDisease.getHealthMapDisease().getId()).isEqualTo(80);
-        assertThat(subDisease.getDiseaseGroup()).isNotNull();
-        assertThat(subDisease.getDiseaseGroup().getId()).isEqualTo(249);
-    }
 }

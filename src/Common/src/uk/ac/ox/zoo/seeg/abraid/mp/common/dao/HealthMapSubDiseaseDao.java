@@ -16,10 +16,4 @@ public interface HealthMapSubDiseaseDao {
      */
     List<HealthMapSubDisease> getAll();
 
-    /**
-     * Gets a HealthMap sub-disease by name.
-     * @param name The name.
-     * @return The HealthMap sub-disease, or null if not found.
-     */
-    HealthMapSubDisease getByName(String name);
 }
