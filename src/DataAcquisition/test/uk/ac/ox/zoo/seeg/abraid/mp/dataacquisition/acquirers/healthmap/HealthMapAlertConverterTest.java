@@ -79,7 +79,6 @@ public class HealthMapAlertConverterTest {
         mockOutGetAlertByID(healthMapAlertId, null);
         mockOutGetFeed(feed);
         mockOutGetExistingHealthMapDisease(diseaseId, healthMapDiseaseName, diseaseGroup);
-        mockOutDoesDiseaseOccurrenceExist(false);
 
         // Act
         List<DiseaseOccurrence> occurrences = alertConverter.convert(healthMapAlert, location);
@@ -125,7 +124,6 @@ public class HealthMapAlertConverterTest {
         mockOutGetAlertByID(healthMapAlertId, null);
         mockOutGetFeed(feed);
         mockOutGetExistingHealthMapDisease(diseaseId, healthMapDiseaseName, diseaseGroup);
-        mockOutDoesDiseaseOccurrenceExist(false);
 
         // Act
         List<DiseaseOccurrence> occurrences = alertConverter.convert(healthMapAlert, location);
@@ -172,7 +170,6 @@ public class HealthMapAlertConverterTest {
         mockOutGetAlertByID(healthMapAlertId, alert);
         mockOutGetFeed(feed);
         mockOutGetExistingHealthMapDisease(diseaseId, healthMapDiseaseName, diseaseGroup);
-        mockOutDoesDiseaseOccurrenceExist(false);
 
         // Act
         List<DiseaseOccurrence> occurrences = alertConverter.convert(healthMapAlert, location);
@@ -212,7 +209,6 @@ public class HealthMapAlertConverterTest {
         mockOutGetFeed(null);
         mockOutGetExistingHealthMapDisease(diseaseId, healthMapDiseaseName, diseaseGroup);
         mockOutGetHealthMapProvenance();
-        mockOutDoesDiseaseOccurrenceExist(false);
 
         // Act
         List<DiseaseOccurrence> occurrences = alertConverter.convert(healthMapAlert, location);
@@ -335,7 +331,6 @@ public class HealthMapAlertConverterTest {
         mockOutGetFeed(feed);
         HealthMapDisease healthMapDisease =
                 mockOutGetExistingHealthMapDisease(diseaseId, healthMapDiseaseName, diseaseGroup);
-        mockOutDoesDiseaseOccurrenceExist(false);
 
         // Act
         List<DiseaseOccurrence> occurrences = alertConverter.convert(healthMapAlert, location);
@@ -383,7 +378,6 @@ public class HealthMapAlertConverterTest {
         mockOutGetAlertByID(healthMapAlertId, alert);
         mockOutGetFeed(feed);
         mockOutGetExistingHealthMapDisease(existingDiseaseId, existingHealthMapDiseaseName, existingDiseaseGroup);
-        mockOutDoesDiseaseOccurrenceExist(false);
 
         // Act
         List<DiseaseOccurrence> occurrences = alertConverter.convert(healthMapAlert, location);
@@ -423,7 +417,6 @@ public class HealthMapAlertConverterTest {
         // Prepare mock objects
         mockOutGetAlertByID(healthMapAlertId, alert);
         mockOutGetFeed(feed);
-        mockOutDoesDiseaseOccurrenceExist(false);
 
         // Act
         List<DiseaseOccurrence> occurrences = alertConverter.convert(healthMapAlert, location);
@@ -496,7 +489,6 @@ public class HealthMapAlertConverterTest {
         // Prepare mock objects
         mockOutGetAlertByID(healthMapAlertId, null);
         mockOutGetFeed(feed);
-        mockOutDoesDiseaseOccurrenceExist(false);
 
         // Act
         List<DiseaseOccurrence> occurrences = alertConverter.convert(healthMapAlert, location);
@@ -550,7 +542,6 @@ public class HealthMapAlertConverterTest {
         mockOutGetAlertByID(healthMapAlertId, alert);
         mockOutGetFeed(feed);
         mockOutGetExistingHealthMapDisease(diseaseId, healthMapDiseaseName, null);
-        mockOutDoesDiseaseOccurrenceExist(false);
 
         // Act
         List<DiseaseOccurrence> occurrences = alertConverter.convert(healthMapAlert, location);
@@ -586,7 +577,6 @@ public class HealthMapAlertConverterTest {
         mockOutGetAlertByID(healthMapAlertId, null);
         mockOutGetFeed(feed);
         mockOutGetExistingHealthMapDisease(diseaseId, healthMapDiseaseName, diseaseGroup);
-        mockOutDoesDiseaseOccurrenceExist(false);
 
         // Act
         List<DiseaseOccurrence> occurrences = alertConverter.convert(healthMapAlert, location);
@@ -630,7 +620,6 @@ public class HealthMapAlertConverterTest {
         mockOutGetAlertByID(healthMapAlertId, null);
         mockOutGetFeed(feed);
         mockOutGetExistingHealthMapDisease(diseaseId, healthMapDiseaseName, diseaseGroup);
-        mockOutDoesDiseaseOccurrenceExist(false);
 
         // Act
         List<DiseaseOccurrence> occurrences = alertConverter.convert(healthMapAlert, location);
@@ -678,10 +667,6 @@ public class HealthMapAlertConverterTest {
         HealthMapSubDisease healthMapSubDisease = new HealthMapSubDisease(healthMapDisease, name, diseaseGroup);
         subDiseaseMap.put(name, healthMapSubDisease);
         return healthMapSubDisease;
-    }
-
-    private void mockOutDoesDiseaseOccurrenceExist(boolean result) {
-        when(diseaseService.doesDiseaseOccurrenceExist(any(DiseaseOccurrence.class))).thenReturn(result);
     }
 
     private boolean doOccurrencesContainDiseaseGroup(List<DiseaseOccurrence> occurrences, DiseaseGroup diseaseGroup) {
