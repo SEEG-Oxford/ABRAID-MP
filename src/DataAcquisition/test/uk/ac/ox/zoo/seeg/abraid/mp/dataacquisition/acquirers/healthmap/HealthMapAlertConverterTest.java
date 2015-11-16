@@ -6,8 +6,8 @@ import org.junit.Test;
 import org.springframework.util.ObjectUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.AlertService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.HealthMapService;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.domain.HealthMapAlert;
 
 import java.util.Arrays;
@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 /**
@@ -32,7 +31,7 @@ public class HealthMapAlertConverterTest {
     private Map<String, HealthMapSubDisease> subDiseaseMap;
     private HealthMapAlertConverter alertConverter;
     private AlertService alertService;
-    private DiseaseService diseaseService;
+    private HealthMapService healthMapService;
     private EmailService emailService;
     private String placeCategoriesToIgnore;
 
@@ -45,11 +44,11 @@ public class HealthMapAlertConverterTest {
         when(lookupData.getSubDiseaseMap()).thenReturn(subDiseaseMap);
 
         alertService = mock(AlertService.class);
-        diseaseService = mock(DiseaseService.class);
+        healthMapService = mock(HealthMapService.class);
         emailService = mock(EmailService.class);
         placeCategoriesToIgnore = "imported case";
 
-        alertConverter = new HealthMapAlertConverter(alertService, diseaseService, emailService, lookupData,
+        alertConverter = new HealthMapAlertConverter(alertService, emailService, lookupData, healthMapService,
                 placeCategoriesToIgnore);
     }
 
@@ -343,7 +342,7 @@ public class HealthMapAlertConverterTest {
         assertThat(occurrence.getLocation()).isSameAs(location);
         assertThat(occurrence.getOccurrenceDate()).isEqualTo(publicationDate);
         assertThat(healthMapDisease.getName()).isEqualTo(healthMapDiseaseNewName);
-        verify(diseaseService).saveHealthMapDisease(eq(healthMapDisease));
+        verify(healthMapService).saveHealthMapDisease(eq(healthMapDisease));
     }
 
     @Test
@@ -389,7 +388,7 @@ public class HealthMapAlertConverterTest {
         assertThat(occurrence.getAlert()).isSameAs(alert);
         assertThat(occurrence.getLocation()).isSameAs(location);
         assertThat(occurrence.getOccurrenceDate()).isEqualTo(publicationDate);
-        verify(diseaseService).saveHealthMapDisease(eq(newHealthMapDisease));
+        verify(healthMapService).saveHealthMapDisease(eq(newHealthMapDisease));
         assertThat(lookupData.getDiseaseMap().get(diseaseId)).isEqualTo(newHealthMapDisease);
     }
 
@@ -501,7 +500,7 @@ public class HealthMapAlertConverterTest {
         assertThat(doOccurrencesContainDiseaseGroup(occurrences, diseaseGroupAb)).isTrue();
         assertThat(doOccurrencesContainDiseaseGroup(occurrences, diseaseGroupLeishmaniases)).isTrue();
         assertThat(doOccurrencesContainDiseaseGroup(occurrences, diseaseGroupNew)).isTrue();
-        verify(diseaseService).saveHealthMapDisease(eq(healthMapDiseaseNew));
+        verify(healthMapService).saveHealthMapDisease(eq(healthMapDiseaseNew));
 
         for (DiseaseOccurrence occurrence : occurrences) {
             assertThat(occurrence.getAlert()).isNotNull();

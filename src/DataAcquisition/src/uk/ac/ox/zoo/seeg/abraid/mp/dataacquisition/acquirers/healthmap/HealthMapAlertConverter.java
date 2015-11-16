@@ -6,8 +6,8 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.AlertService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.HealthMapService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.ParseUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.domain.HealthMapAlert;
 
@@ -40,20 +40,20 @@ public class HealthMapAlertConverter {
     private static final String FOUND_NEW_DISEASE_TEMPLATE_GROUP_KEY = "cluster";
 
     private final AlertService alertService;
-    private final DiseaseService diseaseService;
     private final EmailService emailService;
     private final HealthMapLookupData lookupData;
+    private final HealthMapService healthMapService;
     private final List<String> placeCategoriesToIgnore;
 
     private UrlValidator urlValidator = new UrlValidator(new String[] {"http", "https"});
 
-    public HealthMapAlertConverter(AlertService alertService, DiseaseService diseaseService,
-                                   EmailService emailService, HealthMapLookupData lookupData,
+    public HealthMapAlertConverter(AlertService alertService, EmailService emailService,
+                                   HealthMapLookupData lookupData, HealthMapService healthMapService,
                                    String placeCategoriesToIgnore) {
         this.alertService = alertService;
-        this.diseaseService = diseaseService;
         this.emailService = emailService;
         this.lookupData = lookupData;
+        this.healthMapService = healthMapService;
 
         // This comes in as a comma-separated list, so split it and make it lowercase (for case-insensitive comparison)
         if (placeCategoriesToIgnore != null) {
@@ -264,7 +264,7 @@ public class HealthMapAlertConverter {
     private void renameHealthMapDiseaseIfRequired(HealthMapDisease disease, String diseaseName) {
         if (!disease.getName().equals(diseaseName)) {
             disease.setName(diseaseName);
-            diseaseService.saveHealthMapDisease(disease);
+            healthMapService.saveHealthMapDisease(disease);
         }
     }
 
@@ -281,7 +281,7 @@ public class HealthMapAlertConverter {
         healthMapDisease.setDiseaseGroup(diseaseGroup);
 
         // This saves both the new HealthMap disease and the new disease cluster
-        diseaseService.saveHealthMapDisease(healthMapDisease);
+        healthMapService.saveHealthMapDisease(healthMapDisease);
 
         // Add the new HealthMap disease to the cached map
         lookupData.getDiseaseMap().put(diseaseId, healthMapDisease);
