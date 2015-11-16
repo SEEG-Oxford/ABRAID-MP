@@ -14,7 +14,6 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "healthmap_subdisease")
-@Immutable
 public class HealthMapSubDisease {
     // The primary key.
     @Id
@@ -60,12 +59,20 @@ public class HealthMapSubDisease {
         return healthMapDisease;
     }
 
+    public void setHealthMapDisease(HealthMapDisease healthMapDisease) {
+        this.healthMapDisease = healthMapDisease;
+    }
+
     public String getName() {
         return name;
     }
 
     public DiseaseGroup getDiseaseGroup() {
         return diseaseGroup;
+    }
+
+    public void setDiseaseGroup(DiseaseGroup diseaseGroup) {
+        this.diseaseGroup = diseaseGroup;
     }
 
     public DateTime getCreatedDate() {

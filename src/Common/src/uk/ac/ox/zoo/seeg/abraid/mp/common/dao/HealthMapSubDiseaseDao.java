@@ -11,9 +11,22 @@ import java.util.List;
  */
 public interface HealthMapSubDiseaseDao {
     /**
+     * Gets a HealthMapSubDisease by ID.
+     *
+     * @param id The ID.
+     * @return The HealthMapSubDisease with the specified ID, or null if not found.
+     */
+    HealthMapSubDisease getById(Integer id);
+
+    /**
      * Gets all sub-diseases.
      * @return All sub-diseases.
      */
     List<HealthMapSubDisease> getAll();
 
+    /**
+     * Saves the specified HealthMap subdisease.
+     * @param disease The disease to save.
+     */
+    void save(HealthMapSubDisease disease);
 }
