@@ -11,7 +11,7 @@
 <script type="text/javascript">
     // bootstrapped data for js viewmodels
     var data = {
-        wmsUrl: "${baseWmsUrl}",
+        wmsUrl: "${baseWmsUrl?js_string}",
         runs: ${runs},
         countries: ${countries},
     };

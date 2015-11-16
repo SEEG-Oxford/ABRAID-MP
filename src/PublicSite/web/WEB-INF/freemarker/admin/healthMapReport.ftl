@@ -26,14 +26,14 @@
             <tr>
                 <th></th>
                 <#list months as month>
-                    <th>${month}</th>
+                    <th>${month?html}</th>
                 </#list>
             </tr>
         </thead>
         <tbody>
             <#list qualifiers as qualifier>
                 <tr onclick="$('.q${qualifier?index}').fadeToggle();" <#if qualifier=='Total'>style="font-weight: bold"</#if>>
-                    <td>${qualifier}</td>
+                    <td>${qualifier?html}</td>
                     <#list months as month>
                         <td <#if month=='Total'>style="font-weight: bold"</#if>>${data[month][qualifier].getDataCountryCount() + data[month][qualifier].getDataAdmin1Count() + data[month][qualifier].getDataAdmin2Count() + data[month][qualifier].getDataPreciseCount()}&nbsp;(${data[month][qualifier].getLocationCountryCount() + data[month][qualifier].getLocationAdmin1Count() + data[month][qualifier].getLocationAdmin2Count() + data[month][qualifier].getLocationPreciseCount()})</td>
                     </#list>

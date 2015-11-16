@@ -57,16 +57,16 @@
 
     <@security.authorize ifAnyGranted="ROLE_USER">
         <ul class="collapse navbar-collapse nav navbar-nav navbar-right" id="user-nav">
-            <li class="centered-nav"><a href="#" class="collapse-only">Signed in as: <br><strong><@security.authentication property="principal.fullName"/></strong></a></li>
+            <li class="centered-nav"><a href="#" class="collapse-only">Signed in as: <br><strong><@security.authentication property="principal.fullName" htmlEscape="true"/></strong></a></li>
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                     <span class="fa fa-lg fa-user"></span>
                     <span class="collapse-only">Profile <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu" role="menu">
-                    <li class="centered-nav expand-only"><a href="#">Signed in as: <br /><strong><@security.authentication property="principal.fullName"/></strong></a></li>
+                    <li class="centered-nav expand-only"><a href="#">Signed in as: <br /><strong><@security.authentication property="principal.fullName" htmlEscape="true"/></strong></a></li>
                     <li><a title="Edit profile" href="<@spring.url "/account/edit"/>">Edit profile</a></li>
-                    <li><a title="Change password" href="<@spring.url "/account/email"/>">Change email</a></li>
+                    <li><a title="Change email" href="<@spring.url "/account/email"/>">Change email</a></li>
                     <li><a title="Change password" href="<@spring.url "/account/password"/>">Change password</a></li>
                 </ul>
             </li>

@@ -197,13 +197,11 @@ button.btn[type=submit] {
 #about .row {
     border-top: 2px solid rgb(238, 238, 238);
     border-bottom: 2px solid rgb(238, 238, 238);
+    margin-bottom: 20px;
+    padding: 10px 5px;
 }
-#about-text div {
-    padding: 5px;
-}
-#about #contact-links {
-    float: right;
-    padding: 10px 0;
+#about .row li {
+    padding: 3px 0;
 }
 @media (max-width: 768px) {
     #about-img {
@@ -218,7 +216,8 @@ button.btn[type=submit] {
     #about-img {
         display: table-cell;
         vertical-align: middle;
-        padding: 0 20px;
+        text-align: center;
+        width: 200px;
     }
     #about-text {
         display: table-cell;

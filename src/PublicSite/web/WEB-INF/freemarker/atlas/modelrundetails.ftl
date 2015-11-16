@@ -26,7 +26,7 @@
                     <div class="row-sm-height">
                         <div class="col-sm-6 col-sm-height">
                             <!-- ko with:covariateInfluencesViewModel -->
-                            <h5>Covariate Influences</h5>
+                            <h5>Covariate Influence</h5>
                             <div data-bind="if: covariateInfluences">
                                 <script type="text/html" id="covariateHelp"><span data-bind="text: $data.info || ' '"></span></script>
                                 <table class="table table-condensed" id="covariates">
@@ -35,7 +35,7 @@
                                             <th></th>
                                             <th>Rank</th>
                                             <th>Name</th>
-                                            <th>Mean Influence</th>
+                                            <th>Relative&nbsp;Influence</th>
                                         </tr>
                                     </thead>
                                     <tbody data-bind="foreach: covariateInfluences">
@@ -60,7 +60,7 @@
                                             <th></th>
                                             <th>Name</th>
                                             <th>Mean</th>
-                                            <th>Standard Deviation</th>
+                                            <th>Standard&nbsp;Deviation</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -108,7 +108,7 @@
                     <div style="clear: both; padding-bottom: 22px;"></div>
                     <div style="text-align: center; position: absolute; bottom: 0px; width: 100%">
                         <a class="leaflet-panel-button" data-bind="attr: { href: covariateInfluencesViewModel.effectCurvesLink }" target="_blank" title="Curves">Download effect curve data</a>
-                        <a class="leaflet-panel-button" href="#" data-bind="toggleClick: showCovariateTable, preventBubble: true" title="Plots">Show effect curves plots</a>
+                        <a class="leaflet-panel-button" href="#" data-bind="toggleClick: showCovariateTable, preventBubble: true" title="Plots">Show effect curves</a>
                     </div>
                 </div>
                 <div class="panel-body" style="width:850px; margin-left:850px; position: relative">

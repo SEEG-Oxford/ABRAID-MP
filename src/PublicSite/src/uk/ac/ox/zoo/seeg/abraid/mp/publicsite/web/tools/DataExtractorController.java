@@ -29,7 +29,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.web.RasterFilePathFactory;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.util.Collection;
-import java.util.List;
 
 import static ch.lambdaj.Lambda.convert;
 import static ch.lambdaj.Lambda.filter;
@@ -51,7 +50,6 @@ public class DataExtractorController {
     private GeometryService geometryService;
     private AbraidJsonObjectMapper objectMapper;
     private ModellingLocationPrecisionAdjuster precisionAdjuster;
-    private List<String> gaulsToAdjust;
 
     @Autowired
     public DataExtractorController(
