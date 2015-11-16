@@ -22,8 +22,6 @@ public class DiseaseServiceTest {
     private DiseaseOccurrenceDao diseaseOccurrenceDao;
     private DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao;
     private DiseaseGroupDao diseaseGroupDao;
-    private HealthMapDiseaseDao healthMapDiseaseDao;
-    private HealthMapSubDiseaseDao healthMapSubDiseaseDao;
     private ValidatorDiseaseGroupDao validatorDiseaseGroupDao;
     private AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao;
     private ModelRunDao modelRunDao;
@@ -36,8 +34,6 @@ public class DiseaseServiceTest {
         diseaseOccurrenceDao = mock(DiseaseOccurrenceDao.class);
         diseaseOccurrenceReviewDao = mock(DiseaseOccurrenceReviewDao.class);
         diseaseGroupDao = mock(DiseaseGroupDao.class);
-        healthMapDiseaseDao = mock(HealthMapDiseaseDao.class);
-        healthMapSubDiseaseDao = mock(HealthMapSubDiseaseDao.class);
         validatorDiseaseGroupDao = mock(ValidatorDiseaseGroupDao.class);
         adminUnitDiseaseExtentClassDao = mock(AdminUnitDiseaseExtentClassDao.class);
         modelRunDao = mock(ModelRunDao.class);
@@ -45,7 +41,7 @@ public class DiseaseServiceTest {
         nativeSQL = mock(NativeSQL.class);
         maxDaysOnValidator = 5;
         diseaseService = new DiseaseServiceImpl(diseaseOccurrenceDao, diseaseOccurrenceReviewDao, diseaseGroupDao,
-                healthMapDiseaseDao, healthMapSubDiseaseDao, validatorDiseaseGroupDao, adminUnitDiseaseExtentClassDao,
+                validatorDiseaseGroupDao, adminUnitDiseaseExtentClassDao,
                 modelRunDao, diseaseExtentClassDao, maxDaysOnValidator, nativeSQL);
     }
 
@@ -54,13 +50,6 @@ public class DiseaseServiceTest {
         DiseaseOccurrence occurrence = new DiseaseOccurrence();
         diseaseService.saveDiseaseOccurrence(occurrence);
         verify(diseaseOccurrenceDao).save(eq(occurrence));
-    }
-
-    @Test
-    public void saveHealthMapDisease() {
-        HealthMapDisease disease = new HealthMapDisease();
-        diseaseService.saveHealthMapDisease(disease);
-        verify(healthMapDiseaseDao).save(eq(disease));
     }
 
     @Test
@@ -81,32 +70,6 @@ public class DiseaseServiceTest {
 
         // Assert
         assertThat(testDiseaseExtentClasses).isSameAs(diseaseExtentClasses);
-    }
-
-    @Test
-    public void getAllHealthMapDiseases() {
-        // Arrange
-        List<HealthMapDisease> diseases = Arrays.asList(new HealthMapDisease());
-        when(healthMapDiseaseDao.getAll()).thenReturn(diseases);
-
-        // Act
-        List<HealthMapDisease> testDiseases = diseaseService.getAllHealthMapDiseases();
-
-        // Assert
-        assertThat(testDiseases).isSameAs(diseases);
-    }
-
-    @Test
-    public void getAllHealthMapSubDiseases() {
-        // Arrange
-        List<HealthMapSubDisease> subDiseases = Arrays.asList(new HealthMapSubDisease());
-        when(healthMapSubDiseaseDao.getAll()).thenReturn(subDiseases);
-
-        // Act
-        List<HealthMapSubDisease> testSubDiseases = diseaseService.getAllHealthMapSubDiseases();
-
-        // Assert
-        assertThat(testSubDiseases).isSameAs(subDiseases);
     }
 
     @Test

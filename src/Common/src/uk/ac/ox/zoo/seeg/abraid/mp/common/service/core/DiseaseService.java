@@ -14,18 +14,6 @@ import java.util.Map;
  */
 public interface DiseaseService {
     /**
-     * Gets all HealthMap diseases.
-     * @return All HealthMap diseases.
-     */
-    List<HealthMapDisease> getAllHealthMapDiseases();
-
-    /**
-     * Gets all HealthMap sub-diseases.
-     * @return All HealthMap sub-diseases.
-     */
-    List<HealthMapSubDisease> getAllHealthMapSubDiseases();
-
-    /**
      * Gets all disease groups.
      * @return All disease groups.
      */
@@ -222,12 +210,6 @@ public interface DiseaseService {
      * @param diseaseGroup The disease group to save.
      */
     void saveDiseaseGroup(DiseaseGroup diseaseGroup);
-
-    /**
-     * Saves a HealthMap disease.
-     * @param disease The disease to save.
-     */
-    void saveHealthMapDisease(HealthMapDisease disease);
 
     /**
      * Saves a disease extent class that is associated with an admin unit (global or tropical).
