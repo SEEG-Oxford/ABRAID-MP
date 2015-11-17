@@ -2,9 +2,8 @@
  * Copyright (c) 2015 University of Oxford
  */
 define([
-    "app/admin/HealthMapAdministrationViewModel",
-    "shared/app/BaseTableViewModel"
-], function (HealthMapAdministrationViewModel, BaseTableViewModel) {
+    "app/admin/HealthMapAdministrationViewModel"
+], function (HealthMapAdministrationViewModel) {
     "use strict";
 
     describe("The 'HealthMapAdministrationViewModel' view model", function () {
