@@ -53,7 +53,11 @@ define([
             // Sort
             var sortField = self.sortField();
             iterable = iterable.sortBy(function (disease) {
-                var sortable = ko.utils.recursivePeek(disease[sortField]) || "";
+                var sortChain = sortField.split(".");
+                var sortable = ko.utils.recursivePeek(disease) || "";
+                for (var i = 0; i < sortChain.length; i = i + 1) {
+                    sortable = ko.utils.recursivePeek(sortable[sortChain[i]]) || "";
+                }
                 if (typeof sortable === "string" || sortable instanceof String) {
                     sortable = sortable.toLowerCase();
                 }

@@ -22,8 +22,6 @@ public class DiseaseServiceImpl implements DiseaseService {
     private DiseaseOccurrenceDao diseaseOccurrenceDao;
     private DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao;
     private DiseaseGroupDao diseaseGroupDao;
-    private HealthMapDiseaseDao healthMapDiseaseDao;
-    private HealthMapSubDiseaseDao healthMapSubDiseaseDao;
     private ValidatorDiseaseGroupDao validatorDiseaseGroupDao;
     private AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao;
 
@@ -35,8 +33,6 @@ public class DiseaseServiceImpl implements DiseaseService {
     public DiseaseServiceImpl(DiseaseOccurrenceDao diseaseOccurrenceDao,
                               DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao,
                               DiseaseGroupDao diseaseGroupDao,
-                              HealthMapDiseaseDao healthMapDiseaseDao,
-                              HealthMapSubDiseaseDao healthMapSubDiseaseDao,
                               ValidatorDiseaseGroupDao validatorDiseaseGroupDao,
                               AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao,
                               ModelRunDao modelRunDao,
@@ -46,32 +42,12 @@ public class DiseaseServiceImpl implements DiseaseService {
         this.diseaseOccurrenceDao = diseaseOccurrenceDao;
         this.diseaseOccurrenceReviewDao = diseaseOccurrenceReviewDao;
         this.diseaseGroupDao = diseaseGroupDao;
-        this.healthMapDiseaseDao = healthMapDiseaseDao;
-        this.healthMapSubDiseaseDao = healthMapSubDiseaseDao;
         this.validatorDiseaseGroupDao = validatorDiseaseGroupDao;
         this.adminUnitDiseaseExtentClassDao = adminUnitDiseaseExtentClassDao;
         this.modelRunDao = modelRunDao;
         this.diseaseExtentClassDao = diseaseExtentClassDao;
         this.maxDaysOnValidator = maxDaysOnValidator;
         this.nativeSQL = nativeSQL;
-    }
-
-    /**
-     * Gets all HealthMap diseases.
-     * @return All HealthMap diseases.
-     */
-    @Override
-    public List<HealthMapDisease> getAllHealthMapDiseases() {
-        return healthMapDiseaseDao.getAll();
-    }
-
-    /**
-     * Gets all HealthMap sub-diseases.
-     * @return All HealthMap sub-diseases.
-     */
-    @Override
-    public List<HealthMapSubDisease> getAllHealthMapSubDiseases() {
-        return healthMapSubDiseaseDao.getAll();
     }
 
     /**
@@ -422,15 +398,6 @@ public class DiseaseServiceImpl implements DiseaseService {
     @Override
     public void saveDiseaseGroup(DiseaseGroup diseaseGroup) {
         diseaseGroupDao.save(diseaseGroup);
-    }
-
-    /**
-     * Saves a HealthMap disease.
-     * @param disease The disease to save.
-     */
-    @Override
-    public void saveHealthMapDisease(HealthMapDisease disease) {
-        healthMapDiseaseDao.save(disease);
     }
 
     /**

@@ -3,10 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.AlertService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.GeometryService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.*;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -26,7 +23,7 @@ public class HealthMapLookupDataTest {
     private AlertService alertService;
     private LocationService locationService;
     private GeometryService geometryService;
-    private DiseaseService diseaseService;
+    private HealthMapService healthMapService;
     private HealthMapLookupData lookupData;
 
     @Before
@@ -34,8 +31,8 @@ public class HealthMapLookupDataTest {
         alertService = mock(AlertService.class);
         locationService = mock(LocationService.class);
         geometryService = mock(GeometryService.class);
-        diseaseService = mock(DiseaseService.class);
-        lookupData = new HealthMapLookupData(alertService, locationService, geometryService, diseaseService);
+        healthMapService = mock(HealthMapService.class);
+        lookupData = new HealthMapLookupData(alertService, locationService, geometryService, healthMapService);
     }
 
     @Test
@@ -54,7 +51,7 @@ public class HealthMapLookupDataTest {
         expectedCountryMap.put(2, healthMapCountry2);
 
         // Act
-        lookupData = new HealthMapLookupData(alertService, locationService, geometryService, diseaseService);
+        lookupData = new HealthMapLookupData(alertService, locationService, geometryService, healthMapService);
         Map<Integer, HealthMapCountry> actualCountryMap = lookupData.getCountryMap();
 
         // Assert
@@ -70,14 +67,14 @@ public class HealthMapLookupDataTest {
         HealthMapDisease healthMapDisease2 = new HealthMapDisease(2, "Test HealthMap disease 2", disease2);
 
         List<HealthMapDisease> diseases = Arrays.asList(healthMapDisease1, healthMapDisease2);
-        when(diseaseService.getAllHealthMapDiseases()).thenReturn(diseases);
+        when(healthMapService.getAllHealthMapDiseases()).thenReturn(diseases);
 
         Map<Integer, HealthMapDisease> expectedDiseaseMap = new HashMap<>();
         expectedDiseaseMap.put(1, healthMapDisease1);
         expectedDiseaseMap.put(2, healthMapDisease2);
 
         // Act
-        lookupData = new HealthMapLookupData(alertService, locationService, geometryService, diseaseService);
+        lookupData = new HealthMapLookupData(alertService, locationService, geometryService, healthMapService);
         Map<Integer, HealthMapDisease> actualDiseaseMap = lookupData.getDiseaseMap();
 
         // Assert
@@ -97,7 +94,7 @@ public class HealthMapLookupDataTest {
         HealthMapSubDisease healthMapSubDisease2 = new HealthMapSubDisease(healthMapDisease2, "sub2", disease4);
 
         List<HealthMapSubDisease> subDiseases = Arrays.asList(healthMapSubDisease1, healthMapSubDisease2);
-        when(diseaseService.getAllHealthMapSubDiseases()).thenReturn(subDiseases);
+        when(healthMapService.getAllHealthMapSubDiseases()).thenReturn(subDiseases);
 
         Map<String, HealthMapSubDisease> expectedSubDiseaseMap = new HashMap<>();
         expectedSubDiseaseMap.put("sub1", healthMapSubDisease1);
