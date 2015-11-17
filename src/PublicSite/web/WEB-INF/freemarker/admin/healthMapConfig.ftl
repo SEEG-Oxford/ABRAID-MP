@@ -23,6 +23,9 @@
     td button.btn[type=submit] {
         min-width: 0;
     }
+    td > span > i {
+        color: #aaaaaa;
+    }
 </style>
 </#assign>
 
