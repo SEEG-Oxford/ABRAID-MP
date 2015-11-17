@@ -1,5 +1,5 @@
 /* Row view model for the disease tables on the HealthMap administration page.
- * Copyright (c) 2014 University of Oxford
+ * Copyright (c) 2015 University of Oxford
  */
 define([
     "ko",
@@ -8,7 +8,7 @@ define([
 ], function (ko, _, BaseFormViewModel) {
     "use strict";
 
-    return function (healthMapDisease, target, baseUrl) {
+    return function (baseUrl, target, healthMapDisease) {
         var self = this;
         // Each row in the table is a mini form
         BaseFormViewModel.call(self, true, true, baseUrl, target);
@@ -29,11 +29,15 @@ define([
         // Add form behavior
         self.buildSubmissionData = function () {
             // The controller is only expecting the linked diseases as JsonNamedEntry, so recreate with just id & name.
-            healthMapDisease.abraidDisease = self.abraidDiseaseNew() ?
-            { id: self.abraidDiseaseNew().id, name: self.abraidDiseaseNew().name } : undefined;
-            healthMapDisease.parent = self.parentDiseaseNew() ?
-            { id: self.parentDiseaseNew().id, name: self.parentDiseaseNew().name } : undefined;
-            return healthMapDisease;
+            var extract = function (disease) {
+                return disease() ? { id: disease().id, name: disease().name } : undefined;
+            };
+            return {
+                id: self.id,
+                name: self.name,
+                abraidDisease: extract(self.abraidDiseaseNew),
+                parent: extract(self.parentDiseaseNew)
+            };
         };
 
         self.warning = ko.computed(function () {

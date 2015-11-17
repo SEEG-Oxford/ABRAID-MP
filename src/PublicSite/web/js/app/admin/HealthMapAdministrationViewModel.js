@@ -1,5 +1,5 @@
 /* View model for the HealthMap administration page.
- * Copyright (c) 2014 University of Oxford
+ * Copyright (c) 2015 University of Oxford
  */
 define([
     "ko",
@@ -25,10 +25,10 @@ define([
 
         // Generate row/form view models for each table
         var diseaseRows = _(healthMapDiseases).map(function (healthMapDisease) {
-            return new HealthMapDiseaseRowViewModel(healthMapDisease, "admin/healthmap/updateDisease", baseUrl);
+            return new HealthMapDiseaseRowViewModel(baseUrl, "admin/healthmap/updateDisease", healthMapDisease);
         });
         var subdiseaseRows = _(healthMapSubDiseases).map(function (healthMapSubDisease) {
-            return new HealthMapDiseaseRowViewModel(healthMapSubDisease, "admin/healthmap/updateSubDisease", baseUrl);
+            return new HealthMapDiseaseRowViewModel(baseUrl, "admin/healthmap/updateSubDisease", healthMapSubDisease);
         });
 
         // Create a subview model for each table
@@ -38,6 +38,7 @@ define([
         // Expose the full lists for use in drop down lists
         self.abraidDiseases = abraidDiseases;
         self.healthMapDiseases = healthMapDiseases;
+        self.healthMapSubDiseases = healthMapSubDiseases;
 
         // Add dummy "isSubmitting" field, need for table templates, but not used in this view model
         self.isSubmitting = false;
