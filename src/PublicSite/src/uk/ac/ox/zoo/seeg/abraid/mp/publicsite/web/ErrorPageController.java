@@ -50,7 +50,8 @@ public class ErrorPageController extends AbstractController {
         return "error";
     }
 
-    private void preventExternalRequests(HttpServletRequest request, int status) throws NoSuchRequestHandlingMethodException {
+    private void preventExternalRequests(HttpServletRequest request, int status)
+            throws NoSuchRequestHandlingMethodException {
         if (status == 0) {
             // This request mapping is for internal error access (via web.xml <errorpage>) only. If we get a normal hit
             // on it, throw a 404 (which will end up back here via DefaultHandlerExceptionResolver).
