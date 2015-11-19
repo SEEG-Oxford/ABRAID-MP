@@ -9,7 +9,7 @@
 <@c.page title="ABRAID MP - Error (${status})" mainjs="/js/kickstart/default" includeFooter=show_bars includeNavBar=show_bars>
 <div class="container">
     <div class="jumbotron">
-        <h1>Error (${status}) ${uri}</h1>
+        <h1>Error (${status})</h1>
         <hr/>
         <#switch status>
             <#case 403>
