@@ -13,7 +13,7 @@
 }
 #layerSelector {
     position: absolute;
-    z-index: 10;                 /* Overlay to ensure clicks*/
+    z-index: 999;                /* Overlay to ensure clicks*/
     margin-left: 50px;           /* Space for zoomslider */
 }
 #layerSelector .alert {

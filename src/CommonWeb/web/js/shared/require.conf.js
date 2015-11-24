@@ -28,11 +28,11 @@
             "underscore": cdn + "underscore.js/1.6.0/underscore-min",
             "moment": cdn + "moment.js/2.6.0/moment.min",
             "domReady": cdn + "require-domReady/2.0.1/domReady.min",
-            "leaflet": cdn + "leaflet/0.7.7/leaflet",
             "jquery.cookie": cdn + "jquery-cookie/1.4.1/jquery.cookie.min",
             "d3": cdn + "d3/3.5.5/d3.min",
 
             // Local
+            "leaflet": libPath + "leaflet/leaflet/leaflet",
             "leaflet-markercluster": libPath + "leaflet/markercluster/leaflet.markercluster",
             "leaflet-zoomslider": libPath + "leaflet/zoomslider/L.Control.Zoomslider",
             "flipclock": libPath + "jquery/flipclock/flipclock.min",
