@@ -23,11 +23,11 @@
             <#break>
             <#case 404>
                 <p>Sorry, the page you are looking for could not be found.</p>
-                <p>You might want to try going to our front page, or going back to your previous page.</p>
+                <p>You can go to our front page, or go back to your previous page.</p>
             <#break>
             <#default>
                 <p>Oh, no! An unexpected error occurred.</p>
-                <p>Refresh the page and try again. We track these errors, but if the problem persists, get in touch.</p>
+                <p>Refresh the page and try again. We track these errors but if the problem persists, get in touch.</p>
             <#break>
         </#switch>
         <p><em>We apologize for any inconvenience.</em></p>
