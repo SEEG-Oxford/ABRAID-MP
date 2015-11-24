@@ -22,7 +22,6 @@
     <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Sans+Pro:600" type="text/css">
     <link rel="stylesheet" href="<@spring.url "/ext/leaflet/zoomslider/L.Control.Zoomslider.css" />">
     <link rel="stylesheet" href="<@spring.url "/ext/jquery/flipclock/flipclock.css" />">
-    <link rel="stylesheet" href="<@spring.url "/css/markers.css" />">
     <link rel="stylesheet" href="<@spring.url "/css/map.css" />">
     <link rel="stylesheet" href="<@spring.url "/css/dataValidation.css" />">
 </head>

@@ -23,7 +23,6 @@
     <link rel="stylesheet" href="<@spring.url "/ext/c3/c3/c3.css" />">
     <link rel="stylesheet" href="<@spring.url "/ext/leaflet/zoomslider/L.Control.Zoomslider.css" />">
     <link rel="stylesheet" href="<@spring.url "/ext/jquery/flipclock/flipclock.css" />">
-    <link rel="stylesheet" href="<@spring.url "/css/markers.css" />">
     <link rel="stylesheet" href="<@spring.url "/css/map.css" />">
     <link rel="stylesheet" href="<@spring.url "/css/atlas.css" />">
 </head>
