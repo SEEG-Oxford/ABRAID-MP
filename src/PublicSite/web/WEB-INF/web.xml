@@ -109,6 +109,11 @@
         <filter-name>springSecurityFilterChain</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+    <filter-mapping>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <url-pattern>/error</url-pattern>
+        <dispatcher>ERROR</dispatcher>
+    </filter-mapping>
 
     <!-- Required to include session-management in spring-security http -->
     <listener>
@@ -117,4 +122,7 @@
         </listener-class>
     </listener>
 
+    <error-page>
+        <location>/error</location>
+    </error-page>
 </web-app>
