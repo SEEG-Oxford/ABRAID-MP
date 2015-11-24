@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
  * Copyright (c) 2015 University of Oxford
  *
  * Note: The approach here, to use a RequestMapping with "<error-page>" in web.xml instead of using Spring's
- * @ControllerAdvice/ExceptionResolver mechanism, is intentional. Due to the structure of
+ * ControllerAdvice/ExceptionResolver mechanism, is intentional. Due to the structure of
  * DefaultHandlerExceptionResolver there is no way to add an ExceptionResolver while keeping the behavior of
  * DefaultHandlerExceptionResolver (setting the correct HTTP status and header - i.e. Accept advice) while also styling
  * the html output, for all error types. Instead we let DefaultHandlerExceptionResolver process the errors then
