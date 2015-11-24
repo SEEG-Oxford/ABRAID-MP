@@ -18,26 +18,16 @@ define([
     "L",
     "jquery",
     "ko",
-    "underscore"
-], function (L, $, ko, _) {
+    "underscore",
+    "app/LeafletMapFactory"
+], function (L, $, ko, _, LeafletMapFactory) {
     "use strict";
 
     return function (baseUrl, wmsUrl, loggedIn, alert, setTimeout) { // jshint ignore:line
 
         /** MAP AND BASE LAYER */
-
         // Initialise map at "map" div
-        var map = L.map("map", {
-            attributionControl: false,
-            zoomControl: false,
-            zoomsliderControl: true,
-            maxBounds: [ [-60, -220], [85, 220] ],
-            maxZoom: 7,
-            minZoom: 3,
-            animate: true,
-            bounceAtZoomLimits: false,
-            crs: L.CRS.EPSG4326
-        }).fitWorld();
+        var map = LeafletMapFactory.create("map");
 
         // Add the simplified shapefile base layer with WMS GET request
         var baseLayer = L.tileLayer.wms(wmsUrl, {
