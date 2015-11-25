@@ -5,7 +5,7 @@
             <i class="fa fa-lg fa-picture-o"></i>Download PNG image
         </a>
     </div>
-    <div class="leaflet-bar leaflet-control" data-bind="preventBubble: true">
+    <div class="leaflet-bar leaflet-control" data-bind="visible: showTif, preventBubble: true">
         <a target="_blank" title="GeoTIFF" data-bind="attr: { href: tif }">
             <i class="fa fa-lg fa-download"></i>Download predicted data
         </a>

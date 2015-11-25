@@ -29,6 +29,10 @@ define([
                 baseUrl + "atlas/results/" + activeLayer().run.id + "_" + activeLayer().type + ".tif" : "#";
         }, self);
 
+        self.showTif = ko.computed(function () {
+            return activeLayer() ? activeLayer().type !== "occurrences" : false;
+        }, self);
+
         self.occurrences = ko.computed(function () {
             return activeLayer() ?
                 baseUrl + "atlas/data/modelrun/" + activeLayer().run.id + "/inputoccurrences.csv": "#";
