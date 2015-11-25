@@ -47,6 +47,7 @@ define([
         // Track when zooming is happening
         map.isZooming = false;
         map.isPanning = false;
+        map.isSpidering = false;
         map.on("zoomstart", function () { map.isZooming = true; });
         map.on("zoomend", function () { map.isZooming = false; });
         map.on("movestart", function () { map.isPanning = true; });
@@ -122,7 +123,8 @@ define([
                 maxWidth: 500,
                 offset: [0, 35]
             });
-            marker.on("click", function () {
+            marker.on("click", function (e) {
+                if (e) { L.DomEvent.stop(e); }
                 ko.postbox.publish("point-selected", feature);
                 selectPoint(this);
             });
@@ -244,8 +246,13 @@ define([
                 map.panTo(targetLatLng);
             }
 
+
             var recursivelySelectOccurrenceMarker = function () {
-                if (!map.isZooming && !map.isPanning) {
+                // It should be able to replace all of this with
+                // clusterLayer.zoomToShowLayer(target, function () { clickOccurrenceMarker(target); });
+                // but zoomToShowLayer is buggy and doesnt call its callback on all paths
+
+                if (!map.isZooming && !map.isPanning && !map.isSpidering) {
                     var parent = clusterLayer.getVisibleParent(target);
 
                     if (target._map) { /* jshint ignore:line */
@@ -256,7 +263,15 @@ define([
                     } else if (parent) {
                         // The closest point isn't on the map, but is inside a cluster on the map,
                         // so click the cluster to open it. Then try again, so the spider leg gets clicked
-                        clickOccurrenceMarker(parent);
+                        if (map.getZoom() !== map.getMaxZoom()) {
+                            parent.zoomToBounds();
+                        } else {
+                            map.isSpidering = true;
+                            clusterLayer.once("spiderfied", function () {
+                                map.isSpidering = false;
+                            });
+                            parent.spiderfy();
+                        }
                     } else {
                         // Give up
                         return;
@@ -341,7 +356,7 @@ define([
                     count: feature.properties.occurrenceCount
                 };
                 layer.on({
-                    click: function () { ko.postbox.publish("admin-unit-selected", data); },
+                    click: function (e) { L.DomEvent.stop(e); ko.postbox.publish("admin-unit-selected", data); },
                     mouseover: function () {
                         layer.setStyle({ fillColor: extentClassColour[feature.properties.diseaseExtentClass][1] });
                     },
@@ -470,7 +485,8 @@ define([
         }
 
         // Reset to default style when a point or admin unit is unselected (by clicking anywhere else on the map)
-        function resetSelectedPoint() {
+        function resetSelectedPoint(e) {
+            if (e) { L.DomEvent.stop(e); }
             ko.postbox.publish("point-selected", null);
             resetDiseaseOccurrenceLayerStyle();
         }
@@ -480,7 +496,8 @@ define([
             resetDiseaseExtentLayerStyle();
         }
 
-        function resetSelectedFeature() {
+        function resetSelectedFeature(e) {
+            if (e) { L.DomEvent.stop(e); }
             if (validationTypeIsDiseaseOccurrenceLayer) {
                 resetSelectedPoint();
             } else {
