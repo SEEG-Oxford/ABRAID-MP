@@ -146,7 +146,7 @@ button.btn[type=submit] {
         display: inline-block !important;
     }
 }
-@media (max-width: 768px) {
+@media (max-width: 767px) {
     .collapse-only {
         display: inline-block !important;
     }

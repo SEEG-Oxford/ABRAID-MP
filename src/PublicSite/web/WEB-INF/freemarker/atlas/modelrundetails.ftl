@@ -2,23 +2,23 @@
     <!-- ko with:downloadLinksViewModel -->
     <div class="leaflet-bar leaflet-control" data-bind="visible: showPng, preventBubble: true">
         <a target="_blank" title="PNG" data-bind="attr: { href: png }">
-            <i class="fa fa-lg fa-picture-o"></i>Download PNG image
+            <i class="fa fa-lg fa-picture-o"></i><span>Download PNG image</span>
         </a>
     </div>
     <div class="leaflet-bar leaflet-control" data-bind="visible: showTif, preventBubble: true">
         <a target="_blank" title="GeoTIFF" data-bind="attr: { href: tif }">
-            <i class="fa fa-lg fa-download"></i>Download predicted data
+            <i class="fa fa-lg fa-download"></i><span>Download predicted data</span>
         </a>
     </div>
     <div class="leaflet-bar leaflet-control" style="display: none" data-bind="visible: showOccurrences, preventBubble: true">
         <a target="_blank" title="Input CSV" data-bind="attr: { href: occurrences }">
-            <i class="fa fa-lg fa-file-excel-o"></i>Download input data
+            <i class="fa fa-lg fa-file-excel-o"></i><span>Download input data</span>
         </a>
     </div>
     <!-- /ko -->
     <div class="leaflet-bar leaflet-control" data-bind="preventBubble: false">
-        <a data-toggle="collapse" href="#covariatesAndStatistics" style="width: auto; height: auto;">
-            <i class="fa fa-lg fa-bar-chart-o"></i>View covariates and statistics
+        <a id="covariatesAndStatsButton" data-toggle="collapse" class="collapsed" href="#covariatesAndStatistics">
+            <i class="fa fa-lg fa-bar-chart-o"></i><span>View covariates and statistics</span>
         </a>
         <div class="panel-collapse collapse container-sm-height" id="covariatesAndStatistics" style="width:850px;overflow-x:hidden;">
             <div class="panel-body" data-bind="slideLeft: showCovariateTable" style="width:1700px;">

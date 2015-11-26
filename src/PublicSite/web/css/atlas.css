@@ -8,6 +8,9 @@ html, body {
     width: 100%;
     margin: 0;
 }
+#layerSelector {
+    margin-right: 232px;           /* Space for buttons */
+}
 #modelRunDetails div.leaflet-bar.leaflet-control a {
     min-width: 222px;
     padding: 0 5px;
@@ -95,19 +98,17 @@ html, body {
 .discreteKey {
     padding-right: 6px;
 }
-.legendText {
+#legendText {
     max-width: 320px;
-    border-left: 1px solid #eee;
     padding-left: 8px;
-
 }
-.legendText p {
+#legendText p {
     margin: 0;
     text-align: center;
     font-style: normal;
     font-weight: bold
 }
-.legendText p.help {
+#legendText p.help {
     margin-bottom: 3px;
     text-align: justify;
     font-style: italic;
@@ -170,3 +171,72 @@ html, body {
     font-weight: bold;
     font-size: 12px;
 }
+#covariatesAndStatsButton {
+    width: auto;
+    height: 26px;
+}
+#legendExpander {
+    position: relative;
+    width: 10px;
+}
+#legendExpander>a {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: block;
+    width: auto;
+    height: auto;
+    border-left: 1px solid #eee;
+    border-right: 1px solid #eee;
+}
+#legendExpander>a.collapsed {
+    border-left: none;
+    border-right: none;
+}
+#legendExpander > a > div {
+    display: table;
+    height: 100%;
+    width: 100%;
+}
+#legendExpander > a > div > div{
+    display: table-cell;
+    vertical-align: middle;
+}
+#legendExpander .glyphicon {
+    font-size: 8px;
+    width: 8px;
+    height: 8px;
+}
+#legendExpander .glyphicon-chevron-right {
+    display: none;
+}
+#legendExpander .collapsed .glyphicon-chevron-right {
+    display: block;
+}
+
+#legendExpander .glyphicon-chevron-left {
+    display: block;
+}
+#legendExpander .collapsed .glyphicon-chevron-left {
+    display: none;
+}
+@media (max-width: 1024px) {
+    #map .leaflet-right .leaflet-control {
+        margin-right: 5px;
+        margin-top: 5px;
+    }
+}
+@media (max-width: 550px) {
+    #modelRunDetails div.leaflet-bar.leaflet-control a {
+        min-width: 30px;
+    }
+    #modelRunDetails div.leaflet-bar.leaflet-control a span {
+        display: none;
+    }
+    #covariatesAndStatsButton.collapsed {
+        width: 30px;
+    }
+}
+

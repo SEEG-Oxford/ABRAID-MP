@@ -1,12 +1,13 @@
 /* Apply KO bindings for the atlas page.
  * Copyright (c) 2014 University of Oxford
  */
-/*global require:false, baseUrl:false, data:false, alert:false */
+/*global require:false, baseUrl:false, data:false, alert:false, window:false */
 require([baseUrl + "js/shared/require.conf.js"], function () {
     "use strict";
 
     require([
         "ko",
+        "jquery",
         "app/atlas/AtlasView",
         "app/atlas/CovariateInfluencesViewModel",
         "app/atlas/DownloadLinksViewModel",
@@ -18,9 +19,14 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
         "app/atlas/LegendViewModel",
         "domReady!",
         "analytics"
-    ], function (ko, AtlasView, CovariateInfluencesViewModel, DownloadLinksViewModel, LayerSelectorViewModel,
+    ], function (ko, $, AtlasView, CovariateInfluencesViewModel, DownloadLinksViewModel, LayerSelectorViewModel,
                  ModelRunDetailsViewModel, StatisticsViewModel, WmsLayerParameterFactory, GeoJsonLayerFactory,
                  LegendViewModel, doc) {
+        if ($(window).width() <= 780) {
+            $("#legendText").removeClass("in");
+            $("#legendExpander a").addClass("collapsed");
+        }
+
         var wmsParamFactory = new WmsLayerParameterFactory();
         var geoJsonLayerFactory = new GeoJsonLayerFactory(baseUrl);
         var covariateInfluencesViewModel = new CovariateInfluencesViewModel(baseUrl);
