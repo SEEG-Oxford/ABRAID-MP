@@ -225,7 +225,8 @@ button.btn[type=submit] {
 }
 /* cookiecuttr overrides */
 html > body > div.cc-cookies {
-    top: 50px;
+    position: fixed !important;
+    top: 50px !important;
     width: 100%;
     padding: 5px 10px;
     font-weight: bold;
@@ -249,4 +250,6 @@ html > body > div.cc-cookies> a.cc-cookie-accept:active {
 }
 html > body > .cc-cookies > a {
     float: right;
+    display: inline-block !important;
+    margin: 0 !important;
 }
