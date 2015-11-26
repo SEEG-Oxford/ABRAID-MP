@@ -21,8 +21,16 @@ html, body {
     margin-right: 6px;
     margin-top: 7px
 }
+@media (max-width: 695px) {
+    #covariatesAndStatsButtonBox {
+        display: none;
+    }
+}
 #covariatesAndStatistics table {
     margin: 0;
+}
+ #covariatesAndStatistics td, #covariatesAndStatistics th {
+    padding: 3px 1px 3px 1px;
 }
 #covariatesAndStatistics .panel-body {
     background-color: white;
@@ -37,22 +45,25 @@ html, body {
     min-width: 120px;
 }
 #covariates td:nth-child(4),
-#covariates th:nth-child(5) {
-    min-width: 120px;
+#covariates th:nth-child(4) {
+    min-width: 40px;
     text-align: center;
 }
 #covariates .popover .popover-content {
     text-align: justify;
     font-size: 13px;
 }
+#statistics td:nth-child(2) {
+    padding-left: 5px;
+}
 #statistics td:nth-child(3),
 #statistics th:nth-child(3) {
-    min-width: 80px;
+    min-width: 40px;
     text-align: center;
 }
 #statistics td:nth-child(4),
 #statistics th:nth-child(4) {
-    min-width: 120px;
+    min-width: 40px;
     text-align: center;
 }
 #statistics .popover .close {

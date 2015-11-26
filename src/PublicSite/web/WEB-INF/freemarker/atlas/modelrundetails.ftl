@@ -16,15 +16,15 @@
         </a>
     </div>
     <!-- /ko -->
-    <div class="leaflet-bar leaflet-control" data-bind="preventBubble: false">
+    <div id="covariatesAndStatsButtonBox" class="leaflet-bar leaflet-control" data-bind="preventBubble: false">
         <a id="covariatesAndStatsButton" data-toggle="collapse" class="collapsed" href="#covariatesAndStatistics">
             <i class="fa fa-lg fa-bar-chart-o"></i><span>View covariates and statistics</span>
         </a>
-        <div class="panel-collapse collapse container-sm-height" id="covariatesAndStatistics" style="width:850px;overflow-x:hidden;">
-            <div class="panel-body" data-bind="slideLeft: showCovariateTable" style="width:1700px;">
-                <div style="float: left; width:850px; min-height: 448px; position: relative">
-                    <div class="row-sm-height">
-                        <div class="col-sm-6 col-sm-height">
+        <div class="panel-collapse collapse container-sm-height" id="covariatesAndStatistics" style="width:650px;overflow-x:hidden;">
+            <div class="panel-body" data-bind="slideLeft: showCovariateTable" style="width:1300px;">
+                <div style="float: left; width:650px; min-height: 328px; position: relative">
+                    <div class="row-xs-height">
+                        <div class="col-xs-5 col-xs-height">
                             <!-- ko with:covariateInfluencesViewModel -->
                             <h5>Covariate Influence</h5>
                             <div data-bind="if: covariateInfluences">
@@ -35,7 +35,7 @@
                                             <th></th>
                                             <th>Rank</th>
                                             <th>Name</th>
-                                            <th>Relative&nbsp;Influence</th>
+                                            <th>Relative<br/>Influence</th>
                                         </tr>
                                     </thead>
                                     <tbody data-bind="foreach: covariateInfluences">
@@ -50,7 +50,7 @@
                             </div>
                             <!-- /ko -->
                         </div>
-                        <div class="col-sm-6 col-sm-height" style="border-left: 1px solid #CCCCCC">
+                        <div class="col-xs-2 col-xs-height" style="border-left: 1px solid #CCCCCC">
                             <!-- ko with:statisticsViewModel -->
                             <h5>Submodel Statistics</h5>
                             <div data-bind="if: statistics">
@@ -60,7 +60,7 @@
                                             <th></th>
                                             <th>Name</th>
                                             <th>Mean</th>
-                                            <th>Standard&nbsp;Deviation</th>
+                                            <th>Standard<br/>Deviation</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -111,7 +111,7 @@
                         <a class="leaflet-panel-button" href="#" data-bind="toggleClick: showCovariateTable, preventBubble: true" title="Plots">Show effect curves</a>
                     </div>
                 </div>
-                <div class="panel-body" style="width:850px; margin-left:850px; position: relative">
+                <div class="panel-body" style="width:650px; margin-left:650px; position: relative">
                     <!-- ko with:covariateInfluencesViewModel -->
                     <div id="plotPanel"  data-bind="foreach: covariateInfluencesToPlot">
                         <span data-bind="click: function() {$parent.activeCurve($data)}" data-toggle="modal" data-target="#plotModal">
