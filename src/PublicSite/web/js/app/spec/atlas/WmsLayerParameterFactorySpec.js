@@ -79,9 +79,9 @@ define([
                 expect(paramsDownload).toEqual(_(paramsDisplay).extend(extraDownloadParameters));
 
                 paramsDisplay = vm.createLayerParametersForDisplay({ type: "occurrences", run: { id: "foo" } });
-                paramsDisplay.errorTileUrl = undefined;
-                paramsDisplay.tiled = undefined;
-                paramsDisplay.reuseTiles = undefined;
+                delete paramsDisplay.errorTileUrl;
+                delete paramsDisplay.tiled;
+                delete paramsDisplay.reuseTiles;
                 paramsDownload = vm.createLayerParametersForDownload({ type: "occurrences", run: { id: "foo" } });
                 expect(paramsDownload).toEqual(_(paramsDisplay).extend(extraDownloadParameters));
             });
