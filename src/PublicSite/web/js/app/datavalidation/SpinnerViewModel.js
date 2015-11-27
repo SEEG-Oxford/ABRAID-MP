@@ -7,7 +7,7 @@
 define(["ko"], function (ko) {
     "use strict";
 
-    return function () {
+    return function (setTimeout) {
         var self = this;
         ko.postbox.subscribe("map-view-update-in-progress", function (value) {
             if (value) {

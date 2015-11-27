@@ -26,7 +26,7 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
             var modal = new ModalView(doc.getElementById("helpModal"), data.showHelpText);  // jshint ignore:line
 
             ko.applyBindings(
-                new SpinnerViewModel(),
+                new SpinnerViewModel(setTimeout),
                 doc.getElementById("spinner")
             );
 
