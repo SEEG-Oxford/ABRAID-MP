@@ -4,7 +4,7 @@
 define(["underscore"], function (_) {
     "use strict";
 
-    return function () {
+    return function (baseUrl) {
         var self = this;
 
         self.createLayerParametersForDisplay = function (layer) {
@@ -22,7 +22,8 @@ define(["underscore"], function (_) {
                 layers: "abraid:" + layerName,
                 format: "image/png",
                 reuseTiles: true, // Enable Leaflet reuse of tiles within single page view
-                tiled: true // Enable GeoWebCaching reuse of tiles between all users/page views
+                tiled: true, // Enable GeoWebCaching reuse of tiles between all users/page views
+                errorTileUrl: baseUrl + "static/empty_tile.png"
             };
 
             if (isExtentLayer) {
@@ -48,10 +49,11 @@ define(["underscore"], function (_) {
             var params = self.createLayerParametersForDisplay(layer);
             params = _(params).extend(createBasicDownloadParameters());
             params = _(params).extend({
-                bbox: "-180.1,-60.0,180.0,85.0", // BBox min set to -180.1 due to bug in Geoserver (should be -180.0)
+                bbox: "-180.0,-60.0,180.0,85.0",
                 width: 1656,
                 height: 667
             });
+            params = _(params).omit(["reuseTiles", "tiled", "errorTileUrl"]); // Leaflet params
             return params;
         };
 

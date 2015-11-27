@@ -33,14 +33,16 @@ define([
             layers: ["abraid:base_layer"],
             format: "image/png",
             reuseTiles: true, // Enable Leaflet reuse of tiles within single page view
-            tiled: true // Enable GeoWebCaching reuse of tiles between all users/page views
+            tiled: true, // Enable GeoWebCaching reuse of tiles between all users/page views
+            errorTileUrl: baseUrl + "static/empty_tile.png"
         }).addTo(map);
 
         var hatchingLayer = L.tileLayer.wms(wmsUrl, {
             layers: ["abraid:hatching"],
             format: "image/png",
             reuseTiles: true, // Enable Leaflet reuse of tiles within single page view
-            tiled: true // Enable GeoWebCaching reuse of tiles between all users/page views
+            tiled: true, // Enable GeoWebCaching reuse of tiles between all users/page views
+            errorTileUrl: baseUrl + "static/empty_tile.png"
         });
 
         // Track when zooming is happening

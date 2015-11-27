@@ -28,7 +28,7 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
             $("#legendExpander a").addClass("collapsed");
         }
 
-        var wmsParamFactory = new WmsLayerParameterFactory();
+        var wmsParamFactory = new WmsLayerParameterFactory(baseUrl);
         var geoJsonLayerFactory = new GeoJsonLayerFactory(baseUrl);
         var covariateInfluencesViewModel = new CovariateInfluencesViewModel(baseUrl);
 
