@@ -7,17 +7,16 @@
 define([
     "L",
     "ko",
-    "jquery",
-    "app/LeafletMapFactory"
-], function (L, ko, $, LeafletMapFactory) {
+    "jquery"
+], function (L, ko, $) {
     "use strict";
 
-    return function (wmsUrl, wmsLayerParameterFactory, geoJsonLayerFactory, alert) {
+    return function (wmsUrl, leafletMapFactory, wmsLayerParameterFactory, geoJsonLayerFactory, alert) {
         var self = this;
 
         self.wmsUrl = wmsUrl;
 
-        self.map = LeafletMapFactory.create("map");
+        self.map = leafletMapFactory.create("map");
 
         self.currentWmsLayer = undefined;
         self.currentGeoJsonLayer = undefined;

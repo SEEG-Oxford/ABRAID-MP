@@ -1,5 +1,5 @@
-/* foo.
- * Copyright (c) 2014 University of Oxford
+/* A factory for ABRAID standard leaflet maps (correct zoom limits & defaults).
+ * Copyright (c) 2015 University of Oxford
  */
 define([
     "L",
@@ -7,8 +7,9 @@ define([
 ], function (L, $) {
     "use strict";
 
-    return {
-        create: function (elementId) {
+    return function () {
+        var self = this;
+        self.create = function (elementId) {
             var dragBounds = L.latLngBounds(L.latLng(-60, -220), L.latLng(85, 220));
             var worldBounds = L.latLngBounds(L.latLng(-60, -180), L.latLng(85, 180));
             var acceptableBounds = L.latLngBounds(L.latLng(-60, -120), L.latLng(85, 120));
@@ -44,6 +45,6 @@ define([
                 bounceAtZoomLimits: false,
                 crs: L.CRS.EPSG4326
             });
-        }
+        };
     };
 });

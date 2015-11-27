@@ -14,14 +14,15 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
         "app/atlas/LayerSelectorViewModel",
         "app/atlas/ModelRunDetailsViewModel",
         "app/atlas/StatisticsViewModel",
+        "app/LeafletMapFactory",
         "app/atlas/WmsLayerParameterFactory",
         "app/atlas/GeoJsonLayerFactory",
         "app/atlas/LegendViewModel",
         "domReady!",
         "analytics"
     ], function (ko, $, AtlasView, CovariateInfluencesViewModel, DownloadLinksViewModel, LayerSelectorViewModel,
-                 ModelRunDetailsViewModel, StatisticsViewModel, WmsLayerParameterFactory, GeoJsonLayerFactory,
-                 LegendViewModel, doc) {
+                 ModelRunDetailsViewModel, StatisticsViewModel, LeafletMapFactory, WmsLayerParameterFactory,
+                 GeoJsonLayerFactory, LegendViewModel, doc) {
         if ($(window).width() <= 780) {
             $("#legendText").removeClass("in");
             $("#legendExpander a").addClass("collapsed");
@@ -47,7 +48,7 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
             doc.getElementById("legend")
         );
 
-        var map = new AtlasView(data.wmsUrl, wmsParamFactory, geoJsonLayerFactory, alert); // jshint ignore:line
+        var map = new AtlasView(data.wmsUrl, new LeafletMapFactory(), wmsParamFactory, geoJsonLayerFactory, alert); // jshint ignore:line
 
         // NB. ViewModels subscribing to events published by LayerSelector must be defined first.
         ko.applyBindings(

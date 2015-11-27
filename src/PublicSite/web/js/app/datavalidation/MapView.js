@@ -18,16 +18,15 @@ define([
     "L",
     "jquery",
     "ko",
-    "underscore",
-    "app/LeafletMapFactory"
-], function (L, $, ko, _, LeafletMapFactory) {
+    "underscore"
+], function (L, $, ko, _) {
     "use strict";
 
-    return function (baseUrl, wmsUrl, loggedIn, alert, setTimeout) { // jshint ignore:line
+    return function (baseUrl, wmsUrl, loggedIn, leafletMapFactory, alert, setTimeout) { // jshint ignore:line
 
         /** MAP AND BASE LAYER */
         // Initialise map at "map" div
-        var map = LeafletMapFactory.create("map");
+        var map = leafletMapFactory.create("map");
 
         // Add the simplified shapefile base layer with WMS GET request
         var baseLayer = L.tileLayer.wms(wmsUrl, {
