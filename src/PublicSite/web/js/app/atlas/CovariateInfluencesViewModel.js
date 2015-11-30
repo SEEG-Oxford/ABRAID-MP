@@ -24,28 +24,16 @@ define([
         self.covariateInfluencesToPlot = ko.computed(function () {
             var covariates = self.covariateInfluences();
             if (covariates) {
-                return _(covariates).filter(function (covariate) {
+                var filtered =  _(covariates).filter(function (covariate) {
                     return covariate.meanInfluence > (100.0 / covariates.length);
+                });
+                var minValue = _(filtered).chain().pluck("effectCurve").flatten().pluck("lowerQuantile").min().value();
+                var maxValue = _(filtered).chain().pluck("effectCurve").flatten().pluck("upperQuantile").max().value();
+                return _(filtered).map(function (covariate) {
+                    return { covariate: covariate, min: minValue, max: maxValue };
                 });
             } else {
                 return [];
-            }
-        });
-        self.maxEffectCurveValue = ko.computed(function () {
-            var covariates = self.covariateInfluencesToPlot();
-            if (covariates) {
-                return _(covariates).chain().pluck("effectCurve").flatten().pluck("upperQuantile").max().value();
-            } else {
-                return undefined;
-            }
-        });
-
-        self.minEffectCurveValue = ko.computed(function () {
-            var covariates = self.covariateInfluencesToPlot();
-            if (covariates) {
-                return _(covariates).chain().pluck("effectCurve").flatten().pluck("lowerQuantile").min().value();
-            } else {
-                return undefined;
             }
         });
 

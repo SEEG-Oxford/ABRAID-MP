@@ -114,8 +114,8 @@
                 <div class="panel-body" style="width:650px; margin-left:650px; position: relative">
                     <!-- ko with:covariateInfluencesViewModel -->
                     <div id="plotPanel"  data-bind="foreach: covariateInfluencesToPlot">
-                        <span data-bind="click: function() {$parent.activeCurve($data)}" data-toggle="modal" data-target="#plotModal">
-                            <div data-bind="smallEffectPlot: { covariate: $data, max: $parent.maxEffectCurveValue(), min: $parent.minEffectCurveValue() }"></div>
+                        <span data-bind="click: function() {$parent.activeCurve($data.covariate)}" data-toggle="modal" data-target="#plotModal">
+                            <div data-bind="smallEffectPlot: $data"></div>
                         </span>
                     </div>
                     <!-- /ko -->
