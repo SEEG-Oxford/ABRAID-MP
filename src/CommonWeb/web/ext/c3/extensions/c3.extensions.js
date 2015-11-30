@@ -137,6 +137,7 @@ define([
                 a.download = filenameClean;
                 var canvasData = canvas.toDataURL("image/png");
                 a.href = canvasData;
+                a.target = "_parent"; // workaround for safari's lack of "download" attribute
                 document.body.appendChild(a);
                 a.addEventListener("click", function () {
                     a.parentNode.removeChild(a);

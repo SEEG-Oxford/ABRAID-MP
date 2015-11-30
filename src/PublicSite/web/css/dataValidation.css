@@ -16,14 +16,15 @@ html, body, #dataValidation {
 .leaflet-control-zoomslider {
     margin-top: 45px !important;
 }
+#spinner {
+    z-index: 99999;
+}
 #spinner > i {
-    z-index: 20;
     position: absolute;
     top:50%;
     left:50%;
 }
 #spinner > .background {
-    z-index: 20;
     position: absolute;
     height: 100%;
     width: 100%;
@@ -315,3 +316,40 @@ html, body, #dataValidation {
 .leaflet-popup-tip-container {
     display: none;
 }
+
+/* Override styling of Leaflet plugin MarkerCluster icons to match ABRAID icons. */
+/*Circle*/
+.marker-cluster div {
+    background-color: #bb619b;
+    opacity: 0.8;
+    width: 30px;
+    height: 30px;
+    margin-left: 5px;
+    margin-top: 5px;
+
+    text-align: center;
+    border-radius: 15px;
+    font: 14px "Helvetica Neue", Arial, Helvetica, sans-serif;
+    color: white;
+}
+/* The actual text - set to display the number of children in the cluster */
+.marker-cluster span {
+    line-height: 30px;
+}
+.marker-question {
+    font-family: 'Source Sans Pro', sans-serif;
+    color: #bb619b;
+    line-height: 12px;
+    font-size: 30px;
+    opacity: 0.8;
+}
+.marker-question-selected {
+    left:-2px;
+    font-size: 40px;
+    opacity: 1;
+}
+.marker-centroid {
+    font-size: 14px;
+    color: #555;
+}
+

@@ -10,7 +10,7 @@
         <#if includeNavBar>
             <link rel="stylesheet" href="<@spring.url "/css/login.css" />">
         </#if>
-        <link rel="stylesheet" href="<@spring.url "/js/shared/lib/jquery.cookiecuttr.css" />">
+        <link rel="stylesheet" href="<@spring.url "/ext/jquery/cookiecuttr/jquery.cookiecuttr.css" />">
         ${endOfHead}
     </#assign>
 

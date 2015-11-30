@@ -11,24 +11,12 @@ define([
 ], function (L, ko, $) {
     "use strict";
 
-    return function (wmsUrl, wmsLayerParameterFactory, geoJsonLayerFactory, alert) {
+    return function (wmsUrl, leafletMapFactory, wmsLayerParameterFactory, geoJsonLayerFactory, alert) {
         var self = this;
 
         self.wmsUrl = wmsUrl;
 
-        self.map = L.map("map", {
-            attributionControl: false,
-            zoomControl: false,
-            zoomsliderControl: true,
-            maxBounds: [ [-60, -220], [85, 220] ],
-            maxZoom: 7,
-            minZoom: 3,
-            animate: true,
-            crs: L.CRS.EPSG4326,
-            bounceAtZoomLimits: false
-        });
-
-        self.map.fitWorld();
+        self.map = leafletMapFactory.create("map");
 
         self.currentWmsLayer = undefined;
         self.currentGeoJsonLayer = undefined;

@@ -8,6 +8,7 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
     require([
         "ko",
         "jquery",
+        "app/LeafletMapFactory",
         "app/datavalidation/CounterViewModel",
         "app/datavalidation/LatestOccurrencesViewModel",
         "app/datavalidation/MapView",
@@ -19,14 +20,14 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
         "app/datavalidation/SpinnerViewModel",
         "domReady!",
         "analytics"
-    ], function (ko, $, CounterViewModel, LatestOccurrencesViewModel, setupMap, ModalView, SelectedPointViewModel,
-                 SelectedLayerViewModel, SelectedAdminUnitViewModel, SidePanelViewModel, SpinnerViewModel, doc) {
-            setupMap(baseUrl, data.wmsUrl, data.loggedIn, alert, setTimeout);
-
+    ], function (ko, $, LeafletMapFactory, CounterViewModel, LatestOccurrencesViewModel, MapView, ModalView,
+                 SelectedPointViewModel, SelectedLayerViewModel, SelectedAdminUnitViewModel, SidePanelViewModel,
+                 SpinnerViewModel, doc) {
+            var map = new MapView(baseUrl, data.wmsUrl, data.loggedIn, new LeafletMapFactory(), alert, setTimeout); // jshint ignore:line
             var modal = new ModalView(doc.getElementById("helpModal"), data.showHelpText);  // jshint ignore:line
 
             ko.applyBindings(
-                new SpinnerViewModel(),
+                new SpinnerViewModel(setTimeout),
                 doc.getElementById("spinner")
             );
 
