@@ -15,13 +15,18 @@ public class RunConfiguration {
     // The base directory into which the run directory should be created
     private final File baseDir;
 
+    // If the working directory should be deleted after successful completion of the run
+    private final boolean deleteWorkspace;
+
     // Sub configuration objects
     private final ExecutionRunConfiguration executionConfig;
 
-    public RunConfiguration(String runName, File baseDir, ExecutionRunConfiguration executionConfig) {
+    public RunConfiguration(String runName, File baseDir, boolean deleteWorkspace,
+                            ExecutionRunConfiguration executionConfig) {
         this.runName = runName;
         this.baseDir = baseDir;
         this.executionConfig = executionConfig;
+        this.deleteWorkspace = deleteWorkspace;
     }
 
     public String getRunName() {
@@ -38,5 +43,9 @@ public class RunConfiguration {
 
     public Path getWorkingDirectoryPath() {
         return Paths.get(getBaseDir().getAbsolutePath(), getRunName());
+    }
+
+    public boolean getDeleteWorkspace() {
+        return deleteWorkspace;
     }
 }

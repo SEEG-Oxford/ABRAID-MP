@@ -65,7 +65,7 @@ public class ModelRunnerTest {
         FileUtils.writeStringToFile(Paths.get(expectedBase.toString(), runName, "modelRun.R").toFile(), "\"Hello, World\"");
         int expectedTimeout = 10;
         RunConfiguration config =
-                new RunConfiguration(runName, expectedBase, new ExecutionRunConfiguration(expectedR, expectedTimeout));
+                new RunConfiguration(runName, expectedBase, true, new ExecutionRunConfiguration(expectedR, expectedTimeout));
 
         // Act
         target.runModel(config, null);
@@ -94,7 +94,7 @@ public class ModelRunnerTest {
         String run = "foo";
         FileUtils.writeStringToFile(Paths.get(baseDir.toString(), run, "modelRun.R").toFile(), "\"Hello, World\"");
         return new RunConfiguration(
-                run, baseDir,
+                run, baseDir, true,
                 new ExecutionRunConfiguration(new File(""), 60000));
     }
 }

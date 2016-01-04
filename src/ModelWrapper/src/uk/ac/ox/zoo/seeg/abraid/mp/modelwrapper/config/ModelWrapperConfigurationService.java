@@ -62,4 +62,10 @@ public interface ModelWrapperConfigurationService {
      * @return The root URL for the Model Output Handler web service.
      */
     String getModelOutputHandlerRootUrl();
+
+    /**
+     * Gets whether the workspace for completed model runs should be deleted.
+     * @return Whether the workspace for completed model runs should be deleted.
+     */
+    boolean getDeleteWorkspaces();
 }
