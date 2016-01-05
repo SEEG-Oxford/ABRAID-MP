@@ -10,7 +10,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModellingLoca
  * Used for CSV serialization of occurrences for modelling.
  * Copyright (c) 2014 University of Oxford
  */
-@JsonPropertyOrder({ "longitude", "latitude", "weight", "admin", "gaul", "disease" })
+@JsonPropertyOrder({ "longitude", "latitude", "weight", "admin", "gaul", "disease", "date" })
 public class JsonModellingDiseaseOccurrence extends JsonSupplementaryModellingDiseaseOccurrence {
 
     @JsonProperty("Weight")
@@ -18,8 +18,8 @@ public class JsonModellingDiseaseOccurrence extends JsonSupplementaryModellingDi
 
     public JsonModellingDiseaseOccurrence(ModellingLocationPrecisionAdjuster precisionAdjuster,
                                           double longitude, double latitude, double weight,
-                                          int admin, String gaul, int disease) {
-        super(precisionAdjuster, longitude, latitude, admin, gaul, disease);
+                                          int admin, String gaul, int disease, String date) {
+        super(precisionAdjuster, longitude, latitude, admin, gaul, disease, date);
         setWeight(weight);
     }
 
@@ -31,7 +31,8 @@ public class JsonModellingDiseaseOccurrence extends JsonSupplementaryModellingDi
             occurrence.getFinalWeighting(),
             occurrence.getLocation().getPrecision().getModelValue(),
             extractGaulString(occurrence.getLocation()),
-            occurrence.getDiseaseGroup().getId());
+            occurrence.getDiseaseGroup().getId(),
+            extractDateString(occurrence.getOccurrenceDate()));
     }
 
     public double getWeight() {

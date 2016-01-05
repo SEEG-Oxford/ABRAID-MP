@@ -3,6 +3,8 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.apache.commons.lang.ObjectUtils;
+import org.joda.time.DateTime;
+import org.joda.time.format.ISODateTimeFormat;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
@@ -13,7 +15,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModellingLoca
  * Used for CSV serialization of supplementary occurrences for modelling.
  * Copyright (c) 2014 University of Oxford
  */
-@JsonPropertyOrder({ "longitude", "latitude", "admin", "gaul", "disease" })
+@JsonPropertyOrder({ "longitude", "latitude", "admin", "gaul", "disease", "date" })
 public class JsonSupplementaryModellingDiseaseOccurrence {
     private static final String R_CODE_NULL_IDENTIFIER = "NA";
 
@@ -32,14 +34,18 @@ public class JsonSupplementaryModellingDiseaseOccurrence {
     @JsonProperty("Disease")
     private int disease;
 
+    @JsonProperty("Date")
+    private String date;
+
     public JsonSupplementaryModellingDiseaseOccurrence(ModellingLocationPrecisionAdjuster precisionAdjuster,
                                                        double longitude, double latitude,
-                                                       int admin, String gaul, int disease) {
+                                                       int admin, String gaul, int disease, String date) {
         setLongitude(longitude);
         setLatitude(latitude);
         setAdmin(precisionAdjuster.adjust(admin, gaul));
         setGaul(gaul);
         setDisease(disease);
+        setDate(date);
     }
 
     public JsonSupplementaryModellingDiseaseOccurrence(ModellingLocationPrecisionAdjuster precisionAdjuster,
@@ -49,7 +55,17 @@ public class JsonSupplementaryModellingDiseaseOccurrence {
             occurrence.getLocation().getGeom().getY(),
             occurrence.getLocation().getPrecision().getModelValue(),
             extractGaulString(occurrence.getLocation()),
-            occurrence.getDiseaseGroup().getId());
+            occurrence.getDiseaseGroup().getId(),
+            extractDateString(occurrence.getOccurrenceDate()));
+    }
+
+    /**
+     * Gets the string representing a date for use in the model data.
+     * @param occurrenceDate The date to format.
+     * @return The date string.
+     */
+    protected static String extractDateString(DateTime occurrenceDate) {
+        return ISODateTimeFormat.date().print(occurrenceDate);
     }
 
     /**
@@ -109,5 +125,13 @@ public class JsonSupplementaryModellingDiseaseOccurrence {
 
     public void setDisease(int disease) {
         this.disease = disease;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 }

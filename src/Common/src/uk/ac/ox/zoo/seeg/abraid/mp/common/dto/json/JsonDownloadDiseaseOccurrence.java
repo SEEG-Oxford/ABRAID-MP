@@ -2,8 +2,6 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import org.joda.time.DateTime;
-import org.joda.time.format.ISODateTimeFormat;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModellingLocationPrecisionAdjuster;
 
@@ -15,9 +13,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModellingLoca
 @JsonPropertyOrder({
         "longitude", "latitude", "weight", "admin", "gaul", "disease", "date", "provenance", "feed", "url" })
 public class JsonDownloadDiseaseOccurrence extends JsonModellingDiseaseOccurrence {
-    @JsonProperty("Date")
-    private String date;
-
     @JsonProperty("Provenance")
     private String provenance;
 
@@ -31,8 +26,7 @@ public class JsonDownloadDiseaseOccurrence extends JsonModellingDiseaseOccurrenc
                                          double longitude, double latitude, double weight,
                                          int admin, String gaul, int disease,
                                          String date, String provenance, String feed, String url) {
-        super(precisionAdjuster, longitude, latitude, weight, admin, gaul, disease);
-        setDate(date);
+        super(precisionAdjuster, longitude, latitude, weight, admin, gaul, disease, date);
         setProvenance(provenance);
         setFeed(feed);
         setUrl(url);
@@ -51,18 +45,6 @@ public class JsonDownloadDiseaseOccurrence extends JsonModellingDiseaseOccurrenc
             inputDiseaseOccurrence.getAlert().getFeed().getProvenance().getName(),
             inputDiseaseOccurrence.getAlert().getFeed().getName(),
             inputDiseaseOccurrence.getAlert().getUrl());
-    }
-
-    private static String extractDateString(DateTime occurrenceDate) {
-        return ISODateTimeFormat.date().print(occurrenceDate);
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
     }
 
     public String getProvenance() {
