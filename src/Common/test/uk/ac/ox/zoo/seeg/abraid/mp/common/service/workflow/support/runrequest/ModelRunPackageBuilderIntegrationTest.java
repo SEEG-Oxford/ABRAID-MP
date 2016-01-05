@@ -128,9 +128,9 @@ public class ModelRunPackageBuilderIntegrationTest {
                 createOccurrence(diseaseGroupB, createGeom(1, 35), 11, LocationPrecision.ADMIN2, 11, 22, new DateTime("2014-09-02"))
         );
         Collection<CovariateFile> covariateFiles = Arrays.asList(
-                createCovariateFile("c1.tif"),
-                createCovariateFile("c2.tif"),
-                createCovariateFile("sub/c3.tif")
+                createCovariateFile(1, "c1.tif", true),
+                createCovariateFile(2, "c2.tif", false),
+                createCovariateFile(3, "sub/c3.tif", true)
         );
         String covariateDirectory = DATA_DIR + "covariates/";
 
@@ -181,9 +181,11 @@ public class ModelRunPackageBuilderIntegrationTest {
         return obj;
     }
 
-    private CovariateFile createCovariateFile(String file) {
+    private CovariateFile createCovariateFile(int id, String file, boolean discrete) {
         CovariateFile obj = mock(CovariateFile.class);
+        when(obj.getId()).thenReturn(id);
         when(obj.getFile()).thenReturn(file);
+        when(obj.getDiscrete()).thenReturn(discrete);
         return obj;
     }
 

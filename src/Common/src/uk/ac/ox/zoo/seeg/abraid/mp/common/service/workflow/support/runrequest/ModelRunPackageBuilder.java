@@ -105,7 +105,7 @@ public class ModelRunPackageBuilder {
             addData(workingDirectory, diseaseGroup, occurrencesForModelRun, diseaseExtent, supplementaryOccurrences);
             addCovariates(workingDirectory, covariateFiles, covariateDirectory);
             addGaulLayers(workingDirectory);
-            addRModelCode(workingDirectory, diseaseGroup);
+            addRModelCode(workingDirectory, diseaseGroup, covariateFiles);
 
             LOGGER.info(String.format(LOG_WORKSPACE_SUCCESSFULLY_PROVISIONED, workingDirectory.toString()));
 
@@ -222,14 +222,14 @@ public class ModelRunPackageBuilder {
         );
     }
 
-    private void addRModelCode(Path workingDirectory, DiseaseGroup diseaseGroup)
+    private void addRModelCode(Path workingDirectory, DiseaseGroup diseaseGroup, Collection<CovariateFile> covariates)
             throws IOException {
         File modelDirectory = Paths.get(workingDirectory.toString(), MODEL_CODE_DIRECTORY_NAME).toFile();
         // Copy model
         sourceCodeManager.provision(modelDirectory);
 
         // Template script
-        scriptGenerator.generateScript(modellingConfiguration, workingDirectory.toFile(), diseaseGroup);
+        scriptGenerator.generateScript(modellingConfiguration, workingDirectory.toFile(), diseaseGroup, covariates);
     }
 
     private void zipWorkspace(Path workingDirectoryPath, Path zipFilePath) throws ZipException {

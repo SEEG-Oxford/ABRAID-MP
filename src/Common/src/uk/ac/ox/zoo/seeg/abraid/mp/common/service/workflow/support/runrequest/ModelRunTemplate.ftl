@@ -25,7 +25,7 @@ attempt_model_run <- function() {
     parallel_flag <- TRUE
 
     # Disease ID
-    disease <-  ${disease?c}
+    disease <- ${disease?c}
 
     # Model mode
     mode <- "${mode?string}"
@@ -41,8 +41,16 @@ attempt_model_run <- function() {
 
     # Define covariates to use.
     # If you would like to use these covariate files please contact abraid@zoo.ox.ac.uk, as we cannot release them in all circumstances.
-    covariate_files <- list.files(path="covariates", recursive=TRUE)
-    covariate_paths <- if(length(covariate_files)==0) c() else paste("covariates", covariate_files, sep="/")
+    covariate_paths <- list(
+<#list covariates as covariate>
+        "id${covariate.getId()?c}"="covariates/${covariate.getFile()}"<#sep>,</#sep>
+</#list>
+    )
+    covariate_factors <- list(
+<#list covariates as covariate>
+        "id${covariate.getId()?c}"=${covariate.getDiscrete()?string("TRUE","FALSE")}<#sep>,</#sep>
+</#list>
+    )
 
     # Define admin unit rasters to use.
     # If you would like to use these admin unit rasters (or related shape files) please contact abraid@zoo.ox.ac.uk, as we cannot release them in all circumstances.
@@ -174,7 +182,7 @@ attempt_model_run <- function() {
             admin1_path,
             admin2_path,
             covariate_paths,
-            rep(FALSE, length(covariate_paths)),
+            covariate_factors,
             verbose,
             max_cpus,
             load_seegSDM,

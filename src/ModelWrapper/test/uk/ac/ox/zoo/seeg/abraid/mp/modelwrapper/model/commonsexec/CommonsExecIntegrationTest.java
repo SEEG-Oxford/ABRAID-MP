@@ -4,6 +4,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.config.ModellingConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.runrequest.FreemarkerScriptGenerator;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.runrequest.ScriptGenerator;
@@ -22,6 +23,8 @@ import java.io.PipedOutputStream;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -139,9 +142,10 @@ public class CommonsExecIntegrationTest {
         DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
         when(diseaseGroup.getModelMode()).thenReturn("bhatt");
         when(diseaseGroup.getId()).thenReturn(123);
+        Collection<CovariateFile> covariates = new ArrayList<>();
 
         ScriptGenerator scriptGenerator = new FreemarkerScriptGenerator();
-        scriptGenerator.generateScript(new ModellingConfiguration(1, true, true), config.getWorkingDirectoryPath().toFile(), diseaseGroup);
+        scriptGenerator.generateScript(new ModellingConfiguration(1, true, true), config.getWorkingDirectoryPath().toFile(), diseaseGroup, covariates);
 
         ModelRunner runner = new ModelRunnerImpl(new CommonsExecProcessRunnerFactory());
 
