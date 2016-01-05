@@ -294,4 +294,32 @@ public class ModelWrapperConfigurationServiceTest {
         // Assert
         assertThat(result).isEqualTo("http://api:password@localhost:8080/modeloutputhandler");
     }
+
+    @Test
+    public void getDeleteWorkspacesReturnsCorrectValue() throws Exception {
+        // Arrange
+        File testFile = testFolder.newFile();
+        writeStandardSimplePropertiesWithExtra(testFile, "initialValue1", "initialValue2", "delete.success.workspaces",  "false");
+        ModelWrapperConfigurationService target = new ModelWrapperConfigurationServiceImpl(testFile, mock(OSChecker.class));
+
+        // Act
+        boolean result = target.getDeleteWorkspaces();
+
+        // Assert
+        assertThat(result).isEqualTo(false);
+    }
+
+    @Test
+    public void getDeleteWorkspacesReturnsCorrectDefaultValue() throws Exception {
+        // Arrange
+        File testFile = testFolder.newFile();
+        writeStandardSimpleProperties(testFile, "initialValue1", "initialValue2");
+        ModelWrapperConfigurationService target = new ModelWrapperConfigurationServiceImpl(testFile, mock(OSChecker.class));
+
+        // Act
+        boolean result = target.getDeleteWorkspaces();
+
+        // Assert
+        assertThat(result).isEqualTo(true);
+    }
 }

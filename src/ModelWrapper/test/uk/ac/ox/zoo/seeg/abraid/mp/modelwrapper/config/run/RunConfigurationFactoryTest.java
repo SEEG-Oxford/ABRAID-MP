@@ -27,6 +27,7 @@ public class RunConfigurationFactoryTest {
 
         when(configurationService.getCacheDirectory()).thenReturn("expectation1");
         setupExpectedExecutionConfiguration(configurationService);
+        when(configurationService.getDeleteWorkspaces()).thenReturn(true);
 
         String expectedRunName = "name123";
 
@@ -37,6 +38,7 @@ public class RunConfigurationFactoryTest {
         assertThat(result.getRunName()).isEqualTo(expectedRunName);
         assertThat(result.getBaseDir().getParentFile().getName()).isEqualTo("expectation1");
         assertThat(result.getBaseDir().getName()).isEqualTo("runs");
+        assertThat(result.getDeleteWorkspace()).isEqualTo(true);
         assertCorrectExecutionConfiguration(result.getExecutionConfig());
     }
 

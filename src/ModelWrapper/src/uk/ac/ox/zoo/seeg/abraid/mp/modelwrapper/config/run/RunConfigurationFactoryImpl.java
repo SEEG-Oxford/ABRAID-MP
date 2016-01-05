@@ -34,6 +34,7 @@ public class RunConfigurationFactoryImpl implements RunConfigurationFactory {
         return new RunConfiguration(
                 runName,
                 buildBaseDir(),
+                modelWrapperConfigurationService.getDeleteWorkspaces(),
                 buildExecutionConfig());
     }
 

@@ -33,6 +33,7 @@ public class ModelWrapperConfigurationServiceImpl
     private static final String R_EXECUTABLE_KEY = "r.executable.path";
     private static final String R_MAX_DURATION_KEY = "r.max.duration";
     private static final String MODEL_OUTPUT_HANDLER_ROOT_URL_KEY = "model.output.handler.root.url";
+    private static final String DELETE_WORKSPACES_KEY = "delete.success.workspaces";
 
     private final OSChecker osChecker;
 
@@ -56,7 +57,7 @@ public class ModelWrapperConfigurationServiceImpl
 
     /**
      * Gets the current modelwrapper authentication username.
-     * @return The username
+     * @return The username.
      */
     @Override
     public String getAuthenticationUsername() {
@@ -128,6 +129,11 @@ public class ModelWrapperConfigurationServiceImpl
     @Override
     public String getModelOutputHandlerRootUrl() {
         return getConfigFile().getString(MODEL_OUTPUT_HANDLER_ROOT_URL_KEY);
+    }
+
+    @Override
+    public boolean getDeleteWorkspaces() {
+        return getConfigFile().getBoolean(DELETE_WORKSPACES_KEY, true);
     }
 
     private String findDefaultR() throws ConfigurationException {

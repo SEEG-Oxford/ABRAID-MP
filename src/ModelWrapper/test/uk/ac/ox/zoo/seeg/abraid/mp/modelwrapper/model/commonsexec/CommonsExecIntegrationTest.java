@@ -38,7 +38,7 @@ public class CommonsExecIntegrationTest {
     public TemporaryFolder testDir = new TemporaryFolder(); ///CHECKSTYLE:SUPPRESS VisibilityModifier
 
     private RunConfiguration createRunConfig() throws IOException {
-        return new RunConfiguration("foo", testDir.getRoot(), new ExecutionRunConfiguration(findR(), 60000));
+        return new RunConfiguration("foo", testDir.getRoot(), true, new ExecutionRunConfiguration(findR(), 60000));
     }
 
     /**

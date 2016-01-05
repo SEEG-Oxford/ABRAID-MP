@@ -37,13 +37,15 @@ public class ModelStatusReporterImpl implements ModelStatusReporter {
 
     private final String runName;
     private final Path workingDirectoryPath;
+    private final boolean deleteWorkspace;
     private final ModelOutputHandlerWebService modelOutputHandlerWebService;
     private final AbraidJsonObjectMapper objectMapper;
 
-    public ModelStatusReporterImpl(String runName, Path workingDirectory,
+    public ModelStatusReporterImpl(String runName, Path workingDirectory, boolean deleteWorkspace,
             ModelOutputHandlerWebService modelOutputHandlerWebService, AbraidJsonObjectMapper objectMapper) {
         this.runName = runName;
         this.workingDirectoryPath = workingDirectory;
+        this.deleteWorkspace = deleteWorkspace;
 
         this.modelOutputHandlerWebService = modelOutputHandlerWebService;
         this.objectMapper = objectMapper;
@@ -63,7 +65,9 @@ public class ModelStatusReporterImpl implements ModelStatusReporter {
             createMetadataAndSaveToFile(status, outputText, errorText);
             zipFile = createZipFile(pickOutputFiles(status));
             sendOutputsToModelOutputHandler(zipFile);
-            deleteWorkingDirectory(status);
+            if (deleteWorkspace) {
+                deleteWorkingDirectory(status);
+            }
         } catch (Exception e) {
             logger.fatal(String.format(LOG_HANDLER_REQUEST_ERROR, e.getMessage()), e);
         } finally {
