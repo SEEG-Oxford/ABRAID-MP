@@ -20,10 +20,7 @@ import org.springframework.test.context.ContextConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.config.ConfigurationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ModelRunDao;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateFile;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.CovariateService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
@@ -173,7 +170,9 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
 
     private CovariateFile createMockCovariateFile(String path) throws IOException {
         CovariateFile covariateFile = mock(CovariateFile.class);
-        when(covariateFile.getFile()).thenReturn(path);
+        CovariateSubFile subObj = mock(CovariateSubFile.class);
+        when(subObj.getFile()).thenReturn(path);
+        when(covariateFile.getFiles()).thenReturn(Arrays.asList(subObj));
         File file = Paths.get(testFolder.getRoot().getAbsolutePath(), path).toFile();
         FileUtils.writeStringToFile(file, path);
         return covariateFile;

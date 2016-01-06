@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateFile;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateSubFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateValueBin;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateConfiguration;
@@ -23,10 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static ch.lambdaj.Lambda.*;
 
@@ -77,8 +75,9 @@ public class CovariatesControllerHelperImpl implements CovariatesControllerHelpe
                 convert(covariateService.getAllCovariateFiles(), new Converter<CovariateFile, JsonCovariateFile>() {
                     @Override
                     public JsonCovariateFile convert(CovariateFile covariateFile) {
+                        // TEMP = USE FIRST SUBFILE
                         return new JsonCovariateFile(
-                                covariateFile.getFile(),
+                                covariateFile.getFiles().get(0).getFile(),
                                 covariateFile.getName(),
                                 covariateFile.getInfo(),
                                 covariateFile.getHide(),
@@ -96,8 +95,11 @@ public class CovariatesControllerHelperImpl implements CovariatesControllerHelpe
      */
     @Override
     public  void setCovariateConfiguration(JsonCovariateConfiguration config) {
-        Map<String, CovariateFile> allCovariateFiles =
-                index(covariateService.getAllCovariateFiles(), on(CovariateFile.class).getFile());
+        // TEMP = USE FIRST SUBFILE
+        Map<String, CovariateFile> allCovariateFiles = new HashMap<>();
+        for (CovariateFile covariate : covariateService.getAllCovariateFiles()) {
+            allCovariateFiles.put(covariate.getFiles().get(0).getFile(), covariate);
+        }
         final Map<Integer, DiseaseGroup> allDiseaseGroups =
                 index(diseaseService.getAllDiseaseGroups(), on(DiseaseGroup.class).getId());
 
@@ -156,13 +158,15 @@ public class CovariatesControllerHelperImpl implements CovariatesControllerHelpe
 
     private void addCovariateToDatabase(String name, boolean isDiscrete, String path,
                                         Map<DoubleRange, Integer> binnedCovariateValueData) throws IOException {
+        // TEMP = USE FIRST SUBFILE
         CovariateFile covariateFile = new CovariateFile(
                 name,
-                path,
                 false,
                 isDiscrete,
                 ""
         );
+        CovariateSubFile subFile = new CovariateSubFile(covariateFile, null, path);
+        covariateFile.setFiles(Arrays.asList(subFile));
 
         List<CovariateValueBin> bins = new ArrayList<>();
         for (Map.Entry<DoubleRange, Integer> bin : binnedCovariateValueData.entrySet()) {

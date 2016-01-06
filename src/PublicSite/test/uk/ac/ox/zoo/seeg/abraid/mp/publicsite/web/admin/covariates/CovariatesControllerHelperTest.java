@@ -8,6 +8,7 @@ import org.junit.rules.TemporaryFolder;
 import org.mockito.ArgumentCaptor;
 import org.springframework.mock.web.MockMultipartFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateFile;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateSubFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateValueBin;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.CovariateService;
@@ -115,7 +116,8 @@ public class CovariatesControllerHelperTest extends BaseCovariatesControllerTest
         verify(covariateService).saveCovariateFile(captor.capture());
         CovariateFile saved = captor.getValue();
         assertThat(saved.getName()).isEqualTo("name");
-        assertThat(saved.getFile()).isEqualTo("asd/fas");
+        // TEMP = USE FIRST SUBFILE
+        assertThat(saved.getFiles().get(0).getFile()).isEqualTo("asd/fas");
         assertThat(saved.getHide()).isEqualTo(false);
         assertThat(saved.getDiscrete()).isEqualTo(false);
         assertThat(saved.getInfo()).isEqualTo("");
@@ -146,7 +148,8 @@ public class CovariatesControllerHelperTest extends BaseCovariatesControllerTest
         verify(covariateService).saveCovariateFile(captor.capture());
         CovariateFile saved = captor.getValue();
         assertThat(saved.getName()).isEqualTo("name");
-        assertThat(saved.getFile()).isEqualTo("asd/fas");
+        // TEMP = USE FIRST SUBFILE
+        assertThat(saved.getFiles().get(0).getFile()).isEqualTo("asd/fas");
         assertThat(saved.getHide()).isEqualTo(false);
         assertThat(saved.getDiscrete()).isEqualTo(true);
         assertThat(saved.getInfo()).isEqualTo("");
@@ -160,7 +163,7 @@ public class CovariatesControllerHelperTest extends BaseCovariatesControllerTest
     }
 
     @Test
-    public void saveNewCovariateThrowsIfDirectoryCanNotBeCreated() throws Exception {
+    public void saveNewCovariateSavesFileAtCorrectLocation() throws Exception {
         // Arrange
         CovariateService covariateService = createMockCovariateService(testFolder.getRoot());
         DiseaseService diseaseService = createMockDiseaseService();
@@ -173,6 +176,9 @@ public class CovariatesControllerHelperTest extends BaseCovariatesControllerTest
 
         // Assert
         assertThat(new File(covariateService.getCovariateDirectory() + "/asd/fas")).hasContentEqualTo(refFile);
-        verify(covariateService).saveCovariateFile(eq(new CovariateFile("name", "asd/fas", false, true, "")));
+        CovariateFile expectedFile = new CovariateFile("name", false, true, "");
+        CovariateSubFile expectedSubFile = new CovariateSubFile(expectedFile, null, "asd/fas");
+        expectedFile.setFiles(Arrays.asList(expectedSubFile));
+        verify(covariateService).saveCovariateFile(eq(expectedFile));
     }
 }

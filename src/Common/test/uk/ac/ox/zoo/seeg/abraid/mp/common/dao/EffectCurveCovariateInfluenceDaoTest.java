@@ -5,10 +5,12 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateFile;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateSubFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.EffectCurveCovariateInfluence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvEffectCurveCovariateInfluence;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -95,7 +97,9 @@ public class EffectCurveCovariateInfluenceDaoTest extends AbstractCommonSpringIn
     }
 
     private CovariateFile createCovariateFile(int idx) {
-        CovariateFile covariate = new CovariateFile("name" + idx, "file" + idx, false, false, "info" + idx);
+        CovariateFile covariate = new CovariateFile("name" + idx, false, false, "info" + idx);
+        CovariateSubFile covariateSubFile = new CovariateSubFile(covariate, null, "file" + idx);
+        covariate.setFiles(Arrays.asList(covariateSubFile));
         covariateFileDao.save(covariate);
         return covariate;
     }

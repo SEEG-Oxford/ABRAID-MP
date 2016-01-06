@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.covariates;
 
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateFile;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateSubFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateFile;
@@ -63,7 +64,10 @@ public class BaseCovariatesControllerTests {
 
     protected CovariateFile createMockCovariateFile(String path, String name, boolean hide, List<DiseaseGroup> enabled) {
         CovariateFile mock = mock(CovariateFile.class);
-        when(mock.getFile()).thenReturn(path);
+        // TEMP = USE FIRST SUBFILE
+        CovariateSubFile submock = mock(CovariateSubFile.class);
+        when(submock.getFile()).thenReturn(path);
+        when(mock.getFiles()).thenReturn(Arrays.asList(submock));
         when(mock.getName()).thenReturn(name);
         when(mock.getHide()).thenReturn(hide);
         when(mock.getEnabledDiseaseGroups()).thenReturn(enabled);

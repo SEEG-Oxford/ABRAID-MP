@@ -4,11 +4,13 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateFile;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateSubFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateValueBin;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -44,9 +46,11 @@ public class CovariateFileDaoTest extends AbstractCommonSpringIntegrationTests {
     @Test
     public void saveAndReload() {
         // Arrange
-        CovariateFile covariateFile = new CovariateFile("NAME", "FILE", true, true, "INFO");
+        CovariateFile covariateFile = new CovariateFile("NAME", true, true, "INFO");
         Collection<DiseaseGroup> enabledDiseaseGroups = Arrays.asList(diseaseGroupDao.getById(87), diseaseGroupDao.getById(60));
         Collection<CovariateValueBin> bins = Arrays.asList(new CovariateValueBin(covariateFile, 0, 5, 10), new CovariateValueBin(covariateFile, 5, 10, 1), new CovariateValueBin(covariateFile, 10, 10, 10));
+        List<CovariateSubFile> subFiles = Arrays.asList(new CovariateSubFile(covariateFile, "QUALIFIER", "FILE"));
+        covariateFile.setFiles(subFiles);
         covariateFile.setEnabledDiseaseGroups(enabledDiseaseGroups);
         covariateFile.setCovariateValueHistogramData(bins);
 
@@ -59,7 +63,10 @@ public class CovariateFileDaoTest extends AbstractCommonSpringIntegrationTests {
         covariateFile = covariateFileDao.getById(id);
         assertThat(covariateFile.getName()).isEqualTo("NAME");
         assertThat(covariateFile.getInfo()).isEqualTo("INFO");
-        assertThat(covariateFile.getFile()).isEqualTo("FILE");
+        assertThat(covariateFile.getFiles()).hasSize(1);
+        CovariateSubFile subfile = covariateFile.getFiles().get(0);
+        assertThat(subfile.getFile()).isEqualTo("FILE");
+        assertThat(subfile.getQualifier()).isEqualTo("QUALIFIER");
         assertThat(covariateFile.getHide()).isEqualTo(true);
         assertThat(covariateFile.getEnabledDiseaseGroups()).containsAll(enabledDiseaseGroups);
         assertThat(covariateFile.getEnabledDiseaseGroups()).hasSameSizeAs(enabledDiseaseGroups);

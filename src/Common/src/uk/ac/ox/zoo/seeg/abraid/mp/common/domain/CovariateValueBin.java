@@ -3,7 +3,8 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
 import javax.persistence.*;
 
 /**
- * Represents the count of covariate values falling within a defined range (a histogram entry).
+ * Represents the count of covariate values falling within a defined range (a histogram entry), for the last time layer
+ * in multi layer covariates.
  * Copyright (c) 2015 University of Oxford
  */
 @Entity

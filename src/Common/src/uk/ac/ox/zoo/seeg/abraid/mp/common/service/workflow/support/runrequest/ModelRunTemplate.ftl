@@ -42,8 +42,16 @@ attempt_model_run <- function() {
     # Define covariates to use.
     # If you would like to use these covariate files please contact abraid@zoo.ox.ac.uk, as we cannot release them in all circumstances.
     covariate_paths <- list(
-<#list covariates as covariate>
-        "id${covariate.getId()?c}"="covariates/${covariate.getFile()}"<#sep>,</#sep>
+<#list covariates as covariate><#assign files=covariate.getFiles()>
+<#if files?size == 1>
+        "id${covariate.getId()?c}"="covariates/${files?first.getFile()}"<#-- comment to prevent newline in output
+--><#else>
+        "id${covariate.getId()?c}"=list(
+<#list covariate.getFiles() as file>
+            "${file.getQualifier()}"="covariates/${file.getFile()}"<#sep>,</#sep>
+</#list>
+        )<#--  comment to prevent newline in output
+--></#if><#sep>,</#sep>
 </#list>
     )
     covariate_factors <- list(

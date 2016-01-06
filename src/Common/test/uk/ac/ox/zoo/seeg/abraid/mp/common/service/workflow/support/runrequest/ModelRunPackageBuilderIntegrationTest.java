@@ -24,6 +24,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -128,9 +129,9 @@ public class ModelRunPackageBuilderIntegrationTest {
                 createOccurrence(diseaseGroupB, createGeom(1, 35), 11, LocationPrecision.ADMIN2, 11, 22, new DateTime("2014-09-02"))
         );
         Collection<CovariateFile> covariateFiles = Arrays.asList(
-                createCovariateFile(1, "c1.tif", true),
-                createCovariateFile(2, "c2.tif", false),
-                createCovariateFile(3, "sub/c3.tif", true)
+                createCovariateFile(1, "c1.tif", true, 1),
+                createCovariateFile(2, "c2.tif", false, 2),
+                createCovariateFile(3, "sub/c3.tif", true, 1)
         );
         String covariateDirectory = DATA_DIR + "covariates/";
 
@@ -181,10 +182,17 @@ public class ModelRunPackageBuilderIntegrationTest {
         return obj;
     }
 
-    private CovariateFile createCovariateFile(int id, String file, boolean discrete) {
+    private CovariateFile createCovariateFile(int id, String file, boolean discrete, int subCount) {
         CovariateFile obj = mock(CovariateFile.class);
+        List<CovariateSubFile> covariateSubFiles = new ArrayList<>();
+        for (int i = 1; i <= subCount; i++) {
+            CovariateSubFile subObj = mock(CovariateSubFile.class);
+            when(subObj.getQualifier()).thenReturn(subCount == 1 ? null : "2015-0" + i);
+            when(subObj.getFile()).thenReturn(subCount == 1 ? file : file + "_" + i);
+            covariateSubFiles.add(subObj);
+        }
+        when(obj.getFiles()).thenReturn(covariateSubFiles);
         when(obj.getId()).thenReturn(id);
-        when(obj.getFile()).thenReturn(file);
         when(obj.getDiscrete()).thenReturn(discrete);
         return obj;
     }
@@ -248,8 +256,10 @@ public class ModelRunPackageBuilderIntegrationTest {
         Collection<File> files = FileUtils.listFiles(dir, null, true);
         assertThat(files).contains(Paths.get(dir.toString(), "c1.tif").toFile());
         assertThat(Paths.get(dir.toString(), "c1.tif").toFile()).hasContentEqualTo(Paths.get(DATA_DIR, "covariates/c1.tif").toFile());
-        assertThat(files).contains(Paths.get(dir.toString(), "c2.tif").toFile());
-        assertThat(Paths.get(dir.toString(), "c2.tif").toFile()).hasContentEqualTo(Paths.get(DATA_DIR, "covariates/c2.tif").toFile());
+        assertThat(files).contains(Paths.get(dir.toString(), "c2.tif_1").toFile());
+        assertThat(Paths.get(dir.toString(), "c2.tif_1").toFile()).hasContentEqualTo(Paths.get(DATA_DIR, "covariates/c2.tif_1").toFile());
+        assertThat(files).contains(Paths.get(dir.toString(), "c2.tif_2").toFile());
+        assertThat(Paths.get(dir.toString(), "c2.tif_2").toFile()).hasContentEqualTo(Paths.get(DATA_DIR, "covariates/c2.tif_2").toFile());
         assertThat(files).contains(Paths.get(dir.toString(), "sub/c3.tif").toFile());
         assertThat(Paths.get(dir.toString(), "sub/c3.tif").toFile()).hasContentEqualTo(Paths.get(DATA_DIR, "covariates/sub/c3.tif").toFile());
     }

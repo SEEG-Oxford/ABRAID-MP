@@ -39,7 +39,10 @@ attempt_model_run <- function() {
     # If you would like to use these covariate files please contact abraid@zoo.ox.ac.uk, as we cannot release them in all circumstances.
     covariate_paths <- list(
         "id1"="covariates/c1.tif",
-        "id2"="covariates/c2.tif",
+        "id2"=list(
+            "2015-01"="covariates/c2.tif_1",
+            "2015-02"="covariates/c2.tif_2"
+        ),
         "id3"="covariates/sub/c3.tif"
     )
     covariate_factors <- list(

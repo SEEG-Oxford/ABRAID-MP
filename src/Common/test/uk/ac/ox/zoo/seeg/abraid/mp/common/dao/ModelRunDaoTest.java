@@ -609,7 +609,9 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
     }
 
     private CovariateFile createCovariateFile(int idx) {
-        CovariateFile covariate = new CovariateFile("name" + idx, "file" + idx, false, false, "info" + idx);
+        CovariateFile covariate = new CovariateFile("name" + idx, false, false, "info" + idx);
+        CovariateSubFile covariateSubFile = new CovariateSubFile(covariate, null, "file" + idx);
+        covariate.setFiles(Arrays.asList(covariateSubFile));
         covariateFileDao.save(covariate);
         return covariate;
     }

@@ -5,6 +5,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateFile;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateSubFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateFile;
@@ -146,8 +147,12 @@ public class CovariatesControllerValidator {
     }
 
     private boolean checkFilePaths(JsonCovariateConfiguration config) {
+        // TEMP = USE FIRST SUBFILE
         LambdaList<String> knownFiles = with(covariateService.getAllCovariateFiles())
-                .extract(on(CovariateFile.class).getFile()).sort(on(String.class));
+                .extract(on(CovariateFile.class).getFiles())
+                .extract(on(List.class).get(0))
+                .extract(on(CovariateSubFile.class).getFile())
+                .sort(on(String.class));
         LambdaList<String> configFiles = with(config.getFiles())
                 .extract(on(JsonCovariateFile.class).getPath()).sort(on(String.class));
         return knownFiles.equals(configFiles);
