@@ -14,10 +14,6 @@ import java.util.Collection;
 @Table(name = "covariate_file")
 @NamedQueries({
         @NamedQuery(
-                name = "getCovariateByPath",
-                query = "from CovariateFile where file=:path"
-        ),
-        @NamedQuery(
                 name = "getCovariateFilesByDiseaseGroup",
                 query = "select c from CovariateFile c " +
                         "join c.enabledDiseaseGroups d " +

@@ -29,23 +29,13 @@ public class CovariateFileDaoTest extends AbstractCommonSpringIntegrationTests {
     }
 
     @Test
-    public void getByPathReturnsNullIfNonExistent() {
-        assertThat(covariateFileDao.getByFilePath("non-existent name")).isNull();
-    }
-
-    @Test
-    public void getByPathReturnsCorrectInstance() {
-        assertThat(covariateFileDao.getByFilePath("access.tif").getName()).isEqualTo("EC JRC Urban Accessability");
-    }
-
-    @Test
     public void getCovariateFilesByDiseaseGroupReturnsCorrectSet() {
         assertThat(covariateFileDao.getCovariateFilesByDiseaseGroup(diseaseGroupDao.getById(87))).hasSize(8);
     }
 
     @Test
     public void getCovariateFilesByDiseaseGroupExcludesHidden() {
-        CovariateFile file = covariateFileDao.getByFilePath("access.tif");
+        CovariateFile file = covariateFileDao.getById(1);
         file.setHide(true);
         covariateFileDao.save(file);
         assertThat(covariateFileDao.getCovariateFilesByDiseaseGroup(diseaseGroupDao.getById(87))).hasSize(7);

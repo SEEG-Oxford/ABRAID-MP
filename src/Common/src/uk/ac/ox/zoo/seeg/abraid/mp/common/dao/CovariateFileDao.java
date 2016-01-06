@@ -24,13 +24,6 @@ public interface CovariateFileDao {
     List<CovariateFile> getCovariateFilesByDiseaseGroup(DiseaseGroup diseaseGroup);
 
     /**
-     * Gets a covariate file by path.
-     * @param path The path.
-     * @return The covariate file with the specified path, or null if not found.
-     */
-    CovariateFile getByFilePath(String path);
-
-    /**
      * Saves the specified covariate file.
      * @param covariateFile The covariate file to save.
      */

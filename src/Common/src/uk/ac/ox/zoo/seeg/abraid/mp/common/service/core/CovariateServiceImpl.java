@@ -50,13 +50,13 @@ public class CovariateServiceImpl implements CovariateService {
     }
 
     /**
-     * Gets a covariate file by path.
-     * @param path The path.
-     * @return The covariate file with the specified path, or null if not found.
+     * Gets a covariate file by its ID.
+     * @param id The ID.
+     * @return The covariate file with the specified ID, or null if not found.
      */
     @Override
-    public CovariateFile getCovariateFileByPath(String path) {
-        return covariateFileDao.getByFilePath(path);
+    public CovariateFile getCovariateFileById(int id) {
+        return covariateFileDao.getById(id);
     }
 
     /**
