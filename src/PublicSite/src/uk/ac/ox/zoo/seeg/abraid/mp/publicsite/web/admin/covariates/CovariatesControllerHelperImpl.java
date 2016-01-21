@@ -1,7 +1,9 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.covariates;
 
+import ch.lambdaj.collection.LambdaMap;
 import ch.lambdaj.function.convert.Converter;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.DoubleRange;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +14,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateValueBin;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateFile;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateSubFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelDisease;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.CovariateService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
@@ -27,6 +30,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 import static ch.lambdaj.Lambda.*;
+import static ch.lambdaj.collection.LambdaCollections.with;
 
 /**
  * Helper for the AccountController, separated out into a class to isolate the transaction/exception rollback.
@@ -75,9 +79,10 @@ public class CovariatesControllerHelperImpl implements CovariatesControllerHelpe
                 convert(covariateService.getAllCovariateFiles(), new Converter<CovariateFile, JsonCovariateFile>() {
                     @Override
                     public JsonCovariateFile convert(CovariateFile covariateFile) {
-                        // TEMP = USE FIRST SUBFILE
+                        List<JsonCovariateSubFile> subFiles = extractSubFiles(covariateFile);
                         return new JsonCovariateFile(
-                                covariateFile.getFiles().get(0).getFile(),
+                                covariateFile.getId(),
+                                subFiles,
                                 covariateFile.getName(),
                                 covariateFile.getInfo(),
                                 covariateFile.getHide(),
@@ -85,33 +90,58 @@ public class CovariatesControllerHelperImpl implements CovariatesControllerHelpe
                                 extract(covariateFile.getEnabledDiseaseGroups(), on(DiseaseGroup.class).getId())
                         );
                     }
+
+
                 })
         );
     }
 
+    private List<JsonCovariateSubFile> extractSubFiles(CovariateFile covariateFile) {
+        return convert(covariateFile.getFiles(), new Converter<CovariateSubFile, JsonCovariateSubFile>() {
+            @Override
+            public JsonCovariateSubFile convert(CovariateSubFile covariateSubFile) {
+                return new JsonCovariateSubFile(
+                        covariateSubFile.getId(),
+                        covariateSubFile.getFile(),
+                        covariateSubFile.getQualifier()
+                );
+            }
+        });
+    }
+
     /**
      * Persist the JSON version of the covariate configuration into the database.
+     * Note: Id's have been checked by this point in CovariatesControllerValidator.
      * @param config The covariate configuration
      */
     @Override
     public  void setCovariateConfiguration(JsonCovariateConfiguration config) {
-        // TEMP = USE FIRST SUBFILE
-        Map<String, CovariateFile> allCovariateFiles = new HashMap<>();
-        for (CovariateFile covariate : covariateService.getAllCovariateFiles()) {
-            allCovariateFiles.put(covariate.getFiles().get(0).getFile(), covariate);
-        }
-        final Map<Integer, DiseaseGroup> allDiseaseGroups =
-                index(diseaseService.getAllDiseaseGroups(), on(DiseaseGroup.class).getId());
+        final LambdaMap<Integer, CovariateFile> allCovariateFiles = with(covariateService.getAllCovariateFiles())
+                .index(on(CovariateFile.class).getId());
+        final LambdaMap<Integer, DiseaseGroup> allDiseaseGroups = with(diseaseService.getAllDiseaseGroups())
+                .index(on(DiseaseGroup.class).getId());
 
         for (JsonCovariateFile jsonFile : config.getFiles()) {
             boolean changed = false;
-            CovariateFile dbFile = allCovariateFiles.get(jsonFile.getPath());
-            if (dbFile.getName() == null || !dbFile.getName().equals(jsonFile.getName())) {
+            CovariateFile dbFile = allCovariateFiles.get(jsonFile.getId());
+            LambdaMap<Integer, CovariateSubFile> dbSubFiles = with(dbFile.getFiles())
+                    .index(on(CovariateSubFile.class).getId());
+
+            for (JsonCovariateSubFile jsonSubFile : jsonFile.getSubFiles()) {
+                CovariateSubFile dbSubFile = dbSubFiles.get(jsonSubFile.getId());
+
+                if (!StringUtils.equals(dbSubFile.getQualifier(), jsonSubFile.getQualifier())) {
+                    dbSubFile.setQualifier(jsonSubFile.getQualifier());
+                    changed = true;
+                }
+            }
+
+            if (!StringUtils.equals(dbFile.getName(), jsonFile.getName())) {
                 dbFile.setName(jsonFile.getName());
                 changed = true;
             }
 
-            if (dbFile.getInfo() == null || !dbFile.getInfo().equals(jsonFile.getInfo())) {
+            if (!StringUtils.equals(dbFile.getInfo(), jsonFile.getInfo())) {
                 dbFile.setInfo(jsonFile.getInfo());
                 changed = true;
             }
@@ -133,6 +163,7 @@ public class CovariatesControllerHelperImpl implements CovariatesControllerHelpe
                 dbFile.setEnabledDiseaseGroups(enabledDiseases);
                 changed = true;
             }
+
 
             if (changed) {
                 covariateService.saveCovariateFile(dbFile);

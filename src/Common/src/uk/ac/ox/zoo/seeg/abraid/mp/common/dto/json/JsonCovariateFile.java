@@ -7,7 +7,8 @@ import java.util.List;
  * Copyright (c) 2014 University of Oxford
  */
 public class JsonCovariateFile {
-    private String path;
+    private int id;
+    private List<JsonCovariateSubFile> subFiles;
     private String name;
     private String info;
     private boolean hide;
@@ -17,9 +18,10 @@ public class JsonCovariateFile {
     public JsonCovariateFile() {
     }
 
-    public JsonCovariateFile(String path, String name, String info, boolean hide, boolean discrete,
-                             List<Integer> enabled) {
-        setPath(path);
+    public JsonCovariateFile(int id, List<JsonCovariateSubFile> subFiles, String name, String info, boolean hide,
+                             boolean discrete, List<Integer> enabled) {
+        setId(id);
+        setSubFiles(subFiles);
         setName(name);
         setInfo(info);
         setHide(hide);
@@ -27,12 +29,20 @@ public class JsonCovariateFile {
         setEnabled(enabled);
     }
 
-    public String getPath() {
-        return path;
+    public int getId() {
+        return id;
     }
 
-    public void setPath(String path) {
-        this.path = path;
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public List<JsonCovariateSubFile> getSubFiles() {
+        return subFiles;
+    }
+
+    public void setSubFiles(List<JsonCovariateSubFile> subFiles) {
+        this.subFiles = subFiles;
     }
 
     public String getName() {
@@ -84,19 +94,21 @@ public class JsonCovariateFile {
 
         JsonCovariateFile that = (JsonCovariateFile) o;
 
-        if (hide != that.hide) return false;
         if (discrete != that.discrete) return false;
+        if (hide != that.hide) return false;
+        if (id != that.id) return false;
         if (enabled != null ? !enabled.equals(that.enabled) : that.enabled != null) return false;
         if (info != null ? !info.equals(that.info) : that.info != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        if (path != null ? !path.equals(that.path) : that.path != null) return false;
+        if (subFiles != null ? !subFiles.equals(that.subFiles) : that.subFiles != null) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = path != null ? path.hashCode() : 0;
+        int result = id;
+        result = 31 * result + (subFiles != null ? subFiles.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (info != null ? info.hashCode() : 0);
         result = 31 * result + (hide ? 1 : 0);

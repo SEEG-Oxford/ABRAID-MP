@@ -6,8 +6,8 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.springframework.mock.web.MockMultipartFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateFile;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateSubFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.CovariateService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 
@@ -203,7 +203,7 @@ public class CovariatesControllerValidatorTest extends BaseCovariatesControllerT
     }
 
     @Test
-    public void validateCovariateConfigurationRejectsNullFile() throws Exception {
+    public void validateCovariateConfigurationRejectsNullFiles() throws Exception {
         // Arrange
         JsonCovariateConfiguration config = mock(JsonCovariateConfiguration.class);
         when(config.getFiles()).thenReturn(null);
@@ -217,37 +217,100 @@ public class CovariatesControllerValidatorTest extends BaseCovariatesControllerT
     }
 
     @Test
-      public void validateCovariateConfigurationRejectsUnknownFilePath() throws Exception {
+    public void validateCovariateConfigurationRejectsNewSubFile() throws Exception {
         // Arrange
         JsonCovariateConfiguration config = createValidMockConfig();
         CovariateService covariateService = createMockCovariateService(testFolder.getRoot());
         DiseaseService diseaseService = createMockDiseaseService();
         CovariatesControllerValidator target = new CovariatesControllerValidator(covariateService, diseaseService);
-        config.getFiles().add(createMockJsonCovariateFile("Wrong", "foo", true, new ArrayList<Integer>()));
+        config.getFiles().get(0).getSubFiles().add(createMockJsonCovariateSubFile(11, "Wrong", "foo"));
 
         // Act
         Collection<String> result = target.validateCovariateConfiguration(config);
 
         // Assert
-        assertThat(result).contains("Unexpected file listed or missing.");
+        assertThat(result).contains("Unexpected file or subfile listed or missing.");
     }
 
     @Test
-    public void validateCovariateConfigurationRejectsMissingFilePath() throws Exception {
+    public void validateCovariateConfigurationRejectsUnknownSubFile() throws Exception {
         // Arrange
         JsonCovariateConfiguration config = createValidMockConfig();
         CovariateService covariateService = createMockCovariateService(testFolder.getRoot());
         DiseaseService diseaseService = createMockDiseaseService();
         CovariatesControllerValidator target = new CovariatesControllerValidator(covariateService, diseaseService);
-        covariateService.getAllCovariateFiles().add(createMockCovariateFile("Missing", "foo", true, new ArrayList<DiseaseGroup>()));
+        when(config.getFiles().get(0).getSubFiles().get(0).getId()).thenReturn(111);
 
         // Act
         Collection<String> result = target.validateCovariateConfiguration(config);
 
         // Assert
-        assertThat(result).contains("Unexpected file listed or missing.");
+        assertThat(result).contains("Unexpected file or subfile listed or missing.");
     }
 
+    @Test
+    public void validateCovariateConfigurationRejectsMissingSubFile() throws Exception {
+        // Arrange
+        JsonCovariateConfiguration config = createValidMockConfig();
+        CovariateService covariateService = createMockCovariateService(testFolder.getRoot());
+        DiseaseService diseaseService = createMockDiseaseService();
+        CovariatesControllerValidator target = new CovariatesControllerValidator(covariateService, diseaseService);
+        config.getFiles().get(0).getSubFiles().remove(0);
+
+        // Act
+        Collection<String> result = target.validateCovariateConfiguration(config);
+
+        // Assert
+        assertThat(result).contains("Unexpected file or subfile listed or missing.");
+    }
+
+    @Test
+    public void validateCovariateConfigurationRejectsNewCovariate() throws Exception {
+        // Arrange
+        JsonCovariateConfiguration config = createValidMockConfig();
+        CovariateService covariateService = createMockCovariateService(testFolder.getRoot());
+        DiseaseService diseaseService = createMockDiseaseService();
+        CovariatesControllerValidator target = new CovariatesControllerValidator(covariateService, diseaseService);
+        config.getFiles().add(createMockJsonCovariateFile(11, "Wrong", false, new ArrayList<Integer>(), new ArrayList<JsonCovariateSubFile>()));
+
+        // Act
+        Collection<String> result = target.validateCovariateConfiguration(config);
+
+        // Assert
+        assertThat(result).contains("Unexpected file or subfile listed or missing.");
+    }
+
+    @Test
+    public void validateCovariateConfigurationRejectsUnknownCovariate() throws Exception {
+        // Arrange
+        JsonCovariateConfiguration config = createValidMockConfig();
+        CovariateService covariateService = createMockCovariateService(testFolder.getRoot());
+        DiseaseService diseaseService = createMockDiseaseService();
+        CovariatesControllerValidator target = new CovariatesControllerValidator(covariateService, diseaseService);
+        when(config.getFiles().get(0).getId()).thenReturn(111);
+
+        // Act
+        Collection<String> result = target.validateCovariateConfiguration(config);
+
+        // Assert
+        assertThat(result).contains("Unexpected file or subfile listed or missing.");
+    }
+
+    @Test
+    public void validateCovariateConfigurationRejectsMissingCovariate() throws Exception {
+        // Arrange
+        JsonCovariateConfiguration config = createValidMockConfig();
+        CovariateService covariateService = createMockCovariateService(testFolder.getRoot());
+        DiseaseService diseaseService = createMockDiseaseService();
+        CovariatesControllerValidator target = new CovariatesControllerValidator(covariateService, diseaseService);
+        config.getFiles().remove(0);
+
+        // Act
+        Collection<String> result = target.validateCovariateConfiguration(config);
+
+        // Assert
+        assertThat(result).contains("Unexpected file or subfile listed or missing.");
+    }
     @Test
     public void validateCovariateConfigurationRejectsDuplicateEnabledDiseases() throws Exception {
         // Arrange

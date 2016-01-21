@@ -61,11 +61,13 @@ public class CovariatesControllerHelperTest extends BaseCovariatesControllerTest
         // Assert
         JsonCovariateConfiguration expected = createValidMockConfig();
         assertThat(result.getFiles().size()).isEqualTo(4);
-        assertThat(result.getFiles().get(0).getPath()).isEqualTo(expected.getFiles().get(0).getPath());
+        assertThat(result.getFiles().get(0).getId()).isEqualTo(expected.getFiles().get(0).getId());
         assertThat(result.getFiles().get(0).getName()).isEqualTo(expected.getFiles().get(0).getName());
         assertThat(result.getFiles().get(0).getHide()).isEqualTo(expected.getFiles().get(0).getHide());
         assertThat(result.getFiles().get(0).getInfo()).isEqualTo(expected.getFiles().get(0).getInfo());
         assertThat(result.getFiles().get(0).getEnabled()).isEqualTo(expected.getFiles().get(0).getEnabled());
+        assertThat(result.getFiles().get(0).getSubFiles().size()).isEqualTo(expected.getFiles().get(0).getSubFiles().size());
+        assertThat(result.getFiles().get(0).getSubFiles().get(0).getId()).isEqualTo(expected.getFiles().get(0).getSubFiles().get(0).getId());
         assertThat(result.getDiseases().size()).isEqualTo(2);
         assertThat(result.getDiseases().get(0).getId()).isEqualTo(22);
     }
@@ -78,6 +80,7 @@ public class CovariatesControllerHelperTest extends BaseCovariatesControllerTest
         JsonCovariateConfiguration config = createValidMockConfig();
         when(config.getFiles().get(0).getName()).thenReturn("new Name");
         when(config.getFiles().get(0).getHide()).thenReturn(true);
+        when(config.getFiles().get(0).getSubFiles().get(0).getQualifier()).thenReturn("qwe");
         when(config.getFiles().get(0).getDiscrete()).thenReturn(true);
         when(config.getFiles().get(2).getEnabled()).thenReturn(Arrays.asList(22, 60));
         when(config.getFiles().get(2).getInfo()).thenReturn("new");
@@ -91,6 +94,7 @@ public class CovariatesControllerHelperTest extends BaseCovariatesControllerTest
         verify(c1).setName("new Name");
         verify(c1).setHide(true);
         verify(c1, never()).setDiscrete(true); // Read only
+        verify(c1.getFiles().get(0)).setQualifier("qwe");
         verify(covariateService).saveCovariateFile(c1);
         CovariateFile c2 = covariateService.getAllCovariateFiles().get(2);
         verify(c2).setEnabledDiseaseGroups(eq(diseaseService.getAllDiseaseGroups()));
