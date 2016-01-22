@@ -52,8 +52,8 @@ define([
                 expect(vm.sortField).toBeObservable();
             });
 
-            it("defaults to 'path'", function () {
-                expect(vm.sortField()).toBe("path");
+            it("defaults to 'name'", function () {
+                expect(vm.sortField()).toBe("name");
             });
         });
 
@@ -74,9 +74,12 @@ define([
 
             it("start with the same content as passed to the constructor", function () {
                 var input = { diseases: [ "foo" ], files: [
-                    { name: "bar", path: "FOO", info: "", enabled: [1], hide: false },
-                    { name: "containsfoo", path: "bar", info: "", enabled: [1], hide: false },
-                    { name: "oof", path: "rab", info: "", enabled: [1], hide: false }
+                    {name: "bar", info: "", enabled: [1], hide: false,
+                        subFiles: [ { qualifier: "foo", path: "FOO" } ] },
+                    { name: "containsfoo", info: "", enabled: [1], hide: false,
+                        subFiles: [ { qualifier: "B", path: "bar" } ] },
+                    { name: "oof", info: "", enabled: [1], hide: false,
+                        subFiles: [ { qualifier: "OOF", path: "rab" } ] }
                 ]};
                 vm =  new CovariatesListViewModel("foo", input);
                 expect(vm.entries()).toBe(input.files);
@@ -124,7 +127,7 @@ define([
             it("sets the reverses the sort order if argument different same as current sort field", function () {
                 var order = vm.reverseSort();
                 spyOn(vm, "reverseSort"); // Yay for observables also being functions
-                vm.updateSort("path");
+                vm.updateSort("name");
                 expect(vm.reverseSort).toHaveBeenCalledWith(!order);
             });
         });
@@ -196,16 +199,19 @@ define([
                     vm = new CovariatesListViewModel("foo", {
                         diseases: [ { id: 1, name: "foo" } ],
                         files: [
-                            { name: "bar", path: "FOO", info: "", enabled: [1], hide: false },
-                            { name: "containsfoo", path: "bar", info: "", enabled: [1], hide: false },
-                            { name: "oof", path: "rab", info: "", enabled: [1], hide: false }
+                            {name: "bar", info: "", enabled: [1], hide: false,
+                                subFiles: [ { qualifier: "foo", path: "FOO" } ] },
+                            { name: "containsfoo", info: "", enabled: [1], hide: false,
+                                subFiles: [ { qualifier: "B", path: "bar" } ] },
+                            { name: "oof", info: "", enabled: [1], hide: false,
+                                subFiles: [ { qualifier: "OOF", path: "rab" } ] }
                         ]
                     });
                 });
 
                 it("is filtered using the 'filter string' field", function () {
                     expect(vm.visibleEntries().length).toBe(3);
-                    vm.filter("foo");
+                    vm.filter("oo");
                     expect(vm.visibleEntries().length).toBe(2);
                 });
 
@@ -223,15 +229,16 @@ define([
                 });
 
                 it("is sorted using the 'sort field'", function () {
-                    expect(_(vm.visibleEntries()).pluck("path")).toEqual([ "./bar", "./FOO", "./rab" ]);
-                    vm.sortField("name");
-                    expect(_(vm.visibleEntries()).pluck("path")).toEqual([ "./FOO", "./bar", "./rab" ]);
+                    expect(_(vm.visibleEntries()).pluck("name").map(function (f) {return f(); }))
+                        .toEqual([ "bar", "containsfoo", "oof" ]);
                 });
 
                 it("is sorted using the 'sort order'", function () {
-                    expect(_(vm.visibleEntries()).pluck("path")).toEqual([ "./bar", "./FOO", "./rab" ]);
+                    expect(_(vm.visibleEntries()).pluck("name").map(function (f) {return f(); }))
+                        .toEqual([ "bar", "containsfoo", "oof" ]);
                     vm.reverseSort(true);
-                    expect(_(vm.visibleEntries()).pluck("path")).toEqual([ "./rab", "./FOO", "./bar" ]);
+                    expect(_(vm.visibleEntries()).pluck("name").map(function (f) {return f(); }))
+                        .toEqual([ "oof", "containsfoo", "bar" ]);
                 });
             });
         });

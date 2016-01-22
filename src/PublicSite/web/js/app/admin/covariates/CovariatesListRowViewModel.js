@@ -1,7 +1,11 @@
 /* An AMD defining the Covariates List Row, a vm to back one row in the covariates table.
  * Copyright (c) 2014 University of Oxford
  */
-define(["ko", "underscore"], function (ko, _) {
+define([
+    "ko",
+    "underscore",
+    "app/admin/covariates/CovariatesSubFileViewModel"
+], function (ko, _, CovariatesSubFileViewModel) {
     "use strict";
 
     return function (parentViewModel, parentFile, activeDiseaseId) {
@@ -19,7 +23,11 @@ define(["ko", "underscore"], function (ko, _) {
         });
         self.discrete = parentFile.discrete; // Read only
         self.mouseOver = ko.observable(false);
-        self.path = "./" + parentFile.path;
+        self.count = parentFile.subFiles ? parentFile.subFiles.length : 0;
+        self.files = _(parentFile.subFiles).map(function (subFile) {
+            return new CovariatesSubFileViewModel(parentViewModel, subFile);
+        });
+
         self.info = ko.observable(parentFile.info);
         self.info.subscribe(function (value) {
             parentFile.info = value;

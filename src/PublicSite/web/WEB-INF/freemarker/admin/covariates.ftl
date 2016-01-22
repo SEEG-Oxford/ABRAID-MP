@@ -21,7 +21,9 @@
                     <input type="text" data-bind="formValue: name, attr: { title: name }, css: { 'transparent-input': !mouseOver() }" placeholder="A name must be provided">
                 </span>
             </td>
-            <td><input type="text" data-bind="formValue: path, attr: { title: path }" readonly="true" class="transparent-input" ></td>
+            <td>
+                <button class="btn btn-default" style="padding-top: 3px; padding-bottom: 3px" data-bind="text: count, popover: { title: 'Files', trigger: 'click', placement: 'bottom', template: 'sub-files-template'}, click: function(data, event) { event.preventDefault(); }, bootstrapDisable: $parent.isSubmitting()"></button>
+            </td>
             <td><input type="checkbox" data-bind="checked: discrete, bootstrapDisable: true"></td>
             <td><input type="checkbox" data-bind="formChecked: state"></td>
             <td>
@@ -32,6 +34,20 @@
             </td>
         </tr>
     </@t.tableTemplates>
+    <script type="text/html" id="sub-files-template">
+        <table>
+            <tr>
+                <th>Qualifier</th>
+                <th>Path</th>
+            </tr>
+            <tbody data-bind="foreach: files">
+                <tr>
+                    <td><span class="input-group"><input type="text" data-bind="formValue: qualifier, attr: { title: qualifier }" placeholder="A qualifier must be provided"></span></td>
+                    <td><input type="text" data-bind="formValue: path, attr: { title: path }" readonly="true" class="transparent-input" ></td>
+                </tr>
+            </tbody>
+        </table>
+    </script>
     <script type="text/html" id="info-text-template">
         <textarea rows="8" cols="30" maxlength="500" placeholder="Not specified" autofocus="true" style="resize: none;" data-bind="value: info">
         </textarea>
@@ -79,7 +95,7 @@
             <@t.tableBody singular="covariate" title="Covariates">
                 [
                     { name: 'name', display: 'Name' },
-                    { name: 'path', display: 'Path' },
+                    { name: 'count', display: 'Files' },
                     { name: 'discrete', display: 'Is discrete*' },
                     { name: 'state', display: 'Use for current disease' },
                     { name: 'info', display: '+' },
