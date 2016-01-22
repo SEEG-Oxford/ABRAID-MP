@@ -15,5 +15,5 @@ CREATE TABLE covariate_sub_file (
 GRANT SELECT, INSERT, UPDATE ON covariate_sub_file TO ${application_username};
 GRANT SELECT, UPDATE ON covariate_sub_file_id_seq TO ${application_username};
 
-INSERT INTO covariate_sub_file (covariate_file_id, file, qualifier) SELECT id, file, NULL FROM covariate_file;
+INSERT INTO covariate_sub_file (covariate_file_id, file, qualifier) SELECT id, file, 'Single' FROM covariate_file;
 ALTER TABLE covariate_file DROP COLUMN file;
