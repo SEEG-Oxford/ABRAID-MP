@@ -15,6 +15,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.CovariateService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -27,9 +28,9 @@ import static org.mockito.Mockito.*;
 import static uk.ac.ox.zoo.seeg.abraid.mp.testutils.GeneralTestUtils.captorForClass;
 
 /**
- * Tests for CovariatesControllerHelper.
- * Copyright (c) 2015 University of Oxford
- */
+* Tests for CovariatesControllerHelper.
+* Copyright (c) 2015 University of Oxford
+*/
 public class CovariatesControllerHelperTest extends BaseCovariatesControllerTests {
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder(); ///CHECKSTYLE:SUPPRESS VisibilityModifier
@@ -112,7 +113,7 @@ public class CovariatesControllerHelperTest extends BaseCovariatesControllerTest
         byte[] bytes = FileUtils.readFileToByteArray(refFile);
 
         // Act
-        target.saveNewCovariateFile("name", false, covariateService.getCovariateDirectory() + "/asd/fas", new MockMultipartFile("foo", "oof", "application/octet-stream", bytes));
+        target.saveNewCovariateFile("name", "qualifier", null, false, covariateService.getCovariateDirectory() + "/asd/fas", new MockMultipartFile("foo", "oof", "application/octet-stream", bytes));
 
         // Assert
         assertThat(new File(covariateService.getCovariateDirectory() + "/asd/fas")).hasContentEqualTo(refFile);
@@ -120,8 +121,8 @@ public class CovariatesControllerHelperTest extends BaseCovariatesControllerTest
         verify(covariateService).saveCovariateFile(captor.capture());
         CovariateFile saved = captor.getValue();
         assertThat(saved.getName()).isEqualTo("name");
-        // TEMP = USE FIRST SUBFILE
         assertThat(saved.getFiles().get(0).getFile()).isEqualTo("asd/fas");
+        assertThat(saved.getFiles().get(0).getQualifier()).isEqualTo("qualifier");
         assertThat(saved.getHide()).isEqualTo(false);
         assertThat(saved.getDiscrete()).isEqualTo(false);
         assertThat(saved.getInfo()).isEqualTo("");
@@ -144,7 +145,7 @@ public class CovariatesControllerHelperTest extends BaseCovariatesControllerTest
         byte[] bytes = FileUtils.readFileToByteArray(refFile);
 
         // Act
-        target.saveNewCovariateFile("name", true, covariateService.getCovariateDirectory() + "/asd/fas", new MockMultipartFile("foo", "oof", "application/octet-stream", bytes));
+        target.saveNewCovariateFile("name", "qualifier", null, true, covariateService.getCovariateDirectory() + "/asd/fas", new MockMultipartFile("foo", "oof", "application/octet-stream", bytes));
 
         // Assert
         assertThat(new File(covariateService.getCovariateDirectory() + "/asd/fas")).hasContentEqualTo(refFile);
@@ -152,8 +153,8 @@ public class CovariatesControllerHelperTest extends BaseCovariatesControllerTest
         verify(covariateService).saveCovariateFile(captor.capture());
         CovariateFile saved = captor.getValue();
         assertThat(saved.getName()).isEqualTo("name");
-        // TEMP = USE FIRST SUBFILE
         assertThat(saved.getFiles().get(0).getFile()).isEqualTo("asd/fas");
+        assertThat(saved.getFiles().get(0).getQualifier()).isEqualTo("qualifier");
         assertThat(saved.getHide()).isEqualTo(false);
         assertThat(saved.getDiscrete()).isEqualTo(true);
         assertThat(saved.getInfo()).isEqualTo("");
@@ -176,13 +177,36 @@ public class CovariatesControllerHelperTest extends BaseCovariatesControllerTest
         byte[] bytes = FileUtils.readFileToByteArray(refFile);
 
         // Act
-        target.saveNewCovariateFile("name", true, covariateService.getCovariateDirectory() + "/asd/fas", new MockMultipartFile("foo", "oof", "application/octet-stream", bytes));
+        target.saveNewCovariateFile("name", "qualifier", null, true, covariateService.getCovariateDirectory() + "/asd/fas", new MockMultipartFile("foo", "oof", "application/octet-stream", bytes));
 
         // Assert
         assertThat(new File(covariateService.getCovariateDirectory() + "/asd/fas")).hasContentEqualTo(refFile);
         CovariateFile expectedFile = new CovariateFile("name", false, true, "");
-        CovariateSubFile expectedSubFile = new CovariateSubFile(expectedFile, null, "asd/fas");
+        CovariateSubFile expectedSubFile = new CovariateSubFile(expectedFile, "qualifier", "asd/fas");
         expectedFile.setFiles(Arrays.asList(expectedSubFile));
         verify(covariateService).saveCovariateFile(eq(expectedFile));
+    }
+
+    @Test
+    public void saveNewCovariateSavesSubFileCorrectly() throws Exception {
+        // Arrange
+        CovariateService covariateService = createMockCovariateService(testFolder.getRoot());
+        DiseaseService diseaseService = createMockDiseaseService();
+        CovariateFile parentFile = mock(CovariateFile.class);
+        when(parentFile.getFiles()).thenReturn(new ArrayList<CovariateSubFile>());
+        when(covariateService.getCovariateFileById(1)).thenReturn(parentFile);
+        CovariatesControllerHelper target = new CovariatesControllerHelperImpl(covariateService, diseaseService);
+        File refFile = new File(TEST_DATA_PATH, "continuous_raster.tif");
+        byte[] bytes = FileUtils.readFileToByteArray(refFile);
+
+        // Act
+        target.saveNewCovariateFile("name", "qualifier", 1, true, covariateService.getCovariateDirectory() + "/asd/fas", new MockMultipartFile("foo", "oof", "application/octet-stream", bytes));
+
+        // Assert
+        assertThat(new File(covariateService.getCovariateDirectory() + "/asd/fas")).hasContentEqualTo(refFile);
+
+        assertThat(parentFile.getFiles().get(parentFile.getFiles().size() - 1).getQualifier()).isEqualTo("qualifier");
+        assertThat(parentFile.getFiles().get(parentFile.getFiles().size() - 1).getFile()).isEqualTo("asd/fas");
+        verify(covariateService).saveCovariateFile(parentFile);
     }
 }

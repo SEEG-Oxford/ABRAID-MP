@@ -21,9 +21,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 /**
- * Tests for CovariatesController.
- * Copyright (c) 2015 University of Oxford
- */
+* Tests for CovariatesController.
+* Copyright (c) 2015 University of Oxford
+*/
 public class CovariatesControllerTest {
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder(); ///CHECKSTYLE:SUPPRESS VisibilityModifier
@@ -176,6 +176,8 @@ public class CovariatesControllerTest {
         when(expectedFile.getOriginalFilename()).thenReturn("file.ext");
         when(expectedFile.getBytes()).thenReturn("Test content".getBytes());
         final String expectedName = "name";
+        String expectedQualifier = "expectedQualifier";
+        Integer expectedParent = 123;
         final String expectedSubdirectory = "dir";
         final String expectedCovariateDir = testFolder.newFolder().toString();
         final boolean expectedIsDiscrete = true;
@@ -188,15 +190,50 @@ public class CovariatesControllerTest {
         when(covariatesControllerHelper.extractTargetPath(expectedSubdirectory, expectedFile)).thenReturn(expectedPath);
         CovariatesControllerValidator validator = mock(CovariatesControllerValidator.class);
         CovariatesController target = new CovariatesController(covariatesControllerHelper, validator, new AbraidJsonObjectMapper());
-        when(validator.validateCovariateUpload(anyString(), anyString(), any(MultipartFile.class), anyString()))
+        when(validator.validateCovariateUpload(anyString(), anyString(), anyInt(), anyString(), any(MultipartFile.class), anyString()))
             .thenReturn(Arrays.asList("FAIL1", "FAIL2"));
 
         // Act
-        ResponseEntity<JsonFileUploadResponse> result = target.addCovariateFile(expectedName, expectedIsDiscrete, expectedSubdirectory, expectedFile);
+        ResponseEntity<JsonFileUploadResponse> result = target.addCovariateFile(expectedName, expectedQualifier, expectedParent, expectedIsDiscrete, expectedSubdirectory, expectedFile);
 
         // Assert
         verify(validator).validateCovariateUpload(
-                expectedName, expectedSubdirectory, expectedFile, expectedPath
+                expectedName, expectedQualifier, expectedParent, expectedSubdirectory, expectedFile, expectedPath
+        );
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(result.getBody().getStatus()).isEqualTo("FAIL");
+        assertThat(result.getBody().getMessages()).containsOnly("FAIL1", "FAIL2");
+    }
+
+    @Test
+    public void addCovariateFileValidatesItsInputsCorrectlyWithoutParent() throws Exception {
+        // Arrange
+        final MultipartFile expectedFile = mock(MultipartFile.class);
+        when(expectedFile.getOriginalFilename()).thenReturn("file.ext");
+        when(expectedFile.getBytes()).thenReturn("Test content".getBytes());
+        final String expectedName = "name";
+        String expectedQualifier = "expectedQualifier";
+        final String expectedSubdirectory = "dir";
+        final String expectedCovariateDir = testFolder.newFolder().toString();
+        final boolean expectedIsDiscrete = true;
+        final String expectedPath = FilenameUtils.separatorsToUnix(expectedCovariateDir + "/" + expectedSubdirectory + "/file.ext");
+        final JsonCovariateConfiguration expectedCovariateConf = mock(JsonCovariateConfiguration.class);
+
+
+        CovariatesControllerHelper covariatesControllerHelper = mock(CovariatesControllerHelper.class);
+        when(covariatesControllerHelper.getCovariateConfiguration()).thenReturn(expectedCovariateConf);
+        when(covariatesControllerHelper.extractTargetPath(expectedSubdirectory, expectedFile)).thenReturn(expectedPath);
+        CovariatesControllerValidator validator = mock(CovariatesControllerValidator.class);
+        CovariatesController target = new CovariatesController(covariatesControllerHelper, validator, new AbraidJsonObjectMapper());
+        when(validator.validateCovariateUpload(anyString(), anyString(), anyInt(), anyString(), any(MultipartFile.class), anyString()))
+                .thenReturn(Arrays.asList("FAIL1", "FAIL2"));
+
+        // Act
+        ResponseEntity<JsonFileUploadResponse> result = target.addCovariateFile(expectedName, expectedQualifier, -1, expectedIsDiscrete, expectedSubdirectory, expectedFile);
+
+        // Assert
+        verify(validator).validateCovariateUpload(
+                expectedName, expectedQualifier, null, expectedSubdirectory, expectedFile, expectedPath
         );
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(result.getBody().getStatus()).isEqualTo("FAIL");
@@ -211,6 +248,8 @@ public class CovariatesControllerTest {
         when(expectedFile.getOriginalFilename()).thenReturn(expectedFileName);
         when(expectedFile.getBytes()).thenReturn("Test content".getBytes());
         final String expectedName = "name";
+        String expectedQualifier = "expectedQualifier";
+        Integer expectedParent = 123;
         final String expectedSubdirectory = "dir";
         final boolean expectedIsDiscrete = false;
         final String expectedCovariateDir = testFolder.newFolder().toString();
@@ -222,14 +261,44 @@ public class CovariatesControllerTest {
         when(covariatesControllerHelper.extractTargetPath(expectedSubdirectory, expectedFile)).thenReturn(expectedPath);
         CovariatesControllerValidator validator = mock(CovariatesControllerValidator.class);
         CovariatesController target = new CovariatesController(covariatesControllerHelper, validator, new AbraidJsonObjectMapper());
-        when(validator.validateCovariateUpload(anyString(), anyString(), any(MultipartFile.class), anyString()))
+        when(validator.validateCovariateUpload(anyString(), anyString(), anyInt(), anyString(), any(MultipartFile.class), anyString()))
                 .thenReturn(new ArrayList<String>());
 
         // Act
-        target.addCovariateFile(expectedName, expectedIsDiscrete, expectedSubdirectory, expectedFile);
+        target.addCovariateFile(expectedName, expectedQualifier, expectedParent, expectedIsDiscrete, expectedSubdirectory, expectedFile);
 
         // Assert
-        verify(covariatesControllerHelper).saveNewCovariateFile(expectedName, expectedIsDiscrete, expectedPath, expectedFile);
+        verify(covariatesControllerHelper).saveNewCovariateFile(expectedName, expectedQualifier, expectedParent, expectedIsDiscrete, expectedPath, expectedFile);
+    }
+
+    @Test
+    public void addCovariateFileSavesTheFileCorrectlyWithoutParent() throws Exception {
+        // Arrange
+        final MultipartFile expectedFile = mock(MultipartFile.class);
+        final String expectedFileName = "file.ext";
+        when(expectedFile.getOriginalFilename()).thenReturn(expectedFileName);
+        when(expectedFile.getBytes()).thenReturn("Test content".getBytes());
+        final String expectedName = "name";
+        String expectedQualifier = "expectedQualifier";
+        final String expectedSubdirectory = "dir";
+        final boolean expectedIsDiscrete = false;
+        final String expectedCovariateDir = testFolder.newFolder().toString();
+        final String expectedPath = FilenameUtils.separatorsToUnix(expectedCovariateDir + "/" + expectedSubdirectory + "/" + expectedFileName);
+        final JsonCovariateConfiguration expectedCovariateConf = mock(JsonCovariateConfiguration.class);
+
+        CovariatesControllerHelper covariatesControllerHelper = mock(CovariatesControllerHelper.class);
+        when(covariatesControllerHelper.getCovariateConfiguration()).thenReturn(expectedCovariateConf);
+        when(covariatesControllerHelper.extractTargetPath(expectedSubdirectory, expectedFile)).thenReturn(expectedPath);
+        CovariatesControllerValidator validator = mock(CovariatesControllerValidator.class);
+        CovariatesController target = new CovariatesController(covariatesControllerHelper, validator, new AbraidJsonObjectMapper());
+        when(validator.validateCovariateUpload(anyString(), anyString(), anyInt(), anyString(), any(MultipartFile.class), anyString()))
+                .thenReturn(new ArrayList<String>());
+
+        // Act
+        target.addCovariateFile(expectedName, expectedQualifier, -1, expectedIsDiscrete, expectedSubdirectory, expectedFile);
+
+        // Assert
+        verify(covariatesControllerHelper).saveNewCovariateFile(expectedName, expectedQualifier, null, expectedIsDiscrete, expectedPath, expectedFile);
     }
 
     @Test
@@ -240,6 +309,8 @@ public class CovariatesControllerTest {
         when(expectedFile.getOriginalFilename()).thenReturn(expectedFileName);
         when(expectedFile.getBytes()).thenReturn("Test content".getBytes());
         final String expectedName = "name";
+        String expectedQualifier = "expectedQualifier";
+        Integer expectedParent = -1;
         final String expectedSubdirectory = "dir";
         final boolean expectedIsDiscrete = true;
         final List<JsonCovariateFile> covariateFileList = new ArrayList<>();
@@ -248,11 +319,11 @@ public class CovariatesControllerTest {
         when(covariatesControllerHelper.extractTargetPath(expectedSubdirectory, expectedFile)).thenReturn("xyz");
         CovariatesControllerValidator validator = mock(CovariatesControllerValidator.class);
         CovariatesController target = new CovariatesController(covariatesControllerHelper, validator, new AbraidJsonObjectMapper());
-        when(validator.validateCovariateUpload(anyString(), anyString(), any(MultipartFile.class), anyString()))
+        when(validator.validateCovariateUpload(anyString(), anyString(), anyInt(), anyString(), any(MultipartFile.class), anyString()))
                 .thenReturn(new ArrayList<String>());
 
         // Act
-        ResponseEntity<JsonFileUploadResponse> result = target.addCovariateFile(expectedName, expectedIsDiscrete, expectedSubdirectory, expectedFile);
+        ResponseEntity<JsonFileUploadResponse> result = target.addCovariateFile(expectedName, expectedQualifier, expectedParent, expectedIsDiscrete, expectedSubdirectory, expectedFile);
 
         // Assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);

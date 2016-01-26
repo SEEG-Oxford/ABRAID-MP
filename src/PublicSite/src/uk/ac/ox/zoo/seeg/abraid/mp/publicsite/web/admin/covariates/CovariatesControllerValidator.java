@@ -32,6 +32,8 @@ import static org.hamcrest.Matchers.isIn;
 public class CovariatesControllerValidator {
     private static final String FAIL_FILE_MISSING = "File missing.";
     private static final String FAIL_NAME_MISSING = "Name missing.";
+    private static final String FAIL_INVALID_PARENT = "Parent ID not valid.";
+    private static final String FAIL_QUALIFIER_MISSING = "Qualifier missing.";
     private static final String FAIL_SUBDIRECTORY_MISSING = "Subdirectory missing.";
     private static final String FAIL_SUBDIRECTORY_NOT_VALID = "Subdirectory not valid.";
     private static final String FAIL_NAME_NOT_UNIQUE = "Name not unique.";
@@ -55,22 +57,32 @@ public class CovariatesControllerValidator {
 
     /**
      * Validate the user input from a covariate upload.
-     * @param name Name of the covariate file.
+     * @param name The display name for the covariate (null if a sub file).
+     * @param qualifier The qualifier name for the covariate sub file (ie the year/month).
+     * @param parentId The ID of the parent covariate for this file (or null if this is the first file).
      * @param subdirectory The directory to add the file to.
      * @param file The covariate file.
      * @param targetPath The location to store the file.
      * @return A set of validation failures.
      */
-    public Collection<String> validateCovariateUpload(
-            String name, String subdirectory, MultipartFile file, String targetPath) {
+    public Collection<String> validateCovariateUpload(String name, String qualifier, Integer parentId,
+                                                      String subdirectory, MultipartFile file, String targetPath) {
         List<String> messages = new ArrayList<>();
 
         if (file == null || file.isEmpty()) {
             messages.add(FAIL_FILE_MISSING);
         }
 
-        if (StringUtils.isEmpty(name)) {
+        if (parentId != null && covariateService.getCovariateFileById(parentId) == null) {
+            messages.add(FAIL_INVALID_PARENT);
+        }
+
+        if (parentId == null && StringUtils.isEmpty(name)) {
             messages.add(FAIL_NAME_MISSING);
+        }
+
+        if (StringUtils.isEmpty(qualifier)) {
+            messages.add(FAIL_QUALIFIER_MISSING);
         }
 
         if (StringUtils.isEmpty(subdirectory)) {

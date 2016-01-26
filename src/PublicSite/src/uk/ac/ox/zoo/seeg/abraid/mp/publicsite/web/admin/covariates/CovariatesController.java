@@ -39,7 +39,7 @@ public class CovariatesController {
             "Covariate configuration update failed.";
     private static final String LOG_COVARIATE_CONFIGURATION_UPDATED_SUCCESSFULLY =
             "Covariate configuration updated successfully.";
-    private static final String LOG_NEW_COVARIATE = "New covariate uploaded (%s, %s).";
+    private static final String LOG_NEW_COVARIATE = "New covariate uploaded (%s).";
 
     private final CovariatesControllerHelper covariatesControllerHelper;
     private final CovariatesControllerValidator validator;
@@ -105,7 +105,9 @@ public class CovariatesController {
 
     /**
      * Handles the submission of the covariate file upload form.
-     * @param name The name of the added covariate.
+     * @param name The display name for the covariate (null if a sub file).
+     * @param qualifier The qualifier name for the covariate sub file (ie the year/month).
+     * @param parentId The ID of the parent covariate for this file (or null if this is the first file).
      * @param discrete True if this covariate contains discrete values
      * @param subdirectory The subdirectory to add the new file to.
      * @param file The new covariate file.
@@ -117,23 +119,23 @@ public class CovariatesController {
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseBody
     public ResponseEntity<JsonFileUploadResponse> addCovariateFile(
-            String name, boolean discrete, String subdirectory, MultipartFile file) throws IOException {
+            String name, String qualifier, Integer parentId, boolean discrete, String subdirectory, MultipartFile file)
+            throws IOException {
+        if (parentId == null || parentId == -1) {
+            parentId = null;
+        }
         String targetPath = covariatesControllerHelper.extractTargetPath(subdirectory, file);
         Collection<String> validationMessages = validator
-                .validateCovariateUpload(name, subdirectory, file, targetPath);
+                .validateCovariateUpload(name, qualifier, parentId, subdirectory, file, targetPath);
 
         if (!validationMessages.isEmpty()) {
             return new ResponseEntity<>(new JsonFileUploadResponse(false, validationMessages), HttpStatus.BAD_REQUEST);
         } else {
             // Create the file on server
-            covariatesControllerHelper.saveNewCovariateFile(name, discrete, targetPath, file);
-            LOGGER.info(String.format(LOG_NEW_COVARIATE, name, targetPath));
+            covariatesControllerHelper.saveNewCovariateFile(name, qualifier, parentId, discrete, targetPath, file);
+            LOGGER.info(String.format(LOG_NEW_COVARIATE, targetPath));
 
             return new ResponseEntity<>(new JsonFileUploadResponse(true, validationMessages), HttpStatus.OK);
         }
     }
-
-
-
-
 }
