@@ -29,6 +29,7 @@ import javax.persistence.Table;
         @NamedQuery(
                 name = "getDiseaseOccurrencesByDiseaseGroupIdAndStatuses",
                 query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
+                        "inner join fetch d.location.country " +
                         "where d.diseaseGroup.id=:diseaseGroupId and d.status in :statuses"
         ),
         @NamedQuery(
