@@ -62,9 +62,10 @@ attempt_model_run <- function() {
 
     # Define admin unit rasters to use.
     # If you would like to use these admin unit rasters (or related shape files) please contact abraid@zoo.ox.ac.uk, as we cannot release them in all circumstances.
-    admin0_path <- "admins/admin0.tif"
-    admin1_path <- "admins/admin1.tif"
-    admin2_path <- "admins/admin2.tif"
+    admin_paths <- list(
+        "admin0"="admins/admin0.tif",
+        "admin1"="admins/admin1.tif",
+        "admin2"="admins/admin2.tif")
 
     # Create a temp dir for intermediate rasters
     dir.create('temp')
@@ -186,9 +187,7 @@ attempt_model_run <- function() {
             occurrence_path,
             extent_path,
             supplementary_occurrence_path,
-            admin0_path,
-            admin1_path,
-            admin2_path,
+            admin_paths,
             covariate_paths,
             covariate_factors,
             verbose,
