@@ -53,9 +53,12 @@ attempt_model_run <- function() {
 
     # Define admin unit rasters to use.
     # If you would like to use these admin unit rasters (or related shape files) please contact abraid@zoo.ox.ac.uk, as we cannot release them in all circumstances.
-    admin0_path <- "admins/admin0.tif"
-    admin1_path <- "admins/admin1.tif"
-    admin2_path <- "admins/admin2.tif"
+    admin_paths <- list(
+        "admin0"="admins/admin0.tif",
+        "admin1"="admins/admin1.tif",
+        "admin2"="admins/admin2.tif",
+        "admin3"="admins/admin2.tif"  # This one wont be used, but is needed for compatablity with older bits of seegSDM
+    )
 
     # Create a temp dir for intermediate rasters
     dir.create('temp')
