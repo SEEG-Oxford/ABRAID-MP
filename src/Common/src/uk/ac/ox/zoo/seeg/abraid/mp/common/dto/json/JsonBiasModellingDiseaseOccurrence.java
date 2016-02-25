@@ -12,11 +12,11 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModellingLoca
 
 /**
  * A DTO to represent a DiseaseOccurrence in an R compatible form (NA instead of null), without a weighting.
- * Used for CSV serialization of supplementary occurrences for modelling.
+ * Used for CSV serialization of bias occurrences for modelling.
  * Copyright (c) 2014 University of Oxford
  */
 @JsonPropertyOrder({ "longitude", "latitude", "admin", "gaul", "disease", "date" })
-public class JsonSupplementaryModellingDiseaseOccurrence {
+public class JsonBiasModellingDiseaseOccurrence {
     private static final String R_CODE_NULL_IDENTIFIER = "NA";
 
     @JsonProperty("Longitude")
@@ -37,9 +37,9 @@ public class JsonSupplementaryModellingDiseaseOccurrence {
     @JsonProperty("Date")
     private String date;
 
-    public JsonSupplementaryModellingDiseaseOccurrence(ModellingLocationPrecisionAdjuster precisionAdjuster,
-                                                       double longitude, double latitude,
-                                                       int admin, String gaul, int disease, String date) {
+    public JsonBiasModellingDiseaseOccurrence(ModellingLocationPrecisionAdjuster precisionAdjuster,
+                                              double longitude, double latitude,
+                                              int admin, String gaul, int disease, String date) {
         setLongitude(longitude);
         setLatitude(latitude);
         setAdmin(precisionAdjuster.adjust(admin, gaul));
@@ -48,8 +48,8 @@ public class JsonSupplementaryModellingDiseaseOccurrence {
         setDate(date);
     }
 
-    public JsonSupplementaryModellingDiseaseOccurrence(ModellingLocationPrecisionAdjuster precisionAdjuster,
-                                                       DiseaseOccurrence occurrence) {
+    public JsonBiasModellingDiseaseOccurrence(ModellingLocationPrecisionAdjuster precisionAdjuster,
+                                              DiseaseOccurrence occurrence) {
         this(precisionAdjuster,
             occurrence.getLocation().getGeom().getX(),
             occurrence.getLocation().getGeom().getY(),

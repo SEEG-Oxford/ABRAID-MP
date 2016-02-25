@@ -17,10 +17,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Tests for JsonSupplementaryModellingDiseaseOccurrence.
+ * Tests for JsonBiasModellingDiseaseOccurrence.
  * Copyright (c) 2014 University of Oxford
  */
-public class JsonSupplementaryModellingDiseaseOccurrenceTest {
+public class JsonBiasModellingDiseaseOccurrenceTest {
     @Test
     public void explicitConstructorBindsFieldsCorrectly() {
         // Arrange
@@ -32,7 +32,7 @@ public class JsonSupplementaryModellingDiseaseOccurrenceTest {
         String date = "date";
 
         // Act
-        JsonSupplementaryModellingDiseaseOccurrence result = new JsonSupplementaryModellingDiseaseOccurrence(createNoopAdjuster(), longitude, latitude, admin, gaul, disease, date);
+        JsonBiasModellingDiseaseOccurrence result = new JsonBiasModellingDiseaseOccurrence(createNoopAdjuster(), longitude, latitude, admin, gaul, disease, date);
 
         // Assert
         assertThat(result.getLongitude()).isEqualTo(longitude);
@@ -53,7 +53,7 @@ public class JsonSupplementaryModellingDiseaseOccurrenceTest {
         String date = "date";
 
         // Act
-        JsonSupplementaryModellingDiseaseOccurrence result = new JsonSupplementaryModellingDiseaseOccurrence(createNoopAdjuster(), longitude, latitude, admin, null, disease, date);
+        JsonBiasModellingDiseaseOccurrence result = new JsonBiasModellingDiseaseOccurrence(createNoopAdjuster(), longitude, latitude, admin, null, disease, date);
 
         // Assert
         assertThat(result.getLongitude()).isEqualTo(longitude);
@@ -78,7 +78,7 @@ public class JsonSupplementaryModellingDiseaseOccurrenceTest {
         when(adjuster.adjust(admin, gaul)).thenReturn(admin - 1);
 
         // Act
-        JsonSupplementaryModellingDiseaseOccurrence result = new JsonSupplementaryModellingDiseaseOccurrence(adjuster, longitude, latitude, admin, gaul, disease, date);
+        JsonBiasModellingDiseaseOccurrence result = new JsonBiasModellingDiseaseOccurrence(adjuster, longitude, latitude, admin, gaul, disease, date);
 
         // Assert
         assertThat(result.getLongitude()).isEqualTo(longitude);
@@ -146,7 +146,7 @@ public class JsonSupplementaryModellingDiseaseOccurrenceTest {
         when(mock.getOccurrenceDate()).thenReturn(new DateTime(date));
 
         // Act
-        JsonSupplementaryModellingDiseaseOccurrence result = new JsonSupplementaryModellingDiseaseOccurrence(createNoopAdjuster(), mock);
+        JsonBiasModellingDiseaseOccurrence result = new JsonBiasModellingDiseaseOccurrence(createNoopAdjuster(), mock);
 
         // Assert
         assertThat(result.getLongitude()).isEqualTo(longitude);
@@ -183,7 +183,7 @@ public class JsonSupplementaryModellingDiseaseOccurrenceTest {
         when(adjuster.adjust(admin, gaul)).thenReturn(admin - 1);
 
         // Act
-        JsonSupplementaryModellingDiseaseOccurrence result = new JsonSupplementaryModellingDiseaseOccurrence(adjuster, mock);
+        JsonBiasModellingDiseaseOccurrence result = new JsonBiasModellingDiseaseOccurrence(adjuster, mock);
 
         // Assert
         assertThat(result.getLongitude()).isEqualTo(longitude);
@@ -197,7 +197,7 @@ public class JsonSupplementaryModellingDiseaseOccurrenceTest {
     @Test
     public void serializesCorrectly() throws JsonProcessingException {
         // Arrange
-        JsonSupplementaryModellingDiseaseOccurrence target = new JsonSupplementaryModellingDiseaseOccurrence(createNoopAdjuster(), 7, 6, 4, "3", 123, "2008-01-21");
+        JsonBiasModellingDiseaseOccurrence target = new JsonBiasModellingDiseaseOccurrence(createNoopAdjuster(), 7, 6, 4, "3", 123, "2008-01-21");
 
         // Act
         String result = new ObjectMapper().writeValueAsString(target);
@@ -209,7 +209,7 @@ public class JsonSupplementaryModellingDiseaseOccurrenceTest {
     @Test
     public void serializesCorrectlyWithNull() throws JsonProcessingException {
         // Arrange
-        JsonSupplementaryModellingDiseaseOccurrence target = new JsonSupplementaryModellingDiseaseOccurrence(createNoopAdjuster(), 7, 6, 4, null, 123, "2008-01-21");
+        JsonBiasModellingDiseaseOccurrence target = new JsonBiasModellingDiseaseOccurrence(createNoopAdjuster(), 7, 6, 4, null, 123, "2008-01-21");
 
         // Act
         String result = new ObjectMapper().writeValueAsString(target);

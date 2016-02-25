@@ -11,7 +11,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModellingLoca
  * Copyright (c) 2014 University of Oxford
  */
 @JsonPropertyOrder({ "longitude", "latitude", "weight", "admin", "gaul", "disease", "date" })
-public class JsonModellingDiseaseOccurrence extends JsonSupplementaryModellingDiseaseOccurrence {
+public class JsonModellingDiseaseOccurrence extends JsonBiasModellingDiseaseOccurrence {
 
     @JsonProperty("Weight")
     private double weight;

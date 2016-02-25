@@ -73,7 +73,7 @@ public class ModelRunPackageBuilder {
      * @param diseaseGroup The disease group being modelled
      * @param occurrencesForModelRun The occurrences to be modelled.
      * @param diseaseExtent The extent to be modelled.
-     * @param supplementaryOccurrences The supplementary occurrences to be used by the model.
+     * @param biasOccurrences The bias occurrences to be used by the model.
      * @param covariateFiles The covariate files to use in the model.
      * @param covariateDirectory The directory where the covariates can be found.
      * @return The zip file.
@@ -82,7 +82,7 @@ public class ModelRunPackageBuilder {
     public File buildPackage(String name, DiseaseGroup diseaseGroup,
                              List<DiseaseOccurrence> occurrencesForModelRun,
                              Collection<AdminUnitDiseaseExtentClass> diseaseExtent,
-                             List<DiseaseOccurrence> supplementaryOccurrences,
+                             List<DiseaseOccurrence> biasOccurrences,
                              Collection<CovariateFile> covariateFiles,
                              String covariateDirectory) throws IOException {
         // Check the mode
@@ -103,7 +103,7 @@ public class ModelRunPackageBuilder {
             LOGGER.info(String.format(LOG_PROVISIONING_WORKSPACE, workingDirectory.toString()));
             buildDirectories(workingDirectory);
             addMetadata(workingDirectory, metadata);
-            addData(workingDirectory, diseaseGroup, occurrencesForModelRun, diseaseExtent, supplementaryOccurrences);
+            addData(workingDirectory, diseaseGroup, occurrencesForModelRun, diseaseExtent, biasOccurrences);
             addCovariates(workingDirectory, covariateFiles, covariateDirectory);
             addGaulLayers(workingDirectory);
             addRModelCode(workingDirectory, diseaseGroup, covariateFiles);
@@ -185,11 +185,11 @@ public class ModelRunPackageBuilder {
                          DiseaseGroup disease,
                          List<DiseaseOccurrence> occurrenceData,
                          Collection<AdminUnitDiseaseExtentClass> extentData,
-                         List<DiseaseOccurrence> supplementaryOccurrenceData) throws IOException {
+                         List<DiseaseOccurrence> biasOccurrenceData) throws IOException {
         File dataDirectory = Paths.get(workingDirectory.toString(), MODEL_DATA_DIRECTORY_NAME).toFile();
         // Copy input data
         inputDataManager.writeOccurrenceData(occurrenceData, dataDirectory, false);
-        inputDataManager.writeOccurrenceData(supplementaryOccurrenceData, dataDirectory, true);
+        inputDataManager.writeOccurrenceData(biasOccurrenceData, dataDirectory, true);
         File baseExtentRaster = rasterFilePathFactory.getExtentGaulRaster(disease.isGlobal());
         inputDataManager.writeExtentData(extentData, baseExtentRaster, dataDirectory);
     }

@@ -101,11 +101,11 @@ import javax.persistence.Table;
                         "and occurrenceDate between :startDate and :endDate"
         ),
         @NamedQuery(
-                name = "getSupplementaryOccurrencesForModelRun",
+                name = "getBiasOccurrencesForModelRun",
                 query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
                         "where d.diseaseGroup.id<>:diseaseGroupId " +
                         "and d.status<>'DISCARDED_FAILED_QC' " +
-                        // As this data set is mainly for sample bias, we don't need to apply our
+                        // As this data set is for sample bias, we don't need to apply our
                         // normal filters (READY/final weighting)
                         "and d.location.isModelEligible is TRUE " +
                         "and d.occurrenceDate between :startDate and :endDate"

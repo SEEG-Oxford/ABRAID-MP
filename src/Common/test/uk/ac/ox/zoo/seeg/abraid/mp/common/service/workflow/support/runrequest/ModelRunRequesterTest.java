@@ -194,7 +194,7 @@ public class ModelRunRequesterTest {
         CovariateService covService = mock(CovariateService.class);
         DiseaseService diseaseService = mock(DiseaseService.class);
         List<DiseaseOccurrence> occurrences = Arrays.asList(mock(DiseaseOccurrence.class), mock(DiseaseOccurrence.class), mock(DiseaseOccurrence.class));
-        List<DiseaseOccurrence> supplementaryOccurrences = Arrays.asList(mock(DiseaseOccurrence.class), mock(DiseaseOccurrence.class), mock(DiseaseOccurrence.class), mock(DiseaseOccurrence.class));
+        List<DiseaseOccurrence> biasOccurrences = Arrays.asList(mock(DiseaseOccurrence.class), mock(DiseaseOccurrence.class), mock(DiseaseOccurrence.class), mock(DiseaseOccurrence.class));
         List<AdminUnitDiseaseExtentClass> extent = Arrays.asList(
                 createMockAdminUnitDiseaseExtentClass(), createMockAdminUnitDiseaseExtentClass(),
                 createMockAdminUnitDiseaseExtentClass(), createMockAdminUnitDiseaseExtentClass()
@@ -206,7 +206,7 @@ public class ModelRunRequesterTest {
         );
 
         when(covService.getCovariateDirectory()).thenReturn("covDir");
-        when(diseaseService.getSupplementaryOccurrencesForModelRun(eq(87), any(DateTime.class), any(DateTime.class))).thenReturn(supplementaryOccurrences);
+        when(diseaseService.getBiasOccurrencesForModelRun(eq(87), any(DateTime.class), any(DateTime.class))).thenReturn(biasOccurrences);
 
         when(diseaseService.getDiseaseExtentByDiseaseGroupId(87)).thenReturn(extent);
 
@@ -219,7 +219,7 @@ public class ModelRunRequesterTest {
         target.requestModelRun(87, occurrences, null, null);
 
         // Assert
-        verify(zipBuilder).buildPackage(startsWith("deng_"), same(diseaseGroup), same(occurrences), same(extent), same(supplementaryOccurrences), same(covariateFiles), eq("covDir"));
+        verify(zipBuilder).buildPackage(startsWith("deng_"), same(diseaseGroup), same(occurrences), same(extent), same(biasOccurrences), same(covariateFiles), eq("covDir"));
     }
 
     @Test
@@ -229,7 +229,7 @@ public class ModelRunRequesterTest {
         CovariateService covService = mock(CovariateService.class);
         DiseaseService diseaseService = mock(DiseaseService.class);
         List<DiseaseOccurrence> occurrences = Arrays.asList(mock(DiseaseOccurrence.class), mock(DiseaseOccurrence.class), mock(DiseaseOccurrence.class));
-        List<DiseaseOccurrence> supplementaryOccurrences = Arrays.asList(mock(DiseaseOccurrence.class), mock(DiseaseOccurrence.class), mock(DiseaseOccurrence.class), mock(DiseaseOccurrence.class));
+        List<DiseaseOccurrence> biasOccurrences = Arrays.asList(mock(DiseaseOccurrence.class), mock(DiseaseOccurrence.class), mock(DiseaseOccurrence.class), mock(DiseaseOccurrence.class));
         List<AdminUnitDiseaseExtentClass> extent = Arrays.asList(
                 createMockAdminUnitDiseaseExtentClass(), createMockAdminUnitDiseaseExtentClass(),
                 createMockAdminUnitDiseaseExtentClass(), createMockAdminUnitDiseaseExtentClass()
@@ -243,7 +243,7 @@ public class ModelRunRequesterTest {
         when(covService.getCovariateDirectory()).thenReturn("covDir");
 
         when(diseaseService.getDiseaseExtentByDiseaseGroupId(87)).thenReturn(extent);
-        when(diseaseService.getSupplementaryOccurrencesForModelRun(eq(87), any(DateTime.class), any(DateTime.class))).thenReturn(supplementaryOccurrences);
+        when(diseaseService.getBiasOccurrencesForModelRun(eq(87), any(DateTime.class), any(DateTime.class))).thenReturn(biasOccurrences);
 
         ModelRunPackageBuilder zipBuilder = mock(ModelRunPackageBuilder.class);
         ModelWrapperWebService webService = mock(ModelWrapperWebService.class);
@@ -252,7 +252,7 @@ public class ModelRunRequesterTest {
         when(covService.getCovariateFilesByDiseaseGroup(diseaseGroup)).thenReturn(covariateFiles);
 
         File zipFile = Files.createTempFile("abc", "xzy").toFile();
-        when(zipBuilder.buildPackage(startsWith("deng_"), same(diseaseGroup), same(occurrences), same(extent), same(supplementaryOccurrences), same(covariateFiles), eq("covDir"))).thenReturn(zipFile);
+        when(zipBuilder.buildPackage(startsWith("deng_"), same(diseaseGroup), same(occurrences), same(extent), same(biasOccurrences), same(covariateFiles), eq("covDir"))).thenReturn(zipFile);
 
         // Act
         target.requestModelRun(87, occurrences, null, null);

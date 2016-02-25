@@ -867,7 +867,7 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     }
 
     @Test
-    public void getSupplementaryOccurrencesForModelRun() {
+    public void getBiasOccurrencesForModelRun() {
         // Arrange
         DiseaseGroup deng = diseaseGroupDao.getById(87);
         createDiseaseOccurrence(1, deng, DiseaseOccurrenceStatus.DISCARDED_UNREVIEWED, 80, new DateTime("2014-02-26T00:00:00"));
@@ -879,8 +879,8 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         DateTime endDate = new DateTime("2014-02-27T03:00:00");
 
         // Act
-        List<DiseaseOccurrence> result202 = diseaseOccurrenceDao.getSupplementaryOccurrencesForModelRun(202, startDate, endDate);
-        List<DiseaseOccurrence> result87 = diseaseOccurrenceDao.getSupplementaryOccurrencesForModelRun(87, startDate, endDate);
+        List<DiseaseOccurrence> result202 = diseaseOccurrenceDao.getBiasOccurrencesForModelRun(202, startDate, endDate);
+        List<DiseaseOccurrence> result87 = diseaseOccurrenceDao.getBiasOccurrencesForModelRun(87, startDate, endDate);
 
         // Assert
         // There are 60 non-202 occurrences in the test db + 5 from arrange, but 10 are model ineligible, 1 is failed qc & 18 are out of the time window

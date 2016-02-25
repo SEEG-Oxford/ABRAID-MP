@@ -183,12 +183,12 @@ public interface DiseaseOccurrenceDao {
     long getNumberOfOccurrencesEligibleForModelRun(int diseaseGroupId, DateTime startDate, DateTime endDate);
 
     /**
-     * Gets the supplementary occurrences that are should be used with a model run (for sample bias).
-     * @param diseaseGroupId The disease group ID being modelled (will be excluded from supplementary set).
+     * Gets the bias occurrences that are should be used with a model run (for sample bias).
+     * @param diseaseGroupId The disease group ID being modelled (will be excluded from bias set).
      * @param startDate The start date of the model run input data range.
      * @param endDate The end date  of the model run input data range.
-     * @return The supplementary occurrences.
+     * @return The bias occurrences.
      */
-    List<DiseaseOccurrence> getSupplementaryOccurrencesForModelRun(
+    List<DiseaseOccurrence> getBiasOccurrencesForModelRun(
             int diseaseGroupId, DateTime startDate, DateTime endDate);
 }

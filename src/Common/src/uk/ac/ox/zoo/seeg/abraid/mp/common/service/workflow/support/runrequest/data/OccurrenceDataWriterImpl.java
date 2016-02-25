@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import org.apache.log4j.Logger;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonBiasModellingDiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModellingDiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonSupplementaryModellingDiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModellingLocationPrecisionAdjuster;
 
 import java.io.File;
@@ -40,13 +40,13 @@ public class OccurrenceDataWriterImpl implements OccurrenceDataWriter {
         LOGGER.info(String.format(
                 LOG_WRITING_OCCURRENCE_DATA, occurrenceData.size(), targetFile.toString()));
 
-        List<JsonSupplementaryModellingDiseaseOccurrence> occurrences = new ArrayList<>();
+        List<JsonBiasModellingDiseaseOccurrence> occurrences = new ArrayList<>();
         for (DiseaseOccurrence occurrence : occurrenceData) {
             if (includeWeight) {
                 occurrences.add(new JsonModellingDiseaseOccurrence(
                         modellingLocationPrecisionAdjuster, occurrence));
             } else {
-                occurrences.add(new JsonSupplementaryModellingDiseaseOccurrence(
+                occurrences.add(new JsonBiasModellingDiseaseOccurrence(
                         modellingLocationPrecisionAdjuster, occurrence));
             }
         }
@@ -59,8 +59,8 @@ public class OccurrenceDataWriterImpl implements OccurrenceDataWriter {
 
     private ObjectWriter buildWriter(boolean includeWeight) {
         CsvMapper csvMapper = new CsvMapper();
-        Class<? extends JsonSupplementaryModellingDiseaseOccurrence> type =
-            includeWeight ? JsonModellingDiseaseOccurrence.class : JsonSupplementaryModellingDiseaseOccurrence.class;
+        Class<? extends JsonBiasModellingDiseaseOccurrence> type =
+            includeWeight ? JsonModellingDiseaseOccurrence.class : JsonBiasModellingDiseaseOccurrence.class;
         return csvMapper.writer(csvMapper.schemaFor(type).withHeader());
     }
 }

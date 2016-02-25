@@ -84,8 +84,8 @@ public class ModelRunRequester {
             String covariateDirectory = covariateService.getCovariateDirectory();
             DateTime startDate = min(occurrencesForModelRun, on(DiseaseOccurrence.class).getOccurrenceDate());
             DateTime endDate = max(occurrencesForModelRun, on(DiseaseOccurrence.class).getOccurrenceDate());
-            List<DiseaseOccurrence> supplementaryOccurrences =
-                    diseaseService.getSupplementaryOccurrencesForModelRun(diseaseGroupId, startDate, endDate);
+            List<DiseaseOccurrence> biasOccurrences =
+                    diseaseService.getBiasOccurrencesForModelRun(diseaseGroupId, startDate, endDate);
 
             // Pick a blade
             URI modelWrapperUrl = selectLeastBusyModelWrapperUrl();
@@ -95,7 +95,7 @@ public class ModelRunRequester {
                 // Build the work package
                 String name = buildRunName(diseaseGroup.getAbbreviation());
                 runPackage = modelRunPackageBuilder.buildPackage(name, diseaseGroup, occurrencesForModelRun,
-                        diseaseExtent, supplementaryOccurrences, covariateFiles, covariateDirectory);
+                        diseaseExtent, biasOccurrences, covariateFiles, covariateDirectory);
 
                 // Submit the run
                 logRequest(diseaseGroup, occurrencesForModelRun);

@@ -87,7 +87,7 @@ public class ModelRunPackageBuilderIntegrationTest {
         buildPackageShouldCreateAZipContainingCovariateRasters(directory);
         buildPackageShouldCreateAZipContainingExtentInput(directory);
         buildPackageShouldCreateAZipContainingOccurrenceInput(directory);
-        buildPackageShouldCreateAZipContainingSupplementaryOccurrenceInput(directory);
+        buildPackageShouldCreateAZipContainingBiasOccurrenceInput(directory);
         buildPackageDeletesWorkspace();
 
         // Clean up
@@ -122,7 +122,7 @@ public class ModelRunPackageBuilderIntegrationTest {
         );
         DiseaseGroup diseaseGroupA = createDiseaseGroup(23141, "disease name A", "disease abbr A", true, "meh");
         DiseaseGroup diseaseGroupB = createDiseaseGroup(1111, "disease name B", "disease abbr B", true, "meh");
-        List<DiseaseOccurrence> supplementaryOccurrences = Arrays.asList(
+        List<DiseaseOccurrence> biasOccurrences = Arrays.asList(
                 createOccurrence(diseaseGroupA, createGeom(2, 4), 12, LocationPrecision.PRECISE, 13, 43, new DateTime("2014-01-02")),
                 createOccurrence(diseaseGroupA, createGeom(4, 2), 3, LocationPrecision.COUNTRY, 19, 11, new DateTime("2016-01-02")),
                 createOccurrence(diseaseGroupA, createGeom(6, 13), 5, LocationPrecision.ADMIN1, 14, 12, new DateTime("2014-01-12")),
@@ -136,7 +136,7 @@ public class ModelRunPackageBuilderIntegrationTest {
         String covariateDirectory = DATA_DIR + "covariates/";
 
         //Act
-        File zip = modelRunPackageBuilder.buildPackage(runName, diseaseGroup, occurrences, extent, supplementaryOccurrences, covariateFiles, covariateDirectory);
+        File zip = modelRunPackageBuilder.buildPackage(runName, diseaseGroup, occurrences, extent, biasOccurrences, covariateFiles, covariateDirectory);
         ZipFile zipFile = new ZipFile(zip);
         Path directory = testDir.getRoot().toPath();
         zipFile.extractAll(directory.toAbsolutePath().toString());
@@ -290,14 +290,14 @@ public class ModelRunPackageBuilderIntegrationTest {
                 "16.0,17.0,18.0,2,20,1234,2014-01-21\n");
     }
 
-    private void buildPackageShouldCreateAZipContainingSupplementaryOccurrenceInput(Path directory) throws Exception {
+    private void buildPackageShouldCreateAZipContainingBiasOccurrenceInput(Path directory) throws Exception {
         // Assert
         File dir = Paths.get(directory.toString(), "data").toFile();
         assertThat(dir).exists();
         assertThat(dir).isDirectory();
         Collection<File> files = FileUtils.listFiles(dir, null, true);
-        assertThat(files).contains(Paths.get(dir.toString(), "supplementary_occurrences.csv").toFile());
-        String content = FileUtils.readFileToString(Paths.get(dir.toString(), "supplementary_occurrences.csv").toFile());
+        assertThat(files).contains(Paths.get(dir.toString(), "bias_occurrences.csv").toFile());
+        String content = FileUtils.readFileToString(Paths.get(dir.toString(), "bias_occurrences.csv").toFile());
         assertThat(content).isEqualTo("Longitude,Latitude,Admin,GAUL,Disease,Date\n" +
                         "2.0,4.0,-999,NA,23141,2014-01-02\n" +
                         "4.0,2.0,0,19,23141,2016-01-02\n" +
