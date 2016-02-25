@@ -7,7 +7,7 @@ define([
 ], function (ko, BaseFileFormViewModel) {
     "use strict";
 
-    return function (baseUrl) {
+    return function (baseUrl, diseaseGroups) {
         var self = this;
         BaseFileFormViewModel.call(self, baseUrl, "tools/uploadcsv/upload", {
             success: "CSV file submitted. The results of the upload will be e-mailed to you."
@@ -15,10 +15,15 @@ define([
 
         self.buildSubmissionData = function () {
             return {
-                isGoldStandard: self.isGoldStandard()
+                isGoldStandard: self.isGoldStandard(),
+                isBias: self.isBias(),
+                diseaseGroup: self.selectedDiseaseGroup().id
             };
         };
 
+        self.diseaseGroups = diseaseGroups;
+        self.selectedDiseaseGroup = ko.observable(diseaseGroups[0]);
         self.isGoldStandard = ko.observable(false);
+        self.isBias = ko.observable(false);
     };
 });

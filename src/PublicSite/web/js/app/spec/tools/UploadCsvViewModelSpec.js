@@ -12,7 +12,10 @@ define([
         var vm;
 
         beforeEach(function () {
-            vm = new UploadCsvViewModel("baseUrl");
+            vm = new UploadCsvViewModel("baseUrl", [
+                { id: 1, name: "dengue" },
+                { id: 2, name: "not dengue" }
+            ]);
         });
 
         describe("holds an 'isGoldStandard' field which", function () {
@@ -22,6 +25,35 @@ define([
 
             it("starts false", function () {
                 expect(vm.isGoldStandard()).toBe(false);
+            });
+        });
+
+        describe("holds an 'isBias' field which", function () {
+            it("is observable", function () {
+                expect(vm.isBias).toBeObservable();
+            });
+
+            it("starts false", function () {
+                expect(vm.isBias()).toBe(false);
+            });
+        });
+
+        describe("holds the selected disease group which", function () {
+            it("is an observable", function () {
+                expect(vm.selectedDiseaseGroup).toBeObservable();
+            });
+
+            it("is initially the first item in the disease groups list", function () {
+                expect(vm.selectedDiseaseGroup()).toEqual({
+                    id: 1,
+                    name: "dengue"
+                });
+            });
+        });
+
+        describe("holds the list of disease groups which", function () {
+            it("starts with the same disease groups as passed to the constructor", function () {
+                expect(vm.diseaseGroups.length).toBe(2);
             });
         });
 
@@ -36,7 +68,7 @@ define([
 
                 injector.require(["app/tools/UploadCsvViewModel"],
                     function (UploadCsvViewModel) {
-                        vm = new UploadCsvViewModel("baseUrl");
+                        vm = new UploadCsvViewModel("baseUrl", [ { id: 1, name: "dengue" } ]);
                         expect(baseSpy.calls.argsFor(0)[0]).toBe("baseUrl");
                         expect(baseSpy.calls.argsFor(0)[1]).toBe("tools/uploadcsv/upload");
                         expect(baseSpy.calls.argsFor(0)[2].success).toBe(
@@ -48,8 +80,12 @@ define([
 
             it("a custom buildSubmissionData function, which builds the correct data", function () {
                 vm.isGoldStandard(true);
+                vm.isBias(true);
+                vm.selectedDiseaseGroup(vm.diseaseGroups[1]);
                 expect(vm.buildSubmissionData()).toEqual({
-                    isGoldStandard: true
+                    isGoldStandard: true,
+                    isBias: true,
+                    diseaseGroup: 2
                 });
             });
         });
