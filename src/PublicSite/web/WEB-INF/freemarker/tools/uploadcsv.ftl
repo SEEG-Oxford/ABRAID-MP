@@ -9,11 +9,7 @@
 <#assign bootstrapData>
 <script type="text/javascript">
     // bootstrapped data for js viewmodels
-    var diseaseGroups = [
-        {id: 1, name: "test"},
-        {id: 2, name: "test2"},
-        {id: 3, name: "test3"}
-    ];
+    var diseaseGroups = ${diseaseGroups};
 </script>
 </#assign>
 

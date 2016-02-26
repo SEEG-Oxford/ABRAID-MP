@@ -1,5 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.service;
 
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
+
 import java.util.List;
 
 /**
@@ -22,8 +24,10 @@ public interface DataAcquisitionService {
     /**
      * Acquires data from a generic CSV file.
      * @param csv The content of the CSV file.
-     * @param isGoldStandard Whether or not this is a "gold standard" data set.
+     * @param isBias Whether or not this is a "bias" data set.
+     * @param isGoldStandard Whether or not this is a "gold standard" data set (only relevant for non-bias data sets).
+     * @param biasDisease The ID of the disease for which this is a bias data set (only relevant for bias data sets).
      * @return A list of messages resulting from the data acquisition.
      */
-    List<String> acquireCsvData(byte[] csv, boolean isGoldStandard);
+    List<String> acquireCsvData(byte[] csv, boolean isBias, boolean isGoldStandard, DiseaseGroup biasDisease);
 }

@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.service.DataAcquisitionService;
 
@@ -13,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Helper class for UploadCsvController, which performs the actual uploading of the CSV.
+ * Helper class for UploadCsvController, which performs the actual processing of uploaded CSV.
  *
  * Copyright (c) 2014 University of Oxford
  */
@@ -35,28 +36,39 @@ public class UploadCsvControllerHelper {
 
     /**
      * Acquires the supplied CSV data. Sends an e-mail when completed (either successfully or unsuccessfully).
-     *
      * @param csv The contents of the CSV file to upload.
-     * @param isGoldStandard Whether or not this is a "gold standard" data set.
+     * @param isBias Whether or not this is a "bias" data set.
+     * @param isGoldStandard Whether or not this is a "gold standard" data set (only relevant for non-bias data sets).
+     * @param biasDisease The ID of the disease for which this is a bias data set (only relevant for bias data sets).
      * @param userEmailAddress The e-mail address of the user that submitted the upload.
      * @param filePath The full path to the file to upload (used for information only).
      */
-    public void acquireCsvData(byte[] csv, boolean isGoldStandard, String userEmailAddress, String filePath) {
+    public void acquireCsvData(byte[] csv, boolean isBias, boolean isGoldStandard, DiseaseGroup biasDisease,
+                               String userEmailAddress, String filePath) {
         Timestamp submissionDate = getNowAsTimestamp();
-
-        List<String> messages = dataAcquisitionService.acquireCsvData(csv, isGoldStandard);
+        List<String> messages = dataAcquisitionService.acquireCsvData(csv, isBias, isGoldStandard, biasDisease);
         String message = StringUtils.join(messages, System.lineSeparator());
+        String detail = getEmailDetailsLine(isBias, isGoldStandard, biasDisease);
 
         Timestamp completionDate = getNowAsTimestamp();
-        sendEmail(userEmailAddress, filePath, submissionDate, completionDate, message);
+        sendEmail(userEmailAddress, filePath, submissionDate, completionDate, detail, message);
+    }
+
+    private String getEmailDetailsLine(boolean isBias, boolean isGoldStandard, DiseaseGroup biasDisease) {
+        if (isBias) {
+            return String.format("Bias dataset for: %s", biasDisease.getName());
+        } else {
+            return String.format("Gold standard: %s", (isGoldStandard ? "Yes" : "No"));
+        }
     }
 
     private void sendEmail(String userEmailAddress, String filePath, Timestamp submissionDate, Timestamp completionDate,
-                           String message) {
+                           String detail, String message) {
         Map<String, Object> templateData = new HashMap<>();
         templateData.put("filePath", filePath);
         templateData.put("submissionDate", submissionDate);
         templateData.put("completionDate", completionDate);
+        templateData.put("detail", detail);
         templateData.put("message", message);
 
         try {
