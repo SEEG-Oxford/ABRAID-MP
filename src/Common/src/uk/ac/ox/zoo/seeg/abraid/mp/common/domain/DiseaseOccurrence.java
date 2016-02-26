@@ -104,9 +104,10 @@ import javax.persistence.Table;
                 name = "getBiasOccurrencesForModelRun",
                 query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
                         "where d.diseaseGroup.id<>:diseaseGroupId " +
-                        "and d.status<>'DISCARDED_FAILED_QC' " +
+                        "and d.status NOT IN ('DISCARDED_FAILED_QC', 'BIAS') " +
                         // As this data set is for sample bias, we don't need to apply our
-                        // normal filters (READY/final weighting)
+                        // normal filters (READY/final weighting), but we don't want bias points if there aren't
+                        // bias points uploaded for this disease
                         "and d.location.isModelEligible is TRUE " +
                         "and d.occurrenceDate between :startDate and :endDate"
         ),
@@ -250,6 +251,11 @@ public class DiseaseOccurrence {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime occurrenceDate;
 
+    // The disease group for which this occurrence is part of a bias set (or null).
+    @ManyToOne
+    @JoinColumn(name = "bias_disease_group_id", nullable = true)
+    private DiseaseGroup biasDisease;
+
     public DiseaseOccurrence() {
     }
 
@@ -387,6 +393,14 @@ public class DiseaseOccurrence {
         this.occurrenceDate = occurrenceDate;
     }
 
+    public DiseaseGroup getBiasDisease() {
+        return biasDisease;
+    }
+
+    public void setBiasDisease(DiseaseGroup biasDisease) {
+        this.biasDisease = biasDisease;
+    }
+
     ///COVERAGE:OFF - generated code
     ///CHECKSTYLE:OFF AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     @Override
@@ -418,7 +432,7 @@ public class DiseaseOccurrence {
         if (status != null ? !status.equals(that.status) : that.status != null) return false;
         if (validationWeighting != null ? !validationWeighting.equals(that.validationWeighting) : that.validationWeighting != null)
             return false;
-
+        if (biasDisease != null ? !biasDisease.equals(that.biasDisease) : that.biasDisease != null) return false;
         return true;
     }
 
@@ -438,6 +452,7 @@ public class DiseaseOccurrence {
         result = 31 * result + (finalWeighting != null ? finalWeighting.hashCode() : 0);
         result = 31 * result + (finalWeightingExcludingSpatial != null ? finalWeightingExcludingSpatial.hashCode() : 0);
         result = 31 * result + (occurrenceDate != null ? occurrenceDate.hashCode() : 0);
+        result = 31 * result + (biasDisease != null ? biasDisease.hashCode() : 0);
         return result;
     }
     ///CHECKSTYLE:ON

@@ -394,6 +394,55 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     }
 
     @Test
+    public void saveThenReloadBiasDiseaseOccurrence() {
+        // Arrange
+        DiseaseGroup diseaseGroup = diseaseGroupDao.getById(87);
+        DiseaseGroup biasDiseaseGroup = diseaseGroupDao.getById(64);
+        Location location = locationDao.getById(80);
+        Alert alert = new Alert();
+        alert.setFeed(testFeed);
+
+        DiseaseOccurrence occurrence = new DiseaseOccurrence();
+        occurrence.setDiseaseGroup(diseaseGroup);
+        occurrence.setLocation(location);
+        occurrence.setAlert(alert);
+        occurrence.setStatus(DiseaseOccurrenceStatus.BIAS);
+        occurrence.setOccurrenceDate(DateTime.now());
+        occurrence.setBiasDisease(biasDiseaseGroup);
+
+        // Act
+        diseaseOccurrenceDao.save(occurrence);
+
+        // Assert
+        assertThat(occurrence.getCreatedDate()).isNotNull();
+        assertThat(occurrence.getAlert()).isNotNull();
+        assertThat(occurrence.getAlert().getId()).isNotNull();
+        assertThat(occurrence.getAlert().getCreatedDate()).isNotNull();
+        assertThat(occurrence.getLocation()).isNotNull();
+        assertThat(occurrence.getLocation().getId()).isNotNull();
+        assertThat(occurrence.getLocation().getCreatedDate()).isNotNull();
+
+        Integer id = occurrence.getId();
+        flushAndClear();
+        occurrence = diseaseOccurrenceDao.getById(id);
+
+        assertThat(occurrence.getAlert().getId()).isNotNull();
+        assertThat(occurrence.getCreatedDate()).isNotNull();
+        assertThat(occurrence.getLocation().getId()).isEqualTo(80);
+        assertThat(occurrence.getStatus()).isEqualTo(DiseaseOccurrenceStatus.BIAS);
+        assertThat(occurrence.getEnvironmentalSuitability()).isNull();
+        assertThat(occurrence.getDistanceFromDiseaseExtent()).isNull();
+        assertThat(occurrence.getExpertWeighting()).isNull();
+        assertThat(occurrence.getMachineWeighting()).isNull();
+        assertThat(occurrence.getValidationWeighting()).isNull();
+        assertThat(occurrence.getFinalWeighting()).isNull();
+        assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNull();
+        assertThat(occurrence.getDiseaseGroup().getId()).isEqualTo(87);
+        assertThat(occurrence.getOccurrenceDate()).isNotNull();
+        assertThat(occurrence.getBiasDisease().getId()).isEqualTo(64);
+    }
+
+    @Test
     public void getDiseaseOccurrencesForExistenceCheckExists() {
         DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(272407);
         List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForExistenceCheck(
