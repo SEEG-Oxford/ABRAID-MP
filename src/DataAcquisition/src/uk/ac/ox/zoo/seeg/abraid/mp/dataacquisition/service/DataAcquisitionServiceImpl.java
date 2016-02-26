@@ -49,6 +49,6 @@ public class DataAcquisitionServiceImpl implements DataAcquisitionService {
      */
     @Override
     public List<String> acquireCsvData(byte[] csv, boolean isBias, boolean isGoldStandard, DiseaseGroup biasDisease) {
-        return csvDataAcquirer.acquireDataFromCsv(csv, isGoldStandard);
+        return csvDataAcquirer.acquireDataFromCsv(csv, isBias, isGoldStandard, biasDisease);
     }
 }

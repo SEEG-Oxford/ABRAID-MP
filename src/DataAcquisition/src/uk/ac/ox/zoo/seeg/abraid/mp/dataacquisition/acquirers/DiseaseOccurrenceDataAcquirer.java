@@ -62,7 +62,8 @@ public class DiseaseOccurrenceDataAcquirer {
             Location location = continueLocationConversion(occurrence.getLocation());
             occurrence.setLocation(location);
 
-            if (!doesDiseaseOccurrenceAlreadyExist(occurrence)) {
+            // Skip uniqueness check for bias data
+            if (occurrenceIsBias(occurrence) || !doesDiseaseOccurrenceAlreadyExist(occurrence)) {
                 if (location.getId() == null) {
                     // Save the location because it is required for the native sql occurrence distance to extent
                     locationService.saveLocation(location);
@@ -100,6 +101,10 @@ public class DiseaseOccurrenceDataAcquirer {
     private boolean occurrenceIsCSV(DiseaseOccurrence occurrence) {
         final String provenceName = occurrence.getAlert().getFeed().getProvenance().getName();
         return provenceName.equals(ProvenanceNames.MANUAL_GOLD_STANDARD) || provenceName.equals(ProvenanceNames.MANUAL);
+    }
+
+    private boolean occurrenceIsBias(DiseaseOccurrence occurrence) {
+        return occurrence.getBiasDisease() != null;
     }
 
     // Returns the converted location, or null if the location could not be converted further

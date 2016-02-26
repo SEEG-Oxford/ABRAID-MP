@@ -63,6 +63,22 @@ public class DiseaseOccurrenceDataAcquirerTest {
     }
 
     @Test
+    public void acquireDoSaveEvenIfOccurrenceAlreadyForBias() {
+        // Arrange
+        DiseaseOccurrence occurrence = createDefaultDiseaseOccurrence();
+        occurrence.setBiasDisease(mock(DiseaseGroup.class));
+        locationIsKnownToAlreadyExist(occurrence);
+        mockDiseaseOccurrenceAlreadyExists(occurrence, true);
+
+        // Act
+        boolean result = acquirer.acquire(occurrence);
+
+        // Assert
+        assertThat(result).isTrue();
+        verify(diseaseService).saveDiseaseOccurrence(occurrence);
+    }
+
+    @Test
     public void acquireSavesUsingExistingLocationIfLocationAlreadyExistsWithoutGeoNameOnEitherLocation() {
         // Arrange
         DiseaseOccurrence occurrence = createDefaultDiseaseOccurrence();

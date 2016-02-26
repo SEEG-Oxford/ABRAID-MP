@@ -43,7 +43,7 @@ public class CsvDataAcquirerTest {
         String csv = "\nMy site,Invalid double";
 
         // Act
-        List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv.getBytes(), false);
+        List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv.getBytes(), false, false, null);
 
         // Assert
         assertThat(messages).hasSize(1);
@@ -59,7 +59,7 @@ public class CsvDataAcquirerTest {
         when(converter.convert(any(CsvDiseaseOccurrence.class), anyBoolean())).thenThrow(exception);
 
         // Act
-        List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv.getBytes(), false);
+        List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv.getBytes(), false, false, null);
 
         // Assert
         assertThat(messages).hasSize(3);
@@ -77,7 +77,7 @@ public class CsvDataAcquirerTest {
         when(converter.convert(any(CsvDiseaseOccurrence.class), anyBoolean())).thenThrow(exception);
 
         // Act
-        List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv.getBytes(), false);
+        List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv.getBytes(), false, false, null);
 
         // Assert
         assertThat(messages).hasSize(4);
@@ -93,7 +93,34 @@ public class CsvDataAcquirerTest {
         String csv = "\nMy site,Invalid double";
 
         // Act
-        csvDataAcquirer.acquireDataFromCsv(csv.getBytes(), false);
+        csvDataAcquirer.acquireDataFromCsv(csv.getBytes(), false, false, null);
+
+        // Assert
+        verify(manualValidationEnforcer, never()).addRandomSubsetToManualValidation(anySetOf(DiseaseOccurrence.class));
+    }
+
+    @Test
+    public void doesNotCallManualValidationEnforcerForBias() {
+        // Arrange
+        boolean isGoldStandard = false;
+        Location location1 = createLocation(1, true);
+        Location location2 = createLocation(2, false);
+        Location location3 = createLocation(3, true);
+        Location location4 = createLocation(4, true);
+
+        DiseaseOccurrence diseaseOccurrence1 = createAndSetUpDiseaseOccurrence(1, location1, isGoldStandard, true);
+        DiseaseOccurrence diseaseOccurrence2 = createAndSetUpDiseaseOccurrence(2, location2, isGoldStandard, true);
+        DiseaseOccurrence diseaseOccurrence3 = createAndSetUpDiseaseOccurrence(3, location3, isGoldStandard, true);
+        createAndSetUpDiseaseOccurrence(4, location4, isGoldStandard, false);
+        createAndSetUpDiseaseOccurrence(5, location1, isGoldStandard, false);
+        DiseaseOccurrence diseaseOccurrence6 = createAndSetUpDiseaseOccurrence(6, location2, isGoldStandard, true);
+        DiseaseOccurrence diseaseOccurrence7 = createAndSetUpDiseaseOccurrence(7, location3, isGoldStandard, true);
+        createAndSetUpDiseaseOccurrence(8, location4, isGoldStandard, false);
+
+        String csv = "\n1\n2\n3\n4\n5\n6\n7\n8\n";
+
+        // Act
+        csvDataAcquirer.acquireDataFromCsv(csv.getBytes(), true, false, null);
 
         // Assert
         verify(manualValidationEnforcer, never()).addRandomSubsetToManualValidation(anySetOf(DiseaseOccurrence.class));
@@ -129,7 +156,7 @@ public class CsvDataAcquirerTest {
         String csv = "\n1\n2\n3\n4\n5\n6\n7\n8\n";
 
         // Act
-        List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv.getBytes(), isGoldStandard);
+        List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv.getBytes(), false, isGoldStandard, null);
 
         // Assert
         assertThat(messages).hasSize(2);
@@ -158,7 +185,7 @@ public class CsvDataAcquirerTest {
         String csv = "\n1\n2\n3\n4\n5\n6\n7\n8\n";
 
         // Act
-        csvDataAcquirer.acquireDataFromCsv(csv.getBytes(), isGoldStandard);
+        csvDataAcquirer.acquireDataFromCsv(csv.getBytes(), false, isGoldStandard, null);
 
         // Assert
         verify(manualValidationEnforcer).addRandomSubsetToManualValidation(eq(new HashSet<>(Arrays.asList(
@@ -176,7 +203,7 @@ public class CsvDataAcquirerTest {
         String csv = "\n";
 
         // Act
-        List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv.getBytes(), false);
+        List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv.getBytes(), false, false, null);
 
         // Assert
         assertThat(messages).hasSize(2);
@@ -197,7 +224,7 @@ public class CsvDataAcquirerTest {
         String csv = "\n1\n2\n";
 
         // Act
-        List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv.getBytes(), isGoldStandard);
+        List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv.getBytes(), false, isGoldStandard, null);
 
         // Assert
         assertThat(messages).hasSize(2);

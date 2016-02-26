@@ -611,6 +611,22 @@ public class DiseaseOccurrenceValidationServiceTest {
         verify(mwPredictor, never()).findMachineWeighting(any(DiseaseOccurrence.class));
     }
 
+    @Test
+    public void addValidationParametersWithChecksHandlesBiasOccurrencesMinimally() {
+        // Arrange
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(1, false, false);
+        occurrence.setBiasDisease(createDiseaseGroup());
+        occurrence.getLocation().setHasPassedQc(true);
+
+        // Act
+        service.addValidationParametersWithChecks(occurrence);
+
+        // Assert
+        assertThat(occurrence.getStatus()).isEqualTo(DiseaseOccurrenceStatus.BIAS);
+        assertThat(occurrence.getValidationWeighting()).isNull();
+    }
+
+
     private DiseaseGroup createDiseaseGroup() {
         DiseaseGroup diseaseGroup = new DiseaseGroup(1);
         diseaseGroup.setAutomaticModelRunsStartDate(DateTime.now());

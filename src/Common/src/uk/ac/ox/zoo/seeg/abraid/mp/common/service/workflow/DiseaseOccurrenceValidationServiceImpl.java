@@ -45,16 +45,16 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
     public void addValidationParametersWithChecks(DiseaseOccurrence occurrence) {
         // By default, set the occurrence to status READY
         clearAndSetToReady(occurrence);
-        if (hasPassedQc(occurrence)) {
-            if (isGoldStandard(occurrence)) {
-                handleGoldStandard(occurrence);
-            } else if (automaticModelRunsEnabled(occurrence)) {
-                handleAutomaticModelRunsEnabled(occurrence);
-            } else {
-                handleAutomaticModelRunsDisabled(occurrence);
-            }
-        } else {
+        if (hasFailedQc(occurrence)) {
             setToFailedQc(occurrence);
+        } else if (isBias(occurrence)) {
+            setToBias(occurrence);
+        } else if (isGoldStandard(occurrence)) {
+            handleGoldStandard(occurrence);
+        } else if (automaticModelRunsEnabled(occurrence)) {
+            handleAutomaticModelRunsEnabled(occurrence);
+        } else {
+            handleAutomaticModelRunsDisabled(occurrence);
         }
     }
 
@@ -98,8 +98,12 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
         occurrence.setStatus(DiseaseOccurrenceStatus.READY);
     }
 
-    private boolean hasPassedQc(DiseaseOccurrence occurrence) {
-        return (occurrence.getLocation() != null) && occurrence.getLocation().hasPassedQc();
+    private boolean hasFailedQc(DiseaseOccurrence occurrence) {
+        return (occurrence.getLocation() == null) || !occurrence.getLocation().hasPassedQc();
+    }
+
+    private boolean isBias(DiseaseOccurrence occurrence) {
+        return occurrence.getBiasDisease() != null;
     }
 
     private boolean isGoldStandard(DiseaseOccurrence occurrence) {
@@ -108,6 +112,10 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
 
     private void setToFailedQc(DiseaseOccurrence occurrence) {
         occurrence.setStatus(DiseaseOccurrenceStatus.DISCARDED_FAILED_QC);
+    }
+
+    private void setToBias(DiseaseOccurrence occurrence) {
+        occurrence.setStatus(DiseaseOccurrenceStatus.BIAS);
     }
 
     private boolean automaticModelRunsEnabled(DiseaseOccurrence occurrence) {
