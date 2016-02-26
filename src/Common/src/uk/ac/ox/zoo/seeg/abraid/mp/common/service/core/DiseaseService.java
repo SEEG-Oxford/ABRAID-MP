@@ -292,4 +292,11 @@ public interface DiseaseService {
      * @return The input date minus the max number of days on the validator.
      */
     LocalDate subtractMaxDaysOnValidator(DateTime dateTime);
+
+    /**
+     * Delete all of the occurrence that are labelled as bias for the specified disease group.
+     * @param biasDisease Disease group for which to remove the bias points
+     *                       (i.e. bias_disease_group_id, not disease_group_id).
+     */
+    void deleteBiasDiseaseOccurrencesForDisease(DiseaseGroup biasDisease);
 }

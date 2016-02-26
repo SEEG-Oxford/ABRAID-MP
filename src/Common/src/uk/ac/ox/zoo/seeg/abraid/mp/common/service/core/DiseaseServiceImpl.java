@@ -516,6 +516,16 @@ public class DiseaseServiceImpl implements DiseaseService {
         return dateTime.toLocalDate().minusDays(maxDaysOnValidator);
     }
 
+    /**
+     * Delete all of the occurrence that are labelled as bias for the specified disease group.
+     * @param biasDisease Disease group for which to remove the bias points
+     *                       (i.e. bias_disease_group_id, not disease_group_id).
+     */
+    @Override
+    public void deleteBiasDiseaseOccurrencesForDisease(DiseaseGroup biasDisease) {
+        diseaseOccurrenceDao.deleteDiseaseOccurrencesByBiasDiseaseId(biasDisease.getId());
+    }
+
     private boolean isDiseaseGroupGlobal(Integer diseaseGroupId) {
         DiseaseGroup diseaseGroup = getDiseaseGroupById(diseaseGroupId);
         return (diseaseGroup.isGlobal() != null && diseaseGroup.isGlobal());

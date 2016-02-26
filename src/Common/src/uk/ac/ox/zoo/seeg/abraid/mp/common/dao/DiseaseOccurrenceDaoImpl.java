@@ -323,4 +323,14 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
        return listNamedQuery("getBiasOccurrencesForModelRun", "diseaseGroupId",
                 diseaseGroupId, "startDate", startDate, "endDate", endDate);
     }
+
+    /**
+     * Delete all of the occurrence that are labelled as bias for the specified disease group.
+     * @param diseaseGroupId Disease group for which to remove the bias points
+     *                       (i.e. bias_disease_group_id, not disease_group_id).
+     */
+    @Override
+    public void deleteDiseaseOccurrencesByBiasDiseaseId(int diseaseGroupId) {
+        noResultNamedQuery("deleteDiseaseOccurrencesByBiasDiseaseId", "diseaseGroupId", diseaseGroupId);
+    }
 }

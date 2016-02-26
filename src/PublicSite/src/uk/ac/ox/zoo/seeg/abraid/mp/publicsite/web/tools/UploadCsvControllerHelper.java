@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.service.DataAcquisitionService;
 
@@ -27,10 +28,13 @@ public class UploadCsvControllerHelper {
 
     private DataAcquisitionService dataAcquisitionService;
     private EmailService emailService;
+    private DiseaseService diseaseService;
 
     @Autowired
-    public UploadCsvControllerHelper(DataAcquisitionService dataAcquisitionService, EmailService emailService) {
+    public UploadCsvControllerHelper(DataAcquisitionService dataAcquisitionService, DiseaseService diseaseService,
+                                     EmailService emailService) {
         this.dataAcquisitionService = dataAcquisitionService;
+        this.diseaseService = diseaseService;
         this.emailService = emailService;
     }
 
@@ -46,6 +50,11 @@ public class UploadCsvControllerHelper {
     public void acquireCsvData(byte[] csv, boolean isBias, boolean isGoldStandard, DiseaseGroup biasDisease,
                                String userEmailAddress, String filePath) {
         Timestamp submissionDate = getNowAsTimestamp();
+
+        if (isBias) {
+            diseaseService.deleteBiasDiseaseOccurrencesForDisease(biasDisease);
+        }
+
         List<String> messages = dataAcquisitionService.acquireCsvData(csv, isBias, isGoldStandard, biasDisease);
         String message = StringUtils.join(messages, System.lineSeparator());
         String detail = getEmailDetailsLine(isBias, isGoldStandard, biasDisease);

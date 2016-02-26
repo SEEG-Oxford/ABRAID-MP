@@ -191,4 +191,11 @@ public interface DiseaseOccurrenceDao {
      */
     List<DiseaseOccurrence> getBiasOccurrencesForModelRun(
             int diseaseGroupId, DateTime startDate, DateTime endDate);
+
+    /**
+     * Delete all of the occurrence that are labelled as bias for the specified disease group.
+     * @param diseaseGroupId Disease group for which to remove the bias points
+     *                       (i.e. bias_disease_group_id, not disease_group_id).
+     */
+    void deleteDiseaseOccurrencesByBiasDiseaseId(int diseaseGroupId);
 }

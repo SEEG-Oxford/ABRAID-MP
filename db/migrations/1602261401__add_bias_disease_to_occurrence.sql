@@ -8,5 +8,7 @@ ALTER TABLE disease_occurrence DROP  CONSTRAINT ck_disease_occurrence_status;
 ALTER TABLE disease_occurrence ADD CONSTRAINT ck_disease_occurrence_status
     CHECK (status IN ('AWAITING_BATCHING', 'DISCARDED_FAILED_QC', 'DISCARDED_UNREVIEWED', 'DISCARDED_UNUSED', 'IN_REVIEW', 'READY', 'BIAS'));
 
-ALTER TABLE disease_occurrence ADD CONSTRAINT ck_disease_occurrence_bias_disease_group
-    CHECK ((status<>'BIAS' AND bias_disease_group_id IS NULL) OR (status='BIAS' AND bias_disease_group_id IS NOT NULL));
+ALTER TABLE disease_occurrence ADD CONSTRAINT ck_disease_occurrence_bias_disease_group_id
+    CHECK ((status<>'BIAS' AND bias_disease_group_id IS NULL) OR (status IN ('BIAS', 'DISCARDED_FAILED_QC') AND bias_disease_group_id IS NOT NULL));
+
+GRANT DELETE ON disease_occurrence TO ${application_username};

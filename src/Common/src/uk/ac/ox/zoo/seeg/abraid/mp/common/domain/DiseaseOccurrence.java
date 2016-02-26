@@ -121,6 +121,10 @@ import javax.persistence.Table;
                         "and d.environmentalSuitability is not null " +
                         "and d.expertWeighting is not null " +
                         "and d.occurrenceDate > :cutOffDate"
+        ),
+        @NamedQuery(
+                name = "deleteDiseaseOccurrencesByBiasDiseaseId",
+                query = "delete from DiseaseOccurrence where biasDisease.id=:diseaseGroupId"
         )
 })
 @Entity
