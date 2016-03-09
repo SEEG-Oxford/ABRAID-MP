@@ -35,7 +35,9 @@ import javax.persistence.Table;
         @NamedQuery(
                 name = "getDiseaseOccurrencesForExistenceCheck",
                 query = "from DiseaseOccurrence where diseaseGroup=:diseaseGroup and location=:location " +
-                        "and alert=:alert and occurrenceDate=:occurrenceDate and status<>'BIAS'"
+                        "and alert=:alert and occurrenceDate=:occurrenceDate and biasDisease is null"
+                        // Using biasDisease instead of status BIAS, as bias points can be BIAS or FAILED_QC, neither
+                        // should be considered for duplicates as they may be purged
         ),
         @NamedQuery(
                 name = "getDiseaseOccurrencesYetToBeReviewedByExpert",

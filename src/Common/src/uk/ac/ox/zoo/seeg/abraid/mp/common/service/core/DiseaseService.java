@@ -193,7 +193,8 @@ public interface DiseaseService {
 
     /**
      * Determines whether the specified disease occurrence already exists in the database. This is true if an
-     * occurrence exists with the same disease group, location, alert and occurrence start date.
+     * occurrence (excluding bias occurrences) exists with the same disease group, location, alert and occurrence
+     * start date.
      * @param occurrence The disease occurrence.
      * @return True if the occurrence already exists in the database, otherwise false.
      */

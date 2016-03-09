@@ -492,6 +492,32 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     }
 
     @Test
+    public void getDiseaseOccurrencesForExistenceCheckIgnoresExistingBiasPoints() {
+        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(272407);
+        occurrence.setBiasDisease(diseaseGroupDao.getById(87));
+        occurrence.setStatus(DiseaseOccurrenceStatus.BIAS);
+        diseaseOccurrenceDao.save(occurrence);
+
+        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForExistenceCheck(
+                occurrence.getDiseaseGroup(), occurrence.getLocation(), occurrence.getAlert(),
+                occurrence.getOccurrenceDate());
+        assertThat(occurrences).hasSize(0);
+    }
+
+    @Test
+    public void getDiseaseOccurrencesForExistenceCheckIgnoresExistingFailedBiasPoints() {
+        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(272407);
+        occurrence.setBiasDisease(diseaseGroupDao.getById(87));
+        occurrence.setStatus(DiseaseOccurrenceStatus.DISCARDED_FAILED_QC);
+        diseaseOccurrenceDao.save(occurrence);
+
+        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForExistenceCheck(
+                occurrence.getDiseaseGroup(), occurrence.getLocation(), occurrence.getAlert(),
+                occurrence.getOccurrenceDate());
+        assertThat(occurrences).hasSize(0);
+    }
+
+    @Test
     public void getDiseaseOccurrencesForDiseaseExtentWithNullParameters() {
         getDiseaseOccurrencesForDiseaseExtent(87, null, null, false, 49);
     }

@@ -100,8 +100,8 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
     }
 
     /**
-     * Get disease occurrences that match the specified disease group, location, alert and occurrence start date.
-     * Used to check for the existence of a disease occurrence.
+     * Get disease occurrences (excluding bias occurrences) that match the specified disease group, location, alert
+     * and occurrence start date. Used to check for the existence of a disease occurrence.
      * @param diseaseGroup The disease group.
      * @param location The location.
      * @param alert The alert.
