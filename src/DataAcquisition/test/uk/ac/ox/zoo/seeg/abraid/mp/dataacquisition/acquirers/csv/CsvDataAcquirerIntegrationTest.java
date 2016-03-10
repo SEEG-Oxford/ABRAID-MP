@@ -71,7 +71,7 @@ public class CsvDataAcquirerIntegrationTest extends AbstractDataAcquisitionSprin
     @Test
     public void acquireBiasIsSuccessful() {
         DiseaseGroup disease = diseaseGroupDao.getById(87);
-        List<DiseaseOccurrence> occurrences = acquire(true, true, disease);
+        List<DiseaseOccurrence> occurrences = acquire(true, false, disease);
         assertBiasParameters(occurrences.get(0), disease);
         assertBiasParameters(occurrences.get(1), disease);
     }

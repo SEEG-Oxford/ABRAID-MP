@@ -228,7 +228,7 @@ public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTest
                 argThat(new DiseaseGroupIdMatcher(87)),
                 argThat(new ListSizeMatcher<DiseaseOccurrence>(27)),
                 argThat(new ListSizeMatcher<AdminUnitDiseaseExtentClass>(451)),
-                argThat(new ListSizeMatcher<DiseaseOccurrence>(15)),
+                argThat(new ListSizeMatcher<DiseaseOccurrence>(5)),
                 argThat(new ListSizeMatcher<CovariateFile>(0)),
                 eq(System.getProperty("user.home") + "/AppData/Local/abraid/covariates"));
 
@@ -290,7 +290,7 @@ public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTest
                 argThat(new DiseaseGroupIdMatcher(87)),
                 argThat(new ListSizeMatcher<DiseaseOccurrence>(27)),
                 argThat(new ListSizeMatcher<AdminUnitDiseaseExtentClass>(451)),
-                argThat(new ListSizeMatcher<DiseaseOccurrence>(15)),
+                argThat(new ListSizeMatcher<DiseaseOccurrence>(5)),
                 argThat(new ListSizeMatcher<CovariateFile>(0)),
                 eq(System.getProperty("user.home") + "/AppData/Local/abraid/covariates"))
         ).thenReturn(zip);

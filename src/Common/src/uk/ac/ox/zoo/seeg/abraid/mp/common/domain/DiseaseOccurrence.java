@@ -103,15 +103,49 @@ import javax.persistence.Table;
                         "and occurrenceDate between :startDate and :endDate"
         ),
         @NamedQuery(
-                name = "getBiasOccurrencesForModelRun",
+                name = "getCountOfUnfilteredBespokeBiasOccurrences",
+                query = "select count(*) " +
+                        "from DiseaseOccurrence d " +
+                        "where d.biasDisease.id=:diseaseGroupId"
+        ),
+        @NamedQuery(
+                name = "getEstimateCountOfFilteredBespokeBiasOccurrences",
+                // This only an estimate as we can not apply the occurrence date filter used in
+                // 'getBespokeBiasOccurrences' outside of the context of a model run as the date range is unknown
+                query = "select count(*) " +
+                        "from DiseaseOccurrence d " +
+                        "where d.biasDisease.id=:diseaseGroupId " +
+                        "and d.status = 'BIAS' " +
+                        DiseaseOccurrence.BIAS_OCCURRENCE_LOCATION_FILTER_CLAUSES
+        ),
+        @NamedQuery(
+                name = "getEstimateCountOfFilteredDefaultBiasOccurrences",
+                // This only an estimate as we can not apply the occurrence date filter used in
+                // 'getDefaultBiasOccurrencesForModelRun' outside of a model run as the date range is unknown
+                query = "select count(*) " +
+                        "from DiseaseOccurrence d " +
+                        "where d.diseaseGroup.id<>:diseaseGroupId " +
+                        "and d.status NOT IN ('DISCARDED_FAILED_QC', 'BIAS') " +
+                        DiseaseOccurrence.BIAS_OCCURRENCE_LOCATION_FILTER_CLAUSES
+        ),
+        @NamedQuery(
+                name = "getBespokeBiasOccurrencesForModelRun",
+                query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
+                        "where d.biasDisease.id=:diseaseGroupId " +
+                        "and d.status = 'BIAS' " +
+                        DiseaseOccurrence.BIAS_OCCURRENCE_LOCATION_FILTER_CLAUSES +
+                        DiseaseOccurrence.OCCURRENCE_DATE_FILTER_CLAUSE
+        ),
+        @NamedQuery(
+                name = "getDefaultBiasOccurrencesForModelRun",
                 query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
                         "where d.diseaseGroup.id<>:diseaseGroupId " +
                         "and d.status NOT IN ('DISCARDED_FAILED_QC', 'BIAS') " +
                         // As this data set is for sample bias, we don't need to apply our
                         // normal filters (READY/final weighting), but we don't want bias points if there aren't
                         // bias points uploaded for this disease
-                        "and d.location.isModelEligible is TRUE " +
-                        "and d.occurrenceDate between :startDate and :endDate"
+                        DiseaseOccurrence.BIAS_OCCURRENCE_LOCATION_FILTER_CLAUSES +
+                        DiseaseOccurrence.OCCURRENCE_DATE_FILTER_CLAUSE
         ),
         @NamedQuery(
                 name = "getDiseaseOccurrencesForTrainingPredictor",
@@ -183,7 +217,26 @@ public class DiseaseOccurrence {
      * "That were not used in the last model run"
      */
     public static final String NEW_LOCATION_COUNT_QUERY_NOT_IN_LAST_RUN_CLAUSE =
-        " and d.location.id not in :locationsFromLastModelRun";
+            " and d.location.id not in :locationsFromLastModelRun";
+
+    /** A HQL fragment to choose between global and tropical gaul codes. */
+    public static final String PICK_EXTENT_GAUL_CODE =
+            "CASE :isGlobal WHEN true " +
+            "  THEN d.location.adminUnitGlobalGaulCode " +
+            "  ELSE d.location.adminUnitTropicalGaulCode " +
+            "END";
+
+    /** A HQL fragment to filter occurrences by location when selecting a bias data set.
+     * Filters by model eligibiliy (size) and disease extent (within only)
+     */
+    public static final String BIAS_OCCURRENCE_LOCATION_FILTER_CLAUSES =
+            "and d.location.isModelEligible is TRUE " +
+            "and (" + DiseaseOccurrence.PICK_EXTENT_GAUL_CODE + ") " +
+            "in (" + AdminUnitDiseaseExtentClass.EXTENT_GAUL_CODES_BY_DISEASE_GROUP_ID + ")";
+
+    /** A HQL fragment to filter occurrences within an occurrence date range. */
+    public static final String OCCURRENCE_DATE_FILTER_CLAUSE =
+            "and d.occurrenceDate between :startDate and :endDate ";
 
     // The primary key.
     @Id

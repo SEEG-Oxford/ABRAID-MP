@@ -647,19 +647,81 @@ public class DiseaseServiceTest {
     }
 
     @Test
-    public void getBiasOccurrencesForModelRun() {
+    public void getDefaultBiasOccurrencesForModelRun() {
         // Arrange
-        int diseaseGroupId = 123;
+        DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
         DateTime startDate = DateTime.now().minusDays(1234);
         DateTime endDate = DateTime.now().minusDays(234);
         List<DiseaseOccurrence> expected = Arrays.asList(new DiseaseOccurrence(), new DiseaseOccurrence());
-        when(diseaseOccurrenceDao.getBiasOccurrencesForModelRun(diseaseGroupId, startDate, endDate)).thenReturn(expected);
+        when(diseaseOccurrenceDao.getDefaultBiasOccurrencesForModelRun(diseaseGroup, startDate, endDate)).thenReturn(expected);
 
         // Act
-        List<DiseaseOccurrence> result = diseaseService.getBiasOccurrencesForModelRun(diseaseGroupId, startDate, endDate);
+        List<DiseaseOccurrence> result = diseaseService.getDefaultBiasOccurrencesForModelRun(diseaseGroup, startDate, endDate);
 
         // Assert
-        verify(diseaseOccurrenceDao).getBiasOccurrencesForModelRun(diseaseGroupId, startDate, endDate);
+        verify(diseaseOccurrenceDao).getDefaultBiasOccurrencesForModelRun(diseaseGroup, startDate, endDate);
+        assertThat(result).isEqualTo(expected);
+    }
+
+    @Test
+    public void getBespokeBiasOccurrencesForModelRun() {
+        // Arrange
+        DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
+        DateTime startDate = DateTime.now().minusDays(1234);
+        DateTime endDate = DateTime.now().minusDays(234);
+        List<DiseaseOccurrence> expected = Arrays.asList(new DiseaseOccurrence(), new DiseaseOccurrence());
+        when(diseaseOccurrenceDao.getBespokeBiasOccurrencesForModelRun(diseaseGroup, startDate, endDate)).thenReturn(expected);
+
+        // Act
+        List<DiseaseOccurrence> result = diseaseService.getBespokeBiasOccurrencesForModelRun(diseaseGroup, startDate, endDate);
+
+        // Assert
+        verify(diseaseOccurrenceDao).getBespokeBiasOccurrencesForModelRun(diseaseGroup, startDate, endDate);
+        assertThat(result).isEqualTo(expected);
+    }
+
+    @Test
+    public void getCountOfUnfilteredBespokeBiasOccurrences() {
+        // Arrange
+        DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
+        long expected = 7;
+        when(diseaseOccurrenceDao.getCountOfUnfilteredBespokeBiasOccurrences(diseaseGroup)).thenReturn(expected);
+
+        // Act
+        long result = diseaseService.getCountOfUnfilteredBespokeBiasOccurrences(diseaseGroup);
+
+        // Assert
+        verify(diseaseOccurrenceDao).getCountOfUnfilteredBespokeBiasOccurrences(diseaseGroup);
+        assertThat(result).isEqualTo(expected);
+    }
+
+    @Test
+    public void getEstimateCountOfFilteredBespokeBiasOccurrences() {
+        // Arrange
+        DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
+        long expected = 7;
+        when(diseaseOccurrenceDao.getEstimateCountOfFilteredBespokeBiasOccurrences(diseaseGroup)).thenReturn(expected);
+
+        // Act
+        long result = diseaseService.getEstimateCountOfFilteredBespokeBiasOccurrences(diseaseGroup);
+
+        // Assert
+        verify(diseaseOccurrenceDao).getEstimateCountOfFilteredBespokeBiasOccurrences(diseaseGroup);
+        assertThat(result).isEqualTo(expected);
+    }
+
+    @Test
+    public void getEstimateCountOfFilteredDefaultBiasOccurrences() {
+        // Arrange
+        DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
+        long expected = 7;
+        when(diseaseOccurrenceDao.getEstimateCountOfFilteredDefaultBiasOccurrences(diseaseGroup)).thenReturn(expected);
+
+        // Act
+        long result = diseaseService.getEstimateCountOfFilteredDefaultBiasOccurrences(diseaseGroup);
+
+        // Assert
+        verify(diseaseOccurrenceDao).getEstimateCountOfFilteredDefaultBiasOccurrences(diseaseGroup);
         assertThat(result).isEqualTo(expected);
     }
 }

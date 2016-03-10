@@ -84,8 +84,13 @@ public class ModelRunRequester {
             String covariateDirectory = covariateService.getCovariateDirectory();
             DateTime startDate = min(occurrencesForModelRun, on(DiseaseOccurrence.class).getOccurrenceDate());
             DateTime endDate = max(occurrencesForModelRun, on(DiseaseOccurrence.class).getOccurrenceDate());
-            List<DiseaseOccurrence> biasOccurrences =
-                    diseaseService.getBiasOccurrencesForModelRun(diseaseGroupId, startDate, endDate);
+
+            List<DiseaseOccurrence> biasOccurrences = null;
+            if (diseaseService.getCountOfUnfilteredBespokeBiasOccurrences(diseaseGroup) != 0) {
+                biasOccurrences = diseaseService.getBespokeBiasOccurrencesForModelRun(diseaseGroup, startDate, endDate);
+            } else {
+                biasOccurrences = diseaseService.getDefaultBiasOccurrencesForModelRun(diseaseGroup, startDate, endDate);
+            }
 
             // Pick a blade
             URI modelWrapperUrl = selectLeastBusyModelWrapperUrl();
