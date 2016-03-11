@@ -146,6 +146,27 @@ public class JsonModelRunInformationBuilder {
     }
 
     /**
+     * Populates the text that describes the sample bias disease occurrences.
+     * @param useSampleBias
+     * @param bespokeBiasCount
+     * @param usableBiasEstimate
+     * @return This builder.
+     */
+    public JsonModelRunInformationBuilder populateBiasMessage(
+            boolean useSampleBias, long bespokeBiasCount, long usableBiasEstimate) {
+        String message = "The current model mode for this disease group does not use sample bias data.";
+        if (useSampleBias) {
+            message = String.format(
+                    "%s bespoke sample bias data points have been provided, approximately %s %s are suitable.",
+                    bespokeBiasCount,
+                    usableBiasEstimate,
+                    (bespokeBiasCount == 0 ? "ABRAID occurrences" : "of which"));
+        }
+        information.setSampleBiasText(message);
+        return this;
+    }
+
+    /**
      * Returns the built JsonModelRunInformation object.
      * @return The built JsonModelRunInformation object.
      */

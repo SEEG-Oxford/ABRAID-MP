@@ -278,6 +278,41 @@ public class JsonModelRunInformationBuilderTest {
         assertThat(information.isHasGoldStandardOccurrences()).isFalse();
     }
 
+    @Test
+    public void populateBiasMessageWhenNotUsing() {
+        // Arrange
+        JsonModelRunInformationBuilder builder = new JsonModelRunInformationBuilder();
+
+        // Act
+        JsonModelRunInformation information = builder.populateBiasMessage(false, 4, 4).get();
+
+        // Assert
+        assertThat(information.getSampleBiasText()).isEqualTo("The current model mode for this disease group does not use sample bias data.");
+    }
+
+    @Test
+    public void populateBiasMessageWhenBespoke() {
+        // Arrange
+        JsonModelRunInformationBuilder builder = new JsonModelRunInformationBuilder();
+        // Act
+        JsonModelRunInformation information = builder.populateBiasMessage(true, 4, 0).get();
+
+        // Assert
+        assertThat(information.getSampleBiasText()).isEqualTo("4 bespoke sample bias data points have been provided, approximately 0 of which are suitable.");
+    }
+
+    @Test
+    public void populateBiasMessageWhenDefault() {
+        // Arrange
+        JsonModelRunInformationBuilder builder = new JsonModelRunInformationBuilder();
+
+        // Act
+        JsonModelRunInformation information = builder.populateBiasMessage(true, 0, 4).get();
+
+        // Assert
+        assertThat(information.getSampleBiasText()).isEqualTo("0 bespoke sample bias data points have been provided, approximately 4 ABRAID occurrences are suitable.");
+    }
+
     private DiseaseGroup createMockDiseaseGroup(int id) {
         DiseaseGroup mock = mock(DiseaseGroup.class);
         when(mock.getId()).thenReturn(id);

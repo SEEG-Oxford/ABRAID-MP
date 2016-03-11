@@ -55,6 +55,7 @@ public class AdminDiseaseGroupController extends AbstractController {
     private DiseaseOccurrenceSpreadHelper helper;
     private BatchDatesValidator batchDatesValidator;
     private SourceCodeManager sourceCodeManager;
+    private List<String> biasModelModes;
 
     private Comparator<String> caseInsensitiveComparator = new Comparator<String>() {
         @Override
@@ -68,7 +69,8 @@ public class AdminDiseaseGroupController extends AbstractController {
                                        ModelRunWorkflowService modelRunWorkflowService,
                                        ModelRunService modelRunService, DiseaseOccurrenceSpreadHelper helper,
                                        BatchDatesValidator batchDatesValidator,
-                                       SourceCodeManager sourceCodeManager) {
+                                       SourceCodeManager sourceCodeManager,
+                                       String[] biasModelModes) {
         this.diseaseService = diseaseService;
         this.objectMapper = objectMapper;
         this.modelRunWorkflowService = modelRunWorkflowService;
@@ -76,6 +78,7 @@ public class AdminDiseaseGroupController extends AbstractController {
         this.helper = helper;
         this.batchDatesValidator = batchDatesValidator;
         this.sourceCodeManager = sourceCodeManager;
+        this.biasModelModes = Arrays.asList(biasModelModes);
     }
 
     /**
@@ -131,6 +134,16 @@ public class AdminDiseaseGroupController extends AbstractController {
         List<DiseaseOccurrence> goldStandardOccurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(
                 diseaseGroupId, true);
 
+        boolean useBias = biasModelModes.contains(diseaseGroup.getModelMode());
+        long bespokeBiasCount = 0;
+        long usableBiasEstimate = 0;
+        if (useBias) {
+            bespokeBiasCount = diseaseService.getCountOfUnfilteredBespokeBiasOccurrences(diseaseGroup);
+            usableBiasEstimate = bespokeBiasCount == 0 ?
+                    diseaseService.getEstimateCountOfFilteredDefaultBiasOccurrences(diseaseGroup) :
+                    diseaseService.getEstimateCountOfFilteredBespokeBiasOccurrences(diseaseGroup);
+        }
+
         JsonModelRunInformation info = new JsonModelRunInformationBuilder()
                 .populateLastModelRunText(lastRequestedModelRun)
                 .populateHasModelBeenSuccessfullyRun(lastCompletedModelRun)
@@ -138,6 +151,7 @@ public class AdminDiseaseGroupController extends AbstractController {
                 .populateCanRunModelWithReason(diseaseGroup)
                 .populateBatchDateParameters(lastCompletedModelRun, statistics)
                 .populateHasGoldStandardOccurrences(goldStandardOccurrences)
+                .populateBiasMessage(useBias, bespokeBiasCount, usableBiasEstimate)
                 .get();
 
         return new ResponseEntity<>(info, HttpStatus.OK);

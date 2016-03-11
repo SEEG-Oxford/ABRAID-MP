@@ -52,7 +52,7 @@ public class AdminDiseaseGroupControllerTest {
         batchDatesValidator = mock(BatchDatesValidator.class);
         sourceCodeManager = mock(SourceCodeManager.class);
         controller = new AdminDiseaseGroupController(diseaseService, objectMapper, modelRunWorkflowService,
-                modelRunService, helper, batchDatesValidator, sourceCodeManager);
+                modelRunService, helper, batchDatesValidator, sourceCodeManager, new String[] { "all_bias" });
     }
 
     @Test
@@ -89,7 +89,7 @@ public class AdminDiseaseGroupControllerTest {
     }
 
     @Test
-    public void getModelRunInformation() {
+    public void getModelRunInformationWithBespokeBias() {
         // Arrange
         int diseaseGroupId = 87;
         ModelRun lastRequestedModelRun = new ModelRun("dengue 1", createMockDiseaseGroup(87), "host", new DateTime("2014-07-02T14:15:16"), DateTime.now(), DateTime.now());
@@ -103,6 +103,12 @@ public class AdminDiseaseGroupControllerTest {
         when(diseaseService.getDiseaseOccurrenceStatistics(diseaseGroupId)).thenReturn(statistics);
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
 
+        diseaseGroup.setModelMode("all_bias");
+        when(diseaseService.getCountOfUnfilteredBespokeBiasOccurrences(diseaseGroup)).thenReturn(1L);
+        when(diseaseService.getEstimateCountOfFilteredBespokeBiasOccurrences(diseaseGroup)).thenReturn(2L);
+        when(diseaseService.getEstimateCountOfFilteredDefaultBiasOccurrences(diseaseGroup)).thenReturn(3L);
+
+
         // Act
         ResponseEntity<JsonModelRunInformation> entity = controller.getModelRunInformation(diseaseGroupId);
 
@@ -113,6 +119,75 @@ public class AdminDiseaseGroupControllerTest {
         assertThat(entity.getBody().isHasModelBeenSuccessfullyRun()).isTrue();
         assertThat(entity.getBody().isCanRunModel()).isFalse();
         assertThat(entity.getBody().getCannotRunModelReason()).isEqualTo("the public name is missing");
+        assertThat(entity.getBody().getSampleBiasText()).isEqualTo("1 bespoke sample bias data points have been provided, approximately 2 of which are suitable.");
+    }
+
+    @Test
+    public void getModelRunInformationWithoutBespokeBias() {
+        // Arrange
+        int diseaseGroupId = 87;
+        ModelRun lastRequestedModelRun = new ModelRun("dengue 1", createMockDiseaseGroup(87), "host", new DateTime("2014-07-02T14:15:16"), DateTime.now(), DateTime.now());
+        ModelRun lastCompletedModelRun = new ModelRun();
+        DiseaseOccurrenceStatistics statistics = new DiseaseOccurrenceStatistics(0, 0, null, null);
+        DiseaseGroup diseaseGroup = new DiseaseGroup(87);
+
+        when(modelRunService.getLastRequestedModelRun(diseaseGroupId)).thenReturn(lastRequestedModelRun);
+        when(modelRunService.getMostRecentlyFinishedModelRunWhichCompleted(diseaseGroupId))
+                .thenReturn(lastCompletedModelRun);
+        when(diseaseService.getDiseaseOccurrenceStatistics(diseaseGroupId)).thenReturn(statistics);
+        when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
+
+        diseaseGroup.setModelMode("all_bias");
+        when(diseaseService.getCountOfUnfilteredBespokeBiasOccurrences(diseaseGroup)).thenReturn(1L);
+        when(diseaseService.getEstimateCountOfFilteredBespokeBiasOccurrences(diseaseGroup)).thenReturn(2L);
+        when(diseaseService.getEstimateCountOfFilteredDefaultBiasOccurrences(diseaseGroup)).thenReturn(3L);
+
+        // Act
+        ResponseEntity<JsonModelRunInformation> entity = controller.getModelRunInformation(diseaseGroupId);
+
+        // Assert
+        assertThat(entity.getStatusCode().value()).isEqualTo(200);
+        assertThat(entity.getBody().getLastModelRunText()).isEqualTo("requested on 2 Jul 2014 14:15:16");
+        assertThat(entity.getBody().getDiseaseOccurrencesText()).isEqualTo("none");
+        assertThat(entity.getBody().isHasModelBeenSuccessfullyRun()).isTrue();
+        assertThat(entity.getBody().isCanRunModel()).isFalse();
+        assertThat(entity.getBody().getCannotRunModelReason()).isEqualTo("the public name is missing");
+        assertThat(entity.getBody().getSampleBiasText()).isEqualTo("1 bespoke sample bias data points have been provided, approximately 2 of which are suitable.");
+    }
+
+    @Test
+    public void getModelRunInformationNotUsingBias() {
+        // Arrange
+        int diseaseGroupId = 87;
+        ModelRun lastRequestedModelRun = new ModelRun("dengue 1", createMockDiseaseGroup(87), "host", new DateTime("2014-07-02T14:15:16"), DateTime.now(), DateTime.now());
+        ModelRun lastCompletedModelRun = new ModelRun();
+        DiseaseOccurrenceStatistics statistics = new DiseaseOccurrenceStatistics(0, 0, null, null);
+        DiseaseGroup diseaseGroup = new DiseaseGroup(87);
+
+
+        when(modelRunService.getLastRequestedModelRun(diseaseGroupId)).thenReturn(lastRequestedModelRun);
+        when(modelRunService.getMostRecentlyFinishedModelRunWhichCompleted(diseaseGroupId))
+                .thenReturn(lastCompletedModelRun);
+        when(diseaseService.getDiseaseOccurrenceStatistics(diseaseGroupId)).thenReturn(statistics);
+        when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
+
+        diseaseGroup.setModelMode("bhatt");
+        when(diseaseService.getCountOfUnfilteredBespokeBiasOccurrences(diseaseGroup)).thenReturn(1L);
+        when(diseaseService.getEstimateCountOfFilteredBespokeBiasOccurrences(diseaseGroup)).thenReturn(2L);
+        when(diseaseService.getEstimateCountOfFilteredDefaultBiasOccurrences(diseaseGroup)).thenReturn(3L);
+
+
+        // Act
+        ResponseEntity<JsonModelRunInformation> entity = controller.getModelRunInformation(diseaseGroupId);
+
+        // Assert
+        assertThat(entity.getStatusCode().value()).isEqualTo(200);
+        assertThat(entity.getBody().getLastModelRunText()).isEqualTo("requested on 2 Jul 2014 14:15:16");
+        assertThat(entity.getBody().getDiseaseOccurrencesText()).isEqualTo("none");
+        assertThat(entity.getBody().isHasModelBeenSuccessfullyRun()).isTrue();
+        assertThat(entity.getBody().isCanRunModel()).isFalse();
+        assertThat(entity.getBody().getCannotRunModelReason()).isEqualTo("the public name is missing");
+        assertThat(entity.getBody().getSampleBiasText()).isEqualTo("The current model mode for this disease group does not use sample bias data.");
     }
 
     @Test
