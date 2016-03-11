@@ -126,6 +126,7 @@ import javax.persistence.Table;
                         "from DiseaseOccurrence d " +
                         "where d.diseaseGroup.id<>:diseaseGroupId " +
                         "and d.status NOT IN ('DISCARDED_FAILED_QC', 'BIAS') " +
+                        DiseaseOccurrence.BIAS_OCCURRENCE_AGENT_TYPE_FILTER_CLAUSE +
                         DiseaseOccurrence.BIAS_OCCURRENCE_LOCATION_FILTER_CLAUSES
         ),
         @NamedQuery(
@@ -144,6 +145,7 @@ import javax.persistence.Table;
                         // As this data set is for sample bias, we don't need to apply our
                         // normal filters (READY/final weighting), but we don't want bias points if there aren't
                         // bias points uploaded for this disease
+                        DiseaseOccurrence.BIAS_OCCURRENCE_AGENT_TYPE_FILTER_CLAUSE +
                         DiseaseOccurrence.BIAS_OCCURRENCE_LOCATION_FILTER_CLAUSES +
                         DiseaseOccurrence.OCCURRENCE_DATE_FILTER_CLAUSE
         ),
@@ -232,7 +234,12 @@ public class DiseaseOccurrence {
     public static final String BIAS_OCCURRENCE_LOCATION_FILTER_CLAUSES =
             "and d.location.isModelEligible is TRUE " +
             "and (" + DiseaseOccurrence.PICK_EXTENT_GAUL_CODE + ") " +
-            "in (" + AdminUnitDiseaseExtentClass.EXTENT_GAUL_CODES_BY_DISEASE_GROUP_ID + ")";
+            "in (" + AdminUnitDiseaseExtentClass.EXTENT_GAUL_CODES_BY_DISEASE_GROUP_ID + ") ";
+
+    /** A HQL fragment to filter occurrences by disease group agent type when selecting a bias data set.
+     */
+    public static final String BIAS_OCCURRENCE_AGENT_TYPE_FILTER_CLAUSE =
+            "and (:shouldFilterBiasDataByAgentType is FALSE or d.diseaseGroup.agentType=:agentType) ";
 
     /** A HQL fragment to filter occurrences within an occurrence date range. */
     public static final String OCCURRENCE_DATE_FILTER_CLAUSE =

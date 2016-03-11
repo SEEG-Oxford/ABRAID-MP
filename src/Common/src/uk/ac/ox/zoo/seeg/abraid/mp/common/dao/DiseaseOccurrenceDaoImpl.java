@@ -333,7 +333,9 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
     @Override
     public long getEstimateCountOfFilteredBespokeBiasOccurrences(DiseaseGroup diseaseGroup) {
         return (long) getParameterisedNamedQuery("getEstimateCountOfFilteredBespokeBiasOccurrences",
-                "diseaseGroupId", diseaseGroup.getId(), "isGlobal", diseaseGroup.isGlobal()).uniqueResult();
+                "diseaseGroupId", diseaseGroup.getId(),
+                "isGlobal", diseaseGroup.isGlobal()
+        ).uniqueResult();
     }
 
     /**
@@ -346,7 +348,11 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
     @Override
     public long getEstimateCountOfFilteredDefaultBiasOccurrences(DiseaseGroup diseaseGroup) {
         return (long) getParameterisedNamedQuery("getEstimateCountOfFilteredDefaultBiasOccurrences",
-                "diseaseGroupId", diseaseGroup.getId(), "isGlobal", diseaseGroup.isGlobal()).uniqueResult();
+                "diseaseGroupId", diseaseGroup.getId(),
+                "isGlobal", diseaseGroup.isGlobal(),
+                "shouldFilterBiasDataByAgentType", diseaseGroup.shouldFilterBiasDataByAgentType(),
+                "agentType", diseaseGroup.getAgentType()
+        ).uniqueResult();
     }
 
     /**
@@ -360,8 +366,10 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
     public List<DiseaseOccurrence> getBespokeBiasOccurrencesForModelRun(
             DiseaseGroup diseaseGroup, DateTime startDate, DateTime endDate) {
         return listNamedQuery("getBespokeBiasOccurrencesForModelRun",
-                "diseaseGroupId", diseaseGroup.getId(), "isGlobal", diseaseGroup.isGlobal(),
-                "startDate", startDate, "endDate", endDate);
+                "diseaseGroupId", diseaseGroup.getId(),
+                "isGlobal", diseaseGroup.isGlobal(),
+                "startDate", startDate,
+                "endDate", endDate);
     }
 
     /**
@@ -376,8 +384,12 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
     public List<DiseaseOccurrence> getDefaultBiasOccurrencesForModelRun(
             DiseaseGroup diseaseGroup, DateTime startDate, DateTime endDate) {
        return listNamedQuery("getDefaultBiasOccurrencesForModelRun",
-               "diseaseGroupId", diseaseGroup.getId(), "isGlobal", diseaseGroup.isGlobal(),
-               "startDate", startDate, "endDate", endDate);
+               "diseaseGroupId", diseaseGroup.getId(),
+               "isGlobal", diseaseGroup.isGlobal(),
+               "shouldFilterBiasDataByAgentType", diseaseGroup.shouldFilterBiasDataByAgentType(),
+               "agentType", diseaseGroup.getAgentType(),
+               "startDate", startDate,
+               "endDate", endDate);
     }
 
     /**
