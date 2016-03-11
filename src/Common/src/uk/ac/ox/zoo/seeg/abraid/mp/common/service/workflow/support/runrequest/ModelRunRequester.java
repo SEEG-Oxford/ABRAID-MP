@@ -30,6 +30,7 @@ public class ModelRunRequester {
     private final ModelRunPackageBuilder modelRunPackageBuilder;
     private DiseaseService diseaseService;
     private ModelRunService modelRunService;
+    private List<String> biasModelModes;
 
     private static final Logger LOGGER = Logger.getLogger(ModelRunRequester.class);
     private static final String WEB_SERVICE_ERROR_MESSAGE = "Error when requesting a model run: %s";
@@ -47,12 +48,14 @@ public class ModelRunRequester {
                              ModelRunPackageBuilder modelRunPackageBuilder,
                              CovariateService covariateService,
                              DiseaseService diseaseService, ModelRunService modelRunService,
+                             String[] biasModelModes,
                              String[] modelWrapperUrlCollection) {
         this.modelWrapperWebService = modelWrapperWebService;
         this.modelRunPackageBuilder = modelRunPackageBuilder;
         this.diseaseService = diseaseService;
         this.covariateService = covariateService;
         this.modelRunService = modelRunService;
+        this.biasModelModes = Arrays.asList(biasModelModes);
         this.modelWrapperUrlCollection = convert(modelWrapperUrlCollection, new Converter<String, URI>() {
             @Override
             public URI convert(String url) {
@@ -86,10 +89,12 @@ public class ModelRunRequester {
             DateTime endDate = max(occurrencesForModelRun, on(DiseaseOccurrence.class).getOccurrenceDate());
 
             List<DiseaseOccurrence> biasOccurrences = null;
-            if (diseaseService.getCountOfUnfilteredBespokeBiasOccurrences(diseaseGroup) != 0) {
-                biasOccurrences = diseaseService.getBespokeBiasOccurrencesForModelRun(diseaseGroup, startDate, endDate);
-            } else {
-                biasOccurrences = diseaseService.getDefaultBiasOccurrencesForModelRun(diseaseGroup, startDate, endDate);
+            if (biasModelModes.contains(diseaseGroup.getModelMode())) {
+                if (diseaseService.getCountOfUnfilteredBespokeBiasOccurrences(diseaseGroup) != 0) {
+                    biasOccurrences = diseaseService.getBespokeBiasOccurrencesForModelRun(diseaseGroup, startDate, endDate);
+                } else {
+                    biasOccurrences = diseaseService.getDefaultBiasOccurrencesForModelRun(diseaseGroup, startDate, endDate);
+                }
             }
 
             // Pick a blade

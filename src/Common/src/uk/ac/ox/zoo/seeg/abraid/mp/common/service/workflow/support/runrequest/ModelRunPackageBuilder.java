@@ -189,7 +189,9 @@ public class ModelRunPackageBuilder {
         File dataDirectory = Paths.get(workingDirectory.toString(), MODEL_DATA_DIRECTORY_NAME).toFile();
         // Copy input data
         inputDataManager.writeOccurrenceData(occurrenceData, dataDirectory, false);
-        inputDataManager.writeOccurrenceData(biasOccurrenceData, dataDirectory, true);
+        if (biasOccurrenceData != null) {
+            inputDataManager.writeOccurrenceData(biasOccurrenceData, dataDirectory, true);
+        }
         File baseExtentRaster = rasterFilePathFactory.getExtentGaulRaster(disease.isGlobal());
         inputDataManager.writeExtentData(extentData, baseExtentRaster, dataDirectory);
     }

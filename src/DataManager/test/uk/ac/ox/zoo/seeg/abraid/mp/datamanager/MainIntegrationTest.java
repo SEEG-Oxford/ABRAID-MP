@@ -123,6 +123,7 @@ public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTest
         diseaseGroup.setOccursInAfrica(false);
         diseaseGroup.setMinDistinctCountries(null);
         diseaseGroup.setAutomaticModelRunsStartDate(DateTime.now());
+        diseaseGroup.setModelMode("all_bias");
         diseaseGroupDao.save(diseaseGroup);
     }
 

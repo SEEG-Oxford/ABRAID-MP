@@ -47,6 +47,7 @@ public class ModelRunRequesterTest {
         ModelRunService runService = mock(ModelRunService.class);
         when(runService.getModelRunRequestServersByUsage()).thenReturn(Arrays.asList("a", "c", "b"));
         ModelRunRequester target = new ModelRunRequester(webService, modelRunPackageBuilder, covariateService, diseaseService, runService,
+                new String[]{"all_bias"},
                 new String[]{"http://api:key@a:1245/path", "http://api:key@b:1245/path", "http://api:key@c:1245/path"});
 
         // Act
@@ -70,6 +71,7 @@ public class ModelRunRequesterTest {
         ModelRunService runService = mock(ModelRunService.class);
         when(runService.getModelRunRequestServersByUsage()).thenReturn(Arrays.asList("c", "b"));
         ModelRunRequester target = new ModelRunRequester(webService, modelRunPackageBuilder, covariateService, diseaseService, runService,
+                new String[]{"all_bias"},
                 new String[]{"http://api:key@a:1245/path", "http://api:key@b:1245/path", "http://api:key@c:1245/path", "http://api:key@d:1245/path"});
 
         // Act
@@ -83,7 +85,7 @@ public class ModelRunRequesterTest {
     public void requestModelRunSavesTheInputOccurrencesForAutomaticModelRun() throws Exception {
         // Arrange
         ModelRunService runService = mock(ModelRunService.class);
-        ModelRunRequester target = createMockModelRunRequester(runService, 87, true, null, mock(ModelRunPackageBuilder.class), mock(CovariateService.class), mock(ModelWrapperWebService.class));
+        ModelRunRequester target = createMockModelRunRequester(runService, 87, true, "all_bias", null, mock(ModelRunPackageBuilder.class), mock(CovariateService.class), mock(ModelWrapperWebService.class));
 
         // Act
         target.requestModelRun(87, Arrays.asList(mock(DiseaseOccurrence.class), mock(DiseaseOccurrence.class), mock(DiseaseOccurrence.class)), null, null);
@@ -100,7 +102,7 @@ public class ModelRunRequesterTest {
         // Arrange
         ModelRunService runService = mock(ModelRunService.class);
 
-        ModelRunRequester target = createMockModelRunRequester(runService, 87, false, null, mock(ModelRunPackageBuilder.class), mock(CovariateService.class), mock(ModelWrapperWebService.class));
+        ModelRunRequester target = createMockModelRunRequester(runService, 87, false, "all_bias", null, mock(ModelRunPackageBuilder.class), mock(CovariateService.class), mock(ModelWrapperWebService.class));
 
         // Act
         target.requestModelRun(87, Arrays.asList(mock(DiseaseOccurrence.class), mock(DiseaseOccurrence.class), mock(DiseaseOccurrence.class)), null, null);
@@ -122,7 +124,7 @@ public class ModelRunRequesterTest {
                 createMockAdminUnitDiseaseExtentClass(), createMockAdminUnitDiseaseExtentClass()
         );
         when(diseaseService.getDiseaseExtentByDiseaseGroupId(87)).thenReturn(extent);
-        ModelRunRequester target = createMockModelRunRequester(runService, 87, true, diseaseService, mock(ModelRunPackageBuilder.class), mock(CovariateService.class), mock(ModelWrapperWebService.class));
+        ModelRunRequester target = createMockModelRunRequester(runService, 87, true, "all_bias", diseaseService, mock(ModelRunPackageBuilder.class), mock(CovariateService.class), mock(ModelWrapperWebService.class));
 
         // Act
         target.requestModelRun(87, Arrays.asList(mock(DiseaseOccurrence.class)), null, null);
@@ -139,7 +141,7 @@ public class ModelRunRequesterTest {
         // Arrange
         ModelRunService runService = mock(ModelRunService.class);
         DiseaseService diseaseService = mock(DiseaseService.class);
-        ModelRunRequester target = createMockModelRunRequester(runService, 87, true, diseaseService, mock(ModelRunPackageBuilder.class), mock(CovariateService.class), mock(ModelWrapperWebService.class));
+        ModelRunRequester target = createMockModelRunRequester(runService, 87, true, "all_bias", diseaseService, mock(ModelRunPackageBuilder.class), mock(CovariateService.class), mock(ModelWrapperWebService.class));
         DiseaseOccurrence oldest = mock(DiseaseOccurrence.class);
         DateTime oldDate = DateTime.parse("2013-02-27T08:06:46.000Z");
         when(oldest.getOccurrenceDate()).thenReturn(oldDate);
@@ -166,7 +168,7 @@ public class ModelRunRequesterTest {
         // Arrange
         DiseaseService diseaseService = mock(DiseaseService.class);
         ModelRunService runService = mock(ModelRunService.class);
-        ModelRunRequester target = createMockModelRunRequester(runService, 87, true, diseaseService, mock(ModelRunPackageBuilder.class), mock(CovariateService.class), mock(ModelWrapperWebService.class));
+        ModelRunRequester target = createMockModelRunRequester(runService, 87, true, "all_bias", diseaseService, mock(ModelRunPackageBuilder.class), mock(CovariateService.class), mock(ModelWrapperWebService.class));
 
 
         DateTimeUtils.setCurrentMillisFixed(0);
@@ -211,7 +213,7 @@ public class ModelRunRequesterTest {
         when(diseaseService.getDiseaseExtentByDiseaseGroupId(87)).thenReturn(extent);
 
         ModelRunPackageBuilder zipBuilder = mock(ModelRunPackageBuilder.class);
-        ModelRunRequester target = createMockModelRunRequester(runService, 87, true, diseaseService, zipBuilder, covService, mock(ModelWrapperWebService.class));
+        ModelRunRequester target = createMockModelRunRequester(runService, 87, true, "all_bias", diseaseService, zipBuilder, covService, mock(ModelWrapperWebService.class));
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(87);
         when(diseaseService.getCountOfUnfilteredBespokeBiasOccurrences(same(diseaseGroup))).thenReturn(0L);
         when(diseaseService.getDefaultBiasOccurrencesForModelRun(same(diseaseGroup), any(DateTime.class), any(DateTime.class))).thenReturn(biasOccurrences);
@@ -248,11 +250,49 @@ public class ModelRunRequesterTest {
         when(diseaseService.getDiseaseExtentByDiseaseGroupId(87)).thenReturn(extent);
 
         ModelRunPackageBuilder zipBuilder = mock(ModelRunPackageBuilder.class);
-        ModelRunRequester target = createMockModelRunRequester(runService, 87, true, diseaseService, zipBuilder, covService, mock(ModelWrapperWebService.class));
+        ModelRunRequester target = createMockModelRunRequester(runService, 87, true, "all_bias", diseaseService, zipBuilder, covService, mock(ModelWrapperWebService.class));
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(87);
         when(diseaseService.getCountOfUnfilteredBespokeBiasOccurrences(same(diseaseGroup))).thenReturn(4L);
         when(diseaseService.getBespokeBiasOccurrencesForModelRun(same(diseaseGroup), any(DateTime.class), any(DateTime.class))).thenReturn(biasOccurrences);
         when(covService.getCovariateFilesByDiseaseGroup(diseaseGroup)).thenReturn(covariateFiles);
+
+        // Act
+        target.requestModelRun(87, occurrences, null, null);
+
+        // Assert
+        verify(zipBuilder).buildPackage(startsWith("deng_"), same(diseaseGroup), same(occurrences), same(extent), same(biasOccurrences), same(covariateFiles), eq("covDir"));
+    }
+
+    @Test
+    public void requestModelRunBuildsZipWithCorrectDataWhenNotUsingBias() throws Exception {
+        // Arrange
+        ModelRunService runService = mock(ModelRunService.class);
+        CovariateService covService = mock(CovariateService.class);
+        DiseaseService diseaseService = mock(DiseaseService.class);
+
+        List<DiseaseOccurrence> occurrences = Arrays.asList(mock(DiseaseOccurrence.class), mock(DiseaseOccurrence.class), mock(DiseaseOccurrence.class));
+        List<AdminUnitDiseaseExtentClass> extent = Arrays.asList(
+                createMockAdminUnitDiseaseExtentClass(), createMockAdminUnitDiseaseExtentClass(),
+                createMockAdminUnitDiseaseExtentClass(), createMockAdminUnitDiseaseExtentClass()
+        );
+        List<CovariateFile> covariateFiles = Arrays.asList(
+                mock(CovariateFile.class),
+                mock(CovariateFile.class),
+                mock(CovariateFile.class)
+        );
+
+        when(covService.getCovariateDirectory()).thenReturn("covDir");
+
+        when(diseaseService.getDiseaseExtentByDiseaseGroupId(87)).thenReturn(extent);
+
+        ModelRunPackageBuilder zipBuilder = mock(ModelRunPackageBuilder.class);
+        ModelRunRequester target = createMockModelRunRequester(runService, 87, true, "bhatt", diseaseService, zipBuilder, covService, mock(ModelWrapperWebService.class));
+        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(87);
+        when(diseaseService.getCountOfUnfilteredBespokeBiasOccurrences(same(diseaseGroup))).thenReturn(4L);
+        when(diseaseService.getBespokeBiasOccurrencesForModelRun(same(diseaseGroup), any(DateTime.class), any(DateTime.class))).thenReturn(
+                Arrays.asList(mock(DiseaseOccurrence.class), mock(DiseaseOccurrence.class), mock(DiseaseOccurrence.class), mock(DiseaseOccurrence.class)));
+        when(covService.getCovariateFilesByDiseaseGroup(diseaseGroup)).thenReturn(covariateFiles);
+        List<DiseaseOccurrence> biasOccurrences = null;
 
         // Act
         target.requestModelRun(87, occurrences, null, null);
@@ -286,7 +326,7 @@ public class ModelRunRequesterTest {
 
         ModelRunPackageBuilder zipBuilder = mock(ModelRunPackageBuilder.class);
         ModelWrapperWebService webService = mock(ModelWrapperWebService.class);
-        ModelRunRequester target = createMockModelRunRequester(runService, 87, true, diseaseService, zipBuilder, covService, webService);
+        ModelRunRequester target = createMockModelRunRequester(runService, 87, true, "all_bias", diseaseService, zipBuilder, covService, webService);
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(87);
         when(diseaseService.getCountOfUnfilteredBespokeBiasOccurrences(same(diseaseGroup))).thenReturn(0L);
         when(diseaseService.getDefaultBiasOccurrencesForModelRun(same(diseaseGroup), any(DateTime.class), any(DateTime.class))).thenReturn(biasOccurrences);
@@ -310,14 +350,16 @@ public class ModelRunRequesterTest {
         return mock;
     }
 
-    private ModelRunRequester createMockModelRunRequester(ModelRunService runService, int diseaseGroupId, boolean automaticRuns, DiseaseService mockDiseaseService, ModelRunPackageBuilder modelRunPackageBuilder1, CovariateService covariateService, ModelWrapperWebService webService) throws IOException, ZipException {
+    private ModelRunRequester createMockModelRunRequester(ModelRunService runService, int diseaseGroupId, boolean automaticRuns, String mode, DiseaseService mockDiseaseService, ModelRunPackageBuilder modelRunPackageBuilder1, CovariateService covariateService, ModelWrapperWebService webService) throws IOException, ZipException {
         DiseaseService diseaseService = mockDiseaseService == null ? mock(DiseaseService.class) : mockDiseaseService;
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(mock(DiseaseGroup.class));
         when(diseaseService.getDiseaseGroupById(diseaseGroupId).getAbbreviation()).thenReturn("deng");
+        when(diseaseService.getDiseaseGroupById(diseaseGroupId).getModelMode()).thenReturn(mode);
         when(diseaseService.getDiseaseGroupById(diseaseGroupId).isAutomaticModelRunsEnabled()).thenReturn(automaticRuns);
         when(webService.startRun(any(URI.class), any(File.class))).thenReturn(mock(JsonModelRunResponse.class));
         when(runService.getModelRunRequestServersByUsage()).thenReturn(new ArrayList<String>());
         return new ModelRunRequester(webService, modelRunPackageBuilder1, covariateService, diseaseService, runService,
+                new String[]{"all_bias"},
                 new String[]{"http://api:key@a:1245/path"});
     }
 }
