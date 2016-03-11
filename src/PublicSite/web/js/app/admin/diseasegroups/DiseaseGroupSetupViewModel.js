@@ -40,6 +40,7 @@ define([
         self.batchDateMaximum = ko.observable("");
         self.hasGoldStandardOccurrences = ko.observable(false);
         self.onlyUseGoldStandardOccurrences = ko.observable(false);
+        self.sampleBiasText = ko.observable("");
 
         self.buildSubmissionUrl = function () {
             return baseUrl + "admin/diseases/" + self.selectedDiseaseGroupId() + "/requestmodelrun";
@@ -119,6 +120,7 @@ define([
             self.canRunModel(false);
             self.hasGoldStandardOccurrences(false);
             self.onlyUseGoldStandardOccurrences(false);
+            self.sampleBiasText("");
         };
 
         self.updateModelRunInfo = function (diseaseGroupId) { // only public for testing
@@ -140,6 +142,7 @@ define([
                         self.hasModelBeenSuccessfullyRun(data.hasModelBeenSuccessfullyRun);
                         self.canRunModel(data.canRunModel);
                         self.hasGoldStandardOccurrences(data.hasGoldStandardOccurrences);
+                        self.sampleBiasText(data.sampleBiasText);
                         if (!self.canRunModel()) {
                             var errorMessage = "Cannot run model or generate disease extent because " +
                                 data.cannotRunModelReason;
