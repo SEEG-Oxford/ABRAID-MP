@@ -147,9 +147,9 @@ public class JsonModelRunInformationBuilder {
 
     /**
      * Populates the text that describes the sample bias disease occurrences.
-     * @param useSampleBias
-     * @param bespokeBiasCount
-     * @param usableBiasEstimate
+     * @param useSampleBias True if the current model mode supports sample bias data.
+     * @param bespokeBiasCount The number of csv sample bias data points provided.
+     * @param usableBiasEstimate An estimate of the number of usable bias points in the system (bespoke or not).
      * @return This builder.
      */
     public JsonModelRunInformationBuilder populateBiasMessage(

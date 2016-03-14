@@ -90,11 +90,9 @@ public class ModelRunRequester {
 
             List<DiseaseOccurrence> biasOccurrences = null;
             if (biasModelModes.contains(diseaseGroup.getModelMode())) {
-                if (diseaseService.getCountOfUnfilteredBespokeBiasOccurrences(diseaseGroup) != 0) {
-                    biasOccurrences = (diseaseService.getCountOfUnfilteredBespokeBiasOccurrences(diseaseGroup) != 0) ?
-                            diseaseService.getBespokeBiasOccurrencesForModelRun(diseaseGroup, startDate, endDate) :
-                            diseaseService.getDefaultBiasOccurrencesForModelRun(diseaseGroup, startDate, endDate);
-                }
+                biasOccurrences = (diseaseService.getCountOfUnfilteredBespokeBiasOccurrences(diseaseGroup) != 0) ?
+                        diseaseService.getBespokeBiasOccurrencesForModelRun(diseaseGroup, startDate, endDate) :
+                        diseaseService.getDefaultBiasOccurrencesForModelRun(diseaseGroup, startDate, endDate);
             }
 
             // Pick a blade

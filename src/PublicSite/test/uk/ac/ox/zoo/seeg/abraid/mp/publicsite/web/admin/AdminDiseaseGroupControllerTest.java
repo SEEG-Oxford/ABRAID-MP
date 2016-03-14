@@ -52,7 +52,7 @@ public class AdminDiseaseGroupControllerTest {
         batchDatesValidator = mock(BatchDatesValidator.class);
         sourceCodeManager = mock(SourceCodeManager.class);
         controller = new AdminDiseaseGroupController(diseaseService, objectMapper, modelRunWorkflowService,
-                modelRunService, helper, batchDatesValidator, sourceCodeManager, new String[] { "all_bias" });
+                modelRunService, helper, batchDatesValidator, sourceCodeManager, new String[] {"all_bias"});
     }
 
     @Test
@@ -69,8 +69,8 @@ public class AdminDiseaseGroupControllerTest {
         when(diseaseService.getAllDiseaseGroups()).thenReturn(diseaseGroups);
         when(sourceCodeManager.getSupportedModesForCurrentVersion()).thenReturn(new HashSet<String>(Arrays.asList("mode1", "mode2", "mode3")));
         String expectedJson = "[" +
-                "{\"id\":87,\"name\":\"dengue\",\"publicName\":\"dengue\",\"shortName\":\"dengue\",\"abbreviation\":\"deng\",\"groupType\":\"SINGLE\",\"maxDaysBetweenModelRuns\":6,\"isGlobal\":false,\"validatorDiseaseGroup\":{\"id\":4},\"weighting\":1.0,\"automaticModelRuns\":false,\"minDataVolume\":0,\"useMachineLearning\":true}," +
-                "{\"id\":188,\"name\":\"Leishmaniases\",\"publicName\":\"leishmaniases\",\"shortName\":\"leishmaniases\",\"abbreviation\":\"leish\",\"groupType\":\"MICROCLUSTER\",\"maxDaysBetweenModelRuns\":7,\"isGlobal\":true,\"parentDiseaseGroup\":{\"id\":5,\"name\":\"leishmaniases\"},\"validatorDiseaseGroup\":{\"id\":9},\"weighting\":0.5,\"automaticModelRuns\":false,\"minDataVolume\":0,\"useMachineLearning\":true}]";
+                "{\"id\":87,\"name\":\"dengue\",\"publicName\":\"dengue\",\"shortName\":\"dengue\",\"abbreviation\":\"deng\",\"groupType\":\"SINGLE\",\"maxDaysBetweenModelRuns\":6,\"isGlobal\":false,\"filterBiasDataByAgentType\":false,\"validatorDiseaseGroup\":{\"id\":4},\"weighting\":1.0,\"automaticModelRuns\":false,\"minDataVolume\":0,\"useMachineLearning\":true}," +
+                "{\"id\":188,\"name\":\"Leishmaniases\",\"publicName\":\"leishmaniases\",\"shortName\":\"leishmaniases\",\"abbreviation\":\"leish\",\"groupType\":\"MICROCLUSTER\",\"maxDaysBetweenModelRuns\":7,\"isGlobal\":true,\"filterBiasDataByAgentType\":false,\"parentDiseaseGroup\":{\"id\":5,\"name\":\"leishmaniases\"},\"validatorDiseaseGroup\":{\"id\":9},\"weighting\":0.5,\"automaticModelRuns\":false,\"minDataVolume\":0,\"useMachineLearning\":true}]";
 
         ValidatorDiseaseGroup validator1 = new ValidatorDiseaseGroup(3, "Japanese encephalitis");
         ValidatorDiseaseGroup validator2 = new ValidatorDiseaseGroup(2, "cholera");

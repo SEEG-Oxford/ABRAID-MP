@@ -183,24 +183,4 @@ public class UploadCsvControllerTest {
         verify(diseaseService).deleteBiasDiseaseOccurrencesForDisease(diseaseGroup);
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
-
-    @Test
-    public void purgeBiasDataReturnsBadRequestWithInvalidDiseaseID() throws Exception {
-        // Act
-        ResponseEntity responseEntity = controller.purgeBiasData(-87);
-
-        // Assert
-        verify(diseaseService, never()).deleteBiasDiseaseOccurrencesForDisease(diseaseGroup);
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    }
-
-    @Test
-    public void purgeBiasDataReturnsNoContentIfSuccessful() throws Exception {
-        // Act
-        ResponseEntity responseEntity = controller.purgeBiasData(87);
-
-        // Assert
-        verify(diseaseService).deleteBiasDiseaseOccurrencesForDisease(diseaseGroup);
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
-    }
 }

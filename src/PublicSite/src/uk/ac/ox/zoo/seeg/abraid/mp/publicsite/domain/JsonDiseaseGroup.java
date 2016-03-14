@@ -44,7 +44,7 @@ public class JsonDiseaseGroup {
         setShortName(diseaseGroup.getShortName());
         setAbbreviation(diseaseGroup.getAbbreviation());
         setGroupType(diseaseGroup.getGroupType().name());
-        setAgentType(diseaseGroup.getAgentType() == null? null : diseaseGroup.getAgentType().name());
+        setAgentType(diseaseGroup.getAgentType() == null ? null : diseaseGroup.getAgentType().name());
         setIsGlobal(diseaseGroup.isGlobal());
         setFilterBiasDataByAgentType(diseaseGroup.shouldFilterBiasDataByAgentType());
         setModelMode(diseaseGroup.getModelMode());
