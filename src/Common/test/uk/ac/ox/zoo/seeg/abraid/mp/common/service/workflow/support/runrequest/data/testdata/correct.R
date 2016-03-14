@@ -24,7 +24,7 @@ attempt_model_run <- function() {
     disease <- 1234
 
     # Model mode
-    mode <- "bhatt"
+    mode <- "Bhatt2013"
 
     # Define occurrence data
     occurrence_path <- "data/occurrences.csv"

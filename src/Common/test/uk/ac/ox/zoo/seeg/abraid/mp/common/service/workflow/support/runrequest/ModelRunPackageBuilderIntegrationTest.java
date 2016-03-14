@@ -77,7 +77,7 @@ public class ModelRunPackageBuilderIntegrationTest {
     @Test
     public void buildPackageShouldCreateAZipContainingTheCorrectContent() throws Exception {
         // Arrange/Act
-        Path directory = buildTestPackage("bhatt");
+        Path directory = buildTestPackage("Bhatt2013");
 
         // Assert
         buildPackageShouldCreateAZipContainingTheCorrectMetadata(directory);
@@ -102,7 +102,7 @@ public class ModelRunPackageBuilderIntegrationTest {
         when(rasterFilePathFactory.getExtentGaulRaster(true)).thenReturn(new File(DATA_DIR + "SmallRaster.tif"));
         when(rasterFilePathFactory.getExtentGaulRaster(false)).thenReturn(new File("doesnt exist"));
         configurationServiceImpl.setModelRepositoryUrl("https://github.com/SEEG-Oxford/seegSDM.git");
-        configurationServiceImpl.setModelRepositoryVersion("0.1-7");
+        configurationServiceImpl.setModelRepositoryVersion("0.1-9");
         gitSourceCodeManager.updateRepository();
 
         String runName = "runName12356";
@@ -231,7 +231,7 @@ public class ModelRunPackageBuilderIntegrationTest {
         assertThat(files).contains(Paths.get(dir.toString(), "R/seegSDM.R").toFile());
         assertThat(files).contains(Paths.get(dir.toString(), "DESCRIPTION").toFile());
         String description = FileUtils.readFileToString(Paths.get(dir.toString(), "DESCRIPTION").toFile());
-        assertThat(description).contains("Version: 0.1-7");
+        assertThat(description).contains("Version: 0.1-9");
     }
 
     private void buildPackageShouldCreateAZipContainingGaulLevelAdminRasters(Path directory) throws Exception {

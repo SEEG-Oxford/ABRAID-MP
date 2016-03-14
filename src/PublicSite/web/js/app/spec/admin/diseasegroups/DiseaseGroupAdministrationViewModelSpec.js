@@ -49,7 +49,7 @@ define([
                 minNewLocations: wrap(1),
                 maxEnvironmentalSuitabilityForTriggering: wrap(0.2),
                 minDistanceFromDiseaseExtentForTriggering: wrap(-300),
-                modelMode: wrap("bhatt"),
+                modelMode: wrap("Bhatt2013"),
                 agentType: wrap("VIRUS"),
                 filterBiasDataByAgentType: wrap(true),
                 minDataVolume: wrap(2),
@@ -74,7 +74,7 @@ define([
                 "\"abbreviation\":\"ABBREV\"," +
                 "\"groupType\":\"MICROCLUSTER\"," +
                 "\"isGlobal\":true," +
-                "\"modelMode\":\"bhatt\"," +
+                "\"modelMode\":\"Bhatt2013\"," +
                 "\"agentType\":\"VIRUS\"," +
                 "\"filterBiasDataByAgentType\":true," +
                 "\"parentDiseaseGroup\":{\"id\":2}," +
@@ -217,7 +217,7 @@ define([
                 minNewLocations: wrap(""),
                 maxEnvironmentalSuitabilityForTriggering: wrap(""),
                 minDistanceFromDiseaseExtentForTriggering: wrap(""),
-                modelMode: wrap("bhatt"),
+                modelMode: wrap("Bhatt2013"),
                 agentType: wrap(""),
                 filterBiasDataByAgentType: wrap(false),
                 minDataVolume: wrap(""),
@@ -236,7 +236,7 @@ define([
             };
             var expectedParams = "{\"name\":\"Name\"," +
                 "\"groupType\":\"MICROCLUSTER\"," +
-                "\"modelMode\":\"bhatt\"," +
+                "\"modelMode\":\"Bhatt2013\"," +
                 "\"agentType\":\"\"," +
                 "\"filterBiasDataByAgentType\":false," +
                 "\"parentDiseaseGroup\":{\"id\":null}," +

@@ -140,7 +140,7 @@ public class CommonsExecIntegrationTest {
         final RunConfiguration config = createRunConfig();
         Files.createDirectories(Paths.get(config.getWorkingDirectoryPath().toString(), "covariates"));
         DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
-        when(diseaseGroup.getModelMode()).thenReturn("bhatt");
+        when(diseaseGroup.getModelMode()).thenReturn("Bhatt2013");
         when(diseaseGroup.getId()).thenReturn(123);
         Collection<CovariateFile> covariates = new ArrayList<>();
 

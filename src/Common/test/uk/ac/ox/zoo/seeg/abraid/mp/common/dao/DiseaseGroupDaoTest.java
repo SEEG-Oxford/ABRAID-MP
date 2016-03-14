@@ -63,7 +63,7 @@ public class DiseaseGroupDaoTest extends AbstractCommonSpringIntegrationTests {
         String diseaseClusterPublicName = "Test disease cluster public name";
         String diseaseClusterShortName = "Short name";
         String diseaseClusterAbbreviation = "tdc";
-        String mode = "bhatt";
+        String mode = "Bhatt2013";
         int validatorDiseaseGroupId = 2;
         ValidatorDiseaseGroup validatorDiseaseGroup = validatorDiseaseGroupDao.getById(validatorDiseaseGroupId);
         DateTime lastModelRunPrepDate = DateTime.now().minusHours(2);
