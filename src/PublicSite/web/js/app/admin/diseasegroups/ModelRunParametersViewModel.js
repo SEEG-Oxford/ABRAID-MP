@@ -15,6 +15,9 @@ define(["ko"], function (ko) {
         self.maxEnvironmentalSuitabilityForTriggering = ko.observable().extend({ number: true, min: 0, max: 1 });
         self.minDistanceFromDiseaseExtentForTriggering = ko.observable().extend({ number: true });
         self.modelMode = ko.observable().extend({ required: true, inList: supportedModes });
+        self.filterBiasDataByAgentType = ko.observable();
+        self.agentTypes = [ "ALGA", "BACTERIA", "FUNGUS", "PARASITE", "PRION", "VIRUS" ];
+        self.agentType = ko.observable().extend({ required: self.filterBiasDataByAgentType });
 
         // Machine Learning
         self.useMachineLearning = ko.observable();
@@ -73,6 +76,8 @@ define(["ko"], function (ko) {
             self.useMachineLearning(diseaseGroup.useMachineLearning);
             self.maxEnvironmentalSuitabilityWithoutML(ko.utils.normaliseInput(
                 diseaseGroup.maxEnvironmentalSuitabilityWithoutML));
+            self.agentType(diseaseGroup.agentType);
+            self.filterBiasDataByAgentType(diseaseGroup.filterBiasDataByAgentType);
         });
     };
 });

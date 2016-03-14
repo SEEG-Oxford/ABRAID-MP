@@ -2,10 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.domain;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseExtent;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroupType;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ValidatorDiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -26,6 +23,8 @@ public class JsonDiseaseGroupTest {
         diseaseGroup.setAbbreviation("Abbr");
         diseaseGroup.setGlobal(true);
         diseaseGroup.setModelMode("test_mode");
+        diseaseGroup.setAgentType(DiseaseGroupAgentType.ALGA);
+        diseaseGroup.setFilterBiasDataByAgentType(true);
         diseaseGroup.setValidatorDiseaseGroup(new ValidatorDiseaseGroup(30, "Validator name"));
         diseaseGroup.setWeighting(0.1);
         diseaseGroup.setAutomaticModelRunsStartDate(DateTime.now());
@@ -52,6 +51,8 @@ public class JsonDiseaseGroupTest {
         assertThat(jsonDiseaseGroup.getAbbreviation()).isEqualTo("Abbr");
         assertThat(jsonDiseaseGroup.getIsGlobal()).isTrue();
         assertThat(jsonDiseaseGroup.getModelMode()).isEqualTo("test_mode");
+        assertThat(jsonDiseaseGroup.getFilterBiasDataByAgentType()).isEqualTo(true);
+        assertThat(jsonDiseaseGroup.getAgentType()).isEqualTo("ALGA");
         assertThat(jsonDiseaseGroup.getWeighting()).isEqualTo(0.1);
         assertThat(jsonDiseaseGroup.isAutomaticModelRuns()).isEqualTo(true);
         assertThat(jsonDiseaseGroup.getMinNewLocations()).isEqualTo(400);

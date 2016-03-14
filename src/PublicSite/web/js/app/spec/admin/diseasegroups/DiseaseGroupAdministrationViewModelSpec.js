@@ -50,6 +50,8 @@ define([
                 maxEnvironmentalSuitabilityForTriggering: wrap(0.2),
                 minDistanceFromDiseaseExtentForTriggering: wrap(-300),
                 modelMode: wrap("bhatt"),
+                agentType: wrap("VIRUS"),
+                filterBiasDataByAgentType: wrap(true),
                 minDataVolume: wrap(2),
                 minDistinctCountries: wrap(3),
                 minHighFrequencyCountries: wrap(4),
@@ -73,6 +75,8 @@ define([
                 "\"groupType\":\"MICROCLUSTER\"," +
                 "\"isGlobal\":true," +
                 "\"modelMode\":\"bhatt\"," +
+                "\"agentType\":\"VIRUS\"," +
+                "\"filterBiasDataByAgentType\":true," +
                 "\"parentDiseaseGroup\":{\"id\":2}," +
                 "\"validatorDiseaseGroup\":{\"id\":3}," +
                 "\"maxDaysBetweenModelRuns\":7," +
@@ -214,6 +218,8 @@ define([
                 maxEnvironmentalSuitabilityForTriggering: wrap(""),
                 minDistanceFromDiseaseExtentForTriggering: wrap(""),
                 modelMode: wrap("bhatt"),
+                agentType: wrap(""),
+                filterBiasDataByAgentType: wrap(false),
                 minDataVolume: wrap(""),
                 minDistinctCountries: wrap(""),
                 minHighFrequencyCountries: wrap(""),
@@ -231,6 +237,8 @@ define([
             var expectedParams = "{\"name\":\"Name\"," +
                 "\"groupType\":\"MICROCLUSTER\"," +
                 "\"modelMode\":\"bhatt\"," +
+                "\"agentType\":\"\"," +
+                "\"filterBiasDataByAgentType\":false," +
                 "\"parentDiseaseGroup\":{\"id\":null}," +
                 "\"validatorDiseaseGroup\":{\"id\":null}," +
                 "\"diseaseExtentParameters\":{}}";

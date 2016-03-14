@@ -13,9 +13,11 @@ public class JsonDiseaseGroup {
     private String shortName;
     private String abbreviation;
     private String groupType;
+    private String agentType;
     private String modelMode;
     private int maxDaysBetweenModelRuns;
     private Boolean isGlobal;
+    private boolean filterBiasDataByAgentType;
     private JsonParentDiseaseGroup parentDiseaseGroup;
     private JsonValidatorDiseaseGroup validatorDiseaseGroup;
     private Double weighting;
@@ -42,7 +44,9 @@ public class JsonDiseaseGroup {
         setShortName(diseaseGroup.getShortName());
         setAbbreviation(diseaseGroup.getAbbreviation());
         setGroupType(diseaseGroup.getGroupType().name());
+        setAgentType(diseaseGroup.getAgentType() == null? null : diseaseGroup.getAgentType().name());
         setIsGlobal(diseaseGroup.isGlobal());
+        setFilterBiasDataByAgentType(diseaseGroup.shouldFilterBiasDataByAgentType());
         setModelMode(diseaseGroup.getModelMode());
         if (diseaseGroup.getParentGroup() != null) {
             setParentDiseaseGroup(new JsonParentDiseaseGroup(diseaseGroup.getParentGroup()));
@@ -92,6 +96,14 @@ public class JsonDiseaseGroup {
         this.groupType = groupType;
     }
 
+    public String getAgentType() {
+        return agentType;
+    }
+
+    public void setAgentType(String agentType) {
+        this.agentType = agentType;
+    }
+
     public String getPublicName() {
         return publicName;
     }
@@ -122,6 +134,14 @@ public class JsonDiseaseGroup {
 
     public void setIsGlobal(Boolean isGlobal) {
         this.isGlobal = isGlobal;
+    }
+
+    public boolean getFilterBiasDataByAgentType() {
+        return filterBiasDataByAgentType;
+    }
+
+    public void setFilterBiasDataByAgentType(boolean filterBiasDataByAgentType) {
+        this.filterBiasDataByAgentType = filterBiasDataByAgentType;
     }
 
     public String getModelMode() {

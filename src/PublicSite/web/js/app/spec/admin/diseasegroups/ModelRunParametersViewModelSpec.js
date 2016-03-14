@@ -39,6 +39,8 @@ define([
                 expect(vm.minDistanceFromDiseaseExtentForTriggering).toBeObservable();
                 expect(vm.minDataVolume).toBeObservable();
                 expect(vm.modelMode).toBeObservable();
+                expect(vm.agentType).toBeObservable();
+                expect(vm.filterBiasDataByAgentType).toBeObservable();
                 expect(vm.minDistinctCountries).toBeObservable();
                 expect(vm.minHighFrequencyCountries).toBeObservable();
                 expect(vm.highFrequencyThreshold).toBeObservable();
@@ -60,6 +62,7 @@ define([
 
                 expect(vm.modelMode).toHaveValidationRule({name: "required", params: true});
                 expect(vm.modelMode).toHaveValidationRule({name: "inList", params: modesList});
+                expect(vm.agentType).toHaveValidationRule({name: "required", params: vm.filterBiasDataByAgentType});
                 expect(vm.minDistanceFromDiseaseExtentForTriggering)
                     .toHaveValidationRule({name: "number", params: true});
                 expect(vm.minDataVolume).toHaveValidationRule({name: "required", params: true});
@@ -77,6 +80,8 @@ define([
                     minDistanceFromDiseaseExtentForTriggering: "-300",
                     minDataVolume: "2",
                     modelMode: "b",
+                    agentType: "xyz",
+                    filterBiasDataByAgentType: true,
                     minDistinctCountries: "3",
                     minHighFrequencyCountries: "4",
                     highFrequencyThreshold: "5",
@@ -99,6 +104,8 @@ define([
                     .toBe(diseaseGroup.minDistanceFromDiseaseExtentForTriggering);
                 expect(vm.minDataVolume()).toBe(diseaseGroup.minDataVolume);
                 expect(vm.modelMode()).toBe(diseaseGroup.modelMode);
+                expect(vm.agentType()).toBe(diseaseGroup.agentType);
+                expect(vm.filterBiasDataByAgentType()).toBe(diseaseGroup.filterBiasDataByAgentType);
                 expect(vm.minDistinctCountries()).toBe(diseaseGroup.minDistinctCountries);
                 expect(vm.minHighFrequencyCountries()).toBe(diseaseGroup.minHighFrequencyCountries);
                 expect(vm.highFrequencyThreshold()).toBe(diseaseGroup.highFrequencyThreshold);
@@ -122,6 +129,8 @@ define([
                     minDistanceFromDiseaseExtentForTriggering: 0,
                     minDataVolume: "",
                     modelMode: "",
+                    agentType: "",
+                    filterBiasDataByAgentType: false,
                     minDistinctCountries: NaN,
                     minHighFrequencyCountries: undefined,
                     highFrequencyThreshold: 0,
@@ -143,6 +152,8 @@ define([
                 expect(vm.minDataVolume()).toBe("");
                 expect(vm.minDistinctCountries()).toBe("");
                 expect(vm.modelMode()).toBe("");
+                expect(vm.agentType()).toBe("");
+                expect(vm.filterBiasDataByAgentType()).toBe(false);
                 expect(vm.minHighFrequencyCountries()).toBe("");
                 expect(vm.highFrequencyThreshold()).toBe(0);
                 expect(vm.occursInAfrica()).toBe(diseaseGroup.occursInAfrica);
@@ -173,6 +184,20 @@ define([
                 vm.occursInAfrica(false);
                 // Assert
                 expect(vm.highFrequencyThreshold()).toBe(null);
+            });
+        });
+
+        describe("holds a list of valid agent types which", function () {
+            it("has the correct entries", function () {
+                // Arrange
+                var vm = new ModelRunParametersViewModel(baseUrl, eventName);
+                // Assert
+                expect(vm.agentTypes).toContain("ALGA");
+                expect(vm.agentTypes).toContain("BACTERIA");
+                expect(vm.agentTypes).toContain("FUNGUS");
+                expect(vm.agentTypes).toContain("PARASITE");
+                expect(vm.agentTypes).toContain("PRION");
+                expect(vm.agentTypes).toContain("VIRUS");
             });
         });
 

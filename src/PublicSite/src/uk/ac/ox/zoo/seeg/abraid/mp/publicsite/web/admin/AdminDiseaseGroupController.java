@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -356,7 +357,9 @@ public class AdminDiseaseGroupController extends AbstractController {
         diseaseGroup.setShortName(settings.getShortName());
         diseaseGroup.setAbbreviation(settings.getAbbreviation());
         diseaseGroup.setGroupType(DiseaseGroupType.valueOf(settings.getGroupType()));
+        diseaseGroup.setAgentType(parseAgentType(settings.getAgentType()));
         diseaseGroup.setGlobal(settings.getIsGlobal());
+        diseaseGroup.setFilterBiasDataByAgentType(settings.getFilterBiasDataByAgentType());
         diseaseGroup.setModelMode(settings.getModelMode());
         diseaseGroup.setMaxDaysBetweenModelRuns(settings.getMaxDaysBetweenModelRuns());
         diseaseGroup.setMinNewLocationsTrigger(settings.getMinNewLocations());
@@ -378,6 +381,10 @@ public class AdminDiseaseGroupController extends AbstractController {
         } else {
             return false;
         }
+    }
+
+    private DiseaseGroupAgentType parseAgentType(String agentType) {
+        return StringUtils.isEmpty(agentType) ? null : DiseaseGroupAgentType.valueOf(agentType);
     }
 
     private boolean setParentDiseaseGroup(DiseaseGroup diseaseGroup, JsonDiseaseGroup settings) {
