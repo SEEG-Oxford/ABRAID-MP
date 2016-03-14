@@ -296,8 +296,8 @@ public class ModelRunPackageBuilderIntegrationTest {
         assertThat(dir).exists();
         assertThat(dir).isDirectory();
         Collection<File> files = FileUtils.listFiles(dir, null, true);
-        assertThat(files).contains(Paths.get(dir.toString(), "bias_occurrences.csv").toFile());
-        String content = FileUtils.readFileToString(Paths.get(dir.toString(), "bias_occurrences.csv").toFile());
+        assertThat(files).contains(Paths.get(dir.toString(), "sample_bias.csv").toFile());
+        String content = FileUtils.readFileToString(Paths.get(dir.toString(), "sample_bias.csv").toFile());
         assertThat(content).isEqualTo("Longitude,Latitude,Admin,GAUL,Disease,Date\n" +
                         "2.0,4.0,-999,NA,23141,2014-01-02\n" +
                         "4.0,2.0,0,19,23141,2016-01-02\n" +

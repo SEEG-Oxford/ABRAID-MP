@@ -62,7 +62,7 @@ public class InputDataManagerTest {
         target.writeOccurrenceData(new ArrayList<DiseaseOccurrence>(), dataDir, true);
 
         // Assert
-        verify(mockOccurrenceWriter).write(anyListOf(DiseaseOccurrence.class), eq(Paths.get(dataDir.toString(), "bias_occurrences.csv").toFile()), eq(false));
+        verify(mockOccurrenceWriter).write(anyListOf(DiseaseOccurrence.class), eq(Paths.get(dataDir.toString(), "sample_bias.csv").toFile()), eq(false));
     }
 
     @Test

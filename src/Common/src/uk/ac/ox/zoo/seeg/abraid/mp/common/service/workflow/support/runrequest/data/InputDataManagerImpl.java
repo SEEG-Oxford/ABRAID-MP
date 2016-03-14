@@ -18,7 +18,7 @@ public class InputDataManagerImpl implements InputDataManager {
     private static final Logger LOGGER = Logger.getLogger(InputDataManagerImpl.class);
 
     private static final String OCCURRENCE_CSV = "occurrences.csv";
-    private static final String SUPPLEMENTARY_OCCURRENCE_CSV = "bias_occurrences.csv";
+    private static final String SAMPLE_BIAS_CSV = "sample_bias.csv";
     private static final String EXTENT_RASTER = "extent.tif";
     private final ExtentDataWriter extentDataWriter;
     private final OccurrenceDataWriter occurrenceDataWriter;
@@ -39,7 +39,7 @@ public class InputDataManagerImpl implements InputDataManager {
     public void writeOccurrenceData(List<DiseaseOccurrence> occurrenceData, File dataDirectory, boolean isBias)
             throws IOException {
         File outbreakFile = Paths.get(dataDirectory.toString(),
-                isBias ? SUPPLEMENTARY_OCCURRENCE_CSV : OCCURRENCE_CSV).toFile();
+                isBias ? SAMPLE_BIAS_CSV : OCCURRENCE_CSV).toFile();
         occurrenceDataWriter.write(occurrenceData, outbreakFile, !isBias);
     }
 
