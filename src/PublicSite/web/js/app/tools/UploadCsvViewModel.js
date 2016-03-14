@@ -3,8 +3,9 @@
  */
 define([
     "ko",
+    "jquery",
     "shared/app/BaseFileFormViewModel"
-], function (ko, BaseFileFormViewModel) {
+], function (ko, $, BaseFileFormViewModel) {
     "use strict";
 
     return function (baseUrl, diseaseGroups) {
@@ -25,5 +26,22 @@ define([
         self.selectedDiseaseGroup = ko.observable(diseaseGroups[0]);
         self.isGoldStandard = ko.observable(false);
         self.isBias = ko.observable(false);
+        self.purgeBiasData = function () {
+            self.notices.removeAll();
+            self.isSubmitting(true);
+
+            $.ajax({
+                url: baseUrl + "tools/uploadcsv/purgeBiasData",
+                method: "POST",
+                data: { diseaseGroup: self.selectedDiseaseGroup().id }
+            })
+            .done(function () {
+                self.pushNotice(self.selectedDiseaseGroup().name + " bias data removed", "success");
+            })
+            .fail(self.failureHandler)
+            .always(function () {
+                self.isSubmitting(false);
+            });
+        };
     };
 });

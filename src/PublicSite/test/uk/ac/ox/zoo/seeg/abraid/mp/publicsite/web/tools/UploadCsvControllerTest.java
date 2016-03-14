@@ -163,4 +163,44 @@ public class UploadCsvControllerTest {
         verify(uploadCsvControllerHelperAsyncWrapper).acquireCsvData(eq(csv), eq(isBias), eq(isGoldStandard),
                 eq(expectedDisease), eq(USER_EMAIL_ADDRESS), eq(filePath));
     }
+
+    @Test
+    public void purgeBiasDataReturnsBadRequestWithInvalidDiseaseID() throws Exception {
+        // Act
+        ResponseEntity responseEntity = controller.purgeBiasData(-87);
+
+        // Assert
+        verify(diseaseService, never()).deleteBiasDiseaseOccurrencesForDisease(diseaseGroup);
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void purgeBiasDataReturnsNoContentIfSuccessful() throws Exception {
+        // Act
+        ResponseEntity responseEntity = controller.purgeBiasData(87);
+
+        // Assert
+        verify(diseaseService).deleteBiasDiseaseOccurrencesForDisease(diseaseGroup);
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    }
+
+    @Test
+    public void purgeBiasDataReturnsBadRequestWithInvalidDiseaseID() throws Exception {
+        // Act
+        ResponseEntity responseEntity = controller.purgeBiasData(-87);
+
+        // Assert
+        verify(diseaseService, never()).deleteBiasDiseaseOccurrencesForDisease(diseaseGroup);
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void purgeBiasDataReturnsNoContentIfSuccessful() throws Exception {
+        // Act
+        ResponseEntity responseEntity = controller.purgeBiasData(87);
+
+        // Assert
+        verify(diseaseService).deleteBiasDiseaseOccurrencesForDisease(diseaseGroup);
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    }
 }

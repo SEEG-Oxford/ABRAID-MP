@@ -108,6 +108,23 @@ public class UploadCsvController extends AbstractController {
         }
     }
 
+    /**
+     * Purges any uploaded sample bias data for a specified disease.
+     * @param diseaseGroup The ID of the disease for which bias data should be removed.
+     * @return HTTP Status code: 204 for success, 400 if any inputs are invalid.
+     * @throws Exception if upload could not be performed
+     */
+    @Secured({ "ROLE_ADMIN" })
+    @RequestMapping(value = "/tools/uploadcsv/purgeBiasData", method = RequestMethod.POST)
+    public ResponseEntity purgeBiasData(int diseaseGroup) throws Exception {
+        DiseaseGroup biasDisease = diseaseService.getDiseaseGroupById(diseaseGroup);
+        if (biasDisease == null) {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+        diseaseService.deleteBiasDiseaseOccurrencesForDisease(biasDisease);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
+
     private void acquireCsvData(MultipartFile file, boolean isBias, boolean isGoldStandard, DiseaseGroup biasDisease)
             throws IOException {
         byte[] csvFile = file.getBytes();

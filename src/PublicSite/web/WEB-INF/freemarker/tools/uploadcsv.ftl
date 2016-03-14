@@ -36,8 +36,12 @@
                             <i class="fa fa-medkit"></i>
                         </span>
                         <select id="disease-group-picker" name="bias-disease" class="form-control" data-bind="options: diseaseGroups, value: selectedDiseaseGroup, optionsText: 'name', valueAllowUnset: true" ></select>
+                        <span class="input-group-addon btn btn-default btn-file">
+                            <span>Purge bias data</span>
+                            <input type="button" data-bind="disabled: find('isSubmitting'), click: purgeBiasData">
+                        </span>
                     </span>
-                    <span>This file will replace any existing bias set for the chosen disease. To remove a bias dataset (and resume using filter based bias datasets) upload an empty csv (header row only).</span>
+                    <span>This file will replace any existing bias set for the chosen disease.</span>
                 </p>
                 <p class="form-group" data-bind="visible: !isBias()">
                     <label for="is-gold-standard">Is this a "gold standard" data set? If so, final weightings will be set to 1 and the occurrences will not appear on the Data Validator.</label>
