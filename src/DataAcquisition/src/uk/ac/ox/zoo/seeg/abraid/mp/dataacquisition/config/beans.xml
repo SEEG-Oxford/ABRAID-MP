@@ -48,8 +48,11 @@
 
     <!-- HealthMap data acquisition beans -->
     <bean id="healthMapAlertConverter" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.HealthMapAlertConverter" autowire="constructor">
-        <!-- Expected to be a comma-separated list -->
-        <constructor-arg name="placeCategoriesToIgnore" value="${healthmap.placeCategoriesToIgnore}"/>
+        <constructor-arg name="placeCategoriesToIgnore">
+            <bean class="uk.ac.ox.zoo.seeg.abraid.mp.common.util.ParseUtils" factory-method="splitCommaDelimitedString">
+                <constructor-arg name="text" type="java.lang.String" value="${healthmap.placeCategoriesToIgnore}"/>
+            </bean>
+        </constructor-arg>
     </bean>
     <bean id="healthMapDataAcquirer" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.HealthMapDataAcquirer" autowire="constructor"/>
     <bean id="healthMapDataConverter" class="uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.HealthMapDataConverter" autowire="constructor"/>

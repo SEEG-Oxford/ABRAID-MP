@@ -28,6 +28,7 @@ public class DiseaseServiceImpl implements DiseaseService {
     private ModelRunDao modelRunDao;
     private DiseaseExtentClassDao diseaseExtentClassDao;
     private int maxDaysOnValidator;
+    private List<String> biasModelModes;
     private NativeSQL nativeSQL;
 
     public DiseaseServiceImpl(DiseaseOccurrenceDao diseaseOccurrenceDao,
@@ -38,6 +39,7 @@ public class DiseaseServiceImpl implements DiseaseService {
                               ModelRunDao modelRunDao,
                               DiseaseExtentClassDao diseaseExtentClassDao,
                               int maxDaysOnValidator,
+                              List<String> biasModelModes,
                               NativeSQL nativeSQL) {
         this.diseaseOccurrenceDao = diseaseOccurrenceDao;
         this.diseaseOccurrenceReviewDao = diseaseOccurrenceReviewDao;
@@ -47,6 +49,7 @@ public class DiseaseServiceImpl implements DiseaseService {
         this.modelRunDao = modelRunDao;
         this.diseaseExtentClassDao = diseaseExtentClassDao;
         this.maxDaysOnValidator = maxDaysOnValidator;
+        this.biasModelModes = biasModelModes;
         this.nativeSQL = nativeSQL;
     }
 
@@ -575,6 +578,17 @@ public class DiseaseServiceImpl implements DiseaseService {
     @Override
     public void deleteBiasDiseaseOccurrencesForDisease(DiseaseGroup biasDisease) {
         diseaseOccurrenceDao.deleteDiseaseOccurrencesByBiasDiseaseId(biasDisease.getId());
+    }
+
+    /**
+     * Determines whether the specified disease group require bias data for model runs based on the disease's
+     * model mode.
+     * @param diseaseGroup The disease group.
+     * @return True if bias data is required.
+     */
+    @Override
+    public boolean modelModeRequiresBiasDataForDisease(DiseaseGroup diseaseGroup) {
+        return biasModelModes.contains(diseaseGroup.getModelMode());
     }
 
     private boolean isDiseaseGroupGlobal(Integer diseaseGroupId) {

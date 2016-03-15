@@ -52,7 +52,7 @@ public class AdminDiseaseGroupControllerTest {
         batchDatesValidator = mock(BatchDatesValidator.class);
         sourceCodeManager = mock(SourceCodeManager.class);
         controller = new AdminDiseaseGroupController(diseaseService, objectMapper, modelRunWorkflowService,
-                modelRunService, helper, batchDatesValidator, sourceCodeManager, new String[] {"Shearer2016"});
+                modelRunService, helper, batchDatesValidator, sourceCodeManager);
     }
 
     @Test
@@ -103,7 +103,7 @@ public class AdminDiseaseGroupControllerTest {
         when(diseaseService.getDiseaseOccurrenceStatistics(diseaseGroupId)).thenReturn(statistics);
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
 
-        diseaseGroup.setModelMode("Shearer2016");
+        when(diseaseService.modelModeRequiresBiasDataForDisease(diseaseGroup)).thenReturn(true);
         when(diseaseService.getCountOfUnfilteredBespokeBiasOccurrences(diseaseGroup)).thenReturn(1L);
         when(diseaseService.getEstimateCountOfFilteredBespokeBiasOccurrences(diseaseGroup)).thenReturn(2L);
         when(diseaseService.getEstimateCountOfFilteredDefaultBiasOccurrences(diseaseGroup)).thenReturn(3L);
@@ -137,8 +137,8 @@ public class AdminDiseaseGroupControllerTest {
         when(diseaseService.getDiseaseOccurrenceStatistics(diseaseGroupId)).thenReturn(statistics);
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
 
-        diseaseGroup.setModelMode("Shearer2016");
-        when(diseaseService.getCountOfUnfilteredBespokeBiasOccurrences(diseaseGroup)).thenReturn(1L);
+        when(diseaseService.modelModeRequiresBiasDataForDisease(diseaseGroup)).thenReturn(true);
+        when(diseaseService.getCountOfUnfilteredBespokeBiasOccurrences(diseaseGroup)).thenReturn(0L);
         when(diseaseService.getEstimateCountOfFilteredBespokeBiasOccurrences(diseaseGroup)).thenReturn(2L);
         when(diseaseService.getEstimateCountOfFilteredDefaultBiasOccurrences(diseaseGroup)).thenReturn(3L);
 
@@ -152,7 +152,7 @@ public class AdminDiseaseGroupControllerTest {
         assertThat(entity.getBody().isHasModelBeenSuccessfullyRun()).isTrue();
         assertThat(entity.getBody().isCanRunModel()).isFalse();
         assertThat(entity.getBody().getCannotRunModelReason()).isEqualTo("the public name is missing");
-        assertThat(entity.getBody().getSampleBiasText()).isEqualTo("1 bespoke sample bias data points have been provided, approximately 2 of which are suitable.");
+        assertThat(entity.getBody().getSampleBiasText()).isEqualTo("0 bespoke sample bias data points have been provided, approximately 3 ABRAID occurrences are suitable.");
     }
 
     @Test
@@ -171,7 +171,7 @@ public class AdminDiseaseGroupControllerTest {
         when(diseaseService.getDiseaseOccurrenceStatistics(diseaseGroupId)).thenReturn(statistics);
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
 
-        diseaseGroup.setModelMode("Bhatt2013");
+        when(diseaseService.modelModeRequiresBiasDataForDisease(diseaseGroup)).thenReturn(false);
         when(diseaseService.getCountOfUnfilteredBespokeBiasOccurrences(diseaseGroup)).thenReturn(1L);
         when(diseaseService.getEstimateCountOfFilteredBespokeBiasOccurrences(diseaseGroup)).thenReturn(2L);
         when(diseaseService.getEstimateCountOfFilteredDefaultBiasOccurrences(diseaseGroup)).thenReturn(3L);

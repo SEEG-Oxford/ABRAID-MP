@@ -8,6 +8,7 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -130,6 +131,15 @@ public final class ParseUtils {
         }
 
         return splitList;
+    }
+
+    /**
+     * Splits the specified space-delimited text. All tokens are trimmed and empty tokens are ignored.
+     * @param text The text to split.
+     * @return The split text.
+     */
+    public static List<String> splitSpaceDelimitedString(String text) {
+        return Arrays.asList(StringUtils.tokenizeToStringArray(text, " ", true, true));
     }
 
     /**

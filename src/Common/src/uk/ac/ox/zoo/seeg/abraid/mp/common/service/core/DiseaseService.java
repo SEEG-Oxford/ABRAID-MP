@@ -337,4 +337,12 @@ public interface DiseaseService {
      *                       (i.e. bias_disease_group_id, not disease_group_id).
      */
     void deleteBiasDiseaseOccurrencesForDisease(DiseaseGroup biasDisease);
+
+    /**
+     * Determines whether the specified disease group require bias data for model runs based on the disease's
+     * model mode.
+     * @param diseaseGroup The disease group.
+     * @return True if bias data is required.
+     */
+    boolean modelModeRequiresBiasDataForDisease(DiseaseGroup diseaseGroup);
 }

@@ -42,7 +42,8 @@ public class DiseaseServiceTest {
         maxDaysOnValidator = 5;
         diseaseService = new DiseaseServiceImpl(diseaseOccurrenceDao, diseaseOccurrenceReviewDao, diseaseGroupDao,
                 validatorDiseaseGroupDao, adminUnitDiseaseExtentClassDao,
-                modelRunDao, diseaseExtentClassDao, maxDaysOnValidator, nativeSQL);
+                modelRunDao, diseaseExtentClassDao, maxDaysOnValidator, Arrays.asList("Shearer2016"),
+                nativeSQL);
     }
 
     @Test
@@ -723,5 +724,31 @@ public class DiseaseServiceTest {
         // Assert
         verify(diseaseOccurrenceDao).getEstimateCountOfFilteredDefaultBiasOccurrences(diseaseGroup);
         assertThat(result).isEqualTo(expected);
+    }
+
+    @Test
+    public void modelModeRequiresBiasDataForDiseaseTrue() {
+        // Arrange
+        DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
+        when(diseaseGroup.getModelMode()).thenReturn("Shearer2016");
+
+        // Act
+        boolean result = diseaseService.modelModeRequiresBiasDataForDisease(diseaseGroup);
+
+        // Assert
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    public void modelModeRequiresBiasDataForDiseaseFalse() {
+        // Arrange
+        DiseaseGroup diseaseGroup = mock(DiseaseGroup.class);
+        when(diseaseGroup.getModelMode()).thenReturn("Bhatt2013");
+
+        // Act
+        boolean result = diseaseService.modelModeRequiresBiasDataForDisease(diseaseGroup);
+
+        // Assert
+        assertThat(result).isFalse();
     }
 }
