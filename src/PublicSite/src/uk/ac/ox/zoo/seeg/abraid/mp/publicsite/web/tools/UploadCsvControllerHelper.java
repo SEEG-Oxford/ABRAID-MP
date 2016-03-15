@@ -65,7 +65,7 @@ public class UploadCsvControllerHelper {
 
     private String getEmailDetailsLine(boolean isBias, boolean isGoldStandard, DiseaseGroup biasDisease) {
         if (isBias) {
-            return String.format("Bias dataset for: %s", biasDisease.getName());
+            return String.format("Background dataset for: %s", biasDisease.getName());
         } else {
             return String.format("Gold standard: %s", (isGoldStandard ? "Yes" : "No"));
         }

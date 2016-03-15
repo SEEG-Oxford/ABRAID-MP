@@ -21,8 +21,8 @@
             <@f.form "upload-csv-form" "Upload" "Uploading...">
                 <@f.formGroupFile "file-picker" "File" "file" ".csv" />
                 <p class="form-group">
-                    <label for="is-bias">Is this a normal set of disease occurrences, or should it be used as a sample bias dataset only.</label>
-                    <span id="is-bias" class="input-group btn-group" data-bind="foreach: [ { value: false, label: 'Normal' }, { value: true, label: 'Bias' } ]">
+                    <label for="is-bias">Is this a normal set of disease occurrences, or should it be used as a background dataset only.</label>
+                    <span id="is-bias" class="input-group btn-group" data-bind="foreach: [ { value: false, label: 'Normal' }, { value: true, label: 'Background' } ]">
                         <label class="btn btn-default" data-bind="css: { active: $parent.isBias() === value, disabled: find('isSubmitting') }">
                             <input type="radio" name="is-bias" data-bind="formRadio: { selected: $parent.isBias, value: value }">
                             <span data-bind="text: label"></span>
@@ -30,18 +30,18 @@
                     </span>
                 </p>
                 <p class="form-group" data-bind="visible: isBias">
-                    <label for="bias-disease">What disease should this be used as a sampling bias dataset for?</label>
+                    <label for="bias-disease">What disease should this be used as a background dataset for?</label>
                     <span id="bias-disease" class="input-group">
                         <span class="input-group-addon">
                             <i class="fa fa-medkit"></i>
                         </span>
                         <select id="disease-group-picker" name="bias-disease" class="form-control" data-bind="options: diseaseGroups, value: selectedDiseaseGroup, optionsText: 'name', valueAllowUnset: true" ></select>
                         <span class="input-group-addon btn btn-default btn-file">
-                            <span>Purge bias data</span>
+                            <span>Purge background data</span>
                             <input type="button" data-bind="disabled: find('isSubmitting'), click: purgeBiasData">
                         </span>
                     </span>
-                    <span>This file will replace any existing bias set for the chosen disease.</span>
+                    <span>This file will replace any existing background dataset for the chosen disease.</span>
                 </p>
                 <p class="form-group" data-bind="visible: !isBias()">
                     <label for="is-gold-standard">Is this a "gold standard" data set? If so, final weightings will be set to 1 and the occurrences will not appear on the Data Validator.</label>

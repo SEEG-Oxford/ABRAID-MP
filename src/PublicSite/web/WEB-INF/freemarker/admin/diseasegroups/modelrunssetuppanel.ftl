@@ -50,7 +50,7 @@
                 <span id="disease-occurrences-text" data-bind="text: diseaseOccurrencesText"></span>
             </div>
             <div>
-                <label for="bias-occurrences-text">Sample Bias:</label>
+                <label for="bias-occurrences-text">Background data:</label>
                 <span id="bias-occurrences-text" data-bind="text: sampleBiasText"></span>
             </div>
             <br>

@@ -35,7 +35,7 @@ import static ch.lambdaj.Lambda.convert;
 @Controller
 public class UploadCsvController extends AbstractController {
     private static final String FILE_EMPTY_MESSAGE = "CSV file not supplied.";
-    private static final String BAD_DISEASE_MESSAGE = "Invalid bias disease group specified.";
+    private static final String BAD_DISEASE_MESSAGE = "Invalid background disease group specified.";
 
     private CurrentUserService currentUserService;
     private ExpertService expertService;

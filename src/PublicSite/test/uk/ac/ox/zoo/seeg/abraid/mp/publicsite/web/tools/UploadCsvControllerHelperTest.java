@@ -125,7 +125,7 @@ public class UploadCsvControllerHelperTest {
                 "Here are the results of the CSV upload that you submitted.\n" +
                         "\n" +
                         "File: \"/path/to/test.csv\".\n" +
-                        "Bias dataset for: name\n" +
+                        "Background dataset for: name\n" +
                         "Submitted on: " + nowString + ".\n" +
                         "Completed on: " + nowString + ".\n" +
                         "\n" + expectedEmailEnd)));

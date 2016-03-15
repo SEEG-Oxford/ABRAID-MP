@@ -119,7 +119,7 @@ public class AdminDiseaseGroupControllerTest {
         assertThat(entity.getBody().isHasModelBeenSuccessfullyRun()).isTrue();
         assertThat(entity.getBody().isCanRunModel()).isFalse();
         assertThat(entity.getBody().getCannotRunModelReason()).isEqualTo("the public name is missing");
-        assertThat(entity.getBody().getSampleBiasText()).isEqualTo("1 bespoke sample bias data points have been provided, approximately 2 of which are suitable.");
+        assertThat(entity.getBody().getSampleBiasText()).isEqualTo("1 bespoke background data points have been provided, approximately 2 of which are suitable.");
     }
 
     @Test
@@ -152,7 +152,7 @@ public class AdminDiseaseGroupControllerTest {
         assertThat(entity.getBody().isHasModelBeenSuccessfullyRun()).isTrue();
         assertThat(entity.getBody().isCanRunModel()).isFalse();
         assertThat(entity.getBody().getCannotRunModelReason()).isEqualTo("the public name is missing");
-        assertThat(entity.getBody().getSampleBiasText()).isEqualTo("0 bespoke sample bias data points have been provided, approximately 3 ABRAID occurrences are suitable.");
+        assertThat(entity.getBody().getSampleBiasText()).isEqualTo("0 bespoke background data points have been provided, approximately 3 ABRAID occurrences are suitable.");
     }
 
     @Test
@@ -187,7 +187,7 @@ public class AdminDiseaseGroupControllerTest {
         assertThat(entity.getBody().isHasModelBeenSuccessfullyRun()).isTrue();
         assertThat(entity.getBody().isCanRunModel()).isFalse();
         assertThat(entity.getBody().getCannotRunModelReason()).isEqualTo("the public name is missing");
-        assertThat(entity.getBody().getSampleBiasText()).isEqualTo("The current model mode for this disease group does not use sample bias data.");
+        assertThat(entity.getBody().getSampleBiasText()).isEqualTo("The current model mode for this disease group does not use background data.");
     }
 
     @Test

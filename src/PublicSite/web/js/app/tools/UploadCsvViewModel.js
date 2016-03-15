@@ -36,7 +36,7 @@ define([
                 data: { diseaseGroup: self.selectedDiseaseGroup().id }
             })
             .done(function () {
-                self.pushNotice(self.selectedDiseaseGroup().name + " bias data removed", "success");
+                self.pushNotice(self.selectedDiseaseGroup().name + " background data removed", "success");
             })
             .fail(self.failureHandler)
             .always(function () {

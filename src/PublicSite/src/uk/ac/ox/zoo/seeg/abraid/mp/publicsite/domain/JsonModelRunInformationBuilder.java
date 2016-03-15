@@ -154,10 +154,10 @@ public class JsonModelRunInformationBuilder {
      */
     public JsonModelRunInformationBuilder populateBiasMessage(
             boolean useSampleBias, long bespokeBiasCount, long usableBiasEstimate) {
-        String message = "The current model mode for this disease group does not use sample bias data.";
+        String message = "The current model mode for this disease group does not use background data.";
         if (useSampleBias) {
             message = String.format(
-                    "%s bespoke sample bias data points have been provided, approximately %s %s are suitable.",
+                    "%s bespoke background data points have been provided, approximately %s %s are suitable.",
                     bespokeBiasCount,
                     usableBiasEstimate,
                     (bespokeBiasCount == 0 ? "ABRAID occurrences" : "of which"));

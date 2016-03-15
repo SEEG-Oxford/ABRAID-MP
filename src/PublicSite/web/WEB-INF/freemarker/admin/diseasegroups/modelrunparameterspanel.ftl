@@ -49,7 +49,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="filter-bias-data" class="col-sm-8 control-label">Filter Bias Data By Agent Type</label>
+                        <label for="filter-bias-data" class="col-sm-8 control-label">Filter Background Data By Agent Type</label>
                         <div class="col-sm-4">
                             <input type="checkbox" id="filter-bias-data" data-bind="formChecked: filterBiasDataByAgentType">
                         </div>
