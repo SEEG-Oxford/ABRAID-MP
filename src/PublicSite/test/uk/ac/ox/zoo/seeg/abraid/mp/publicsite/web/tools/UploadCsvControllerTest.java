@@ -66,7 +66,7 @@ public class UploadCsvControllerTest {
     @Test
     public void showCSVPageTemplatesCorrectly() throws Exception {
         // Arrange
-        List<DiseaseGroup> diseaseGroups = Arrays.asList(createDisease(1, "a"), createDisease(2, "b"));
+        List<DiseaseGroup> diseaseGroups = Arrays.asList(createDisease(2, "b"), createDisease(3, "a"));
         when(diseaseService.getAllDiseaseGroups()).thenReturn(diseaseGroups);
         ArgumentCaptor<List<JsonParentDiseaseGroup>> captor = GeneralTestUtils.captorForListClass();
         when(objectMapper.writeValueAsString(captor.capture())).thenReturn("correctDiseaseGroups");
@@ -79,7 +79,7 @@ public class UploadCsvControllerTest {
         assertThat(template).isEqualTo("tools/uploadcsv");
         verify(model).addAttribute("diseaseGroups", "correctDiseaseGroups");
         List<JsonParentDiseaseGroup> jsonDto = captor.getValue();
-        assertThat(jsonDto.get(0).getId()).isEqualTo(1);
+        assertThat(jsonDto.get(0).getId()).isEqualTo(3);
         assertThat(jsonDto.get(0).getName()).isEqualTo("a");
         assertThat(jsonDto.get(1).getId()).isEqualTo(2);
         assertThat(jsonDto.get(1).getName()).isEqualTo("b");

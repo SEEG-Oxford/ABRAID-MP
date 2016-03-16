@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.util.List;
 
 import static ch.lambdaj.Lambda.convert;
+import static ch.lambdaj.Lambda.on;
+import static ch.lambdaj.Lambda.sort;
 
 /**
  * Controller for uploading a CSV file for data acquisition.
@@ -63,7 +65,7 @@ public class UploadCsvController extends AbstractController {
     @Secured({ "ROLE_ADMIN" })
     @RequestMapping(value = "/tools/uploadcsv", method = RequestMethod.GET)
     public String showCSVPage(Model model) throws JsonProcessingException {
-        List<JsonParentDiseaseGroup> diseaseGroups = convert(
+        List<JsonParentDiseaseGroup> diseaseGroups = sort(convert(
             diseaseService.getAllDiseaseGroups(),
             new Converter<DiseaseGroup, JsonParentDiseaseGroup>() {
                 @Override
@@ -72,7 +74,7 @@ public class UploadCsvController extends AbstractController {
                     return new JsonParentDiseaseGroup(diseaseGroup);
                 }
             }
-        );
+        ), on(JsonParentDiseaseGroup.class).getName());
         model.addAttribute("diseaseGroups", objectMapper.writeValueAsString(diseaseGroups));
         return "tools/uploadcsv";
     }
