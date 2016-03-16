@@ -106,7 +106,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
 
     @Before
     public void before() throws Exception {
-        when(configurationService.getModelRepositoryUrl()).thenReturn("https://github.com/laurence-hudson-tessella/seegSDM.git");
+        when(configurationService.getModelRepositoryUrl()).thenReturn("https://github.com/SEEG-Oxford/seegSDM.git");
         when(configurationService.getModelRepositoryVersion()).thenReturn("0.1-9");
         gitSourceCodeManager.updateRepository();
         when(rasterFilePathFactory.getAdminRaster(0)).thenReturn(new File(DATA_DIR + "admin/a0.tif"));

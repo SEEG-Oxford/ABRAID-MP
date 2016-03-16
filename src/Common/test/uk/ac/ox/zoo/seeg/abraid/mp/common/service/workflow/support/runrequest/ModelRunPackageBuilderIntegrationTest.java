@@ -101,7 +101,7 @@ public class ModelRunPackageBuilderIntegrationTest {
         when(rasterFilePathFactory.getAdminRaster(2)).thenReturn(new File(DATA_DIR + "admin/a2.tif"));
         when(rasterFilePathFactory.getExtentGaulRaster(true)).thenReturn(new File(DATA_DIR + "SmallRaster.tif"));
         when(rasterFilePathFactory.getExtentGaulRaster(false)).thenReturn(new File("doesnt exist"));
-        configurationServiceImpl.setModelRepositoryUrl("https://github.com/laurence-hudson-tessella/seegSDM.git");
+        configurationServiceImpl.setModelRepositoryUrl("https://github.com/SEEG-Oxford/seegSDM.git");
         configurationServiceImpl.setModelRepositoryVersion("0.1-9");
         gitSourceCodeManager.updateRepository();
 
