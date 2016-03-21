@@ -13,7 +13,7 @@ if [[ ! -d "$ABRAID_SUPPORT_PATH/modeloutput" ]]; then
   mkdir -p "$ABRAID_SUPPORT_PATH/modeloutput/"
 fi
 
-if [[ -f "$ABRAID_SUPPORT_PATH/modeloutput/waterbodies.tif"]]; then
+if [[ ! -f "$ABRAID_SUPPORT_PATH/modeloutput/waterbodies.tif" ]]; then
   echo "[[ MW | Getting waterbodies mask raster file ]]"
   fileAsk "$REMOTE_USER@${deploy_props[waterbodies.source]}/waterbodies.tif" "$ABRAID_SUPPORT_PATH/modeloutput/waterbodies.tif" "waterbodies mask raster"
 fi
