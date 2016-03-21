@@ -242,6 +242,18 @@ public class WebServiceClientTest {
         assertThat(response).containsIgnoringCase("\"authenticated\": true");
     }
 
+    @Test
+    public void followRedirect() throws IOException {
+        // Arrange
+        WebServiceClient client = new WebServiceClient(60000, 60000);
+
+        // Act
+        String response = client.makeGetRequest("https://httpbin.org/redirect/6");
+
+        // Assert
+        assertThat(response).containsIgnoringCase("\"url\": \"https://httpbin.org/get\"");
+    }
+
     private File getFile(String content) throws IOException {
         File file = testFolder.newFile();
         FileUtils.writeStringToFile(file, content == null ? "1234" : content);

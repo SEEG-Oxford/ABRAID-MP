@@ -1,8 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.web;
 
 import org.apache.http.*;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpRequest;
 import org.apache.http.auth.AuthScheme;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.AuthState;
@@ -21,11 +19,12 @@ import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.apache.http.protocol.HttpContext;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
-import org.springframework.http.*;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
 import java.io.File;
@@ -67,6 +66,7 @@ public class WebServiceClient {
         clientBuilder = clientBuilder.setDefaultRequestConfig(requestConfig);
         clientBuilder = clientBuilder.disableAutomaticRetries();
         clientBuilder = clientBuilder.addInterceptorFirst(new PreemptiveAuthInterceptor());
+        clientBuilder = clientBuilder.setRedirectStrategy(new LaxRedirectStrategy());
         return clientBuilder.build();
     }
 
