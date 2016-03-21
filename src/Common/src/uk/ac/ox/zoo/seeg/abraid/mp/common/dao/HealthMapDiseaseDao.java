@@ -11,17 +11,17 @@ import java.util.List;
  */
 public interface HealthMapDiseaseDao {
     /**
-     * Gets all diseases.
-     * @return All diseases.
-     */
-    List<HealthMapDisease> getAll();
-
-    /**
      * Gets a HealthMap disease by ID.
      * @param id The ID.
      * @return The HealthMap disease, or null if not found.
      */
     HealthMapDisease getById(Integer id);
+
+    /**
+     * Gets all diseases.
+     * @return All diseases.
+     */
+    List<HealthMapDisease> getAll();
 
     /**
      * Saves the specified HealthMap disease.

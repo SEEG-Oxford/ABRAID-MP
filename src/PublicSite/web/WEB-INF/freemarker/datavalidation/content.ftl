@@ -17,12 +17,10 @@
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.2/leaflet.css">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.2/MarkerCluster.css">
     <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Sans+Pro:600" type="text/css">
-    <link rel="stylesheet" href="<@spring.url "/css/markers.css" />">
-    <link rel="stylesheet" href="<@spring.url "/css/L.Control.Zoomslider.css" />">
-    <link rel="stylesheet" href="<@spring.url "/css/flipclock.css" />">
+    <link rel="stylesheet" href="<@spring.url "/ext/leaflet/leaflet/leaflet.css" />">
+    <link rel="stylesheet" href="<@spring.url "/ext/leaflet/zoomslider/L.Control.Zoomslider.css" />">
+    <link rel="stylesheet" href="<@spring.url "/ext/jquery/flipclock/flipclock.css" />">
     <link rel="stylesheet" href="<@spring.url "/css/map.css" />">
     <link rel="stylesheet" href="<@spring.url "/css/dataValidation.css" />">
 </head>
@@ -49,9 +47,11 @@
     <!-- Bootstrapped JS data for KO view models -->
     <script>
         var data = {
-            wmsUrl: "${baseWmsUrl}",
+            wmsUrl: "${baseWmsUrl?js_string}",
             loggedIn: ${userLoggedIn?c},
             showHelpText: ${showHelpText?c},
+            diseasesRequiringExtentInput: [<#list diseasesRequiringExtentInput as disease>${disease?c},</#list>],
+            diseasesRequiringOccurrenceInput: [<#list diseasesRequiringOccurrenceInput as disease>${disease?c},</#list>],
             diseaseOccurrenceReviewCount: ${diseaseOccurrenceReviewCount?c},
             adminUnitReviewCount: ${adminUnitReviewCount?c},
             diseaseInterests: [
@@ -75,6 +75,7 @@
                         name: "${defaultValidatorDiseaseGroupName?js_string}",
                         diseaseGroups: [
                             {
+                                id: 87,
                                 name: "${defaultDiseaseGroupShortName?js_string}"
                             }
                         ]

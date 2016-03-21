@@ -22,7 +22,7 @@ public class AdminUnitQCDaoTest extends AbstractCommonSpringIntegrationTests {
     @Test
     public void getAllReturnsAllAdminUnits() {
         List<AdminUnitQC> adminUnits = adminUnitQCDao.getAll();
-        assertThat(adminUnits).hasSize(41724);
+        assertThat(adminUnits).hasSize(41720);
     }
 
     @Test

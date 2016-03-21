@@ -15,23 +15,15 @@
 
     <bean id="osChecker" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.util.OSCheckerImpl" />
 
-    <bean id="configurationService" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ConfigurationServiceImpl">
+    <bean id="modelWrapperConfigurationServiceImpl" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ModelWrapperConfigurationServiceImpl">
         <constructor-arg name="basicProperties" value="${modelwrapper.managed.properties.file}" />
-        <constructor-arg name="defaultCovariateConfig" value="WEB-INF/defaultCovariateConfig.json" />
         <constructor-arg name="osChecker" ref="osChecker" />
     </bean>
 
     <bean id="runConfigurationFactory" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.RunConfigurationFactoryImpl" autowire="constructor" />
-    <bean id="scriptGenerator" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.FreemarkerScriptGenerator" />
+
     <bean id="processRunnerFactory" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.commonsexec.CommonsExecProcessRunnerFactory" />
-    <bean id="sourceCodeManager" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.GitSourceCodeManager" autowire="constructor" />
-    <bean id="occurrenceDataWriter" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.data.OccurrenceDataWriterImpl" />
-    <bean id="extentDataWriter" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.data.ExtentDataWriterImpl" />
-    <bean id="inputDataManager" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.data.InputDataManagerImpl" autowire="constructor" />
-    <bean id="workspaceProvisioner" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.WorkspaceProvisionerImpl" autowire="constructor" />
     <bean id="modelRunner" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelRunnerImpl" autowire="constructor" />
     <bean id="modelRunnerAsyncWrapper" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelRunnerAsyncWrapperImpl" autowire="constructor" destroy-method="cleanup" />
     <bean id="modelOutputHandlerWebService" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.ModelOutputHandlerWebService" autowire="constructor" />
-
-    <bean id="covariatesControllerValidator" class="uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.web.covariates.CovariatesControllerValidator" autowire="constructor" />
 </beans>

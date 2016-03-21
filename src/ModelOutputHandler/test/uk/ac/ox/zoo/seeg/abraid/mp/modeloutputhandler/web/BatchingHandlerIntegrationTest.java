@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseGroupDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrenceStatus;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
@@ -43,7 +44,9 @@ import static org.mockito.Mockito.when;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class BatchingHandlerIntegrationTest extends AbstractSpringIntegrationTests {
     private static final String LARGE_RASTER_FILENAME =
-            "Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/service/workflow/support/testdata/test_raster_large_double.tif";
+            "ModelOutputHandler/test/uk/ac/ox/zoo/seeg/abraid/mp/modeloutputhandler/web/testdata/batching/prediction_raster.tif";
+    private static final String ADMIN_RASTER_FILENAME =
+            "ModelOutputHandler/test/uk/ac/ox/zoo/seeg/abraid/mp/modeloutputhandler/web/testdata/batching/admin.tif";
 
     @Autowired
     private ModelRunService modelRunService;
@@ -61,6 +64,9 @@ public class BatchingHandlerIntegrationTest extends AbstractSpringIntegrationTes
     @Autowired
     @ReplaceWithMock
     private RasterFilePathFactory rasterFilePathFactory;
+
+    @Autowired
+    private DiseaseGroupDao diseaseGroupDao;
 
     @Test
     public void handleFirstBatch() throws Exception {
@@ -148,7 +154,7 @@ public class BatchingHandlerIntegrationTest extends AbstractSpringIntegrationTes
                                                DateTime batchingCompletionDate) {
         String name = Double.toString(Math.random());
         ModelRun modelRun = new ModelRun(
-                name, diseaseGroupId, "host", DateTime.now().minusDays(1), DateTime.now(), DateTime.now());
+                name, diseaseGroupDao.getById(diseaseGroupId), "host", DateTime.now().minusDays(1), DateTime.now(), DateTime.now());
         modelRun.setStatus(ModelRunStatus.COMPLETED);
         modelRun.setResponseDate(DateTime.now());
         modelRun.setBatchStartDate(batchStartDate);
@@ -159,6 +165,12 @@ public class BatchingHandlerIntegrationTest extends AbstractSpringIntegrationTes
 
         when(rasterFilePathFactory.getFullMeanPredictionRasterFile(eq(modelRun)))
                 .thenReturn(new File(LARGE_RASTER_FILENAME));
+        when(rasterFilePathFactory.getAdminRaster(0))
+                .thenReturn(new File(ADMIN_RASTER_FILENAME));
+        when(rasterFilePathFactory.getAdminRaster(1))
+                .thenReturn(new File(ADMIN_RASTER_FILENAME));
+        when(rasterFilePathFactory.getAdminRaster(2))
+                .thenReturn(new File(ADMIN_RASTER_FILENAME));
         return modelRun;
     }
 

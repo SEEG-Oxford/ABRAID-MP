@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-      Contains web-specific beans.
+      Contains misc util beans.
       Copyright (c) 2014 University of Oxford
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"

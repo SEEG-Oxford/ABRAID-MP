@@ -19,6 +19,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
+import static uk.ac.ox.zoo.seeg.abraid.mp.testutils.GeneralTestUtils.captorForClass;
 
 /**
  * Tests for AdminExpertsController.
@@ -66,7 +67,7 @@ public class AdminExpertsControllerTest {
         target.showPage(model);
 
         // Assert
-        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> captor = captorForClass(String.class);
         verify(model).addAttribute(eq("experts"), captor.capture());
         String json = captor.getValue();
 

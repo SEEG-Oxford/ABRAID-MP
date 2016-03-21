@@ -23,6 +23,7 @@ import static com.googlecode.catchexception.CatchException.caughtException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.*;
+import static uk.ac.ox.zoo.seeg.abraid.mp.testutils.GeneralTestUtils.captorForMapClass;
 
 /**
  * Tests for AccountControllerHelper.
@@ -270,8 +271,7 @@ public class AccountControllerHelperTest {
         target.processExpertPasswordResetRequestAsTransaction("email", "url");
 
         // Assert
-        Class<Map<String, Object>> argType = (Class<Map<String, Object>>) (Class) Map.class;
-        ArgumentCaptor<Map<String, Object>> captor = ArgumentCaptor.forClass(argType);
+        ArgumentCaptor<Map<String, Object>> captor = captorForMapClass();
         verify(emailService).sendEmailInBackground(eq("email"), eq("ABRAID-MP Password Reset"), eq("account/passwordResetEmail.ftl"), captor.capture());
         Map<String, Object> data = captor.getValue();
         assertThat(data.get("url")).isEqualTo("url");

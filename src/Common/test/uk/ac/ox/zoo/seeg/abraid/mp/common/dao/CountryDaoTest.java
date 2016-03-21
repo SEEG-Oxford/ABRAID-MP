@@ -25,6 +25,17 @@ public class CountryDaoTest extends AbstractCommonSpringIntegrationTests {
     }
 
     @Test
+    public void getCountryNamesForHealthMapReport() {
+        // In the test data non of the country geoms are large enough. We could insert/update some, but the abraid user
+        // doesn't have insert/update access to the static readonly table.
+        // Act
+        List<String> actual = countryDao.getCountryNamesForHealthMapReport();
+
+        // Assert
+        assertThat(actual).hasSize(0);
+    }
+
+    @Test
     public void getCountryByValidName() {
         String countryName = "Australia";
         int gaulCode = 17;
@@ -38,6 +49,24 @@ public class CountryDaoTest extends AbstractCommonSpringIntegrationTests {
     public void getCountryByInvalidName() {
         String countryName = "This country does not exist";
         Country country = countryDao.getByName(countryName);
+        assertThat(country).isNull();
+    }
+
+
+    @Test
+    public void getCountryByValidGaul() {
+        String countryName = "Australia";
+        int gaulCode = 17;
+        Country country = countryDao.getByGaulCode(gaulCode);
+        assertThat(country).isNotNull();
+        assertThat(country.getGaulCode()).isEqualTo(gaulCode);
+        assertThat(country.getName()).isEqualTo(countryName);
+    }
+
+    @Test
+    public void getCountryByInvalidGAUL() {
+        int gaulCode = 17777;
+        Country country = countryDao.getByGaulCode(gaulCode);
         assertThat(country).isNull();
     }
 

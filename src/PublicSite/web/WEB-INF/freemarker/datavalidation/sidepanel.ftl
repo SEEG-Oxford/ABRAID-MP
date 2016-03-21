@@ -79,7 +79,7 @@
 
 <script type="text/html" id="no-selected-point-template">
     <ul>
-        <div class="sidePanelText">Select a feature on the map to view more details here...</div>
+        <div class="sidePanelText">Select a point on the map to view more details here...</div>
     </ul>
     <div id="submitReviewSuccess" style="display:none">
         <button type="button" class="btn btn-primary" disabled="disabled">Review submitted</button>
@@ -111,13 +111,12 @@
             </ul>
         </li>
     </ul>
-    <div id="reviewButtons">
     <@security.authorize ifAnyGranted="ROLE_USER">
-        <div class="btn-group">
+        <div id="reviewButtons" class="occurrence-buttons">
             <button type="button" class="btn btn-primary" data-bind="click: function () { submitReview('YES') }, disable: submitting"><i class="fa fa-check"></i>&nbsp;Valid</button>
             <button type="button" class="btn btn-primary" data-bind="click: function () { submitReview('UNSURE') }, disable: submitting">Unsure<br /></button>
             <button type="button" class="btn btn-primary" data-bind="click: function () { submitReview('NO') }, disable: submitting"><i class="fa fa-times"></i>&nbsp;Invalid</button>
+            <button type="button" id="i-dont-know-occurrence-button" class="btn btn-danger btn-block" data-bind="click: function () { submitReview(null) }, disable: submitting">I don't know</button>
         </div>
     </@security.authorize>
-    </div>
 </script>

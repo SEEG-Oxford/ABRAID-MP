@@ -15,13 +15,4 @@ public class HealthMapSubDiseaseDaoImpl extends AbstractDao<HealthMapSubDisease,
     public HealthMapSubDiseaseDaoImpl(SessionFactory sessionFactory) {
         super(sessionFactory);
     }
-
-    /**
-     * Gets a HealthMap sub-disease by name.
-     * @param name The name.
-     * @return The HealthMap sub-disease, or null if not found.
-     */
-    public HealthMapSubDisease getByName(String name) {
-        return uniqueResultNamedQuery("getHealthMapSubDiseaseByName", "name", name);
-    }
 }

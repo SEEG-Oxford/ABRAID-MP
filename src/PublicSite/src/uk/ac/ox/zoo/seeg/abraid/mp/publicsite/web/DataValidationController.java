@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.GeoJsonDiseaseExtentFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.GeoJsonDiseaseOccurrenceFeatureCollection;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.DisplayJsonView;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.support.ResponseView;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.GeometryService;
@@ -27,6 +25,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import static ch.lambdaj.Lambda.extract;
+import static ch.lambdaj.Lambda.on;
 
 /**
  * Controller for the expert data validation map page.
@@ -89,6 +90,8 @@ public class DataValidationController extends AbstractController {
         Integer diseaseOccurrenceReviewCount = 0;
         Integer adminUnitReviewCount = 0;
 
+        List<DiseaseGroup> diseasesRequiringExtentInput = new ArrayList<>();
+        List<DiseaseGroup> diseasesRequiringOccurrenceInput = new ArrayList<>();
         if (userLoggedIn) {
             Expert expert = getExpert(expertId);
             userIsSeeg = expert.isSeegMember();
@@ -97,6 +100,9 @@ public class DataValidationController extends AbstractController {
                 expert.setHasSeenHelpText(true);
                 expertService.saveExpert(expert);
             }
+
+            diseasesRequiringExtentInput = diseaseService.getDiseaseGroupsNeedingExtentReviewByExpert(expert);
+            diseasesRequiringOccurrenceInput =  diseaseService.getDiseaseGroupsNeedingOccurrenceReviewByExpert(expert);
 
             diseaseOccurrenceReviewCount = expertService.getDiseaseOccurrenceReviewCount(expertId).intValue();
             adminUnitReviewCount = expertService.getAdminUnitReviewCount(expertId).intValue();
@@ -111,6 +117,8 @@ public class DataValidationController extends AbstractController {
             model.addAttribute("defaultDiseaseGroupShortName", DEFAULT_DISEASE_GROUP_SHORT_NAME);
         }
 
+        model.addAttribute("diseasesRequiringExtentInput", extractIds(diseasesRequiringExtentInput));
+        model.addAttribute("diseasesRequiringOccurrenceInput", extractIds(diseasesRequiringOccurrenceInput));
         model.addAttribute("userLoggedIn", userLoggedIn);
         model.addAttribute("userSeeg", userIsSeeg);
         model.addAttribute("showHelpText", showHelpText);
@@ -118,6 +126,10 @@ public class DataValidationController extends AbstractController {
         model.addAttribute("adminUnitReviewCount", adminUnitReviewCount);
 
         return "datavalidation/content";
+    }
+
+    private List<Integer> extractIds(List<DiseaseGroup> diseaseGroups) {
+        return extract(diseaseGroups, on(DiseaseGroup.class).getId());
     }
 
     private List<ValidatorDiseaseGroup> getSortedDiseaseInterests(int expertId) {
@@ -155,7 +167,6 @@ public class DataValidationController extends AbstractController {
             value = DATA_VALIDATION_BASE_URL + "/diseases/{validatorDiseaseGroupId}/occurrences",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseView(DisplayJsonView.class)
     @ResponseBody
     public ResponseEntity<GeoJsonDiseaseOccurrenceFeatureCollection> getDiseaseOccurrencesForReviewByCurrentUser(
             @PathVariable Integer validatorDiseaseGroupId) {
@@ -189,7 +200,7 @@ public class DataValidationController extends AbstractController {
         Integer expertId = currentUserService.getCurrentUserId();
 
         // Basic validation
-        if (validatorDiseaseGroupId == null || occurrenceId == null || review == null) {
+        if (validatorDiseaseGroupId == null || occurrenceId == null) {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
 
@@ -199,7 +210,8 @@ public class DataValidationController extends AbstractController {
                 diseaseService.getValidatorDiseaseGroupById(validatorDiseaseGroupId);
         DiseaseOccurrenceReviewResponse diseaseOccurrenceReviewResponse =
                 DiseaseOccurrenceReviewResponse.parseFromString(review);
-        if (occurrence == null || validatorDiseaseGroup == null || diseaseOccurrenceReviewResponse == null) {
+        if (occurrence == null || validatorDiseaseGroup == null ||
+                (review != null && diseaseOccurrenceReviewResponse == null)) {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
 
@@ -228,7 +240,6 @@ public class DataValidationController extends AbstractController {
             value = DATA_VALIDATION_BASE_URL + "/diseases/{diseaseGroupId}/adminunits",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseView(DisplayJsonView.class)
     @ResponseBody
     public ResponseEntity<GeoJsonDiseaseExtentFeatureCollection> getDiseaseExtentForDiseaseGroup(
             @PathVariable Integer diseaseGroupId) {
@@ -265,7 +276,6 @@ public class DataValidationController extends AbstractController {
             value = DATA_VALIDATION_BASE_URL + "/defaultadminunits",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseView(DisplayJsonView.class)
     @ResponseBody
     public ResponseEntity<GeoJsonDiseaseExtentFeatureCollection> getDefaultDiseaseExtent() {
         List<AdminUnitDiseaseExtentClass> diseaseExtent =
@@ -286,7 +296,6 @@ public class DataValidationController extends AbstractController {
             value = DATA_VALIDATION_BASE_URL + "/diseases/{diseaseGroupId}/adminunits/{gaulCode}/occurrences",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseView(DisplayJsonView.class)
     @ResponseBody
     public ResponseEntity<GeoJsonDiseaseOccurrenceFeatureCollection>
         getLatestDiseaseOccurrencesForAdminUnitDiseaseExtentClass(@PathVariable Integer diseaseGroupId,
@@ -310,7 +319,6 @@ public class DataValidationController extends AbstractController {
             value = DATA_VALIDATION_BASE_URL + "/defaultadminunits/{gaulCode}/occurrences",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseView(DisplayJsonView.class)
     @ResponseBody
     public ResponseEntity<GeoJsonDiseaseOccurrenceFeatureCollection>
     getLatestDiseaseOccurrencesForAdminUnitDiseaseExtentClassForDefaultDiseaseGroup(@PathVariable Integer gaulCode) {

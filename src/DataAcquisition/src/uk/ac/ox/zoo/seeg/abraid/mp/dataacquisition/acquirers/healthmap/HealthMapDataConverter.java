@@ -79,13 +79,13 @@ public class HealthMapDataConverter {
         if (healthMapLocation.getAlerts() != null) {
             for (HealthMapAlert healthMapAlert : healthMapLocation.getAlerts()) {
                 for (DiseaseOccurrence occurrence : alertConverter.convert(healthMapAlert, location)) {
-                    if (diseaseOccurrenceDataAcquirer.acquire(occurrence)) {
-                        try {
+                    try {
+                        if (diseaseOccurrenceDataAcquirer.acquire(occurrence)) {
                             convertedOccurrences.add(occurrence);
-                        } catch (DataAcquisitionException e) {
-                            // DataAcquisitionException should not cause a roll back (occurrence age check failed)
-                            LOGGER.warn(e.getMessage());
                         }
+                    } catch (DataAcquisitionException e) {
+                        // DataAcquisitionException should not cause a roll back (occurrence age check failed)
+                        LOGGER.warn(e.getMessage());
                     }
                 }
             }

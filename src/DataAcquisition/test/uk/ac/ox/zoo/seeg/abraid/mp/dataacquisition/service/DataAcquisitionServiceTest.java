@@ -2,6 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.service;
 
 import org.junit.Before;
 import org.junit.Test;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.csv.CsvDataAcquirer;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.HealthMapDataAcquirer;
 
@@ -39,7 +40,15 @@ public class DataAcquisitionServiceTest {
     @Test
     public void acquireCsvData() {
         byte[] csv = "1, 2, 3".getBytes();
-        service.acquireCsvData(csv, true);
-        verify(csvDataAcquirer).acquireDataFromCsv(eq(csv), eq(true));
+        service.acquireCsvData(csv, false, true, null);
+        verify(csvDataAcquirer).acquireDataFromCsv(eq(csv), eq(false), eq(true), (DiseaseGroup) isNull());
+    }
+
+    @Test
+    public void acquireCsvBiasData() {
+        byte[] csv = "1, 2, 3".getBytes();
+        DiseaseGroup disease = mock(DiseaseGroup.class);
+        service.acquireCsvData(csv, true, false, disease);
+        verify(csvDataAcquirer).acquireDataFromCsv(eq(csv), eq(true), eq(false), eq(disease));
     }
 }

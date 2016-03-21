@@ -23,9 +23,7 @@ public class CsvEffectCurveCovariateInfluence extends AbstractCsvCovariateInflue
     public static List<CsvEffectCurveCovariateInfluence> readFromCSV(String csv) throws IOException {
         CsvSchema schema = CsvSchema.builder()
                 .setSkipFirstDataRow(true)
-                .addColumn("index")
-                .addColumn("covariateFilePath")
-                .addColumn("covariateDisplayName")
+                .addColumn("name")
                 .addColumn("covariateValue")
                 .addColumn("meanInfluence", CsvSchema.ColumnType.NUMBER)
                 .addColumn("lowerQuantile", CsvSchema.ColumnType.NUMBER)

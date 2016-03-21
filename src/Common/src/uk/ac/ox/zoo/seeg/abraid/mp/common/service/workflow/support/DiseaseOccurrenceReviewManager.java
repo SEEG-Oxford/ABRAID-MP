@@ -27,9 +27,11 @@ public class DiseaseOccurrenceReviewManager {
             "Removed %d disease occurrence(s) from validation (of which %d discarded); %d occurrence(s) now remaining";
 
     private DiseaseService diseaseService;
+    private double expertWeightingThreshold;
 
-    public DiseaseOccurrenceReviewManager(DiseaseService diseaseService) {
+    public DiseaseOccurrenceReviewManager(DiseaseService diseaseService, double expertWeightingThreshold) {
         this.diseaseService = diseaseService;
+        this.expertWeightingThreshold = expertWeightingThreshold;
     }
 
     /**
@@ -38,6 +40,9 @@ public class DiseaseOccurrenceReviewManager {
      * has not actually received any reviews, set the status to DISCARDED_UNREVIEWED so that it is never sent to the
      * model or included in the disease extent. If we are during disease group set up, the occurrence should be removed
      * from DataValidator immediately, irrespective of time spent in review.
+     * Note: It is possible for an occurrence to end up with DISCARDED_UNREVIEWED while still having an expert
+     * weighting. This is the result of a reviewer(s) score falling below the threshold during the time an occurrence
+     * is on the validator.
      * @param diseaseGroupId The ID of the disease group this model run preparation is for.
      * @param isAutomaticProcess If this is part of the automated daily process or for a manual model run.
      */
@@ -71,7 +76,8 @@ public class DiseaseOccurrenceReviewManager {
 
     private Set<DiseaseOccurrence> getDiseaseOccurrencesInValidationWithReviews(int diseaseGroupId) {
         List<DiseaseOccurrenceReview> reviews =
-                diseaseService.getAllDiseaseOccurrenceReviewsForOccurrencesInValidation(diseaseGroupId);
+                diseaseService.getDiseaseOccurrenceReviewsForOccurrencesInValidationForUpdatingWeightings(
+                        diseaseGroupId, expertWeightingThreshold);
         return new HashSet<>(extract(reviews, on(DiseaseOccurrenceReview.class).getDiseaseOccurrence()));
     }
 

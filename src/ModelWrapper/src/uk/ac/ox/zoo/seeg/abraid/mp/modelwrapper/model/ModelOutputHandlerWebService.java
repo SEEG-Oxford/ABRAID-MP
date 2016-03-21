@@ -1,9 +1,8 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model;
 
-import org.apache.commons.io.FileUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ConfigurationService;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ModelWrapperConfigurationService;
 
 import javax.ws.rs.core.UriBuilder;
 import java.io.File;
@@ -16,12 +15,13 @@ import java.io.IOException;
  */
 public class ModelOutputHandlerWebService {
     private WebServiceClient webServiceClient;
-    private ConfigurationService configurationService;
+    private ModelWrapperConfigurationService configurationService;
 
     // The ModelWrapper's URL path for the model run (this is hardcoded because it is hardcoded in ModelOutputHandler).
     private static final String MODEL_RUN_URL_PATH = "/handleoutputs";
 
-    public ModelOutputHandlerWebService(WebServiceClient webServiceClient, ConfigurationService configurationService) {
+    public ModelOutputHandlerWebService(
+            WebServiceClient webServiceClient, ModelWrapperConfigurationService configurationService) {
         this.webServiceClient = webServiceClient;
         this.configurationService = configurationService;
     }
@@ -35,8 +35,7 @@ public class ModelOutputHandlerWebService {
      */
     public String handleOutputs(File outputZipFile) throws IOException, WebServiceClientException {
         String url = buildUrl();
-        byte[] body = FileUtils.readFileToByteArray(outputZipFile);
-        return webServiceClient.makePostRequestWithBinary(url, body);
+        return webServiceClient.makePostRequestWithBinary(url, outputZipFile);
     }
 
     private String buildUrl() {

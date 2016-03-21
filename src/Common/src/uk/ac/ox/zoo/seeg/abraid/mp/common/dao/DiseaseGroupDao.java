@@ -17,11 +17,31 @@ public interface DiseaseGroupDao {
     List<DiseaseGroup> getAll();
 
     /**
+     * Gets a list of the disease groups for which there are occurrences waiting to be reviewed, by the given expert.
+     * @param expertId The expert's id.
+     * @return A list of disease groups.
+     */
+    List<DiseaseGroup> getDiseaseGroupsNeedingOccurrenceReviewByExpert(int expertId);
+
+    /**
+     * Gets a list of the disease groups for which there are admin units waiting to be reviewed, by the given expert.
+     * @param expertId The expert's id.
+     * @return A list of disease groups.
+     */
+    List<DiseaseGroup> getDiseaseGroupsNeedingExtentReviewByExpert(int expertId);
+
+    /**
      * Gets a disease group by ID.
      * @param id The ID.
      * @return The disease group with the specified ID, or null if not found.
      */
     DiseaseGroup getById(Integer id);
+
+    /**
+     * Gets the names of all disease groups to be shown in the HealthMap disease report (sorted).
+     * @return The disease groups names.
+     */
+    List<String> getDiseaseGroupNamesForHealthMapReport();
 
     /**
      * Saves the specified diseaseGroup.

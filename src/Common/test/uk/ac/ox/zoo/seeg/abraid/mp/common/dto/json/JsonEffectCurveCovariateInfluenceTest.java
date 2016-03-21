@@ -1,7 +1,11 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json;
 
 import org.junit.Test;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateFile;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateSubFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.EffectCurveCovariateInfluence;
+
+import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -23,8 +27,12 @@ public class JsonEffectCurveCovariateInfluenceTest {
         double covariateValue = 2345.0;
 
         EffectCurveCovariateInfluence covariateInfluence = mock(EffectCurveCovariateInfluence.class);
-        when(covariateInfluence.getCovariateFilePath()).thenReturn(name);
-        when(covariateInfluence.getCovariateDisplayName()).thenReturn(displayName);
+        CovariateFile covariateFile = mock(CovariateFile.class);
+        CovariateSubFile subObj = mock(CovariateSubFile.class);
+        when(subObj.getFile()).thenReturn(name);
+        when(covariateFile.getFiles()).thenReturn(Arrays.asList(subObj));
+        when(covariateFile.getName()).thenReturn(displayName);
+        when(covariateInfluence.getCovariateFile()).thenReturn(covariateFile);
         when(covariateInfluence.getMeanInfluence()).thenReturn(meanInfluence);
         when(covariateInfluence.getCovariateValue()).thenReturn(covariateValue);
         when(covariateInfluence.getUpperQuantile()).thenReturn(upperQuantile);

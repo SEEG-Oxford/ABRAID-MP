@@ -16,11 +16,17 @@ public class RasterFilePathFactory {
     private static final String FULL_FILENAME_FORMAT = "%s_%s_full.tif";
     private static final String MASKED_FILENAME_FORMAT = "%s_%s.tif";
     private static final String EXTENT_FILENAME_FORMAT = "%s_%s.tif";
+    private static final String ADMIN_RASTER_FILENAME_FORMAT = "admin%sqc.tif";
+    private static final String EXTENT_GAUL_RASTER_FILENAME_FORMAT = "admin_%s.tif";
+    private static final String GLOBAL_EXTENT_GAUL_TYPE = "global";
+    private static final String TROPICAL_EXTENT_GAUL_TYPE = "tropical";
 
-    private File rasterFileDirectory;
+    private File resultsRasterFileDirectory;
+    private File adminRasterFileDirectory;
 
-    public RasterFilePathFactory(File rasterFileDirectory) {
-        this.rasterFileDirectory = rasterFileDirectory;
+    public RasterFilePathFactory(File resultsRasterFileDirectory, File adminRasterFileDirectory) {
+        this.resultsRasterFileDirectory = resultsRasterFileDirectory;
+        this.adminRasterFileDirectory = adminRasterFileDirectory;
     }
 
     /**
@@ -78,6 +84,27 @@ public class RasterFilePathFactory {
 
     private File getFile(ModelRun modelRun, String type, String pattern) {
         String fileName = String.format(pattern, modelRun.getName(), type);
-        return Paths.get(rasterFileDirectory.getAbsolutePath(), fileName).toFile();
+        return Paths.get(resultsRasterFileDirectory.getAbsolutePath(), fileName).toFile();
+    }
+
+    /**
+     * Gets the location of an admin unit raster file for the admin unit level.
+     * @param level The admin unit level.
+     * @return An admin unit raster file location.
+     */
+    public File getAdminRaster(int level) {
+        String fileName = String.format(ADMIN_RASTER_FILENAME_FORMAT, level);
+        return Paths.get(adminRasterFileDirectory.getAbsolutePath(), fileName).toFile();
+    }
+
+    /**
+     * Gets the location of an extent gaul code raster file.
+     * @param isGlobal If the global or tropical raster should be returned.
+     * @return An extent gaul code raster file location.
+     */
+    public File getExtentGaulRaster(boolean isGlobal) {
+        String fileName = String.format(EXTENT_GAUL_RASTER_FILENAME_FORMAT,
+                (isGlobal ? GLOBAL_EXTENT_GAUL_TYPE : TROPICAL_EXTENT_GAUL_TYPE));
+        return Paths.get(adminRasterFileDirectory.getAbsolutePath(), fileName).toFile();
     }
 }

@@ -19,13 +19,11 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ConfigurationService;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.SourceCodeManager;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ModelWrapperConfigurationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.SpringockitoWebContextLoader;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -36,9 +34,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Integration test for the root ModelWrapper controller.
- * Copyright (c) 2014 University of Oxford
- */
+* Integration test for the root ModelWrapper controller.
+* Copyright (c) 2014 University of Oxford
+*/
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = SpringockitoWebContextLoader.class, locations = {
         "file:ModelWrapper/web/WEB-INF/abraid-servlet-beans.xml",
@@ -58,11 +56,7 @@ public class IndexControllerIntegrationTest extends BaseWebIntegrationTests {
 
     @ReplaceWithMock
     @Autowired
-    private ConfigurationService configurationService;
-
-    @ReplaceWithMock
-    @Autowired
-    private SourceCodeManager sourceCodeManager;
+    private ModelWrapperConfigurationService configurationService;
 
     @Autowired
     private FreeMarkerConfigurer freemarkerConfig;
@@ -85,19 +79,11 @@ public class IndexControllerIntegrationTest extends BaseWebIntegrationTests {
     @Test
     public void indexPageReturnsCorrectContent() throws Exception {
         // Arrange
-        when(configurationService.getModelRepositoryUrl()).thenReturn("foo1");
-        when(configurationService.getModelRepositoryVersion()).thenReturn("foo2");
         when(configurationService.getRExecutablePath()).thenReturn("foo3");
         when(configurationService.getMaxModelRunDuration()).thenReturn(123);
-        when(configurationService.getCovariateDirectory()).thenReturn("foo4");
-        when(sourceCodeManager.getAvailableVersions()).thenReturn(Arrays.asList("1", "2", "3"));
         List<String> expectedJavaScript = Arrays.asList(
-                "url: \"foo1\"",
-                "version: \"foo2\"",
-                "availableVersions: [\"1\",\"2\",\"3\"]",
                 "rPath: \"foo3\"",
-                "runDuration: 123",
-                "covariateDirectory: \"foo4\"");
+                "runDuration: 123");
 
         // Act
         ResultActions sendRequest = this.mockMvc.perform(get("/"));
@@ -112,12 +98,8 @@ public class IndexControllerIntegrationTest extends BaseWebIntegrationTests {
 
     @Test
     public void indexPageOnlyAcceptsGET() throws Exception {
-        when(configurationService.getModelRepositoryUrl()).thenReturn("");
-        when(configurationService.getModelRepositoryVersion()).thenReturn("");
         when(configurationService.getRExecutablePath()).thenReturn("");
         when(configurationService.getMaxModelRunDuration()).thenReturn(0);
-        when(configurationService.getCovariateDirectory()).thenReturn("");
-        when(sourceCodeManager.getAvailableVersions()).thenReturn(new ArrayList<String>());
 
         this.mockMvc.perform(get("/")).andExpect(status().isOk());
         this.mockMvc.perform(post("/")).andExpect(status().isMethodNotAllowed());

@@ -1,17 +1,20 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 
-import com.vividsolutions.jts.geom.Point;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentMatcher;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQL;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ValidationParameterCacheService;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Tests the DistanceFromDiseaseExtentHelper class.
@@ -21,125 +24,202 @@ import static org.mockito.Mockito.*;
 public class DistanceFromDiseaseExtentHelperTest {
     private NativeSQL nativeSQL;
     private DistanceFromDiseaseExtentHelper helper;
+    private LocationService locationService;
+    private ValidationParameterCacheService cacheService;
 
     @Before
     public void setUp() {
         nativeSQL = mock(NativeSQL.class);
-        helper = new DistanceFromDiseaseExtentHelper(nativeSQL);
+        locationService = mock(LocationService.class);
+        cacheService = mock(ValidationParameterCacheService.class);
+        when(cacheService.getDistanceToExtentFromCache(anyInt(), anyInt())).thenReturn(null);
+        helper = new DistanceFromDiseaseExtentHelper(nativeSQL, locationService, cacheService);
     }
 
     @Test
     public void findDistanceFromDiseaseExtentWhenLocationIsOutsideTheExtentReturnsDistanceOutside() {
         // Arrange
         int diseaseGroupId = 87;
-        Point point = GeometryUtils.createPoint(10, 10);
+        int locationId = 123;
         double expectedDistance = 25;
+        boolean isGlobal = false;
+        Location location = mock(Location.class);
+        when(location.getId()).thenReturn(locationId);
+        setupExtentClass(diseaseGroupId, isGlobal, location, DiseaseExtentClass.UNCERTAIN, DiseaseExtentClass.POSSIBLE_ABSENCE, DiseaseExtentClass.ABSENCE);
 
-        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, false, point);
-        when(nativeSQL.findDistanceOutsideDiseaseExtent(eq(diseaseGroupId), eqExact(point))).thenReturn(expectedDistance);
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, isGlobal, location);
+        when(nativeSQL.findDistanceOutsideDiseaseExtent(diseaseGroupId, isGlobal, locationId)).thenReturn(expectedDistance);
+        when(nativeSQL.findDistanceInsideDiseaseExtent(diseaseGroupId, isGlobal, locationId)).thenReturn(321d);
 
         // Act
         Double actualDistance = helper.findDistanceFromDiseaseExtent(occurrence);
 
         // Assert
         assertThat(actualDistance).isEqualTo(expectedDistance);
-        verifyFindDistanceOutsideDiseaseExtent(1);
-        verifyFindDistanceWithinDiseaseExtent(0);
+        verify(cacheService).saveDistanceToExtentCacheEntry(diseaseGroupId, locationId, actualDistance);
     }
 
     @Test
     public void findDistanceFromDiseaseExtentWhenLocationIsWithinTheExtentReturnsDistanceWithin() {
         // Arrange
-        int diseaseGroupId = 64;
-        Point point = GeometryUtils.createPoint(50, 50);
-        double expectedDistance = 20;
+        int diseaseGroupId = 87;
+        int locationId = 123;
+        double expectedDistance = 25;
+        boolean isGlobal = false;
+        Location location = mock(Location.class);
+        when(location.getId()).thenReturn(locationId);
+        setupExtentClass(diseaseGroupId, isGlobal, location, DiseaseExtentClass.POSSIBLE_PRESENCE, DiseaseExtentClass.PRESENCE);
 
-        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, true, point);
-        when(nativeSQL.findDistanceOutsideDiseaseExtent(eq(diseaseGroupId), eqExact(point))).thenReturn(0.0);
-        when(nativeSQL.findDistanceWithinDiseaseExtent(eq(diseaseGroupId), eq(true), eqExact(point))).thenReturn(expectedDistance);
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, isGlobal, location);
+        when(nativeSQL.findDistanceOutsideDiseaseExtent(diseaseGroupId, isGlobal, locationId)).thenReturn(123d);
+        when(nativeSQL.findDistanceInsideDiseaseExtent(diseaseGroupId, isGlobal, locationId)).thenReturn(expectedDistance);
+
+        // Act
+        Double actualDistance = helper.findDistanceFromDiseaseExtent(occurrence);
+
+        // Assert
+        assertThat(actualDistance).isEqualTo(-expectedDistance);
+        verify(cacheService).saveDistanceToExtentCacheEntry(diseaseGroupId, locationId, actualDistance);
+    }
+
+    @Test
+    public void findDistanceFromDiseaseExtentWhenCalculationOutsideReturnsNull() {
+        int diseaseGroupId = 87;
+        int locationId = 123;
+        double expectedDistance = 25;
+        boolean isGlobal = false;
+        Location location = mock(Location.class);
+        when(location.getId()).thenReturn(locationId);
+        setupExtentClass(diseaseGroupId, isGlobal, location, DiseaseExtentClass.UNCERTAIN, DiseaseExtentClass.POSSIBLE_ABSENCE, DiseaseExtentClass.ABSENCE);
+
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, isGlobal, location);
+        when(nativeSQL.findDistanceOutsideDiseaseExtent(diseaseGroupId, isGlobal, locationId)).thenReturn(null);
+        when(nativeSQL.findDistanceInsideDiseaseExtent(diseaseGroupId, isGlobal, locationId)).thenReturn(321d);
+
+        // Act
+        Double actualDistance = helper.findDistanceFromDiseaseExtent(occurrence);
+
+        // Assert
+        assertThat(actualDistance).isNull();
+    }
+
+    @Test
+    public void findDistanceFromDiseaseExtentWhenCalculationInsideReturnsNull() {
+        int diseaseGroupId = 87;
+        int locationId = 123;
+        boolean isGlobal = false;
+        Location location = mock(Location.class);
+        when(location.getId()).thenReturn(locationId);
+        setupExtentClass(diseaseGroupId, isGlobal, location, DiseaseExtentClass.POSSIBLE_PRESENCE, DiseaseExtentClass.PRESENCE);
+
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, isGlobal, location);
+        when(nativeSQL.findDistanceOutsideDiseaseExtent(diseaseGroupId, isGlobal, locationId)).thenReturn(123d);
+        when(nativeSQL.findDistanceInsideDiseaseExtent(diseaseGroupId, isGlobal, locationId)).thenReturn(null);
+
+        // Act
+        Double actualDistance = helper.findDistanceFromDiseaseExtent(occurrence);
+
+        // Assert
+        assertThat(actualDistance).isNull();
+    }
+
+    @Test
+    public void findDistanceFromDiseaseExtentWhenSplitCountryCrossingBoarder() {
+        int diseaseGroupId = 87;
+        int locationId = 123;
+        boolean isGlobal = false;
+        Location location = mock(Location.class);
+        when(location.getId()).thenReturn(locationId);
+        setupExtentClass(diseaseGroupId, isGlobal, location, DiseaseExtentClass.PRESENCE, DiseaseExtentClass.POSSIBLE_PRESENCE, DiseaseExtentClass.UNCERTAIN, DiseaseExtentClass.POSSIBLE_ABSENCE, DiseaseExtentClass.ABSENCE);
+
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, isGlobal, location);
+        when(nativeSQL.findDistanceInsideDiseaseExtent(diseaseGroupId, isGlobal, locationId)).thenReturn(123d);
+        when(nativeSQL.findDistanceOutsideDiseaseExtent(diseaseGroupId, isGlobal, locationId)).thenReturn(321d);
+
+        // Act
+        Double actualDistance = helper.findDistanceFromDiseaseExtent(occurrence);
+
+        // Assert
+        assertThat(actualDistance).isEqualTo(0);
+    }
+
+    @Test
+    public void findDistanceFromDiseaseExtentWhenNoExtent() {
+        int diseaseGroupId = 87;
+        int locationId = 123;
+        boolean isGlobal = false;
+        Location location = mock(Location.class);
+        when(location.getId()).thenReturn(locationId);
+        setupExtentClass(diseaseGroupId, isGlobal, location);
+
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, isGlobal, location);
+        when(nativeSQL.findDistanceInsideDiseaseExtent(diseaseGroupId, isGlobal, locationId)).thenReturn(123d);
+        when(nativeSQL.findDistanceOutsideDiseaseExtent(diseaseGroupId, isGlobal, locationId)).thenReturn(321d);
+
+        // Act
+        Double actualDistance = helper.findDistanceFromDiseaseExtent(occurrence);
+
+        // Assert
+        assertThat(actualDistance).isNull();
+    }
+
+    public void findDistanceFromDiseaseExtentUsesCacheWhenOutside() {
+        int diseaseGroupId = 87;
+        int locationId = 123;
+        double expectedDistance = 25;
+        boolean isGlobal = false;
+        when(cacheService.getDistanceToExtentFromCache(diseaseGroupId, locationId)).thenReturn(expectedDistance);
+        Location location = mock(Location.class);
+        when(location.getId()).thenReturn(locationId);
+        setupExtentClass(diseaseGroupId, isGlobal, location, DiseaseExtentClass.UNCERTAIN, DiseaseExtentClass.POSSIBLE_ABSENCE, DiseaseExtentClass.ABSENCE);
+
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, isGlobal, location);
 
         // Act
         Double actualDistance = helper.findDistanceFromDiseaseExtent(occurrence);
 
         // Assert
         assertThat(actualDistance).isEqualTo(expectedDistance);
-        verifyFindDistanceOutsideDiseaseExtent(1);
-        verifyFindDistanceWithinDiseaseExtent(1);
     }
 
-    @Test
-    public void findDistanceFromDiseaseExtentWhenCalculationOutsideReturnsNull() {
+    public void findDistanceFromDiseaseExtentUsesCacheWhenInside() {
         // Arrange
         int diseaseGroupId = 87;
-        Point point = GeometryUtils.createPoint(10, 10);
+        int locationId = 123;
+        double expectedDistance = -25;
+        boolean isGlobal = false;
+        when(cacheService.getDistanceToExtentFromCache(diseaseGroupId, locationId)).thenReturn(expectedDistance);
+        Location location = mock(Location.class);
+        when(location.getId()).thenReturn(locationId);
+        setupExtentClass(diseaseGroupId, isGlobal, location, DiseaseExtentClass.POSSIBLE_PRESENCE, DiseaseExtentClass.PRESENCE);
 
-        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, false, point);
-        when(nativeSQL.findDistanceOutsideDiseaseExtent(eq(diseaseGroupId), eqExact(point))).thenReturn(null);
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, isGlobal, location);
 
         // Act
         Double actualDistance = helper.findDistanceFromDiseaseExtent(occurrence);
 
         // Assert
-        assertThat(actualDistance).isNull();
-        verifyFindDistanceOutsideDiseaseExtent(1);
-        verifyFindDistanceWithinDiseaseExtent(0);
+        assertThat(actualDistance).isEqualTo(expectedDistance);
     }
 
-    @Test
-    public void findDistanceFromDiseaseExtentWhenCalculationInsideReturnsNull() {
-        // Arrange
-        int diseaseGroupId = 87;
-        Point point = GeometryUtils.createPoint(10, 10);
-
-        DiseaseOccurrence occurrence = createDiseaseOccurrence(diseaseGroupId, false, point);
-        when(nativeSQL.findDistanceOutsideDiseaseExtent(eq(diseaseGroupId), eqExact(point))).thenReturn(0.0);
-        when(nativeSQL.findDistanceWithinDiseaseExtent(eq(diseaseGroupId), eq(false), eqExact(point))).thenReturn(null);
-
-        // Act
-        Double actualDistance = helper.findDistanceFromDiseaseExtent(occurrence);
-
-        // Assert
-        assertThat(actualDistance).isNull();
-        verifyFindDistanceOutsideDiseaseExtent(1);
-        verifyFindDistanceWithinDiseaseExtent(1);
+    private void setupExtentClass(int disease, boolean isGlobal, Location location, String... extentClassNames) {
+        List<AdminUnitDiseaseExtentClass> classes = new ArrayList<>();
+        for (String name : extentClassNames) {
+            AdminUnitDiseaseExtentClass adminExtentClass = mock(AdminUnitDiseaseExtentClass.class);
+            DiseaseExtentClass extentClass = mock(DiseaseExtentClass.class);
+            when(adminExtentClass.getDiseaseExtentClass()).thenReturn(extentClass);
+            when(extentClass.getName()).thenReturn(name);
+            classes.add(adminExtentClass);
+        }
+        when(locationService.getAdminUnitDiseaseExtentClassesForLocation(disease, isGlobal, location)).thenReturn(classes);
     }
 
-    private DiseaseOccurrence createDiseaseOccurrence(int diseaseGroupId, boolean isGlobal, Point point) {
+    private DiseaseOccurrence createDiseaseOccurrence(int diseaseGroupId, boolean isGlobal, Location location) {
         DiseaseOccurrence occurrence = new DiseaseOccurrence();
         DiseaseGroup diseaseGroup = new DiseaseGroup(diseaseGroupId);
         diseaseGroup.setGlobal(isGlobal);
-        Location location = new Location();
-        location.setGeom(point);
         occurrence.setDiseaseGroup(diseaseGroup);
         occurrence.setLocation(location);
         return occurrence;
-    }
-
-    private void verifyFindDistanceOutsideDiseaseExtent(int times) {
-        verify(nativeSQL, times(times)).findDistanceOutsideDiseaseExtent(anyInt(), any(Point.class));
-    }
-
-    private void verifyFindDistanceWithinDiseaseExtent(int times) {
-        verify(nativeSQL, times(times)).findDistanceWithinDiseaseExtent(anyInt(), anyBoolean(), any(Point.class));
-    }
-
-    private Point eqExact(Point point) {
-        return argThat(new PointMatcher(point));
-    }
-
-    /**
-     * Uses Point.equalsExact() instead of Point.equals() (the latter seems unreliable).
-     */
-    static class PointMatcher extends ArgumentMatcher<Point> {
-        private final Point expected;
-
-        public PointMatcher(Point expected) {
-            this.expected = expected;
-        }
-
-        @Override
-        public boolean matches(Object actual) {
-            return expected.equalsExact((Point) actual);
-        }
     }
 }

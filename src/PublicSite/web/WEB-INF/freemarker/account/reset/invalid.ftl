@@ -10,7 +10,7 @@
 <div class="container">
     <@p.panel "request-account-reset-body" "Password Reset">
         <#list failures as failure>
-            <div class="alert alert-danger" role="alert" style="text-align: center">${failure}</div>
+            <div class="alert alert-danger" role="alert" style="text-align: center">${failure?html}</div>
         </#list>
         <br/>
         <p style="text-align: center"><a href="<@spring.url '/account/reset/request' />" class="btn btn-primary">Request a new password reset link</a></p>

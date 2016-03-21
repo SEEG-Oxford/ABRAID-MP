@@ -22,59 +22,35 @@ public class DiseaseServiceImpl implements DiseaseService {
     private DiseaseOccurrenceDao diseaseOccurrenceDao;
     private DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao;
     private DiseaseGroupDao diseaseGroupDao;
-    private HealthMapDiseaseDao healthMapDiseaseDao;
-    private HealthMapSubDiseaseDao healthMapSubDiseaseDao;
     private ValidatorDiseaseGroupDao validatorDiseaseGroupDao;
     private AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao;
 
     private ModelRunDao modelRunDao;
     private DiseaseExtentClassDao diseaseExtentClassDao;
     private int maxDaysOnValidator;
-    private int daysBetweenModelRuns;
+    private List<String> biasModelModes;
     private NativeSQL nativeSQL;
 
     public DiseaseServiceImpl(DiseaseOccurrenceDao diseaseOccurrenceDao,
                               DiseaseOccurrenceReviewDao diseaseOccurrenceReviewDao,
                               DiseaseGroupDao diseaseGroupDao,
-                              HealthMapDiseaseDao healthMapDiseaseDao,
-                              HealthMapSubDiseaseDao healthMapSubDiseaseDao,
                               ValidatorDiseaseGroupDao validatorDiseaseGroupDao,
                               AdminUnitDiseaseExtentClassDao adminUnitDiseaseExtentClassDao,
                               ModelRunDao modelRunDao,
                               DiseaseExtentClassDao diseaseExtentClassDao,
                               int maxDaysOnValidator,
-                              int daysBetweenModelRuns,
+                              List<String> biasModelModes,
                               NativeSQL nativeSQL) {
         this.diseaseOccurrenceDao = diseaseOccurrenceDao;
         this.diseaseOccurrenceReviewDao = diseaseOccurrenceReviewDao;
         this.diseaseGroupDao = diseaseGroupDao;
-        this.healthMapDiseaseDao = healthMapDiseaseDao;
-        this.healthMapSubDiseaseDao = healthMapSubDiseaseDao;
         this.validatorDiseaseGroupDao = validatorDiseaseGroupDao;
         this.adminUnitDiseaseExtentClassDao = adminUnitDiseaseExtentClassDao;
         this.modelRunDao = modelRunDao;
         this.diseaseExtentClassDao = diseaseExtentClassDao;
         this.maxDaysOnValidator = maxDaysOnValidator;
-        this.daysBetweenModelRuns = daysBetweenModelRuns;
+        this.biasModelModes = biasModelModes;
         this.nativeSQL = nativeSQL;
-    }
-
-    /**
-     * Gets all HealthMap diseases.
-     * @return All HealthMap diseases.
-     */
-    @Override
-    public List<HealthMapDisease> getAllHealthMapDiseases() {
-        return healthMapDiseaseDao.getAll();
-    }
-
-    /**
-     * Gets all HealthMap sub-diseases.
-     * @return All HealthMap sub-diseases.
-     */
-    @Override
-    public List<HealthMapSubDisease> getAllHealthMapSubDiseases() {
-        return healthMapSubDiseaseDao.getAll();
     }
 
     /**
@@ -135,6 +111,26 @@ public class DiseaseServiceImpl implements DiseaseService {
         }
         sortMapValueListsByName(map);
         return map;
+    }
+
+    /**
+     * Gets a list of the disease groups for which there are occurrences waiting to be reviewed, by the given expert.
+     * @param expert The expert.
+     * @return A list of disease groups.
+     */
+    @Override
+    public List<DiseaseGroup> getDiseaseGroupsNeedingOccurrenceReviewByExpert(Expert expert) {
+        return diseaseGroupDao.getDiseaseGroupsNeedingOccurrenceReviewByExpert(expert.getId());
+    }
+
+    /**
+     * Gets a list of the disease groups for which there are admin units waiting to be reviewed, by the given expert.
+     * @param expert The expert.
+     * @return A list of disease groups.
+     */
+    @Override
+    public List<DiseaseGroup> getDiseaseGroupsNeedingExtentReviewByExpert(Expert expert) {
+        return diseaseGroupDao.getDiseaseGroupsNeedingExtentReviewByExpert(expert.getId());
     }
 
     private void sortMapValueListsByName(Map<String, List<DiseaseGroup>> map) {
@@ -350,33 +346,23 @@ public class DiseaseServiceImpl implements DiseaseService {
     }
 
     /**
-     * Gets all reviews (for all time) for the disease occurrences which are in review.
-     * @param diseaseGroupId The ID of the disease group.
-     * @return A list of disease occurrence reviews.
-     */
-    @Override
-    public List<DiseaseOccurrenceReview> getAllDiseaseOccurrenceReviewsForOccurrencesInValidation(
-            Integer diseaseGroupId) {
-        return diseaseOccurrenceReviewDao.getAllDiseaseOccurrenceReviewsForOccurrencesInValidation(diseaseGroupId);
-    }
-
-    /**
      * Gets the reviews submitted by reliable experts (whose weighting is greater than the threshold) for the disease
-     * occurrences which are in review.
+     * occurrences which are in review.  "I don't know" response are excluded.
      * @param diseaseGroupId The ID of the disease group.
      * @param expertWeightingThreshold Reviews by experts with a weighting greater than this value will be considered.
      * @return A list of disease occurrence reviews.
      */
     @Override
-    public List<DiseaseOccurrenceReview> getDiseaseOccurrenceReviewsForUpdatingWeightings(
+    public List<DiseaseOccurrenceReview> getDiseaseOccurrenceReviewsForOccurrencesInValidationForUpdatingWeightings(
             Integer diseaseGroupId, Double expertWeightingThreshold) {
-        return diseaseOccurrenceReviewDao.getDiseaseOccurrenceReviewsForUpdatingWeightings(
+        return diseaseOccurrenceReviewDao.getDiseaseOccurrenceReviewsForOccurrencesInValidationForUpdatingWeightings(
                 diseaseGroupId, expertWeightingThreshold);
     }
 
     /**
      * Determines whether the specified disease occurrence already exists in the database. This is true if an
-     * occurrence exists with the same disease group, location, alert and occurrence start date.
+     * occurrence (excluding bias occurrences) exists with the same disease group, location, alert and occurrence
+     * start date.
      * @param occurrence The disease occurrence.
      * @return True if the occurrence already exists in the database, otherwise false.
      */
@@ -416,15 +402,6 @@ public class DiseaseServiceImpl implements DiseaseService {
     @Override
     public void saveDiseaseGroup(DiseaseGroup diseaseGroup) {
         diseaseGroupDao.save(diseaseGroup);
-    }
-
-    /**
-     * Saves a HealthMap disease.
-     * @param disease The disease to save.
-     */
-    @Override
-    public void saveHealthMapDisease(HealthMapDisease disease) {
-        healthMapDiseaseDao.save(disease);
     }
 
     /**
@@ -513,6 +490,77 @@ public class DiseaseServiceImpl implements DiseaseService {
     }
 
     /**
+     * Gets the number of bespoke bias occurrences that have been uploaded for use with a specified diseases group,
+     * regardless of suitability.
+     * @param diseaseGroup The disease group being modelled.
+     * @return The number of bias occurrences.
+     */
+    @Override
+    public long getCountOfUnfilteredBespokeBiasOccurrences(DiseaseGroup diseaseGroup) {
+        return diseaseOccurrenceDao.getCountOfUnfilteredBespokeBiasOccurrences(diseaseGroup);
+    }
+
+    /**
+     * Gets the estimate of number of bespoke bias occurrences that have been uploaded for use with a specified disease
+     * group, which are suitable for use in a model. This is only an estimate as the occurrence date filter that is
+     * applied during model runs is not applied.
+     * @param diseaseGroup The disease group being modelled.
+     * @return The number of bias occurrences.
+     */
+    @Override
+    public long getEstimateCountOfFilteredBespokeBiasOccurrences(DiseaseGroup diseaseGroup) {
+        return diseaseOccurrenceDao.getEstimateCountOfFilteredBespokeBiasOccurrences(diseaseGroup);
+    }
+
+    /**
+     * Gets the estimate of number of occurrences that are available for use as a default/fallback bias set for a
+     * specified disease group, which are suitable for use in a model. This is only an estimate as the occurrence date
+     * filter that is applied during model runs is not applied.
+     * @param diseaseGroup The disease group being modelled.
+     * @return The number of bias occurrences.
+     */
+    @Override
+    public long getEstimateCountOfFilteredDefaultBiasOccurrences(DiseaseGroup diseaseGroup) {
+        return diseaseOccurrenceDao.getEstimateCountOfFilteredDefaultBiasOccurrences(diseaseGroup);
+    }
+
+
+    /**
+     * Gets the bespoke bias occurrences that are should be used with a model run (for sample bias).
+     * @param diseaseGroup The disease group being modelled.
+     * @param startDate The start date of the model run input data range.
+     * @param endDate The end date  of the model run input data range.
+     * @return The bias occurrences.
+     */
+    @Override
+    public List<DiseaseOccurrence> getBespokeBiasOccurrencesForModelRun(
+            DiseaseGroup diseaseGroup, DateTime startDate, DateTime endDate) {
+        return diseaseOccurrenceDao.getBespokeBiasOccurrencesForModelRun(diseaseGroup, startDate, endDate);
+    }
+
+    /**
+     * Gets the occurrences that are available for use as a default/fallback bias set for a specified disease group.
+     * This should be used when a bespoke dataset hasn't been provided.
+     * @param diseaseGroup The disease group being modelled (will be excluded from bias set).
+     * @param startDate The start date of the model run input data range.
+     * @param endDate The end date  of the model run input data range.
+     * @return The bias occurrences.
+     */
+    @Override
+    public List<DiseaseOccurrence> getDefaultBiasOccurrencesForModelRun(
+            DiseaseGroup diseaseGroup, DateTime startDate, DateTime endDate) {
+        return diseaseOccurrenceDao.getDefaultBiasOccurrencesForModelRun(diseaseGroup, startDate, endDate);
+    }
+
+    /**
+     * Gets the names of all disease groups to be shown in the HealthMap disease report (sorted).
+     * @return The disease groups names.
+     */
+    public List<String> getDiseaseGroupNamesForHealthMapReport() {
+        return diseaseGroupDao.getDiseaseGroupNamesForHealthMapReport();
+    }
+
+    /**
      * Returns the input date, with the number of days between scheduled model runs subtracted.
      * @param dateTime The input date.
      * @return The input date minus the number of days between scheduled model runs.
@@ -523,13 +571,24 @@ public class DiseaseServiceImpl implements DiseaseService {
     }
 
     /**
-     * Returns the input date, with the number of days between scheduled model runs subtracted.
-     * @param dateTime The input date.
-     * @return The input date minus the number of days between scheduled model runs.
+     * Delete all of the occurrence that are labelled as bias for the specified disease group.
+     * @param biasDisease Disease group for which to remove the bias points
+     *                       (i.e. bias_disease_group_id, not disease_group_id).
      */
     @Override
-    public LocalDate subtractDaysBetweenModelRuns(DateTime dateTime) {
-        return dateTime.toLocalDate().minusDays(daysBetweenModelRuns);
+    public void deleteBiasDiseaseOccurrencesForDisease(DiseaseGroup biasDisease) {
+        diseaseOccurrenceDao.deleteDiseaseOccurrencesByBiasDiseaseId(biasDisease.getId());
+    }
+
+    /**
+     * Determines whether the specified disease group require bias data for model runs based on the disease's
+     * model mode.
+     * @param diseaseGroup The disease group.
+     * @return True if bias data is required.
+     */
+    @Override
+    public boolean modelModeRequiresBiasDataForDisease(DiseaseGroup diseaseGroup) {
+        return biasModelModes.contains(diseaseGroup.getModelMode());
     }
 
     private boolean isDiseaseGroupGlobal(Integer diseaseGroupId) {

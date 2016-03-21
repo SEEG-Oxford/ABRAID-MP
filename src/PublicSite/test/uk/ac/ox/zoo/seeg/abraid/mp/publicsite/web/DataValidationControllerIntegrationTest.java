@@ -11,7 +11,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.DisplayJsonView;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
@@ -87,7 +86,7 @@ public class DataValidationControllerIntegrationTest extends AbstractPublicSiteI
                 get(DataValidationController.DATA_VALIDATION_BASE_URL + "/diseases/1/occurrences"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
-                .andExpect(content().string(AbstractDiseaseOccurrenceGeoJsonTests.getTwoDiseaseOccurrenceFeaturesAsJson(DisplayJsonView.class)));
+                .andExpect(content().string(AbstractDiseaseOccurrenceGeoJsonTests.getTwoDiseaseOccurrenceFeaturesAsJson()));
     }
 
     @Test
@@ -227,6 +226,15 @@ public class DataValidationControllerIntegrationTest extends AbstractPublicSiteI
         this.mockMvc.perform(
                 post(DataValidationController.DATA_VALIDATION_BASE_URL + "/diseases/1/occurrences/1/validate")
                 .param("review", "YES"))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void submitReviewAcceptsValidIDontKnowRequest() throws Exception {
+        when(expertService.doesDiseaseOccurrenceReviewExist(anyInt(), anyInt())).thenReturn(false);
+
+        this.mockMvc.perform(
+                post(DataValidationController.DATA_VALIDATION_BASE_URL + "/diseases/1/occurrences/1/validate"))
                 .andExpect(status().isNoContent());
     }
 

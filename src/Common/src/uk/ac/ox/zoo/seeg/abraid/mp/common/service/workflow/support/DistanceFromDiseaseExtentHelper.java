@@ -1,8 +1,15 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 
-import com.vividsolutions.jts.geom.Point;
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.NativeSQL;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ValidationParameterCacheService;
+
+import java.util.List;
+
+import static ch.lambdaj.Lambda.*;
+import static org.hamcrest.Matchers.equalTo;
 
 /**
  * Helper class for determining the distance between a location and the disease extent.
@@ -11,9 +18,14 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
  */
 public class DistanceFromDiseaseExtentHelper {
     private NativeSQL nativeSQL;
+    private LocationService locationService;
+    private ValidationParameterCacheService cacheService;
 
-    public DistanceFromDiseaseExtentHelper(NativeSQL nativeSQL) {
+    public DistanceFromDiseaseExtentHelper(NativeSQL nativeSQL, LocationService locationService,
+                                           ValidationParameterCacheService cacheService) {
         this.nativeSQL = nativeSQL;
+        this.locationService = locationService;
+        this.cacheService = cacheService;
     }
 
     /**
@@ -21,25 +33,59 @@ public class DistanceFromDiseaseExtentHelper {
      * @param occurrence The occurrence.
      * @return The distance from the disease extent.
      */
+    @Transactional
     public Double findDistanceFromDiseaseExtent(DiseaseOccurrence occurrence) {
-        Point locationPoint = occurrence.getLocation().getGeom();
-        int diseaseGroupId = occurrence.getDiseaseGroup().getId();
-        Double distance = null;
+        DiseaseGroup diseaseGroup = occurrence.getDiseaseGroup();
+        Location location = occurrence.getLocation();
 
-        if (occurrence.getDiseaseGroup().isGlobal() != null) {
-            boolean isGlobal = occurrence.getDiseaseGroup().isGlobal();
-
-            // We find the distance using a PostGIS query instead of using routines in the GeometryUtils class, because
-            // loading the entire disease extent geometry into memory is likely to be inefficient
-            distance = nativeSQL.findDistanceOutsideDiseaseExtent(diseaseGroupId, locationPoint);
-
-            if (distance != null && distance == 0) {
-                // If the distance is 0, the location is within the disease extent and we need to find the closest point
-                // on the geometry via a different method
-                distance = nativeSQL.findDistanceWithinDiseaseExtent(diseaseGroupId, isGlobal, locationPoint);
-            }
+        Double distance = cacheService.getDistanceToExtentFromCache(diseaseGroup.getId(), location.getId());
+        if (distance != null) {
+            return distance;
         }
 
+        distance = calculateDistance(diseaseGroup, location);
+
+        if (distance != null) {
+            cacheService.saveDistanceToExtentCacheEntry(diseaseGroup.getId(), location.getId(), distance);
+        }
         return distance;
+    }
+
+    private Double calculateDistance(DiseaseGroup diseaseGroup, Location location) {
+        boolean isGlobal = diseaseGroup.isGlobal();
+        int diseaseGroupId = diseaseGroup.getId();
+        int locationId = location.getId();
+
+        List<AdminUnitDiseaseExtentClass> diseaseExtentClasses =
+                locationService.getAdminUnitDiseaseExtentClassesForLocation(diseaseGroupId, isGlobal, location);
+        boolean containsPresence = containsClass(diseaseExtentClasses, DiseaseExtentClass.PRESENCE);
+        boolean containsPossiblePresence = containsClass(diseaseExtentClasses, DiseaseExtentClass.POSSIBLE_PRESENCE);
+        boolean containsUncertain = containsClass(diseaseExtentClasses, DiseaseExtentClass.UNCERTAIN);
+        boolean containsPossibleAbsence = containsClass(diseaseExtentClasses, DiseaseExtentClass.POSSIBLE_ABSENCE);
+        boolean containsAbsence = containsClass(diseaseExtentClasses, DiseaseExtentClass.ABSENCE);
+
+        boolean insideExtent = containsPresence || containsPossiblePresence;
+        boolean outsideExtent = containsUncertain || containsPossibleAbsence || containsAbsence;
+
+        if (insideExtent && outsideExtent) {
+            // "Split" country straddling the edge
+            return 0.0;
+        } else if (outsideExtent) {
+            // We find the distance using a PostGIS query instead of using routines in the GeometryUtils class, because
+            // loading the entire disease extent geometry into memory is likely to be inefficient
+            Double distance = nativeSQL.findDistanceOutsideDiseaseExtent(diseaseGroupId, isGlobal, locationId);
+            return (distance != null) ? (+1.0 * distance) : null;
+        } else if (insideExtent) {
+            Double distance = nativeSQL.findDistanceInsideDiseaseExtent(diseaseGroupId, isGlobal, locationId);
+            return (distance != null) ? (-1.0 * distance) : null;
+        } else {
+            return null; // No extent defined
+        }
+    }
+
+    private boolean containsClass(List<AdminUnitDiseaseExtentClass> diseaseExtentClasses, String extentClass) {
+        return !filter(
+                having(on(AdminUnitDiseaseExtentClass.class).getDiseaseExtentClass().getName(), equalTo(extentClass)),
+                diseaseExtentClasses).isEmpty();
     }
 }

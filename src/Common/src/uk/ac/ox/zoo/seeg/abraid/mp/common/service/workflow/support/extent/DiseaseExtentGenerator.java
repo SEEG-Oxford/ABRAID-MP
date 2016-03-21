@@ -3,9 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.extent;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.GeometryService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.*;
 
 import java.util.Collection;
 import java.util.Map;
@@ -28,6 +26,7 @@ public class DiseaseExtentGenerator {
     private static final Logger LOGGER = Logger.getLogger(DiseaseExtentGenerator.class);
 
     private ModelRunService modelRunService;
+    private ValidationParameterCacheService cacheService;
     private DiseaseService diseaseService;
     private DiseaseExtentGenerationInputDataSelector extentDataSelector;
     private DiseaseExtentGeneratorHelperFactory helperFactory;
@@ -37,12 +36,14 @@ public class DiseaseExtentGenerator {
                                   DiseaseExtentGeneratorHelperFactory helperFactory,
                                   GeometryService geometryService,
                                   DiseaseService diseaseService,
-                                  ModelRunService modelRunService) {
+                                  ModelRunService modelRunService,
+                                  ValidationParameterCacheService cacheService) {
         this.extentDataSelector = extentDataSelector;
         this.helperFactory = helperFactory;
         this.geometryService = geometryService;
         this.diseaseService = diseaseService;
         this.modelRunService = modelRunService;
+        this.cacheService = cacheService;
     }
 
     /**
@@ -64,7 +65,7 @@ public class DiseaseExtentGenerator {
         DiseaseExtentGenerationInputData validatorExtentInputs = extentDataSelector.selectForValidatorExtent(
                 diseaseGroup, adminUnits, isInitial, process, minimumOccurrenceDate);
         DiseaseExtentGenerationOutputData validatorExtentResults = generateExtent(
-                diseaseGroup, validatorExtentInputs, isInitial);
+                diseaseGroup, validatorExtentInputs);
 
         // Calculate new modelling extent (if required)
         DiseaseExtentGenerationOutputData modellingExtentResults;
@@ -73,7 +74,7 @@ public class DiseaseExtentGenerator {
         } else {
             DiseaseExtentGenerationInputData modellingExtentInputs = extentDataSelector.selectForModellingExtent(
                     diseaseGroup, validatorExtentInputs);
-            modellingExtentResults = generateExtent(diseaseGroup, modellingExtentInputs, false);
+            modellingExtentResults = generateExtent(diseaseGroup, modellingExtentInputs);
         }
 
         // Save everything
@@ -92,13 +93,13 @@ public class DiseaseExtentGenerator {
     }
 
     private DiseaseExtentGenerationOutputData generateExtent(
-            DiseaseGroup diseaseGroup, DiseaseExtentGenerationInputData extentInputs, boolean isInitial) {
+            DiseaseGroup diseaseGroup, DiseaseExtentGenerationInputData extentInputs) {
         logDataMessage(extentInputs);
 
         DiseaseExtentGeneratorHelper helper =
                 helperFactory.createHelper(diseaseGroup, extentInputs);
 
-        return helper.computeDiseaseExtent(isInitial);
+        return helper.computeDiseaseExtent();
     }
 
     private void saveExtent(DiseaseGroup diseaseGroup,
@@ -111,6 +112,9 @@ public class DiseaseExtentGenerator {
 
         // Update aggregated extent geometry
         diseaseService.updateAggregatedDiseaseExtent(diseaseGroup);
+
+        // Clear distance cache
+        cacheService.clearDistanceToExtentCacheForDisease(diseaseGroup.getId());
 
         // Save input occurrences
         diseaseGroup.getDiseaseExtentParameters()

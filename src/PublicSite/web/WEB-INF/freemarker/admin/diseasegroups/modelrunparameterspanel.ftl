@@ -22,12 +22,13 @@
             <div class="col-sm-6">
                 <div class="form-horizontal">
                     Triggering a Model Run:
-                    <br><br>
+                    <br>
+                    <@formGroup id="max-days-between-runs" title="Max. Number of Days Between Runs" bind="formValue: maxDaysBetweenModelRuns"></@formGroup>
                     <@formGroup id="min-new-locations" title="Min. Number of New Locations" bind="formValue: minNewLocations"></@formGroup>
                     <@formGroup id="max-environmental-suitability-for-triggering" title="Max. Environmental Suitability" bind="formValue: maxEnvironmentalSuitabilityForTriggering"></@formGroup>
                     <@formGroup id="min-distance-from-extent-for-triggering" title="Min. Distance from Disease Extent" bind="formValue: minDistanceFromDiseaseExtentForTriggering"></@formGroup>
                     Machine Learning:
-                    <br><br>
+                    <br>
                     <div class="form-group">
                         <label for="use-machine-learning" class="col-sm-8 control-label">Use Machine Learning</label>
                         <div class="col-sm-4">
@@ -39,8 +40,22 @@
             </div>
             <div class="col-sm-6">
                 <div class="form-horizontal">
+                    SDM:<br>
+                    <@formGroup id="model-mode" title="Model Mode" bind="formValue: modelMode"></@formGroup>
+                    <div class="form-group">
+                        <label for="agent-type" class="col-sm-6 control-label">Agent Type</label>
+                        <div class="input-group col-sm-6">
+                            <select class="form-control" id="agent-type" data-bind="options: agentTypes, value: agentType, optionsCaption:'Select one...', bootstrapDisable: find('isSubmitting')"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="filter-bias-data" class="col-sm-8 control-label">Filter Background Data By Agent Type</label>
+                        <div class="col-sm-4">
+                            <input type="checkbox" id="filter-bias-data" data-bind="formChecked: filterBiasDataByAgentType">
+                        </div>
+                    </div>
                     Minimum Data Volume and Minimum Data Spread:
-                    <br><br>
+                    <br>
                     <@formGroup id="min-data-volume" title="Min. Data Volume" bind="formValue: minDataVolume"></@formGroup>
                     <@formGroup id="min-distinct-countries" title="Min. Number of Distinct Countries" bind="formValue: minDistinctCountries"></@formGroup>
                     <div class="form-group">

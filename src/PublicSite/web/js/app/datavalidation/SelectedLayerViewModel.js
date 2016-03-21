@@ -9,34 +9,64 @@
  * --- disease set changes on disease occurrences layer
  * --- disease changes on disease extent layer
  */
-define(["ko"], function (ko) {
+define(["ko", "underscore"], function (ko, _) {
     "use strict";
 
-    return function (diseaseInterests, allOtherDiseases) {
+    return function (diseaseInterests, allOtherDiseases, diseasesNeedingExtentInput, diseasesNeedingOccurrenceInput) {
         var self = this;
         var DISEASE_OCCURRENCES = "disease occurrences";
         var DISEASE_EXTENT = "disease extent";
-
+        var getFirstModeNeedingInput = function () {
+            if (diseasesNeedingExtentInput.length === 0 && diseasesNeedingOccurrenceInput.length !== 0) {
+                return DISEASE_OCCURRENCES;
+            }
+            return DISEASE_EXTENT;
+        };
         var Group = function (label, children) {
             this.groupLabel = label;
             this.children = children;
         };
 
-        // Return the first validator disease group of the expert's "Disease Interests", if they have any registered.
-        // Otherwise, return the first disease set of the "All Other Diseases" list.
-        var initialSelectedDiseaseSet = function () {
-            return diseaseInterests.length !== 0 ? self.groups[0].children[0] : self.groups[1].children[0];
+        var getValidatorDiseaseGroups = function () {
+            return _(self.groups[0].children).union(self.groups[1].children);
+        };
+
+        var getInputRequiredSetForCurrentMode = function () {
+            return self.selectedType() === DISEASE_OCCURRENCES ?
+                diseasesNeedingOccurrenceInput : diseasesNeedingExtentInput;
+        };
+
+        var getFirstDiseaseNeedingInput = function (diseaseGroups, withFallback) {
+            var needingInput = getInputRequiredSetForCurrentMode();
+            var disease = _(diseaseGroups).find(function (disease) { return _(needingInput).contains(disease.id); });
+            if (withFallback && !disease) {
+                return diseaseGroups[0];
+            }
+            return disease;
+        };
+
+        var getFirstValidatorDiseaseGroupNeedingInput = function () {
+            var validatorDiseaseGroups = getValidatorDiseaseGroups();
+            var group = _(validatorDiseaseGroups)
+                .find(function (vdg) {
+                    return getFirstDiseaseNeedingInput(vdg.diseaseGroups) !== undefined;
+                });
+            return group || validatorDiseaseGroups[0];
         };
 
         // View Model State
         self.validationTypes = [DISEASE_EXTENT, DISEASE_OCCURRENCES];
-        self.selectedType = ko.observable(self.validationTypes[0]);
+        self.selectedType = ko.observable(getFirstModeNeedingInput());
         self.groups = [
             new Group("Your Disease Interests", diseaseInterests),
             new Group("Other Diseases", allOtherDiseases)
         ];
-        self.selectedDiseaseSet = ko.observable(initialSelectedDiseaseSet());
-        self.selectedDisease = ko.observable(self.selectedDiseaseSet().diseaseGroups[0]);
+        self.selectedDiseaseSet = ko.observable(getFirstValidatorDiseaseGroupNeedingInput());
+        self.selectedDiseaseSet.subscribe(function (newValue) {
+            self.selectedDisease(getFirstDiseaseNeedingInput(newValue.diseaseGroups, true));
+        });
+        self.selectedDisease = ko.observable(
+            getFirstDiseaseNeedingInput(self.selectedDiseaseSet().diseaseGroups, true));
 
         // View State
         self.showDiseaseExtentLayer = ko.computed(function () {

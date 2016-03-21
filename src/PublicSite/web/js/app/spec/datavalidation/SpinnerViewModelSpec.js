@@ -8,10 +8,11 @@ define([
     "use strict";
 
     describe("The spinner view model", function () {
+        var fakeTimeout = function (f) { f(); };
 
         describe("holds the visible value which", function () {
             it("is an observable", function () {
-                var vm = new SpinnerViewModel();
+                var vm = new SpinnerViewModel(fakeTimeout);
                 expect(vm.visible).toBeObservable();
             });
 
@@ -19,13 +20,13 @@ define([
                 // Arrange
                 var expectedValue = false;
                 // Act
-                var vm = new SpinnerViewModel();
+                var vm = new SpinnerViewModel(fakeTimeout);
                 // Assert
                 expect(vm.visible()).toBe(expectedValue);
             });
 
             describe("reacts to the 'update-map-view-in-progress' event", function () {
-                var vm = new SpinnerViewModel();
+                var vm = new SpinnerViewModel(fakeTimeout);
 
                 it("when true", function () {
                     vm.visible(false);

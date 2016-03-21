@@ -36,14 +36,16 @@ public class WeightingsCalculatorTest {
         target.updateDiseaseOccurrenceExpertWeightings(DISEASE_GROUP_ID);
 
         // Assert
-        verify(diseaseService).getDiseaseOccurrenceReviewsForUpdatingWeightings(DISEASE_GROUP_ID, EXPERT_WEIGHTING_THRESHOLD);
+        verify(diseaseService).getDiseaseOccurrenceReviewsForOccurrencesInValidationForUpdatingWeightings(
+                DISEASE_GROUP_ID, EXPERT_WEIGHTING_THRESHOLD);
     }
 
     @Test
     public void updateDiseaseOccurrenceExpertWeightingsLogsNoReviews() {
         // Arrange
         DiseaseService mockDiseaseService = mock(DiseaseService.class);
-        when(mockDiseaseService.getDiseaseOccurrenceReviewsForUpdatingWeightings(DISEASE_GROUP_ID, EXPERT_WEIGHTING_THRESHOLD))
+        when(mockDiseaseService.getDiseaseOccurrenceReviewsForOccurrencesInValidationForUpdatingWeightings(
+                DISEASE_GROUP_ID, EXPERT_WEIGHTING_THRESHOLD))
             .thenReturn(new ArrayList<DiseaseOccurrenceReview>());
 
         WeightingsCalculator target = weightingsCalculator(mockDiseaseService, mock(ExpertService.class));
@@ -94,7 +96,7 @@ public class WeightingsCalculatorTest {
         );
 
         DiseaseService diseaseService = mock(DiseaseService.class);
-        when(diseaseService.getDiseaseOccurrenceReviewsForUpdatingWeightings(DISEASE_GROUP_ID, EXPERT_WEIGHTING_THRESHOLD)).thenReturn(reviews);
+        when(diseaseService.getDiseaseOccurrenceReviewsForOccurrencesInValidationForUpdatingWeightings(DISEASE_GROUP_ID, EXPERT_WEIGHTING_THRESHOLD)).thenReturn(reviews);
         WeightingsCalculator target = weightingsCalculator(diseaseService, mock(ExpertService.class));
 
         // Act
@@ -295,6 +297,31 @@ public class WeightingsCalculatorTest {
         // Assert - No other reviews of occurrence, so the difference is 0.0 and the newWeighting = 1.0 - difference
         verify(expertService).saveExpert(expert);
         assertThat(expert.getWeighting()).isEqualTo(1.0);
+    }
+
+    @Test
+    public void updateExpertsWeightingsIgnoresIDontKnowResponses() {
+        // Arrange
+        Expert expert = new Expert();
+        Expert expert2 = new Expert();
+        ExpertService expertService = mock(ExpertService.class);
+        DiseaseService diseaseService = mock(DiseaseService.class);
+        DiseaseOccurrence diseaseOccurrence = new DiseaseOccurrence();
+        when(diseaseService.getAllDiseaseOccurrenceReviews()).thenReturn(Arrays.asList(
+                new DiseaseOccurrenceReview(expert, diseaseOccurrence, DiseaseOccurrenceReviewResponse.YES),
+                new DiseaseOccurrenceReview(expert2, diseaseOccurrence, null)
+        ));
+
+        WeightingsCalculator target = weightingsCalculator(diseaseService, expertService);
+
+        // Act
+        target.updateExpertsWeightings();
+
+        // Assert - No other reviews of occurrence, so the difference is 0.0 and the newWeighting = 1.0 - difference
+        verify(expertService).saveExpert(expert);
+        assertThat(expert.getWeighting()).isEqualTo(1.0);
+        verify(expertService, never()).saveExpert(expert2);
+        assertThat(expert2.getWeighting()).isEqualTo(0.0);
     }
 
     @Test

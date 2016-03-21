@@ -27,7 +27,6 @@ public class HealthMapDataConverterTest {
     private AlertService alertService;
     private HealthMapLocationConverter locationConverter;
     private HealthMapAlertConverter alertConverter;
-    @SuppressWarnings("FieldCanBeLocal")
     private HealthMapLookupData healthMapLookupData;
     private HealthMapDataConverter healthMapDataConverter;
     private DiseaseOccurrenceDataAcquirer diseaseOccurrenceDataAcquirer;

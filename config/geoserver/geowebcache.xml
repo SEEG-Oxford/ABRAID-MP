@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <gwcConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns="http://geowebcache.org/schema/1.5.0"
-  xsi:schemaLocation="http://geowebcache.org/schema/1.5.0 http://geowebcache.org/schema/1.5.0/geowebcache.xsd">
-  <version>1.5.0</version>
+  xmlns="http://geowebcache.org/schema/1.8.0"
+  xsi:schemaLocation="http://geowebcache.org/schema/1.8.0 http://geowebcache.org/schema/1.8.0/geowebcache.xsd">
+  <version>1.8.0</version>
   <backendTimeout>120</backendTimeout>
+  <blobStores>
+    <FileBlobStore default="true">
+      <id>abraid</id>
+      <enabled>true</enabled>
+      <baseDirectory>/var/lib/tomcat7/webapps/geoserver/data/gwc-blobs</baseDirectory>
+      <fileSystemBlockSize>4096</fileSystemBlockSize>
+    </FileBlobStore>
+  </blobStores>
   <gridSets>
     <!-- By default EPSG:900913 and EPSG:4326 are defined -->
   </gridSets>

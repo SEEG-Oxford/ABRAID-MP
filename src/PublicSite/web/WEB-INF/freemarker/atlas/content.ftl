@@ -17,12 +17,13 @@
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.2/leaflet.css">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.2/MarkerCluster.css">
     <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Sans+Pro:600" type="text/css">
-    <link rel="stylesheet" href="<@spring.url "/css/markers.css" />">
-    <link rel="stylesheet" href="<@spring.url "/css/L.Control.Zoomslider.css" />">
-    <link rel="stylesheet" href="<@spring.url "/css/flipclock.css" />">
+    <link rel="stylesheet" href="<@spring.url "/ext/c3/c3/c3.css" />">
+    <link rel="stylesheet" href="<@spring.url "/ext/leaflet/leaflet/leaflet.css" />">
+    <link rel="stylesheet" href="<@spring.url "/ext/leaflet/zoomslider/L.Control.Zoomslider.css" />">
+    <link rel="stylesheet" href="<@spring.url "/ext/leaflet/markercluster/MarkerCluster.css" />">
+    <link rel="stylesheet" href="<@spring.url "/ext/leaflet/markercluster/MarkerCluster.Default.css" />">
+    <link rel="stylesheet" href="<@spring.url "/ext/jquery/flipclock/flipclock.css" />">
     <link rel="stylesheet" href="<@spring.url "/css/map.css" />">
     <link rel="stylesheet" href="<@spring.url "/css/atlas.css" />">
 </head>
@@ -31,6 +32,30 @@
         <#include "layerselector.ftl"/>
         <#include "modelrundetails.ftl"/>
         <#include "legend.ftl"/>
+    </div>
+    <div class="modal fade" id="plotModal" tabindex="-1" role="dialog" aria-labelledby="plotModalLabel" data-bind="preventBubble: true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true" class="glyphicon glyphicon-remove"></span>
+                        <span class="sr-only">Close</span>
+                    </button>
+                    <h4 class="modal-title" id="helpModalLabel">ABRAID-MP Effect Curve</h4>
+                </div>
+                <div class="leaflet-bar" style="text-align: center; box-shadow: none; border-radius: 0; border: none">
+                    <a class="leaflet-panel-button" data-bind="savePlot: { id: 'largePlot', name: activeCurve().name }" href="#">
+                        <i class="fa fa-floppy-o"></i>&nbsp;&nbsp;Save PNG
+                    </a>
+                </div>
+                <div class="modal-body" style="text-align: center; overflow: auto; padding-bottom: 5">
+                    <div id="largePlot" data-bind="largeEffectPlot: activeCurve"></div>
+                </div>
+                <div class="modal-body" style="text-align: center; overflow: auto; padding-top: 0">
+                    <div id="histogram" data-bind="covariateHistogramPlot: activeCurve"></div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Base url -->
@@ -41,7 +66,7 @@
     <!-- Bootstrapped JS data for KO view models -->
     <script>
         var data = {
-            wmsUrl: "${baseWmsUrl}",
+            wmsUrl: "${baseWmsUrl?js_string}",
             layers: ${layers},
             seegMember: ${seegMember?c}
         };

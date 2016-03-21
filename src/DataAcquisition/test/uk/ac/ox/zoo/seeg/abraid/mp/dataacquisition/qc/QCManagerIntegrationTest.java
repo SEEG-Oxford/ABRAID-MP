@@ -2,6 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.qc;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.CountryDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.AbstractDataAcquisitionSpringIntegrationTests;
@@ -16,6 +17,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class QCManagerIntegrationTest extends AbstractDataAcquisitionSpringIntegrationTests {
     @Autowired
     private QCManager qcManager;
+    @Autowired
+    private CountryDao countryDao;
 
     @Test
     public void stage1NotRunWhenLocationPrecisionIsCountryAndStages2And3Pass() {
@@ -187,7 +190,7 @@ public class QCManagerIntegrationTest extends AbstractDataAcquisitionSpringInteg
     public void passesStage3WithCountryGaulCodeIfPointIsWithinGeometry() {
         // Arrange
         Location location = new Location("Japan", 138.47861, 36.09854, LocationPrecision.COUNTRY);
-        location.setCountryGaulCode(126);
+        location.setCountry(countryDao.getByName("Japan"));
 
         // Act
         boolean hasPassedQc = qcManager.performQC(location);
@@ -204,7 +207,7 @@ public class QCManagerIntegrationTest extends AbstractDataAcquisitionSpringInteg
         // Arrange
         Location location = new Location("Pointe-Noire, DR Congo", 11.86364, -4.77867,
                 LocationPrecision.PRECISE);
-        location.setCountryGaulCode(259002);
+        location.setCountry(countryDao.getByName("United States of America"));
 
         // Act
         boolean hasPassedQc = qcManager.performQC(location);

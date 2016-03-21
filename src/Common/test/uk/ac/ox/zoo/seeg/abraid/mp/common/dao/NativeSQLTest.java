@@ -1,6 +1,5 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
-import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
@@ -8,8 +7,7 @@ import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseExtentClass;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 
 import java.math.BigInteger;
@@ -35,7 +33,11 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
     @Autowired
     private DiseaseGroupDao diseaseGroupDao;
     @Autowired
+    private CountryDao countryDao;
+    @Autowired
     private NativeSQLImpl nativeSQL;
+    @Autowired
+    private LocationDao locationDao;
 
     @Test
     public void findAdminUnitGlobalThatContainsPoint() {
@@ -62,7 +64,7 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
     public void findAdminUnitTropicalThatContainsPoint() {
         Point point = GeometryUtils.createPoint(-124.2, 54.1);
         Integer gaulCode = nativeSQL.findAdminUnitThatContainsPoint(point, false);
-        assertThat(gaulCode).isEqualTo(825);
+        assertThat(gaulCode).isEqualTo(46);
     }
 
     @Test
@@ -102,13 +104,16 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
         // Arrange - find the number of polygons in the non-aggregated disease extent (i.e. that in
         // admin_unit_disease_extent_class)
         int expectedNumGeoms = getNumberOfPolygonsInAdminUnitDiseaseExtentClasses(diseaseGroupId, false);
+        int expectedNumGeomsOutside = getNumberOfPolygonsInAdminUnitDiseaseExtentClassesOutside(diseaseGroupId, false);
 
         // Act
         nativeSQL.updateAggregatedDiseaseExtent(diseaseGroupId, false);
 
         // Assert - Check that number of polygons in the aggregated disease extent is as expected
         int actualNumGeoms = getNumberOfPolygonsInDiseaseExtent(diseaseGroupId);
+        int actualNumGeomsOutside = getNumberOfPolygonsInOutsideDiseaseExtent(diseaseGroupId);
         assertThat(actualNumGeoms).isEqualTo(expectedNumGeoms);
+        assertThat(actualNumGeomsOutside).isEqualTo(expectedNumGeomsOutside);
     }
 
     @Test
@@ -125,6 +130,7 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
         updateAdminUnitDiseaseExtentClass(dengueDiseaseExtent, 179, DiseaseExtentClass.ABSENCE);
         flushAndClear();
         int expectedNewNumGeoms = getNumberOfPolygonsInAdminUnitDiseaseExtentClasses(diseaseGroupId, true);
+        int expectedNewNumGeomsOutside = getNumberOfPolygonsInAdminUnitDiseaseExtentClassesOutside(diseaseGroupId, true);
         assertThat(oldNumGeoms).isNotEqualTo(expectedNewNumGeoms);
 
         // Act
@@ -132,114 +138,9 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
 
         // Assert - Check that number of polygons in the aggregated disease extent is as expected
         int actualNewNumGeoms = getNumberOfPolygonsInDiseaseExtent(diseaseGroupId);
+        int actualNewNumGeomsOutside = getNumberOfPolygonsInOutsideDiseaseExtent(diseaseGroupId);
         assertThat(actualNewNumGeoms).isEqualTo(expectedNewNumGeoms);
-    }
-
-    @Test
-    public void findDistanceOutsideDiseaseExtentWhenLocationIsOnVertexReturnsZero() {
-        findDistanceOutsideDiseaseExtent(20, 20, 20, 20, GeometryUtils.createMultiPolygon(getSquare()));
-    }
-
-    @Test
-    public void findDistanceOutsideDiseaseExtentWhenLocationIsInsideReturnsZero() {
-        findDistanceOutsideDiseaseExtent(19, 18, 19, 18, GeometryUtils.createMultiPolygon(getSquare()));
-    }
-
-    @Test
-    public void findDistanceOutsideDiseaseExtentWhenLocationIsOutsideReturnsDistanceToVertex() {
-        findDistanceOutsideDiseaseExtent(26, 24, 20, 20, GeometryUtils.createMultiPolygon(getSquare()));
-    }
-
-    @Test
-    public void findDistanceOutsideDiseaseExtentWhenLocationIsOutsideReturnsDistanceToClosestInterpolatedPoint() {
-        findDistanceOutsideDiseaseExtent(25, 11, 20, 11, GeometryUtils.createMultiPolygon(getSquare()));
-    }
-
-    @Test
-    public void findDistanceOutsideDiseaseExtentWhenLocationIsFarOutsideReturnsDistanceToClosestInterpolatedPoint() {
-        findDistanceOutsideDiseaseExtent(15, -89.9, 15, 10, GeometryUtils.createMultiPolygon(getSquare()));
-    }
-
-    @Test
-    public void findDistanceOutsideDiseaseExtentWithMultiplePolygons() {
-        findDistanceOutsideDiseaseExtent(25, 11, 20, 11,
-                GeometryUtils.createMultiPolygon(getSquare(), getFivePointedPolygon(), getTriangle()));
-    }
-
-    @Test
-    public void findDistanceWithinDiseaseExtentOnVertexOfPossiblePresenceForTropicalDisease() {
-        // Arrange
-        int diseaseGroupId = 87;
-        updateExtentForTropicalDisease(diseaseGroupId);
-        Point point = GeometryUtils.createPoint(177, -38);
-        double expectedDistance = -300; // Nominal distance for possible presence
-
-        // Act
-        double actualDistance = nativeSQL.findDistanceWithinDiseaseExtent(diseaseGroupId, false, point);
-
-        // Assert
-        assertThat(actualDistance).isEqualTo(expectedDistance);
-    }
-
-    @Test
-    public void findDistanceWithinDiseaseExtentInsidePresenceForTropicalDisease() {
-        // Arrange
-        int diseaseGroupId = 87;
-        updateExtentForTropicalDisease(diseaseGroupId);
-        Point point = GeometryUtils.createPoint(-120.5, 50.5);
-        double expectedDistance = -1000; // Nominal distance for presence
-
-        // Act
-        double actualDistance = nativeSQL.findDistanceWithinDiseaseExtent(diseaseGroupId, false, point);
-
-        // Assert
-        assertThat(actualDistance).isEqualTo(expectedDistance);
-    }
-
-    @Test
-    public void findDistanceWithinDiseaseExtentInsidePresenceForGlobalDisease() {
-        // Arrange
-        int diseaseGroupId = 64;
-        insertExtentForGlobalDisease(diseaseGroupId);
-        Point point = GeometryUtils.createPoint(-124.1, 54.8);
-        double expectedDistance = -1000; // Nominal distance for presence
-
-        // Act
-        double actualDistance = nativeSQL.findDistanceWithinDiseaseExtent(diseaseGroupId, true, point);
-
-        // Assert
-        assertThat(actualDistance).isEqualTo(expectedDistance);
-    }
-
-    @Test
-    public void findDistanceWithinDiseaseExtentReturnsNullIfOutsideDiseaseExtent() {
-        // Arrange
-        int diseaseGroupId = 64;
-        insertExtentForGlobalDisease(diseaseGroupId);
-        Point point = GeometryUtils.createPoint(-1, -1);
-
-        // Act
-        Double actualDistance = nativeSQL.findDistanceWithinDiseaseExtent(diseaseGroupId, true, point);
-
-        // Assert
-        assertThat(actualDistance).isNull();
-    }
-
-    private void findDistanceOutsideDiseaseExtent(double locationX, double locationY,
-                                                  double expectedClosestX, double expectedClosestY,
-                                                  MultiPolygon diseaseExtent) {
-        // Arrange
-        int diseaseGroupId = 87;
-        insertDiseaseExtent(diseaseGroupId, diseaseExtent);
-        Point point = GeometryUtils.createPoint(locationX, locationY);
-        Point expectedClosestPoint = GeometryUtils.createPoint(expectedClosestX, expectedClosestY);
-        double expectedDistance = GeometryUtils.findOrthodromicDistance(point, expectedClosestPoint);
-
-        // Act
-        double actualDistance = nativeSQL.findDistanceOutsideDiseaseExtent(diseaseGroupId, point);
-
-        // Assert
-        assertThat(actualDistance).isEqualTo(expectedDistance, offset(0.00005));
+        assertThat(actualNewNumGeomsOutside).isEqualTo(expectedNewNumGeomsOutside);
     }
 
     private void insertExtentForGlobalDisease(int diseaseGroupId) {
@@ -254,7 +155,7 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
                 adminUnitDiseaseExtentClassDao.getAllTropicalAdminUnitDiseaseExtentClassesByDiseaseGroupId(diseaseGroupId);
         updateAdminUnitDiseaseExtentClass(diseaseExtent, 153, DiseaseExtentClass.ABSENCE);
         updateAdminUnitDiseaseExtentClass(diseaseExtent, 179, DiseaseExtentClass.POSSIBLE_PRESENCE);
-        updateAdminUnitDiseaseExtentClass(diseaseExtent, 825, DiseaseExtentClass.PRESENCE);
+        updateAdminUnitDiseaseExtentClass(diseaseExtent, 64, DiseaseExtentClass.PRESENCE);
         flushAndClear();
     }
 
@@ -268,9 +169,25 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
         return ((BigInteger) uniqueSQLResult(formattedQuery)).intValue();
     }
 
+    private int getNumberOfPolygonsInAdminUnitDiseaseExtentClassesOutside(int diseaseGroupId, boolean isGlobal) {
+        String globalOrTropical = isGlobal ? "global" : "tropical";
+        String expectedNumGeomsQuery =
+                "SELECT SUM(ST_NumGeometries(geom)) FROM admin_unit_%1$s WHERE gaul_code in " +
+                        "(SELECT %1$s_gaul_code FROM admin_unit_disease_extent_class WHERE disease_group_id = " +
+                        diseaseGroupId + " AND disease_extent_class NOT IN ('POSSIBLE_PRESENCE', 'PRESENCE'))";
+        String formattedQuery = String.format(expectedNumGeomsQuery, globalOrTropical);
+        return ((BigInteger) uniqueSQLResult(formattedQuery)).intValue();
+    }
+
     private int getNumberOfPolygonsInDiseaseExtent(int diseaseGroupId) {
         String actualNumGeomsQuery =
                 "SELECT ST_NumGeometries(geom) FROM disease_extent where disease_group_id = " + diseaseGroupId;
+        return (Integer) uniqueSQLResult(actualNumGeomsQuery);
+    }
+
+    private int getNumberOfPolygonsInOutsideDiseaseExtent(int diseaseGroupId) {
+        String actualNumGeomsQuery =
+                "SELECT ST_NumGeometries(outside_geom) FROM disease_extent where disease_group_id = " + diseaseGroupId;
         return (Integer) uniqueSQLResult(actualNumGeomsQuery);
     }
 
@@ -294,20 +211,145 @@ public class NativeSQLTest extends AbstractCommonSpringIntegrationTests {
         adminUnitDiseaseExtentClassDao.save(extentClass);
     }
 
-    private Polygon getTriangle() {
-        return GeometryUtils.createPolygon(1, 1, 3, 2, 2, 3, 1, 1);
+    @Test
+    public void findDistanceToDiseaseExtentPointGlobal() {
+        insertDiseaseExtent();
+        int id = setupDistanceTest(LocationPrecision.PRECISE, 1d, 4d, null, true, null, null);
+        assertThat(nativeSQL.findDistanceOutsideDiseaseExtent(87, true, id)).isEqualTo(156.75914, offset(0.00005));
+        assertThat(nativeSQL.findDistanceInsideDiseaseExtent(87, true, id)).isEqualTo(4460.23046, offset(0.00005));
     }
 
-    private Polygon getSquare() {
-        return GeometryUtils.createPolygon(10, 10, 10, 20, 20, 20, 20, 10, 10, 10);
+    @Test
+    public void findDistanceToDiseaseExtentPointTropical() {
+        insertDiseaseExtent();
+        int id = setupDistanceTest(LocationPrecision.PRECISE, 1d, 4d, null, false, null, null);
+        assertThat(nativeSQL.findDistanceOutsideDiseaseExtent(87, false, id)).isEqualTo(156.75914, offset(0.00005));
+        assertThat(nativeSQL.findDistanceInsideDiseaseExtent(87, false, id)).isEqualTo(4460.23046, offset(0.00005));
     }
 
-    private Polygon getFivePointedPolygon() {
-        return GeometryUtils.createPolygon(3, 4, 5, 11, 12, 8, 9, 5, 5, 6, 3, 4);
+    @Test
+      public void findDistanceToDiseaseExtentAdmin1Global() {
+        insertDiseaseExtent();
+        MultiPolygon geom = GeometryUtils.createMultiPolygon(getTriangle(0, 10), getTriangle(10, 12));
+        int id = setupDistanceTest(LocationPrecision.ADMIN1, 1d, 4d, geom, true, null, null);
+        assertThat(nativeSQL.findDistanceOutsideDiseaseExtent(87, true, id)).isEqualTo(891.60176, offset(0.00005));
+        assertThat(nativeSQL.findDistanceInsideDiseaseExtent(87, true, id)).isEqualTo(3401.72083, offset(0.00005));
     }
 
-    private void insertDiseaseExtent(int diseaseGroupId, Geometry geom) {
-        executeSQLUpdate("UPDATE disease_extent set geom=:geom where disease_group_id=:diseaseGroupId",
-                "diseaseGroupId", diseaseGroupId, "geom", geom);
+    @Test
+    public void findDistanceToDiseaseExtentAdmin1Tropical() {
+        insertDiseaseExtent();
+        MultiPolygon geom = GeometryUtils.createMultiPolygon(getTriangle(0, 10), getTriangle(10, 12));
+        int id = setupDistanceTest(LocationPrecision.ADMIN1, 1d, 4d, geom, false, null, null);
+        assertThat(nativeSQL.findDistanceOutsideDiseaseExtent(87, false, id)).isEqualTo(891.60176, offset(0.00005));
+        assertThat(nativeSQL.findDistanceInsideDiseaseExtent(87, false, id)).isEqualTo(3401.72083, offset(0.00005));
+    }
+
+    @Test
+    public void findDistanceToDiseaseExtentAdmin2Global() {
+        insertDiseaseExtent();
+        MultiPolygon geom = GeometryUtils.createMultiPolygon(getTriangle(0, 10), getTriangle(10, 12));
+        int id = setupDistanceTest(LocationPrecision.ADMIN2, 1d, 4d, geom, true, null, null);
+        assertThat(nativeSQL.findDistanceOutsideDiseaseExtent(87, true, id)).isEqualTo(891.60176, offset(0.00005));
+        assertThat(nativeSQL.findDistanceInsideDiseaseExtent(87, true, id)).isEqualTo(3401.72083, offset(0.00005));
+    }
+
+    @Test
+    public void findDistanceToDiseaseExtentAdmin2Tropical() {
+        insertDiseaseExtent();
+        MultiPolygon geom = GeometryUtils.createMultiPolygon(getTriangle(0, 10), getTriangle(10, 12));
+        int id = setupDistanceTest(LocationPrecision.ADMIN2, 1d, 4d, geom, false, null, null);
+        assertThat(nativeSQL.findDistanceOutsideDiseaseExtent(87, false, id)).isEqualTo(891.60176, offset(0.00005));
+        assertThat(nativeSQL.findDistanceInsideDiseaseExtent(87, false, id)).isEqualTo(3401.72083, offset(0.00005));
+    }
+
+    @Test
+    public void findDistanceToDiseaseExtentCountryGlobal() {
+        insertDiseaseExtent();
+        MultiPolygon geom = GeometryUtils.createMultiPolygon(getTriangle(0, 10), getTriangle(10, 12));
+        int id = setupDistanceTest(LocationPrecision.COUNTRY, 1d, 4d, geom, true, null, null);
+        assertThat(nativeSQL.findDistanceOutsideDiseaseExtent(87, true, id)).isEqualTo(891.60176, offset(0.00005));
+        assertThat(nativeSQL.findDistanceInsideDiseaseExtent(87, true, id)).isEqualTo(3401.72083, offset(0.00005));
+    }
+
+    @Test
+    public void findDistanceToDiseaseExtentCountryTropical() {
+        insertDiseaseExtent();
+        MultiPolygon geom = GeometryUtils.createMultiPolygon(getTriangle(0, 10), getTriangle(10, 12));
+        int id = setupDistanceTest(LocationPrecision.COUNTRY, 1d, 4d, geom, false, null, null);
+        assertThat(nativeSQL.findDistanceOutsideDiseaseExtent(87, false, id)).isEqualTo(891.60176, offset(0.00005));
+        assertThat(nativeSQL.findDistanceInsideDiseaseExtent(87, false, id)).isEqualTo(3401.72083, offset(0.00005));
+    }
+
+    @Test
+    public void findDistanceToDiseaseExtentCountrySplitGlobal() {
+        insertDiseaseExtent();
+        MultiPolygon geom = GeometryUtils.createMultiPolygon(getTriangle(0, 10), getTriangle(10, 12), getTriangle(20, 82), getTriangle(0, 5));
+        MultiPolygon subGeom1 = GeometryUtils.createMultiPolygon(getTriangle(0, 10), getTriangle(10, 12));
+        MultiPolygon subGeom2 = GeometryUtils.createMultiPolygon(getTriangle(20, 82));
+        int id = setupDistanceTest(LocationPrecision.COUNTRY, 1d, 4d, geom, true, subGeom1, subGeom2);
+        assertThat(nativeSQL.findDistanceOutsideDiseaseExtent(87, true, id)).isEqualTo(891.60176, offset(0.00005));
+        assertThat(nativeSQL.findDistanceInsideDiseaseExtent(87, true, id)).isEqualTo(3401.72083, offset(0.00005));
+    }
+
+    @Test
+    public void findDistanceToDiseaseExtentCountrySplitTropical() {
+        insertDiseaseExtent();
+        MultiPolygon geom = GeometryUtils.createMultiPolygon(getTriangle(0, 10), getTriangle(10, 12), getTriangle(20, 82), getTriangle(0, 5));
+        MultiPolygon subGeom1 = GeometryUtils.createMultiPolygon(getTriangle(0, 10), getTriangle(10, 12));
+        MultiPolygon subGeom2 = GeometryUtils.createMultiPolygon(getTriangle(20, 82));
+        int id = setupDistanceTest(LocationPrecision.COUNTRY, 1d, 4d, geom, false, subGeom1, subGeom2);
+        assertThat(nativeSQL.findDistanceOutsideDiseaseExtent(87, false, id)).isEqualTo(891.60176, offset(0.00005));
+        assertThat(nativeSQL.findDistanceInsideDiseaseExtent(87, false, id)).isEqualTo(3401.72083, offset(0.00005));
+    }
+
+    @Test
+    public void findDistanceToDiseaseExtentWithoutExtent() {
+        insertNullDiseaseExtent();
+        int id = setupDistanceTest(LocationPrecision.PRECISE, 1d, 4d, null, true, null, null);
+        assertThat(nativeSQL.findDistanceOutsideDiseaseExtent(87, true, id)).isNull();
+        assertThat(nativeSQL.findDistanceInsideDiseaseExtent(87, true, id)).isNull();
+    }
+
+    private Polygon getTriangle(double xOffset, double yOffset) {
+        return GeometryUtils.createPolygon(
+                xOffset + 1, yOffset + 1,
+                xOffset + 3, yOffset + 2,
+                xOffset + 2, yOffset + 3,
+                xOffset + 1, yOffset + 1);
+    }
+
+    private void insertDiseaseExtent() {
+        MultiPolygon geom = GeometryUtils.createMultiPolygon(getTriangle(0, 0), getTriangle(10, 0), getTriangle(20, 0), getTriangle(30, 0));
+        MultiPolygon outsideGeom = GeometryUtils.createMultiPolygon(getTriangle(40, 0), getTriangle(50, 0), getTriangle(60, 0), getTriangle(70, 0));
+        executeSQLUpdate("UPDATE disease_extent set geom=:geom, outside_geom=:outsideGeom where disease_group_id=:diseaseGroupId",
+                "diseaseGroupId", 87, "geom", geom, "outsideGeom", outsideGeom);
+    }
+
+    private void insertNullDiseaseExtent() {
+        executeSQLUpdate("UPDATE disease_extent set geom=:geom, outside_geom=:outsideGeom where disease_group_id=:diseaseGroupId",
+                "diseaseGroupId", 87, "geom", null, "outsideGeom", null);
+    }
+
+    private int setupDistanceTest(LocationPrecision precision, double x, double y, MultiPolygon linkedGeom, boolean isGlobal, MultiPolygon subLinkedGeom1, MultiPolygon subLinkedGeom2) {
+        Location location = new Location(x, y, precision);
+        if (precision == LocationPrecision.COUNTRY) {
+            executeSQLUpdate("UPDATE country SET geom=:geom WHERE gaul_code=93", "geom", linkedGeom);
+            location.setCountry(countryDao.getByName("Germany")); // GAUL 93 = "Germany"
+            if (subLinkedGeom1 != null || subLinkedGeom2 != null) {
+                executeSQLUpdate("UPDATE admin_unit_" + (isGlobal ? "global" : "tropical") + " SET geom=:geom WHERE gaul_code=27", "geom", subLinkedGeom1);
+                executeSQLUpdate("UPDATE admin_unit_" + (isGlobal ? "global" : "tropical") + " SET geom=:geom WHERE gaul_code=18", "geom", subLinkedGeom2);
+                executeSQLUpdate("INSERT INTO admin_unit_country (admin_unit_gaul_code, country_gaul_code) VALUES (27, 93)");
+                executeSQLUpdate("INSERT INTO admin_unit_country (admin_unit_gaul_code, country_gaul_code) VALUES (18, 93)");
+            }
+        } else if (precision == LocationPrecision.ADMIN1) {
+            executeSQLUpdate("UPDATE admin_unit_qc SET geom=:geom WHERE gaul_code=124", "geom", linkedGeom);
+            location.setAdminUnitQCGaulCode(124);
+        } else if (precision == LocationPrecision.ADMIN2) {
+            executeSQLUpdate("UPDATE admin_unit_qc SET geom=:geom WHERE gaul_code=125", "geom", linkedGeom);
+            location.setAdminUnitQCGaulCode(125);
+        }
+        locationDao.save(location);
+        return location.getId();
     }
 }

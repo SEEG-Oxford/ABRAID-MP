@@ -8,14 +8,18 @@ define(["ko"], function (ko) {
 
     return function () {
         var self = this;
-        self.type = ko.observable().subscribeTo("active-atlas-type");
+        var activeLayer = ko.observable().subscribeTo("active-atlas-layer");
 
-        var activeRun = ko.observable().subscribeTo("selected-run");
-        self.startDate = ko.computed(function () {
-            return (typeof activeRun() !== "undefined") ? activeRun().rangeStart : "???";
+        self.type = ko.computed(function () {
+            return activeLayer() ? activeLayer().type : undefined;
         });
+
+        self.startDate = ko.computed(function () {
+            return activeLayer() ? activeLayer().run.rangeStart : "???";
+        });
+
         self.endDate = ko.computed(function () {
-            return (typeof activeRun() !== "undefined") ? activeRun().rangeEnd : "???";
+            return activeLayer() ? activeLayer().run.rangeEnd : "???";
         });
     };
 });

@@ -32,22 +32,21 @@ public class ModelStatusReporterImpl implements ModelStatusReporter {
     private static final String LOG_HANDLER_SUCCESSFUL = "Successfully sent model outputs to model output handler.";
     private static final String LOG_COULD_NOT_DELETE_TEMP_FILE = "Could not delete temporary file \"%s\"";
     private static final String LOG_COULD_NOT_DELETE_WORKSPACE_DIR = "Could not delete workspace directory \"%s\"";
-    private static final String LOG_NOT_DELETED_WORKSPACE_DIR_DRY_RUN =
-            "Did not delete workspace directory \"%s\", as it was a dry run";
     private static final String LOG_NOT_DELETED_WORKSPACE_DIR =
             "Did not delete workspace directory \"%s\", as the model run did not complete successfully";
 
     private final String runName;
     private final Path workingDirectoryPath;
-    private final boolean dryRun;
+    private final boolean deleteWorkspace;
     private final ModelOutputHandlerWebService modelOutputHandlerWebService;
     private final AbraidJsonObjectMapper objectMapper;
 
-    public ModelStatusReporterImpl(String runName, Path workingDirectory, boolean dryRun,
+    public ModelStatusReporterImpl(String runName, Path workingDirectory, boolean deleteWorkspace,
             ModelOutputHandlerWebService modelOutputHandlerWebService, AbraidJsonObjectMapper objectMapper) {
         this.runName = runName;
         this.workingDirectoryPath = workingDirectory;
-        this.dryRun = dryRun;
+        this.deleteWorkspace = deleteWorkspace;
+
         this.modelOutputHandlerWebService = modelOutputHandlerWebService;
         this.objectMapper = objectMapper;
     }
@@ -66,7 +65,9 @@ public class ModelStatusReporterImpl implements ModelStatusReporter {
             createMetadataAndSaveToFile(status, outputText, errorText);
             zipFile = createZipFile(pickOutputFiles(status));
             sendOutputsToModelOutputHandler(zipFile);
-            deleteWorkingDirectory(status);
+            if (deleteWorkspace) {
+                deleteWorkingDirectory(status);
+            }
         } catch (Exception e) {
             logger.fatal(String.format(LOG_HANDLER_REQUEST_ERROR, e.getMessage()), e);
         } finally {
@@ -124,7 +125,7 @@ public class ModelStatusReporterImpl implements ModelStatusReporter {
         zipParameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);
 
         // Add files to zip file
-        ArrayList filesToAdd = new ArrayList();
+        ArrayList<File> filesToAdd = new ArrayList<>();
         for (String outputFilename : outputFilenames) {
             File fileToAdd = getFileInWorkingDirectory(outputFilename);
             if (fileToAdd.exists()) {
@@ -157,9 +158,7 @@ public class ModelStatusReporterImpl implements ModelStatusReporter {
     }
 
     private void deleteWorkingDirectory(ModelRunStatus modelRunStatus) {
-        if (dryRun) {
-            logger.info(String.format(LOG_NOT_DELETED_WORKSPACE_DIR_DRY_RUN, workingDirectoryPath.toAbsolutePath()));
-        } else if (!modelRunStatus.equals(ModelRunStatus.COMPLETED)) {
+        if (!modelRunStatus.equals(ModelRunStatus.COMPLETED)) {
             logger.warn(String.format(LOG_NOT_DELETED_WORKSPACE_DIR, workingDirectoryPath.toAbsolutePath()));
         } else {
             try {

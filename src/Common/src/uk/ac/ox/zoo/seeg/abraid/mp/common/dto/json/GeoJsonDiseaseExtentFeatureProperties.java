@@ -1,12 +1,10 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitGlobalOrTropical;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitReview;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.DisplayJsonView;
 
 import java.util.List;
 
@@ -18,16 +16,12 @@ import static org.hamcrest.core.IsEqual.equalTo;
  * Copyright (c) 2014 University of Oxford
  */
 public class GeoJsonDiseaseExtentFeatureProperties {
-    @JsonView(DisplayJsonView.class)
     private String name;
 
-    @JsonView(DisplayJsonView.class)
     private String diseaseExtentClass;
 
-    @JsonView(DisplayJsonView.class)
     private Integer occurrenceCount;
 
-    @JsonView(DisplayJsonView.class)
     private boolean needsReview;
 
     public GeoJsonDiseaseExtentFeatureProperties(AdminUnitDiseaseExtentClass adminUnitDiseaseExtentClass,
@@ -102,11 +96,7 @@ public class GeoJsonDiseaseExtentFeatureProperties {
         this.occurrenceCount = occurrenceCount;
     }
 
-    /**
-     * Getter for boolean property needsReview.
-     * @return needsReview.
-     */
-    public boolean needsReview() {
+    public boolean getNeedsReview() {
         return needsReview;
     }
 

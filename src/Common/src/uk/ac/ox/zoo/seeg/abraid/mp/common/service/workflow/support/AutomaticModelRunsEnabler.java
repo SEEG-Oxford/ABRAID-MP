@@ -31,11 +31,14 @@ public class AutomaticModelRunsEnabler {
 
     private DiseaseService diseaseService;
     private DiseaseOccurrenceValidationService diseaseOccurrenceValidationService;
+    private int maxOccurrenceAgeToRetainInDays;
 
     public AutomaticModelRunsEnabler(DiseaseService diseaseService,
-                                     DiseaseOccurrenceValidationService diseaseOccurrenceValidationService) {
+                                     DiseaseOccurrenceValidationService diseaseOccurrenceValidationService,
+                                     int maxOccurrenceAgeToRetainInDays) {
         this.diseaseService = diseaseService;
         this.diseaseOccurrenceValidationService = diseaseOccurrenceValidationService;
+        this.maxOccurrenceAgeToRetainInDays = maxOccurrenceAgeToRetainInDays;
     }
 
     /**
@@ -70,7 +73,7 @@ public class AutomaticModelRunsEnabler {
         // days between model runs. This ensures that that experts are not overwhelmed with occurrences to validate.
         // Occurrences before the cutoff date are permanently ignored by setting their status to DISCARDED_UNUSED.
         DateTime earliestDateForValidationParameters =
-                diseaseService.subtractDaysBetweenModelRuns(DateTime.now()).toDateTimeAtStartOfDay();
+                DateTime.now().toLocalDate().minusDays(maxOccurrenceAgeToRetainInDays).toDateTimeAtStartOfDay();
         List<DiseaseOccurrence> occurrencesForValidationParameters = new ArrayList<>();
 
         for (DiseaseOccurrence occurrence : occurrences) {

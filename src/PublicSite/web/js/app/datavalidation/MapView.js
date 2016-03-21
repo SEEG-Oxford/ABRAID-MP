@@ -22,41 +22,33 @@ define([
 ], function (L, $, ko, _) {
     "use strict";
 
-    return function (baseUrl, wmsUrl, loggedIn, alert, setTimeout) { // jshint ignore:line
+    return function (baseUrl, wmsUrl, loggedIn, leafletMapFactory, alert, setTimeout) { // jshint ignore:line
 
         /** MAP AND BASE LAYER */
-
         // Initialise map at "map" div
-        var map = L.map("map", {
-            attributionControl: false,
-            zoomControl: false,
-            zoomsliderControl: true,
-            maxBounds: [ [-60, -220], [85, 220] ],
-            maxZoom: 7,
-            minZoom: 3,
-            animate: true,
-            bounceAtZoomLimits: false,
-            crs: L.CRS.EPSG4326
-        }).fitWorld();
+        var map = leafletMapFactory.create("map");
 
         // Add the simplified shapefile base layer with WMS GET request
         var baseLayer = L.tileLayer.wms(wmsUrl, {
             layers: ["abraid:base_layer"],
             format: "image/png",
             reuseTiles: true, // Enable Leaflet reuse of tiles within single page view
-            tiled: true // Enable GeoWebCaching reuse of tiles between all users/page views
+            tiled: true, // Enable GeoWebCaching reuse of tiles between all users/page views
+            errorTileUrl: baseUrl + "static/empty_tile.png"
         }).addTo(map);
 
         var hatchingLayer = L.tileLayer.wms(wmsUrl, {
             layers: ["abraid:hatching"],
             format: "image/png",
             reuseTiles: true, // Enable Leaflet reuse of tiles within single page view
-            tiled: true // Enable GeoWebCaching reuse of tiles between all users/page views
+            tiled: true, // Enable GeoWebCaching reuse of tiles between all users/page views
+            errorTileUrl: baseUrl + "static/empty_tile.png"
         });
 
         // Track when zooming is happening
         map.isZooming = false;
         map.isPanning = false;
+        map.isSpidering = false;
         map.on("zoomstart", function () { map.isZooming = true; });
         map.on("zoomend", function () { map.isZooming = false; });
         map.on("movestart", function () { map.isPanning = true; });
@@ -132,7 +124,8 @@ define([
                 maxWidth: 500,
                 offset: [0, 35]
             });
-            marker.on("click", function () {
+            marker.on("click", function (e) {
+                if (e) { L.DomEvent.stop(e); }
                 ko.postbox.publish("point-selected", feature);
                 selectPoint(this);
             });
@@ -213,8 +206,10 @@ define([
                         ko.postbox.publish("no-features-to-review", true);
                         map.fitWorld();
                     }
-                }).fail(function () {
-                    alert("Error fetching occurrences");
+                }).fail(function (xhr, status) {
+                    if (status !== "abort") {
+                        alert("Error fetching occurrences");
+                    }
                 }).always(function () {
                     ko.postbox.publish("map-view-update-in-progress", false);
                 });
@@ -252,8 +247,13 @@ define([
                 map.panTo(targetLatLng);
             }
 
+
             var recursivelySelectOccurrenceMarker = function () {
-                if (!map.isZooming && !map.isPanning) {
+                // It should be able to replace all of this with
+                // clusterLayer.zoomToShowLayer(target, function () { clickOccurrenceMarker(target); });
+                // but zoomToShowLayer is buggy and doesnt call its callback on all paths
+
+                if (!map.isZooming && !map.isPanning && !map.isSpidering) {
                     var parent = clusterLayer.getVisibleParent(target);
 
                     if (target._map) { /* jshint ignore:line */
@@ -264,7 +264,15 @@ define([
                     } else if (parent) {
                         // The closest point isn't on the map, but is inside a cluster on the map,
                         // so click the cluster to open it. Then try again, so the spider leg gets clicked
-                        clickOccurrenceMarker(parent);
+                        if (map.getZoom() !== map.getMaxZoom()) {
+                            parent.zoomToBounds();
+                        } else {
+                            map.isSpidering = true;
+                            clusterLayer.once("spiderfied", function () {
+                                map.isSpidering = false;
+                            });
+                            parent.spiderfy();
+                        }
                     } else {
                         // Give up
                         return;
@@ -349,7 +357,7 @@ define([
                     count: feature.properties.occurrenceCount
                 };
                 layer.on({
-                    click: function () { ko.postbox.publish("admin-unit-selected", data); },
+                    click: function (e) { L.DomEvent.stop(e); ko.postbox.publish("admin-unit-selected", data); },
                     mouseover: function () {
                         layer.setStyle({ fillColor: extentClassColour[feature.properties.diseaseExtentClass][1] });
                     },
@@ -421,8 +429,10 @@ define([
                     adminUnitsReviewedLayer.addData(featureCollectionReviewed);
 
                     publishDiseaseExtentEvents(featuresNeedReview);
-                }).fail(function () {
-                    alert("Error fetching disease extent");
+                }).fail(function (xhr, status) {
+                    if (status !== "abort") {
+                        alert("Error fetching disease extent");
+                    }
                 }).always(function () {
                     ko.postbox.publish("map-view-update-in-progress", false);
                 });
@@ -476,7 +486,8 @@ define([
         }
 
         // Reset to default style when a point or admin unit is unselected (by clicking anywhere else on the map)
-        function resetSelectedPoint() {
+        function resetSelectedPoint(e) {
+            if (e) { L.DomEvent.stop(e); }
             ko.postbox.publish("point-selected", null);
             resetDiseaseOccurrenceLayerStyle();
         }
@@ -486,7 +497,8 @@ define([
             resetDiseaseExtentLayerStyle();
         }
 
-        function resetSelectedFeature() {
+        function resetSelectedFeature(e) {
+            if (e) { L.DomEvent.stop(e); }
             if (validationTypeIsDiseaseOccurrenceLayer) {
                 resetSelectedPoint();
             } else {
@@ -496,6 +508,23 @@ define([
 
         clusterLayer.on("clusterclick", resetSelectedPoint);
         map.on("click", resetSelectedFeature);
+
+        function selectClosestAdminUnitInNeedOfReview(point) {
+            var candidateLayers = adminUnitsNeedReviewLayer.getLayers();
+            if (_.isEmpty(candidateLayers)) {
+                map.fitWorld();
+                ko.postbox.publish("no-features-to-review", true);
+            } else {
+                var closestLayer = _.min(candidateLayers, function (candidateLayer) {
+                    return candidateLayer.getBounds().getCenter().distanceTo(point);
+                });
+                ko.postbox.publish("admin-unit-selected", {
+                    id: closestLayer.feature.id,
+                    name: closestLayer.feature.properties.name,
+                    count: closestLayer.feature.properties.occurrenceCount
+                });
+            }
+        }
 
         ko.postbox.subscribe("layers-changed", function (data) {
             ko.postbox.publish("map-view-update-in-progress", true);
@@ -525,8 +554,10 @@ define([
 
         ko.postbox.subscribe("admin-unit-reviewed", function (id) {
             var layer = adminUnitLayerMap[id];
+            var center = layer.getBounds().getCenter();
             adminUnitsNeedReviewLayer.removeLayer(layer);
             adminUnitsReviewedLayer.addData(layer.feature);
+            selectClosestAdminUnitInNeedOfReview(center);
         });
     };
 });

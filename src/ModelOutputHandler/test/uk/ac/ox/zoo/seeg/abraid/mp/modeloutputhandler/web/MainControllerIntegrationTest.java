@@ -1,5 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.web;
 
+import ch.lambdaj.Lambda;
+import ch.lambdaj.function.convert.Converter;
 import freemarker.template.TemplateException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.builder.CompareToBuilder;
@@ -12,20 +14,25 @@ import org.junit.rules.TemporaryFolder;
 import org.kubek2k.springockito.annotations.ReplaceWithMock;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseGroupDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ModelRunDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvCovariateInfluence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvEffectCurveCovariateInfluence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.csv.CsvSubmodelStatistic;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ValidationParameterCacheService;
 import uk.ac.ox.zoo.seeg.abraid.mp.modeloutputhandler.geoserver.GeoserverRestService;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.AbstractSpringIntegrationTests;
+import uk.ac.ox.zoo.seeg.abraid.mp.testutils.GeneralTestUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.SpringockitoWebContextLoader;
 
 import java.io.File;
@@ -93,6 +100,13 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
     @Autowired
     private ModelRunDao modelRunDao;
 
+    @ReplaceWithMock
+    @Autowired
+    private ValidationParameterCacheService cacheService;
+
+    @Autowired
+    private DiseaseGroupDao diseaseGroupDao;
+
     @Before
     public void setup() {
         when(rasterFileDirectory.getAbsolutePath()).thenReturn(testFolder.getRoot().getAbsolutePath());
@@ -124,7 +138,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
 
         // Act and assert
         this.mockMvc
-                .perform(post(OUTPUT_HANDLER_PATH).content(body))
+                .perform(buildPost(body))
                 .andExpect(status().isOk())
                 .andExpect(content().string(""));
 
@@ -140,6 +154,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
 
         assertThatRasterWrittenToFile(run, "mean_prediction_full.tif", "mean_full");
         assertThatRasterWrittenToFile(run, "mean_prediction.tif", "mean");
+        verifyEnvironmentalSuitabilityCacheReset(run);
         assertThatRasterPublishedToGeoserver(run, "mean");
         assertThatRasterWrittenToFile(run, "prediction_uncertainty_full.tif", "uncertainty_full");
         assertThatRasterWrittenToFile(run, "prediction_uncertainty.tif", "uncertainty");
@@ -158,7 +173,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
 
         // Act and assert
         this.mockMvc
-                .perform(post(OUTPUT_HANDLER_PATH).content(body))
+                .perform(buildPost(body))
                 .andExpect(status().isOk())
                 .andExpect(content().string(""));
 
@@ -174,6 +189,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
 
         assertThatRasterFileDoesNotExist(run, "mean_full");
         assertThatRasterWrittenToFile(run, "mean_prediction.tif", "mean");
+        verifyEnvironmentalSuitabilityCacheReset(run);
         assertThatRasterFileDoesNotExist(run, "uncertainty_full");
         assertThatRasterWrittenToFile(run, "prediction_uncertainty.tif", "uncertainty");
         assertThatRasterWrittenToFile(run, "extent.tif", "extent");
@@ -192,7 +208,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
 
         // Act and assert
         this.mockMvc
-                .perform(post(OUTPUT_HANDLER_PATH).content(body))
+                .perform(buildPost(body))
                 .andExpect(status().isOk())
                 .andExpect(content().string(""));
 
@@ -213,9 +229,14 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
 
         // Act and assert
         this.mockMvc
-                .perform(post(OUTPUT_HANDLER_PATH).content(malformedZipFile))
+                .perform(buildPost(malformedZipFile))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().string("Model outputs handler failed with error \"Probably not a zip file or a corrupted zip file\". See ModelOutputHandler server logs for more details."));
+    }
+
+    private MockHttpServletRequestBuilder buildPost(byte[] data) {
+        MockMultipartFile file = new MockMultipartFile("file", data);
+        return fileUpload(OUTPUT_HANDLER_PATH).file(file);
     }
 
     @Test
@@ -226,7 +247,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
 
         // Act and assert
         this.mockMvc
-                .perform(post(OUTPUT_HANDLER_PATH).content(body))
+                .perform(buildPost(body))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().string("Model outputs handler failed with error \"File metadata.json missing from model run outputs\". See ModelOutputHandler server logs for more details."));
     }
@@ -239,7 +260,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
 
         // Act and assert
         this.mockMvc
-                .perform(post(OUTPUT_HANDLER_PATH).content(body))
+                .perform(buildPost(body))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().string("Model outputs handler failed with error \"Model run with name deng_2014-05-13-11-26-37_0469aac2-d9b2-4104-907e-2886eff11682 does not exist\". See ModelOutputHandler server logs for more details."));
     }
@@ -252,7 +273,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
 
         // Act and assert
         this.mockMvc
-                .perform(post(OUTPUT_HANDLER_PATH).content(body))
+                .perform(buildPost(body))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().string("Model outputs handler failed with error \"File mean_prediction.tif missing from model run outputs\". See ModelOutputHandler server logs for more details."));
     }
@@ -265,7 +286,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
 
         // Act and assert
         this.mockMvc
-                .perform(post(OUTPUT_HANDLER_PATH).content(body))
+                .perform(buildPost(body))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().string("Model outputs handler failed with error \"File prediction_uncertainty.tif missing from model run outputs\". See ModelOutputHandler server logs for more details."));
     }
@@ -278,7 +299,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
 
         // Act and assert
         this.mockMvc
-                .perform(post(OUTPUT_HANDLER_PATH).content(body))
+                .perform(buildPost(body))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().string("Model outputs handler failed with error \"File extent.tif missing from model run outputs\". See ModelOutputHandler server logs for more details."));
     }
@@ -291,7 +312,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
 
         // Act and assert
         this.mockMvc
-                .perform(post(OUTPUT_HANDLER_PATH).content(body))
+                .perform(buildPost(body))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().string("Model outputs handler failed with error \"File statistics.csv missing from model run outputs\". See ModelOutputHandler server logs for more details."));
     }
@@ -304,7 +325,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
 
         // Act and assert
         this.mockMvc
-                .perform(post(OUTPUT_HANDLER_PATH).content(body))
+                .perform(buildPost(body))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().string("Model outputs handler failed with error \"File effect_curves.csv missing from model run outputs\". See ModelOutputHandler server logs for more details."));
     }
@@ -317,13 +338,13 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
 
         // Act and assert
         this.mockMvc
-                .perform(post(OUTPUT_HANDLER_PATH).content(body))
+                .perform(buildPost(body))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().string("Model outputs handler failed with error \"File relative_influence.csv missing from model run outputs\". See ModelOutputHandler server logs for more details."));
     }
 
     private void insertModelRun(String name) {
-        ModelRun modelRun = new ModelRun(name, TEST_MODEL_RUN_DISEASE_GROUP_ID, TEST_MODEL_RUN_SERVER, DateTime.now(), DateTime.now(), DateTime.now());
+        ModelRun modelRun = new ModelRun(name, diseaseGroupDao.getById(TEST_MODEL_RUN_DISEASE_GROUP_ID), TEST_MODEL_RUN_SERVER, DateTime.now(), DateTime.now(), DateTime.now());
         modelRunDao.save(modelRun);
     }
 
@@ -336,6 +357,10 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
         File actualFile = Paths.get(testFolder.getRoot().getAbsolutePath(), run.getName() + "_" + type + ".tif").toFile();
 
         assertThat(actualFile).hasContentEqualTo(expectedFile);
+    }
+
+    private void verifyEnvironmentalSuitabilityCacheReset(ModelRun run) {
+        verify(cacheService).clearEnvironmentalSuitabilityCacheForDisease(run.getDiseaseGroupId());
     }
 
     private void assertThatRasterFileDoesNotExist(ModelRun run, String type) throws IOException {
@@ -385,22 +410,33 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
             }
         });
 
-        assertThat(extractProperty("covariateFilePath").from(database)).isEqualTo(extractProperty("covariateFilePath").from(file));
-        assertThat(extractProperty("covariateDisplayName").from(database)).isEqualTo(extractProperty("covariateDisplayName").from(file));
+        assertThat(prepend("id", extractProperty("id").from(extractProperty("covariateFile").from(database)))).isEqualTo(extractProperty("name").from(file));
         assertThat(extractProperty("meanInfluence").from(database)).isEqualTo(extractProperty("meanInfluence").from(file));
         assertThat(extractProperty("upperQuantile").from(database)).isEqualTo(extractProperty("upperQuantile").from(file));
         assertThat(extractProperty("lowerQuantile").from(database)).isEqualTo(extractProperty("lowerQuantile").from(file));
+    }
+
+    private List<String> prepend(final String prefix, List<Object> from) {
+        return Lambda.convert(from, new Converter<Object, String>() {
+            @Override
+            public String convert(Object s) {
+                return prefix + (s.toString());
+            }
+        });
     }
 
     private void assertThatEffectCurvesInDatabaseMatchesFile(final ModelRun run, String path) throws IOException {
         List<EffectCurveCovariateInfluence> database = run.getEffectCurveCovariateInfluences();
         List<CsvEffectCurveCovariateInfluence> file = CsvEffectCurveCovariateInfluence.readFromCSV(FileUtils.readFileToString(new File(TEST_DATA_PATH, path)));
 
+        // Discrete covariates only store min and max effect curve entries, this means that row 5 of the csv should not be kept
+        file.remove(4);
+
         Collections.sort(database, new Comparator<EffectCurveCovariateInfluence>() {
             @Override
             public int compare(EffectCurveCovariateInfluence o1, EffectCurveCovariateInfluence o2) {
                 return new CompareToBuilder()
-                        .append(o1.getCovariateFilePath(), o2.getCovariateFilePath())
+                        .append(o1.getCovariateFile().getId(), o2.getCovariateFile().getId())
                         .append(o1.getCovariateValue(), o2.getCovariateValue())
                         .toComparison();
             }
@@ -410,14 +446,13 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
             @Override
             public int compare(CsvEffectCurveCovariateInfluence o1, CsvEffectCurveCovariateInfluence o2) {
                 return new CompareToBuilder()
-                        .append(o1.getCovariateFilePath(), o2.getCovariateFilePath())
+                        .append(o1.getName(), o2.getName())
                         .append(o1.getCovariateValue(), o2.getCovariateValue())
                         .toComparison();
             }
         });
 
-        assertThat(extractProperty("covariateFilePath").from(database)).isEqualTo(extractProperty("covariateFilePath").from(file));
-        assertThat(extractProperty("covariateDisplayName").from(database)).isEqualTo(extractProperty("covariateDisplayName").from(file));
+        assertThat(prepend("id", extractProperty("id").from(extractProperty("covariateFile").from(database)))).isEqualTo(extractProperty("name").from(file));
         assertThat(extractProperty("covariateValue").from(database)).isEqualTo(extractProperty("covariateValue").from(file));
         assertThat(extractProperty("meanInfluence").from(database)).isEqualTo(extractProperty("meanInfluence").from(file));
         assertThat(extractProperty("upperQuantile").from(database)).isEqualTo(extractProperty("upperQuantile").from(file));
@@ -425,8 +460,7 @@ public class MainControllerIntegrationTest extends AbstractSpringIntegrationTest
     }
 
     private void assertThatFailureEmailSent(String outputText, String errorText) {
-        Class<Map<String, String>> argType = (Class<Map<String, String>>) (Class) Map.class;
-        ArgumentCaptor<Map<String, String>> captor = ArgumentCaptor.forClass(argType);
+        ArgumentCaptor<Map<String, String>> captor = GeneralTestUtils.captorForMapClass();
 
         verify(emailService).sendEmailInBackground(
                 eq("Failed Model Run"),

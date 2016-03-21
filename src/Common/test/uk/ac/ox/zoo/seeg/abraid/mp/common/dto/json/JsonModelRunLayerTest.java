@@ -2,6 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateInfluence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.SubmodelStatistic;
@@ -17,15 +18,14 @@ import static org.mockito.Mockito.when;
  * Copyright (c) 2014 University of Oxford
  */
 public class JsonModelRunLayerTest {
-    @SuppressWarnings("ConstantConditions")
     @Test
     public void constructorBindsFieldsCorrectly() {
         // Arrange
         ModelRun modelRun = mock(ModelRun.class);
+        CovariateFile covariateFile = mock(CovariateFile.class);
 
-        String displayName = "Display name";
         double meanInfluence = 20.2;
-        CovariateInfluence covariateInfluence = new CovariateInfluence(displayName, meanInfluence);
+        CovariateInfluence covariateInfluence = new CovariateInfluence(covariateFile, meanInfluence);
         boolean automaticRun = true;
         SubmodelStatistic submodelStatistic = mock(SubmodelStatistic.class);
 

@@ -1,10 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap;
 
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.AlertService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.GeometryService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.*;
 
 import java.util.List;
 import java.util.Map;
@@ -21,7 +18,7 @@ public class HealthMapLookupData {
     private final AlertService alertService;
     private final LocationService locationService;
     private final GeometryService geometryService;
-    private final DiseaseService diseaseService;
+    private final HealthMapService healthMapService;
 
     private Map<Integer, HealthMapCountry> countryMap;
     private Map<Integer, HealthMapDisease> diseaseMap;
@@ -31,11 +28,11 @@ public class HealthMapLookupData {
     private Provenance healthMapProvenance;
 
     public HealthMapLookupData(AlertService alertService, LocationService locationService,
-                               GeometryService geometryService, DiseaseService diseaseService) {
+                               GeometryService geometryService, HealthMapService healthMapService) {
         this.alertService = alertService;
         this.locationService = locationService;
         this.geometryService = geometryService;
-        this.diseaseService = diseaseService;
+        this.healthMapService = healthMapService;
     }
 
     /**
@@ -56,7 +53,7 @@ public class HealthMapLookupData {
      */
     public Map<Integer, HealthMapDisease> getDiseaseMap() {
         if (diseaseMap == null) {
-            List<HealthMapDisease> diseases = diseaseService.getAllHealthMapDiseases();
+            List<HealthMapDisease> diseases = healthMapService.getAllHealthMapDiseases();
             diseaseMap = index(diseases, on(HealthMapDisease.class).getId());
         }
         return diseaseMap;
@@ -68,7 +65,7 @@ public class HealthMapLookupData {
      */
     public Map<String, HealthMapSubDisease> getSubDiseaseMap() {
         if (subDiseaseMap == null) {
-            List<HealthMapSubDisease> subDiseases = diseaseService.getAllHealthMapSubDiseases();
+            List<HealthMapSubDisease> subDiseases = healthMapService.getAllHealthMapSubDiseases();
             subDiseaseMap = index(subDiseases, on(HealthMapSubDisease.class).getName());
         }
         return subDiseaseMap;

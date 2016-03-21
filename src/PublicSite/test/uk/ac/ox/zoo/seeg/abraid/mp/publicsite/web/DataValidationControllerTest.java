@@ -96,6 +96,7 @@ public class DataValidationControllerTest {
     public void showPageReturnsDataModelForAnonymousUser() {
         // Arrange
         wireUpAnonmousUser();
+        diseaseService = mock(DiseaseService.class);
 
         Model model = mock(Model.class);
         DataValidationController target = createTarget();
@@ -109,6 +110,11 @@ public class DataValidationControllerTest {
         verify(model).addAttribute("showHelpText", false);
         verify(model).addAttribute("diseaseOccurrenceReviewCount", 0);
         verify(model).addAttribute("adminUnitReviewCount", 0);
+        verify(model).addAttribute("diseasesRequiringExtentInput", new ArrayList<Integer>());
+        verify(model).addAttribute("diseasesRequiringOccurrenceInput", new ArrayList<Integer>());
+
+        verify(diseaseService, never()).getDiseaseGroupsNeedingExtentReviewByExpert(expert);
+        verify(diseaseService, never()).getDiseaseGroupsNeedingOccurrenceReviewByExpert(expert);
 
         verify(model, never()).addAttribute("diseaseInterests", new ArrayList<>());
         verify(model, never()).addAttribute("allOtherDiseases", new ArrayList<>());
@@ -124,6 +130,8 @@ public class DataValidationControllerTest {
         boolean isSeeg = false;
         wireUpExpert(1, isSeeg, true);
         wireUpValidatorDiseaseGroups();
+        wireUpDiseasesNeedingExtentReview(1, 3, 4, 5);
+        wireUpDiseasesNeedingOccurrenceReview(1, 3, 2, 5);
         Model model = mock(Model.class);
         DataValidationController target = createTarget();
 
@@ -136,6 +144,8 @@ public class DataValidationControllerTest {
         verify(model).addAttribute("showHelpText", false);
         verify(model).addAttribute("diseaseOccurrenceReviewCount", 0);
         verify(model).addAttribute("adminUnitReviewCount", 0);
+        verify(model).addAttribute("diseasesRequiringExtentInput", Arrays.asList(1, 3, 4, 5));
+        verify(model).addAttribute("diseasesRequiringOccurrenceInput", Arrays.asList(1, 3, 2, 5));
 
         verify(model).addAttribute("diseaseInterests", new ArrayList<>());
         verify(model).addAttribute("allOtherDiseases", new ArrayList<>());
@@ -151,6 +161,8 @@ public class DataValidationControllerTest {
         boolean isSeeg = true;
         wireUpExpert(1, isSeeg, true);
         wireUpValidatorDiseaseGroups();
+        wireUpDiseasesNeedingExtentReview(1, 3, 4, 5);
+        wireUpDiseasesNeedingOccurrenceReview(1, 3, 2, 5);
         Model model = mock(Model.class);
         DataValidationController target = createTarget();
 
@@ -163,10 +175,15 @@ public class DataValidationControllerTest {
         verify(model).addAttribute("showHelpText", false);
         verify(model).addAttribute("diseaseOccurrenceReviewCount", 0);
         verify(model).addAttribute("adminUnitReviewCount", 0);
+        verify(model).addAttribute("diseasesRequiringExtentInput", Arrays.asList(1, 3, 4, 5));
+        verify(model).addAttribute("diseasesRequiringOccurrenceInput", Arrays.asList(1, 3, 2, 5));
 
         verify(model).addAttribute("diseaseInterests", new ArrayList<>());
         verify(model).addAttribute("allOtherDiseases", new ArrayList<>());
         verify(model).addAttribute("validatorDiseaseGroupMap", new HashMap<>());
+
+        verify(model, never()).addAttribute("defaultValidatorDiseaseGroupName", "dengue");
+        verify(model, never()).addAttribute("defaultDiseaseGroupShortName", "dengue");
     }
 
     @Test
@@ -437,8 +454,8 @@ public class DataValidationControllerTest {
     }
 
     @Test
-    public void submitDiseaseOccurrenceReviewReturnsHttpBadRequestForMissingReview() {
-        // Arrange
+    public void submitDiseaseOccurrenceReviewReturnsHttpNoContentForIDontKnowReview() {
+        // Arrange - "I don't know"
         Integer validatorDiseaseGroupId = 2;
         Integer diseaseOccurrenceId = 3;
 
@@ -451,8 +468,8 @@ public class DataValidationControllerTest {
         ResponseEntity result = target.submitDiseaseOccurrenceReview(validatorDiseaseGroupId, diseaseOccurrenceId, null);
 
         // Assert
-        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        verify(expertService, never()).saveDiseaseOccurrenceReview(anyInt(), anyInt(), any(DiseaseOccurrenceReviewResponse.class));
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+        verify(expertService).saveDiseaseOccurrenceReview(1, diseaseOccurrenceId, null);
     }
 
     @Test
@@ -616,9 +633,9 @@ public class DataValidationControllerTest {
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(result.getBody().getFeatures()).hasSize(2);
         assertThat(result.getBody().getFeatures().get(0).getId()).isEqualTo(1);
-        assertThat(result.getBody().getFeatures().get(0).getProperties().needsReview()).isFalse();
+        assertThat(result.getBody().getFeatures().get(0).getProperties().getNeedsReview()).isFalse();
         assertThat(result.getBody().getFeatures().get(1).getId()).isEqualTo(2);
-        assertThat(result.getBody().getFeatures().get(1).getProperties().needsReview()).isTrue();
+        assertThat(result.getBody().getFeatures().get(1).getProperties().getNeedsReview()).isTrue();
     }
 
     @Test
@@ -640,9 +657,9 @@ public class DataValidationControllerTest {
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(result.getBody().getFeatures()).hasSize(2);
         assertThat(result.getBody().getFeatures().get(0).getId()).isEqualTo(1);
-        assertThat(result.getBody().getFeatures().get(0).getProperties().needsReview()).isFalse();
+        assertThat(result.getBody().getFeatures().get(0).getProperties().getNeedsReview()).isFalse();
         assertThat(result.getBody().getFeatures().get(1).getId()).isEqualTo(2);
-        assertThat(result.getBody().getFeatures().get(1).getProperties().needsReview()).isTrue();
+        assertThat(result.getBody().getFeatures().get(1).getProperties().getNeedsReview()).isTrue();
     }
 
     @Test
@@ -664,9 +681,9 @@ public class DataValidationControllerTest {
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(result.getBody().getFeatures()).hasSize(2);
         assertThat(result.getBody().getFeatures().get(0).getId()).isEqualTo(1);
-        assertThat(result.getBody().getFeatures().get(0).getProperties().needsReview()).isFalse();
+        assertThat(result.getBody().getFeatures().get(0).getProperties().getNeedsReview()).isFalse();
         assertThat(result.getBody().getFeatures().get(1).getId()).isEqualTo(2);
-        assertThat(result.getBody().getFeatures().get(1).getProperties().needsReview()).isTrue();
+        assertThat(result.getBody().getFeatures().get(1).getProperties().getNeedsReview()).isTrue();
     }
 
     @Test
@@ -684,9 +701,9 @@ public class DataValidationControllerTest {
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(result.getBody().getFeatures()).hasSize(2);
         assertThat(result.getBody().getFeatures().get(0).getId()).isEqualTo(1);
-        assertThat(result.getBody().getFeatures().get(0).getProperties().needsReview()).isTrue();
+        assertThat(result.getBody().getFeatures().get(0).getProperties().getNeedsReview()).isTrue();
         assertThat(result.getBody().getFeatures().get(1).getId()).isEqualTo(2);
-        assertThat(result.getBody().getFeatures().get(1).getProperties().needsReview()).isTrue();
+        assertThat(result.getBody().getFeatures().get(1).getProperties().getNeedsReview()).isTrue();
     }
 
     @Test
@@ -848,18 +865,17 @@ public class DataValidationControllerTest {
     }
 
     @Test
-    public void submitAdminUnitReviewReturnsHttpNoContentForMissingReview() {
+    public void submitAdminUnitReviewReturnsHttpNoContentForIDontKnowReview() {
         // Arrange - I don't know
         boolean userIsSeeg = false;
         boolean hasModelRunPrepOccurredForDisease = true;
-        String review = "ABSENCE";
 
         Integer expertId = 1;
         Integer diseaseId = 2;
         Integer gaulCode = 3;
 
         wireUpExpert(expertId, userIsSeeg, false);
-        wireUpForExtentReview(diseaseId, gaulCode, review, hasModelRunPrepOccurredForDisease);
+        wireUpForExtentReview(diseaseId, gaulCode, "ABSENCE", hasModelRunPrepOccurredForDisease);
 
         DataValidationController target = createTarget();
 
@@ -1030,6 +1046,32 @@ public class DataValidationControllerTest {
         list.addAll(Arrays.asList(groups));
 
         when(diseaseService.getAllValidatorDiseaseGroups()).thenReturn(list);
+    }
+
+    private void wireUpDiseasesNeedingExtentReview(Integer... diseaseIds) {
+        diseaseService = mockIfNull(diseaseService, DiseaseService.class);
+
+        List<DiseaseGroup> list = new ArrayList<>();
+        for (Integer id : diseaseIds) {
+            DiseaseGroup dg = mock(DiseaseGroup.class);
+            when(dg.getId()).thenReturn(id);
+            list.add(dg);
+        }
+
+        when(diseaseService.getDiseaseGroupsNeedingExtentReviewByExpert(eq(expert))).thenReturn(list);
+    }
+
+    private void wireUpDiseasesNeedingOccurrenceReview(Integer... diseaseIds) {
+        diseaseService = mockIfNull(diseaseService, DiseaseService.class);
+
+        List<DiseaseGroup> list = new ArrayList<>();
+        for (Integer id : diseaseIds) {
+            DiseaseGroup dg = mock(DiseaseGroup.class);
+            when(dg.getId()).thenReturn(id);
+            list.add(dg);
+        }
+
+        when(diseaseService.getDiseaseGroupsNeedingOccurrenceReviewByExpert(eq(expert))).thenReturn(list);
     }
 
     private void wireUpExistingOccurrenceReview(Integer expertId, Integer occurrenceId) {

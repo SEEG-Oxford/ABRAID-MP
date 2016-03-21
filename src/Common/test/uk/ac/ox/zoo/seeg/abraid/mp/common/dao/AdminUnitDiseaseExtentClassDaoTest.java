@@ -67,6 +67,30 @@ public class AdminUnitDiseaseExtentClassDaoTest extends AbstractCommonSpringInte
     }
 
     @Test
+    public void getAllAdminUnitDiseaseExtentClassesByCountryGaulCode() {
+        // Act
+        List<AdminUnitDiseaseExtentClass> result = adminUnitDiseaseExtentClassDao.getAllAdminUnitDiseaseExtentClassesByCountryGaulCode(87, false, 215);
+
+        // Assert
+        assertThat(result).hasSize(13);
+        assertThat(result.get(0).getAdminUnitGlobalOrTropical().getGaulCode()).isEqualTo(2622);
+        assertThat(result.get(0).getDiseaseExtentClass().getName()).isEqualTo("UNCERTAIN");
+        assertThat(result.get(12).getAdminUnitGlobalOrTropical().getGaulCode()).isEqualTo(2634);
+        assertThat(result.get(12).getDiseaseExtentClass().getName()).isEqualTo("UNCERTAIN");
+    }
+
+    @Test
+    public void getDiseaseExtentClassByGaulCode() {
+        // Act
+        AdminUnitDiseaseExtentClass result = adminUnitDiseaseExtentClassDao.getDiseaseExtentClassByGaulCode(87, false, 153);
+
+        // Assert
+        assertThat(result.getDiseaseExtentClass().getName()).isEqualTo("PRESENCE");
+        assertThat(result.getAdminUnitTropical().getGaulCode()).isEqualTo(153);
+        assertThat(result.getDiseaseGroup().getId()).isEqualTo(87);
+    }
+
+    @Test
     public void globalAdminUnitDiseaseExtentClassHasNullTropicalAdminUnit() {
         // Arrange - NB. Disease Group 22 in DB is a GLOBAL admin unit
         Integer diseaseGroupId = 22;

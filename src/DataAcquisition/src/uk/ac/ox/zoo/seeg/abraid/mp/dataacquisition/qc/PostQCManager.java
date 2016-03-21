@@ -1,5 +1,6 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.qc;
 
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Country;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.GeometryService;
@@ -62,8 +63,8 @@ public class PostQCManager {
      * @param location The location.
      */
     private void assignCountry(Location location) {
-        Integer countryGaulCode = geometryService.findCountryThatContainsPoint(location.getGeom());
-        location.setCountryGaulCode(countryGaulCode);
+        Country country = geometryService.findCountryThatContainsPoint(location.getGeom());
+        location.setCountry(country);
     }
 
     private void failQCIfNotOnLand(Location location) {

@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dao;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,9 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
 
     @Autowired
     private DiseaseGroupDao diseaseGroupDao;
+
+    @Autowired
+    private CovariateFileDao covariateFileDao;
 
     @Autowired
     private DiseaseOccurrenceDao diseaseOccurrenceDao;
@@ -71,8 +75,9 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
         DateTime occurrenceDataRangeStartDate = DateTime.now().minusHours(9);
         DateTime occurrenceDataRangeEndDate = DateTime.now().minusHours(8);
         int batchedOccurrenceCount = 1000;
+        DiseaseGroup diseaseGroup = diseaseGroupDao.getById(diseaseGroupId);
 
-        ModelRun modelRun = new ModelRun(name, diseaseGroupId, requestServer, requestDate,
+        ModelRun modelRun = new ModelRun(name, diseaseGroup, requestServer, requestDate,
                 occurrenceDataRangeStartDate, occurrenceDataRangeEndDate);
         modelRun.setResponseDate(responseDate);
         modelRun.setOutputText(outputText);
@@ -92,6 +97,7 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
         assertThat(modelRun.getName()).isEqualTo(name);
         assertThat(modelRun.getStatus()).isEqualTo(ModelRunStatus.IN_PROGRESS);
         assertThat(modelRun.getDiseaseGroupId()).isEqualTo(diseaseGroupId);
+        assertThat(modelRun.getDiseaseGroup()).isEqualTo(diseaseGroup);
         assertThat(modelRun.getRequestServer()).isEqualTo(requestServer);
         assertThat(modelRun.getRequestDate()).isEqualTo(requestDate);
         assertThat(modelRun.getOutputText()).isEqualTo(outputText);
@@ -178,9 +184,9 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
         run = modelRunDao.getByName("name");
 
         List<CovariateInfluence> covariateInfluences = new ArrayList<>();
-        covariateInfluences.add(createCovariateInfluence("a", "A", run));
-        covariateInfluences.add(createCovariateInfluence("b", "B", run));
-        covariateInfluences.add(createCovariateInfluence("c", "C", run));
+        covariateInfluences.add(createCovariateInfluence(createCovariateFile(1), run));
+        covariateInfluences.add(createCovariateInfluence(createCovariateFile(2), run));
+        covariateInfluences.add(createCovariateInfluence(createCovariateFile(3), run));
         run.setCovariateInfluences(covariateInfluences);
         modelRunDao.save(run);
         flushAndClear();
@@ -201,9 +207,9 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
         run = modelRunDao.getByName("name");
 
         List<EffectCurveCovariateInfluence> effectCurveCovariateInfluences = new ArrayList<>();
-        effectCurveCovariateInfluences.add(createEffectCurveCovariateInfluence("a", "A", run));
-        effectCurveCovariateInfluences.add(createEffectCurveCovariateInfluence("b", "B", run));
-        effectCurveCovariateInfluences.add(createEffectCurveCovariateInfluence("c", "C", run));
+        effectCurveCovariateInfluences.add(createEffectCurveCovariateInfluence(createCovariateFile(1), run));
+        effectCurveCovariateInfluences.add(createEffectCurveCovariateInfluence(createCovariateFile(2), run));
+        effectCurveCovariateInfluences.add(createEffectCurveCovariateInfluence(createCovariateFile(3), run));
         run.setEffectCurveCovariateInfluences(effectCurveCovariateInfluences);
         modelRunDao.save(run);
         flushAndClear();
@@ -294,12 +300,7 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
     public void getMostRecentlyRequestedModelRunWhichCompletedReturnsCorrectValueIfCompletedModelRuns() {
         // Arrange
         int diseaseGroupId = 87;
-        modelRunDao.save(modelRunMalarias1);
-        modelRunDao.save(modelRunDengue1);
-        modelRunDao.save(modelRunDengue2);
-        modelRunDao.save(modelRunDengue3);
-        modelRunDao.save(modelRunDengue4);
-        modelRunDao.save(modelRunDengue5);
+        saveStandardRuns();
 
         // Act
         ModelRun modelRun = modelRunDao.getMostRecentlyRequestedModelRunWhichCompleted(diseaseGroupId);
@@ -354,12 +355,7 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
     public void getMostRecentlyFinishedModelRunWhichCompletedReturnsCorrectValueIfCompletedModelRuns() {
         // Arrange
         int diseaseGroupId = 87;
-        modelRunDao.save(modelRunMalarias1);
-        modelRunDao.save(modelRunDengue1);
-        modelRunDao.save(modelRunDengue2);
-        modelRunDao.save(modelRunDengue3);
-        modelRunDao.save(modelRunDengue4);
-        modelRunDao.save(modelRunDengue5);
+        saveStandardRuns();
 
         // Act
         ModelRun modelRun = modelRunDao.getMostRecentlyFinishedModelRunWhichCompleted(diseaseGroupId);
@@ -471,6 +467,97 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
         assertThat(result).contains(modelRunDengue5);
     }
 
+    private void saveStandardRuns() {
+        modelRunDao.save(modelRunMalarias1);
+        modelRunDao.save(modelRunDengue1);
+        modelRunDao.save(modelRunDengue2);
+        modelRunDao.save(modelRunDengue3);
+        modelRunDao.save(modelRunDengue4);
+        modelRunDao.save(modelRunDengue5);
+    }
+
+    @Test
+    public void getFilteredModelRunsReturnsCorrectSetWithoutFilters() {
+        // Arrange
+        setModelRunStartDates("2014-07-02", "2014-07-02");
+        saveStandardRuns();
+
+        // Act
+        Collection<ModelRun> modelRuns = modelRunDao.getFilteredModelRuns(null, null, null, null);
+        // Assert
+        assertThat(modelRuns).containsOnly(modelRunDengue3, modelRunMalarias1); // Only completed automatic runs
+    }
+
+    @Test
+    public void getFilteredModelRunsReturnsCorrectSetWithNameFilter() {
+        // Arrange
+        setModelRunStartDates("2014-06-28", "2014-07-02");
+        saveStandardRuns();
+
+        // Act
+        Collection<ModelRun> modelRuns = modelRunDao.getFilteredModelRuns("dengue 2", null, null, null);
+        // Assert
+        assertThat(modelRuns).containsOnly(modelRunDengue2);
+    }
+
+    @Test
+    public void getFilteredModelRunsReturnsCorrectSetWithDiseaseFilter() {
+        // Arrange
+        setModelRunStartDates("2014-06-28", "2014-07-02");
+        saveStandardRuns();
+
+        // Act
+        Collection<ModelRun> modelRuns = modelRunDao.getFilteredModelRuns(null, 87, null, null);
+        // Assert
+        assertThat(modelRuns).containsOnly(modelRunDengue2, modelRunDengue3);
+    }
+
+    @Test
+    public void getFilteredModelRunsReturnsCorrectSetWithMinDateFilter() {
+        // Arrange
+        setModelRunStartDates("2014-06-28", "2014-07-02");
+        saveStandardRuns();
+
+        // Act
+        Collection<ModelRun> modelRuns = modelRunDao.getFilteredModelRuns(null, null, new LocalDate("2014-07-04"), null);
+        // Assert
+        assertThat(modelRuns).containsExactly(modelRunMalarias1, modelRunDengue2);
+    }
+
+    @Test
+    public void getFilteredModelRunsReturnsCorrectSetWithMaxDateFilter() {
+        // Arrange
+        setModelRunStartDates("2014-06-28", "2014-07-02");
+        saveStandardRuns();
+
+        // Act
+        Collection<ModelRun> modelRuns = modelRunDao.getFilteredModelRuns(null, null, null, new LocalDate("2014-07-03"));
+        // Assert
+        assertThat(modelRuns).containsOnly(modelRunDengue3);
+    }
+
+    @Test
+    public void getFilteredModelRunsReturnsCorrectSetWithNormalFilters() {
+        // Arrange
+        setModelRunStartDates("2014-06-28", "2014-07-02");
+        saveStandardRuns();
+
+        // Act
+        Collection<ModelRun> modelRuns = modelRunDao.getFilteredModelRuns(null, 87, new LocalDate("2014-07-03"), new LocalDate("2014-07-03"));
+        // Assert
+        assertThat(modelRuns).containsOnly(modelRunDengue3);
+    }
+
+    private void setModelRunStartDates(String dengueDate, String malariaDate) {
+        int diseaseGroupId = 87;
+        DiseaseGroup dengue = diseaseGroupDao.getById(diseaseGroupId);
+        DiseaseGroup malaria = diseaseGroupDao.getById(202);
+        dengue.setAutomaticModelRunsStartDate(new DateTime(dengueDate));
+        malaria.setAutomaticModelRunsStartDate(new DateTime(malariaDate));
+        diseaseGroupDao.save(dengue);
+        diseaseGroupDao.save(malaria);
+    }
+
     private ModelRunAdminUnitDiseaseExtentClass createAdminUnitDiseaseExtentClass(
             ModelRun run, String diseaseExtentClass,
             Integer adminUnitTropicalGaul, Integer adminUnitGlobalGaul) {
@@ -488,22 +575,20 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
         return submodelStatistic;
     }
 
-    private CovariateInfluence createCovariateInfluence(String filePath, String displayName, ModelRun modelRun) {
+    private CovariateInfluence createCovariateInfluence(CovariateFile covariateFile, ModelRun modelRun) {
         CovariateInfluence covariateInfluence = new CovariateInfluence();
         covariateInfluence.setModelRun(modelRun);
-        covariateInfluence.setCovariateFilePath(filePath);
-        covariateInfluence.setCovariateDisplayName(displayName);
+        covariateInfluence.setCovariateFile(covariateFile);
         covariateInfluence.setMeanInfluence(1.0);
         covariateInfluence.setLowerQuantile(2.0);
         covariateInfluence.setUpperQuantile(3.0);
         return covariateInfluence;
     }
 
-    private EffectCurveCovariateInfluence createEffectCurveCovariateInfluence(String filePath, String displayName, ModelRun modelRun) {
+    private EffectCurveCovariateInfluence createEffectCurveCovariateInfluence(CovariateFile covariateFile, ModelRun modelRun) {
         EffectCurveCovariateInfluence effectCurveCovariateInfluence = new EffectCurveCovariateInfluence();
         effectCurveCovariateInfluence.setModelRun(modelRun);
-        effectCurveCovariateInfluence.setCovariateFilePath(filePath);
-        effectCurveCovariateInfluence.setCovariateDisplayName(displayName);
+        effectCurveCovariateInfluence.setCovariateFile(covariateFile);
         effectCurveCovariateInfluence.setMeanInfluence(1.0);
         effectCurveCovariateInfluence.setLowerQuantile(2.0);
         effectCurveCovariateInfluence.setUpperQuantile(3.0);
@@ -512,14 +597,22 @@ public class ModelRunDaoTest extends AbstractCommonSpringIntegrationTests {
     }
 
     private ModelRun createModelRun(String name) {
-        return new ModelRun(name, 87, "host", DateTime.now(), DateTime.now(), DateTime.now());
+        return new ModelRun(name, diseaseGroupDao.getById(87), "host", DateTime.now(), DateTime.now(), DateTime.now());
     }
 
-    private static ModelRun createModelRun(String name, int diseaseGroupId, ModelRunStatus status, String requestServer,
+    private ModelRun createModelRun(String name, int diseaseGroupId, ModelRunStatus status, String requestServer,
                                            String requestDate, String responseDate) {
-        ModelRun modelRun = new ModelRun(name, diseaseGroupId, requestServer, new DateTime(requestDate), DateTime.now(), DateTime.now());
+        ModelRun modelRun = new ModelRun(name, diseaseGroupDao.getById(diseaseGroupId), requestServer, new LocalDate(requestDate).toDateTimeAtStartOfDay(), DateTime.now(), DateTime.now());
         modelRun.setStatus(status);
-        modelRun.setResponseDate(new DateTime(responseDate));
+        modelRun.setResponseDate(new LocalDate(responseDate).toDateTimeAtStartOfDay());
         return modelRun;
+    }
+
+    private CovariateFile createCovariateFile(int idx) {
+        CovariateFile covariate = new CovariateFile("name" + idx, false, false, "info" + idx);
+        CovariateSubFile covariateSubFile = new CovariateSubFile(covariate, null, "file" + idx);
+        covariate.setFiles(Arrays.asList(covariateSubFile));
+        covariateFileDao.save(covariate);
+        return covariate;
     }
 }

@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ConfigurationService;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ModelWrapperConfigurationService;
 
 import java.util.ArrayList;
 
@@ -18,10 +18,10 @@ import java.util.ArrayList;
 public class UserDetailsServiceImpl implements UserDetailsService {
     private static final String ROLE_USER = "ROLE_USER";
 
-    private ConfigurationService configurationService;
+    private ModelWrapperConfigurationService configurationService;
 
     @Autowired
-    public UserDetailsServiceImpl(ConfigurationService configurationService) {
+    public UserDetailsServiceImpl(ModelWrapperConfigurationService configurationService) {
         this.configurationService = configurationService;
     }
 

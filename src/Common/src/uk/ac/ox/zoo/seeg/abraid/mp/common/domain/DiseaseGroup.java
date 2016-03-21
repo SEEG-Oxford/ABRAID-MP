@@ -14,12 +14,41 @@ import javax.persistence.*;
  *
  * Copyright (c) 2014 University of Oxford
  */
-@NamedQueries(
+@NamedQueries({
         @NamedQuery(
                 name = "getDiseaseGroupIdsForAutomaticModelRuns",
                 query = "select id from DiseaseGroup where automaticModelRunsStartDate is not null"
+        ),
+        @NamedQuery(
+                name = "getDiseaseGroupsNeedingOccurrenceReviewByExpert",
+                query = "select distinct do.diseaseGroup " +
+                        "from DiseaseOccurrence as do " +
+                        "where do.status='IN_REVIEW' " +
+                        "and do.id not in (" +
+                        "   select distinct diseaseOccurrence.id " +
+                        "   from DiseaseOccurrenceReview as r " +
+                        "   where r.expert.id = :expertId" +
+                        ") " +
+                        "and do.diseaseGroup.automaticModelRunsStartDate is not null"
+        ),
+        @NamedQuery(
+                name = "getDiseaseGroupsNeedingExtentReviewByExpert",
+                query = "select distinct dec.diseaseGroup " +
+                        "from AdminUnitDiseaseExtentClass as dec " +
+                        "where coalesce(dec.adminUnitGlobal.gaulCode, dec.adminUnitTropical.gaulCode) not in (" +
+                        "   select coalesce(r.adminUnitGlobalGaulCode, r.adminUnitGlobalGaulCode) " +
+                        "   from AdminUnitReview as r " +
+                        "   where r.createdDate >= dec.classChangedDate " +
+                        "   and r.diseaseGroup.id=dec.diseaseGroup.id " +
+                        "   and r.expert.id=:expertId" +
+                        ") " +
+                        "and dec.diseaseGroup.automaticModelRunsStartDate is not null"
+        ),
+        @NamedQuery(
+                name = "getDiseaseGroupNamesForHealthMapReport",
+                query = "select name from DiseaseGroup where isPriorityDisease is TRUE order by name asc"
         )
-)
+})
 @Entity
 @Table(name = "disease_group")
 public class DiseaseGroup {
@@ -57,6 +86,10 @@ public class DiseaseGroup {
     @Column(name = "is_global")
     private Boolean isGlobal;
 
+    // True if the disease group is an ABRAID priority disease.
+    @Column(name = "is_priority_disease", nullable = false)
+    private boolean isPriorityDisease = false;
+
     // A link to a further grouping of diseases for use by experts in the Data Validator.
     @ManyToOne
     @JoinColumn(name = "validator_disease_group_id")
@@ -65,6 +98,14 @@ public class DiseaseGroup {
     // The weighting, initially determined by group type.
     @Column
     private Double weighting;
+
+    // The SDM model mode to use for this disease.
+    @Column(name = "model_mode")
+    private String modelMode;
+
+    // The max number of days between model runs that are triggered by the Data Manager.
+    @Column(name = "max_days_between_runs")
+    private int maxDaysBetweenModelRuns;
 
     // The date on which the disease extent was last generated, whether a one-off action or preparation for a model run.
     @Column(name = "last_extent_generation_date")
@@ -125,6 +166,15 @@ public class DiseaseGroup {
     // sent to the Data Validator
     @Column(name = "max_env_suitability_without_ml")
     private Double maxEnvironmentalSuitabilityWithoutML;
+
+    // The agent type of this disease.
+    @Column(name = "agent_type")
+    @Enumerated(EnumType.STRING)
+    private DiseaseGroupAgentType agentType;
+
+    // True if non-bespoke sample bias data sets for this disease should be filtered by agent type, otherwise false.
+    @Column(name = "filter_bias_data_by_agent_type")
+    private boolean filterBiasDataByAgentType = false;
 
     // The database row creation date.
     @Column(name = "created_date", insertable = false, updatable = false)
@@ -244,6 +294,14 @@ public class DiseaseGroup {
         this.isGlobal = isGlobal;
     }
 
+    public boolean isPriorityDisease() {
+        return isPriorityDisease;
+    }
+
+    public void setPriorityDisease(boolean isPriorityDisease) {
+        this.isPriorityDisease = isPriorityDisease;
+    }
+
     public ValidatorDiseaseGroup getValidatorDiseaseGroup() {
         return validatorDiseaseGroup;
     }
@@ -258,6 +316,22 @@ public class DiseaseGroup {
 
     public void setWeighting(Double weighting) {
         this.weighting = weighting;
+    }
+
+    public String getModelMode() {
+        return modelMode;
+    }
+
+    public void setModelMode(String modelMode) {
+        this.modelMode = modelMode;
+    }
+
+    public int getMaxDaysBetweenModelRuns() {
+        return maxDaysBetweenModelRuns;
+    }
+
+    public void setMaxDaysBetweenModelRuns(int maxDaysBetweenModelRuns) {
+        this.maxDaysBetweenModelRuns = maxDaysBetweenModelRuns;
     }
 
     public DateTime getLastExtentGenerationDate() {
@@ -384,6 +458,27 @@ public class DiseaseGroup {
         this.maxEnvironmentalSuitabilityWithoutML = maxEnvironmentalSuitabilityWithoutML;
     }
 
+    /**
+     * Should non-bespoke sample bias data sets for this disease should be filtered by agent type.
+     * @return True if non-bespoke sample bias data sets for this disease should be filtered by agent type,
+     *          otherwise false.
+     */
+    public boolean shouldFilterBiasDataByAgentType() {
+        return filterBiasDataByAgentType;
+    }
+
+    public void setFilterBiasDataByAgentType(boolean filterBiasDataByAgentType) {
+        this.filterBiasDataByAgentType = filterBiasDataByAgentType;
+    }
+
+    public DiseaseGroupAgentType getAgentType() {
+        return agentType;
+    }
+
+    public void setAgentType(DiseaseGroupAgentType agentType) {
+        this.agentType = agentType;
+    }
+
     public DateTime getCreatedDate() {
         return createdDate;
     }
@@ -397,9 +492,13 @@ public class DiseaseGroup {
 
         DiseaseGroup that = (DiseaseGroup) o;
 
+        if (filterBiasDataByAgentType != that.filterBiasDataByAgentType) return false;
+        if (isPriorityDisease != that.isPriorityDisease) return false;
+        if (maxDaysBetweenModelRuns != that.maxDaysBetweenModelRuns) return false;
         if (minDataVolume != that.minDataVolume) return false;
         if (useMachineLearning != that.useMachineLearning) return false;
         if (abbreviation != null ? !abbreviation.equals(that.abbreviation) : that.abbreviation != null) return false;
+        if (agentType != that.agentType) return false;
         if (automaticModelRunsStartDate != null ? !automaticModelRunsStartDate.equals(that.automaticModelRunsStartDate) : that.automaticModelRunsStartDate != null)
             return false;
         if (createdDate != null ? !createdDate.equals(that.createdDate) : that.createdDate != null) return false;
@@ -414,18 +513,19 @@ public class DiseaseGroup {
             return false;
         if (lastModelRunPrepDate != null ? !lastModelRunPrepDate.equals(that.lastModelRunPrepDate) : that.lastModelRunPrepDate != null)
             return false;
+        if (maxEnvironmentalSuitabilityForTriggering != null ? !maxEnvironmentalSuitabilityForTriggering.equals(that.maxEnvironmentalSuitabilityForTriggering) : that.maxEnvironmentalSuitabilityForTriggering != null)
+            return false;
         if (maxEnvironmentalSuitabilityWithoutML != null ? !maxEnvironmentalSuitabilityWithoutML.equals(that.maxEnvironmentalSuitabilityWithoutML) : that.maxEnvironmentalSuitabilityWithoutML != null)
             return false;
         if (minDistanceFromDiseaseExtentForTriggering != null ? !minDistanceFromDiseaseExtentForTriggering.equals(that.minDistanceFromDiseaseExtentForTriggering) : that.minDistanceFromDiseaseExtentForTriggering != null)
             return false;
         if (minDistinctCountries != null ? !minDistinctCountries.equals(that.minDistinctCountries) : that.minDistinctCountries != null)
             return false;
-        if (maxEnvironmentalSuitabilityForTriggering != null ? !maxEnvironmentalSuitabilityForTriggering.equals(that.maxEnvironmentalSuitabilityForTriggering) : that.maxEnvironmentalSuitabilityForTriggering != null)
-            return false;
         if (minHighFrequencyCountries != null ? !minHighFrequencyCountries.equals(that.minHighFrequencyCountries) : that.minHighFrequencyCountries != null)
             return false;
         if (minNewLocationsTrigger != null ? !minNewLocationsTrigger.equals(that.minNewLocationsTrigger) : that.minNewLocationsTrigger != null)
             return false;
+        if (modelMode != null ? !modelMode.equals(that.modelMode) : that.modelMode != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (occursInAfrica != null ? !occursInAfrica.equals(that.occursInAfrica) : that.occursInAfrica != null)
             return false;
@@ -449,8 +549,11 @@ public class DiseaseGroup {
         result = 31 * result + (shortName != null ? shortName.hashCode() : 0);
         result = 31 * result + (abbreviation != null ? abbreviation.hashCode() : 0);
         result = 31 * result + (isGlobal != null ? isGlobal.hashCode() : 0);
+        result = 31 * result + (isPriorityDisease ? 1 : 0);
         result = 31 * result + (validatorDiseaseGroup != null ? validatorDiseaseGroup.hashCode() : 0);
         result = 31 * result + (weighting != null ? weighting.hashCode() : 0);
+        result = 31 * result + (modelMode != null ? modelMode.hashCode() : 0);
+        result = 31 * result + maxDaysBetweenModelRuns;
         result = 31 * result + (lastExtentGenerationDate != null ? lastExtentGenerationDate.hashCode() : 0);
         result = 31 * result + (lastModelRunPrepDate != null ? lastModelRunPrepDate.hashCode() : 0);
         result = 31 * result + (automaticModelRunsStartDate != null ? automaticModelRunsStartDate.hashCode() : 0);
@@ -465,6 +568,8 @@ public class DiseaseGroup {
         result = 31 * result + (diseaseExtentParameters != null ? diseaseExtentParameters.hashCode() : 0);
         result = 31 * result + (useMachineLearning ? 1 : 0);
         result = 31 * result + (maxEnvironmentalSuitabilityWithoutML != null ? maxEnvironmentalSuitabilityWithoutML.hashCode() : 0);
+        result = 31 * result + (agentType != null ? agentType.hashCode() : 0);
+        result = 31 * result + (filterBiasDataByAgentType ? 1 : 0);
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         return result;
     }

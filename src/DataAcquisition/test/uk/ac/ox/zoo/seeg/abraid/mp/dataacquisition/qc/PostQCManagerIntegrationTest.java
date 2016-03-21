@@ -198,7 +198,7 @@ public class PostQCManagerIntegrationTest extends AbstractDataAcquisitionSpringI
         britishColumbiaCanadaCentroid.setAdminUnitQCGaulCode(826);
         postQCManager.runPostQCProcesses(britishColumbiaCanadaCentroid);
         assertThat(britishColumbiaCanadaCentroid.getAdminUnitGlobalGaulCode()).isEqualTo(826);
-        assertThat(britishColumbiaCanadaCentroid.getAdminUnitTropicalGaulCode()).isEqualTo(825);
+        assertThat(britishColumbiaCanadaCentroid.getAdminUnitTropicalGaulCode()).isEqualTo(46);
     }
 
     @Test

@@ -35,8 +35,6 @@ define([
                                                      false, false, "expectedBaseUrl", "misc/rpath");
                     expect(spy).toHaveBeenCalledWith("expectedDuration", { required : true, number: true, min: 1000 },
                                                      false, false, "expectedBaseUrl", "misc/runduration");
-                    expect(spy).toHaveBeenCalledWith("expectedInitialCovariateDirectory", { required : true },
-                                                     false, false, "expectedBaseUrl", "misc/covariatedirectory");
                     done();
                 });
             });
@@ -45,14 +43,12 @@ define([
                 // Act
                 var vm = new MiscViewModel({
                     rPath: "expectedInitialRPath",
-                    runDuration: "expectedInitialRunDuration",
-                    covariateDirectory: "expectedInitialCovariateDirectory"
+                    runDuration: "expectedInitialRunDuration"
                 }, "expectedBaseUrl");
 
                 // Assert
                 expect(vm.RExecutableViewModel().value()).toBe("expectedInitialRPath");
                 expect(vm.ModelDurationViewModel().value()).toBe("expectedInitialRunDuration");
-                expect(vm.CovariateDirectoryViewModel().value()).toBe("expectedInitialCovariateDirectory");
             });
         });
     });

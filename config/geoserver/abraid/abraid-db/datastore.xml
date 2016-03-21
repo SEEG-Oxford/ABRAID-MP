@@ -18,13 +18,13 @@
     <entry key="fetch size">1000</entry>
     <entry key="preparedStatements">false</entry>
     <entry key="min connections">1</entry>
+    <entry key="Expose primary keys">true</entry>
     <entry key="host">HOST_REPLACE</entry>
     <entry key="validate connections">true</entry>
     <entry key="max connections">10</entry>
     <entry key="Support on the fly geometry simplification">true</entry>
     <entry key="database">DB_REPLACE</entry>
     <entry key="Loose bbox">true</entry>
-    <entry key="Expose primary keys">false</entry>
     <entry key="Max open prepared statements">50</entry>
     <entry key="Estimated extends">true</entry>
     <entry key="user">USER_REPLACE</entry>

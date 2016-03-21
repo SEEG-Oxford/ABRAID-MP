@@ -18,11 +18,9 @@ public class AbstractCovariateInfluence {
     @JoinColumn(name = "model_run_id", nullable = false)
     private ModelRun modelRun;
 
-    @Column(name = "covariate_file_path", nullable = false)
-    private String covariateFilePath;
-
-    @Column(name = "covariate_display_name", nullable = false)
-    private String covariateDisplayName;
+    @ManyToOne
+    @JoinColumn(name = "covariate_file_id", nullable = false)
+    private CovariateFile covariateFile;
 
     @Column(name = "mean_influence")
     private Double meanInfluence;
@@ -36,18 +34,17 @@ public class AbstractCovariateInfluence {
     public AbstractCovariateInfluence() {
     }
 
-    public AbstractCovariateInfluence(AbstractCsvCovariateInfluence dto, ModelRun parentRun) {
+    public AbstractCovariateInfluence(CovariateFile covariate, AbstractCsvCovariateInfluence dto, ModelRun parentRun) {
         setModelRun(parentRun);
-        setCovariateFilePath(dto.getCovariateFilePath());
-        setCovariateDisplayName(dto.getCovariateDisplayName());
+        setCovariateFile(covariate);
         setMeanInfluence(dto.getMeanInfluence());
         setUpperQuantile(dto.getUpperQuantile());
         setLowerQuantile(dto.getLowerQuantile());
     }
 
-    public AbstractCovariateInfluence(String displayName, Double meanInfluence) {
-        this.covariateDisplayName = displayName;
-        this.meanInfluence = meanInfluence;
+    public AbstractCovariateInfluence(CovariateFile covariate, Double meanInfluence) {
+        setCovariateFile(covariate);
+        setMeanInfluence(meanInfluence);
     }
 
     public Integer getId() {
@@ -66,20 +63,12 @@ public class AbstractCovariateInfluence {
         this.modelRun = modelRun;
     }
 
-    public String getCovariateFilePath() {
-        return covariateFilePath;
+    public CovariateFile getCovariateFile() {
+        return covariateFile;
     }
 
-    public void setCovariateFilePath(String covariateFilePath) {
-        this.covariateFilePath = covariateFilePath;
-    }
-
-    public String getCovariateDisplayName() {
-        return covariateDisplayName;
-    }
-
-    public void setCovariateDisplayName(String covariateDisplayName) {
-        this.covariateDisplayName = covariateDisplayName;
+    public void setCovariateFile(CovariateFile covariateFile) {
+        this.covariateFile = covariateFile;
     }
 
     public Double getMeanInfluence() {
@@ -115,9 +104,7 @@ public class AbstractCovariateInfluence {
 
         AbstractCovariateInfluence that = (AbstractCovariateInfluence) o;
 
-        if (covariateDisplayName != null ? !covariateDisplayName.equals(that.covariateDisplayName) : that.covariateDisplayName != null)
-            return false;
-        if (covariateFilePath != null ? !covariateFilePath.equals(that.covariateFilePath) : that.covariateFilePath != null)
+        if (covariateFile != null ? !covariateFile.equals(that.covariateFile) : that.covariateFile != null)
             return false;
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (lowerQuantile != null ? !lowerQuantile.equals(that.lowerQuantile) : that.lowerQuantile != null)
@@ -135,8 +122,7 @@ public class AbstractCovariateInfluence {
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (modelRun != null ? modelRun.hashCode() : 0);
-        result = 31 * result + (covariateFilePath != null ? covariateFilePath.hashCode() : 0);
-        result = 31 * result + (covariateDisplayName != null ? covariateDisplayName.hashCode() : 0);
+        result = 31 * result + (covariateFile != null ? covariateFile.hashCode() : 0);
         result = 31 * result + (meanInfluence != null ? meanInfluence.hashCode() : 0);
         result = 31 * result + (upperQuantile != null ? upperQuantile.hashCode() : 0);
         result = 31 * result + (lowerQuantile != null ? lowerQuantile.hashCode() : 0);

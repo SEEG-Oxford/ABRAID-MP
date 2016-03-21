@@ -1,13 +1,14 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.domain;
 
 import com.vividsolutions.jts.geom.Point;
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
-import org.hibernate.annotations.Type;
+import org.hibernate.annotations.*;
 import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
 /**
  * Represents a location.
@@ -74,9 +75,10 @@ public class Location {
     @Column(name = "admin_unit_tropical_gaul_code")
     private Integer adminUnitTropicalGaulCode;
 
-    // The GAUL code of the country geometry that contains this location.
-    @Column(name = "country_gaul_code")
-    private Integer countryGaulCode;
+    // The country geometry that contains this location.
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "country_gaul_code", nullable = true)
+    private Country country;
 
     // True if this location passed all of the QC checks, false if not.
     @Column(name = "has_passed_qc")
@@ -217,11 +219,14 @@ public class Location {
     }
 
     public Integer getCountryGaulCode() {
-        return countryGaulCode;
+        return (country == null) ? null : country.getGaulCode();
     }
 
-    public void setCountryGaulCode(Integer countryGaulCode) {
-        this.countryGaulCode = countryGaulCode;
+    public Country getCountryGaul() {
+        return country;
+    }
+    public void setCountry(Country country) {
+        this.country = country;
     }
 
     /**

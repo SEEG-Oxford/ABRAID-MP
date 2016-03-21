@@ -19,12 +19,7 @@
     <context:component-scan base-package="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web"/>
 
     <import resource="classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/common-properties.xml"/>
-    <mvc:resources mapping="/atlas/results/**" location="file:${abraid.raster.dir}/" />
-
-    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-        <!-- setting maximum upload size (104857600 bytes = 100MiB) -->
-        <property name="maxUploadSize" value="104857600" />
-    </bean>
+    <mvc:resources mapping="/atlas/results/**" location="file:${abraid.results.raster.dir}/" />
 
     <bean id="reCaptcha" class="net.tanesha.recaptcha.ReCaptchaImpl">
         <property name="publicKey" value="${recaptcha.public.key}" />
@@ -37,6 +32,11 @@
 
     <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
         <property name="templateLoaderPath" value="/WEB-INF/freemarker/"/>
+        <property name="freemarkerSettings">
+            <props>
+                <prop key="template_exception_handler">rethrow</prop>
+            </props>
+        </property>
         <property name="freemarkerVariables">
             <map>
                 <entry key="baseWmsUrl" value="${base.wms.url}" />
@@ -68,18 +68,16 @@
 
     <mvc:annotation-driven content-negotiation-manager="contentNegotiationManager">
         <mvc:message-converters register-defaults="true" >
-            <bean class="uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.support.ViewAwareJsonMessageConverter">
+            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
                 <property name="objectMapper" ref="objectMapper" />
             </bean>
-            <bean class="uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.support.CSVMessageConverter">
+            <bean class="uk.ac.ox.zoo.seeg.abraid.mp.common.dto.CSVMessageConverter">
                 <constructor-arg name="csvMapper">
                     <bean class="com.fasterxml.jackson.dataformat.csv.CsvMapper" />
                 </constructor-arg>
             </bean>
         </mvc:message-converters>
     </mvc:annotation-driven>
-    <bean class="uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.support.JsonViewSupportFactoryBean" />
-    <context:component-scan base-package="uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.support" />
 
     <bean id="currentUserService" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.security.CurrentUserServiceImpl" />
 
@@ -97,6 +95,9 @@
     <bean id="uploadCsvControllerHelperAsyncWrapper" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.tools.UploadCsvControllerHelperAsyncWrapper" destroy-method="cleanup" />
 
     <bean id="diseaseOccurrenceSpreadHelper" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.DiseaseOccurrenceSpreadHelper" autowire="constructor" />
+
+    <bean id="covariatesControllerHelper" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.covariates.CovariatesControllerHelperImpl" autowire="constructor" />
+    <bean id="covariatesControllerValidator" class="uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.covariates.CovariatesControllerValidator" autowire="constructor" />
 
     <mvc:default-servlet-handler/>
 

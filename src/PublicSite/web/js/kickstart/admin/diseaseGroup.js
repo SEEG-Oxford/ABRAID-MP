@@ -1,7 +1,8 @@
 /* Kick-start JS for the administration disease group page.
  * Copyright (c) 2014 University of Oxford
  */
-/*global require:false, window:false, baseUrl:false, diseaseGroups:false, validatorDiseaseGroups:false*/
+/*global require:false, window:false, baseUrl:false, diseaseGroups:false,
+         validatorDiseaseGroups:false, supportedModes:false */
 //Load base configuration, then load the app logic for this page.
 require([baseUrl + "js/shared/require.conf.js"], function () {
     "use strict";
@@ -14,13 +15,11 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
         "app/admin/diseasegroups/DiseaseGroupSettingsViewModel",
         "app/admin/diseasegroups/ModelRunParametersViewModel",
         "app/admin/diseasegroups/DiseaseGroupSetupViewModel",
-        "app/admin/diseasegroups/SyncDiseasesViewModel",
         "domReady!",
         "shared/navbar",
         "analytics"
     ], function (ko, DiseaseExtentParametersViewModel, DiseaseGroupAdministrationViewModel, DiseaseGroupsListViewModel,
-                 DiseaseGroupSettingsViewModel, ModelRunParametersViewModel, DiseaseGroupSetupViewModel,
-                 SyncDiseasesViewModel, doc) {
+                 DiseaseGroupSettingsViewModel, ModelRunParametersViewModel, DiseaseGroupSetupViewModel, doc) {
 
         var diseaseGroupSelectedEventName = "disease-group-selected";
         var diseaseGroupSavedEventName = "disease-group-saved";
@@ -28,15 +27,7 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
         var diseaseGroupsListViewModel =
             new DiseaseGroupsListViewModel(diseaseGroups, diseaseGroupSelectedEventName);
 
-        var syncDiseasesViewModel =
-            new SyncDiseasesViewModel(baseUrl);
-
-        ko.applyBindings({
-                diseaseGroupsListViewModel: diseaseGroupsListViewModel,
-                syncDiseasesViewModel: syncDiseasesViewModel
-            },
-            doc.getElementById("disease-groups-list")
-        );
+        ko.applyBindings(diseaseGroupsListViewModel, doc.getElementById("disease-groups-list"));
 
         var refresh = function () {
             window.top.location.reload();
@@ -47,7 +38,7 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
                 baseUrl,
                 refresh,
                 new DiseaseGroupSettingsViewModel(diseaseGroups, validatorDiseaseGroups, diseaseGroupSelectedEventName),
-                new ModelRunParametersViewModel(baseUrl, diseaseGroupSelectedEventName),
+                new ModelRunParametersViewModel(baseUrl, diseaseGroupSelectedEventName, supportedModes),
                 new DiseaseExtentParametersViewModel(diseaseGroupSelectedEventName),
                 diseaseGroupSelectedEventName,
                 diseaseGroupSavedEventName

@@ -1,14 +1,14 @@
 <featureType>
   <id>FeatureTypeInfoImpl--5f32640d:1466746c7a9:-7ff8</id>
   <name>base_layer</name>
-  <nativeName>admin_unit_simplified_global_view</nativeName>
+  <nativeName>admin_unit_full_global_view</nativeName>
   <namespace>
     <id>NamespaceInfoImpl--5f32640d:1466746c7a9:-7ffa</id>
   </namespace>
-  <title>admin_unit_simplified_global_view</title>
+  <title>admin_unit_full_global_view</title>
   <keywords>
     <string>features</string>
-    <string>admin_unit_simplified_global_view</string>
+    <string>admin_unit_full_global_view</string>
   </keywords>
   <nativeCRS>GEOGCS[&quot;WGS 84&quot;,
   DATUM[&quot;World Geodetic System 1984&quot;,

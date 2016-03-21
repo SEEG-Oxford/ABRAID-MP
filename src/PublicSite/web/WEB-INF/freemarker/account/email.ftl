@@ -13,7 +13,7 @@
 <#assign bootstrapData>
 <script type="text/javascript">
     // bootstrapped data for js viewmodels
-    var currentEmail = "${email}";
+    var currentEmail = "${email?js_string}";
 </script>
 </#assign>
 <@c.page title="ABRAID MP - Change Email" mainjs="/js/kickstart/account/email" bootstrapData=bootstrapData>

@@ -27,8 +27,8 @@ public class HealthMapWebServiceTest {
         // Arrange
         DateTime startDate = new DateTime("2014-01-06T10:01:02+0000");
         DateTime endDate = new DateTime("2014-01-07T13:10:59+0000");
-        String startDateUrl = "2014-01-06+10:01:02%2B0000";
-        String endDateUrl = "2014-01-07+13:10:59%2B0000";
+        String startDateUrl = "2014-01-06%2010:01:02%2B0000";
+        String endDateUrl = "2014-01-07%2013:10:59%2B0000";
 
         // Real location with 2 alerts
         String jsonLocation1 = "{" +
@@ -295,7 +295,7 @@ public class HealthMapWebServiceTest {
     public void healthMapReturnsNoResults() {
         // Arrange
         DateTime startDate = new DateTime("2014-01-06T00:00:00+0000");
-        String startDateUrl = "2014-01-06+00:00:00%2B0000";
+        String startDateUrl = "2014-01-06%2000:00:00%2B0000";
         String json = "[]";
 
         String url = getHealthMapBaseUrl() + addStartDate(startDateUrl);
@@ -348,7 +348,7 @@ public class HealthMapWebServiceTest {
         String startDateString = "2014-04-21 15:29:03+0100";
 
         // Act
-        HealthMapWebService webService = new HealthMapWebService(new WebServiceClient());
+        HealthMapWebService webService = new HealthMapWebService(null);
         webService.setDefaultStartDate(startDateString);
 
         // Assert
@@ -361,7 +361,7 @@ public class HealthMapWebServiceTest {
         String startDateString = "2014-04-21 15:29:03";
 
         // Act
-        HealthMapWebService webService = new HealthMapWebService(new WebServiceClient());
+        HealthMapWebService webService = new HealthMapWebService(null);
         catchException(webService).setDefaultStartDate(startDateString);
 
         // Assert
@@ -382,7 +382,7 @@ public class HealthMapWebServiceTest {
                 "]" +
                 "}]";
 
-        HealthMapWebService webService = getHealthMapWebService(new WebServiceClient());
+        HealthMapWebService webService = getHealthMapWebService(null);
         List<HealthMapLocation> locations = webService.parseJson(alertJson);
 
         assertThat(locations).hasSize(1);

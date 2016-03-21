@@ -53,6 +53,15 @@ public class GeometryServiceImpl implements GeometryService {
     }
 
     /**
+     * Gets the names of all countries to be shown in the HealthMap country report (sorted).
+     * @return The country names.
+     */
+    @Override
+    public List<String> getCountryNamesForHealthMapReport() {
+        return countryDao.getCountryNamesForHealthMapReport();
+    }
+
+    /**
      * Gets a list of admin units for global or tropical diseases, depending on whether the specified disease group
      * is a global or a tropical disease.
      * @param diseaseGroup The disease group.
@@ -131,10 +140,11 @@ public class GeometryServiceImpl implements GeometryService {
     /**
      * Finds the country that contains the specified point.
      * @param point The point.
-     * @return The GAUL code of the country that contains the specified point.
+     * @return The country that contains the specified point.
      */
-    public Integer findCountryThatContainsPoint(Point point) {
-        return nativeSQL.findCountryThatContainsPoint(point);
+    public Country findCountryThatContainsPoint(Point point) {
+        Integer gaul = nativeSQL.findCountryThatContainsPoint(point);
+        return (gaul == null) ? null : countryDao.getByGaulCode(gaul);
     }
 
     /**

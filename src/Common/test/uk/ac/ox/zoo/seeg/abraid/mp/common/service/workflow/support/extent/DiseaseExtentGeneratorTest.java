@@ -6,9 +6,7 @@ import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.GeometryService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +22,7 @@ public class DiseaseExtentGeneratorTest extends BaseDiseaseExtentGenerationTests
     private DiseaseService diseaseService;
     private ModelRunService modelRunService;
     private GeometryService geometryService;
+    private ValidationParameterCacheService cacheService;
     private DiseaseExtentGenerationInputDataSelector dataSelector;
     private DiseaseExtentGeneratorHelperFactory helperFactory;
 
@@ -41,6 +40,7 @@ public class DiseaseExtentGeneratorTest extends BaseDiseaseExtentGenerationTests
         diseaseService = mock(DiseaseService.class);
         modelRunService = mock(ModelRunService.class);
         geometryService = mock(GeometryService.class);
+        cacheService = mock(ValidationParameterCacheService.class);
         dataSelector = mock(DiseaseExtentGenerationInputDataSelector.class);
         helperFactory = mock(DiseaseExtentGeneratorHelperFactory.class);
         validatorInputData = mock(DiseaseExtentGenerationInputData.class);
@@ -52,7 +52,7 @@ public class DiseaseExtentGeneratorTest extends BaseDiseaseExtentGenerationTests
         when(dataSelector.selectForValidatorExtent(eq(diseaseGroup), eq(adminUnits), anyBoolean(), any(DiseaseProcessType.class), any(DateTime.class))).thenReturn(validatorInputData);
         when(dataSelector.selectForModellingExtent(eq(diseaseGroup), eq(validatorInputData))).thenReturn(modellingInputData);
 
-        diseaseExtentGenerator = new DiseaseExtentGenerator(dataSelector, helperFactory, geometryService, diseaseService, modelRunService);
+        diseaseExtentGenerator = new DiseaseExtentGenerator(dataSelector, helperFactory, geometryService, diseaseService, modelRunService, cacheService);
         minimumOccurrenceDate = DateTime.now().minusHours(1);
     }
 
@@ -68,7 +68,7 @@ public class DiseaseExtentGeneratorTest extends BaseDiseaseExtentGenerationTests
 
         // Assert
         verify(dataSelector).selectForValidatorExtent(diseaseGroup, adminUnits, true, DiseaseProcessType.AUTOMATIC, minimumOccurrenceDate);
-        verify(helper).computeDiseaseExtent(true);
+        verify(helper).computeDiseaseExtent();
     }
 
     @Test
@@ -85,11 +85,11 @@ public class DiseaseExtentGeneratorTest extends BaseDiseaseExtentGenerationTests
         // Assert
         verify(dataSelector).selectForValidatorExtent(diseaseGroup, adminUnits, false, DiseaseProcessType.AUTOMATIC, minimumOccurrenceDate);
         verify(helperFactory).createHelper(diseaseGroup, validatorInputData);
-        verify(helper).computeDiseaseExtent(false);
+        verify(helper).computeDiseaseExtent();
     }
 
     @Test
-    public void generateDiseaseExtentCalculatesNewModelingExtentWithCorrectDataForAutomaticNonInitial() throws Exception {
+    public void generateDiseaseExtentCalculatesNewModellingExtentWithCorrectDataForAutomaticNonInitial() throws Exception {
         // Arrange
         setupAdminUnits(adminUnits);
         setupOldModelRun(true);
@@ -102,11 +102,11 @@ public class DiseaseExtentGeneratorTest extends BaseDiseaseExtentGenerationTests
         // Assert
         verify(dataSelector).selectForModellingExtent(diseaseGroup, validatorInputData);
         verify(helperFactory).createHelper(diseaseGroup, modellingInputData);
-        verify(helper).computeDiseaseExtent(false);
+        verify(helper).computeDiseaseExtent();
     }
 
     @Test
-    public void generateDiseaseExtentSkipsNewModelingExtentWithCorrectDataForAutomaticInitial() throws Exception {
+    public void generateDiseaseExtentSkipsNewModellingExtentWithCorrectDataForAutomaticInitial() throws Exception {
         // Arrange
         setupAdminUnits(adminUnits);
         setupOldModelRun(false);
@@ -119,11 +119,11 @@ public class DiseaseExtentGeneratorTest extends BaseDiseaseExtentGenerationTests
         // Assert
         verify(dataSelector, never()).selectForModellingExtent(diseaseGroup, validatorInputData);
         verify(helperFactory, never()).createHelper(diseaseGroup, modellingInputData);
-        verify(helper, never()).computeDiseaseExtent(false);
+        verify(helper, never()).computeDiseaseExtent();
     }
 
     @Test
-    public void generateDiseaseExtentSkipsNewModelingExtentWithCorrectDataForManualInitial() throws Exception {
+    public void generateDiseaseExtentSkipsNewModellingExtentWithCorrectDataForManualInitial() throws Exception {
         // Arrange
         setupAdminUnits(adminUnits);
         setupOldModelRun(false);
@@ -136,11 +136,11 @@ public class DiseaseExtentGeneratorTest extends BaseDiseaseExtentGenerationTests
         // Assert
         verify(dataSelector, never()).selectForModellingExtent(diseaseGroup, validatorInputData);
         verify(helperFactory, never()).createHelper(diseaseGroup, modellingInputData);
-        verify(helper, never()).computeDiseaseExtent(false);
+        verify(helper, never()).computeDiseaseExtent();
     }
 
     @Test
-    public void generateDiseaseExtentSkipsNewModelingExtentWithCorrectDataForManualNonInitial() throws Exception {
+    public void generateDiseaseExtentSkipsNewModellingExtentWithCorrectDataForManualNonInitial() throws Exception {
         // Arrange
         setupAdminUnits(adminUnits);
         setupOldModelRun(true);
@@ -153,7 +153,7 @@ public class DiseaseExtentGeneratorTest extends BaseDiseaseExtentGenerationTests
         // Assert
         verify(dataSelector, never()).selectForModellingExtent(diseaseGroup, validatorInputData);
         verify(helperFactory, never()).createHelper(diseaseGroup, modellingInputData);
-        verify(helper, never()).computeDiseaseExtent(false);
+        verify(helper, never()).computeDiseaseExtent();
     }
 
     @Test
@@ -232,6 +232,7 @@ public class DiseaseExtentGeneratorTest extends BaseDiseaseExtentGenerationTests
             }
         }
 
+        verify(cacheService).clearDistanceToExtentCacheForDisease(diseaseGroup.getId());
         verify(diseaseGroup.getDiseaseExtentParameters()).setLastValidatorExtentUpdateInputOccurrences(occurrencesForLastValidatorExtent);
         verify(diseaseGroup).setLastExtentGenerationDate(eq(DateTime.now()));
         verify(diseaseService).saveDiseaseGroup(diseaseGroup);
@@ -261,7 +262,7 @@ public class DiseaseExtentGeneratorTest extends BaseDiseaseExtentGenerationTests
 
     private void setupHelperFactory(DiseaseExtentGenerationInputData inputData, DiseaseExtentGeneratorHelper helperResult, DiseaseExtentGenerationOutputData result) {
         when(helperFactory.createHelper(diseaseGroup, inputData)).thenReturn(helperResult);
-        when(helperResult.computeDiseaseExtent(anyBoolean())).thenReturn(result);
+        when(helperResult.computeDiseaseExtent()).thenReturn(result);
     }
 
     private void setupExistingExtent(List<AdminUnitDiseaseExtentClass> existingDiseaseExtent) {

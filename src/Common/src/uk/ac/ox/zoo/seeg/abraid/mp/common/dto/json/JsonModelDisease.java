@@ -1,11 +1,8 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.util.StringUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.DiseaseSynchronisationJsonView;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.ModellingJsonView;
 
 /**
  * The JSON DTO used identify a disease when triggering model runs.
@@ -21,17 +18,20 @@ public class JsonModelDisease {
     }
 
     public JsonModelDisease(int id, boolean isGlobal, String name, String abbreviation) {
+        this(id, name);
         setGlobal(isGlobal);
+        setAbbreviation(abbreviation);
+    }
+
+    public JsonModelDisease(int id, String name) {
         setId(id);
         setName(name);
-        setAbbreviation(abbreviation);
     }
 
     public JsonModelDisease(DiseaseGroup diseaseGroup) {
         this(diseaseGroup.getId(), diseaseGroup.isGlobal(), diseaseGroup.getName(), diseaseGroup.getAbbreviation());
     }
 
-    @JsonView({ ModellingJsonView.class, DiseaseSynchronisationJsonView.class })
     public int getId() {
         return id;
     }
@@ -40,7 +40,6 @@ public class JsonModelDisease {
         this.id = id;
     }
 
-    @JsonView(ModellingJsonView.class)
     public boolean isGlobal() {
         return isGlobal;
     }
@@ -49,7 +48,6 @@ public class JsonModelDisease {
         this.isGlobal = isGlobal;
     }
 
-    @JsonView({ ModellingJsonView.class, DiseaseSynchronisationJsonView.class })
     public String getName() {
         return name;
     }
@@ -58,7 +56,6 @@ public class JsonModelDisease {
         this.name = name;
     }
 
-    @JsonView(ModellingJsonView.class)
     public String getAbbreviation() {
         return abbreviation;
     }

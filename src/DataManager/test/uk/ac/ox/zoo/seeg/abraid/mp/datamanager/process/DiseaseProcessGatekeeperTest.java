@@ -38,17 +38,11 @@ public class DiseaseProcessGatekeeperTest {
             }
         });
 
-        when(diseaseService.subtractDaysBetweenModelRuns(any(DateTime.class))).thenAnswer(new Answer<LocalDate>() {
-            @Override
-            public LocalDate answer(InvocationOnMock invocationOnMock) throws Throwable {
-                return ((DateTime) invocationOnMock.getArguments()[0]).toLocalDate().minusDays(7);
-            }
-        });
-
         // The default disease group for dengue has automatic model runs set to true
         diseaseGroup = mock(DiseaseGroup.class);
         when(diseaseGroup.getId()).thenReturn(DISEASE_GROUP_ID);
         when(diseaseGroup.getName()).thenReturn("Dengue");
+        when(diseaseGroup.getMaxDaysBetweenModelRuns()).thenReturn(7);
         when(diseaseGroup.getAutomaticModelRunsStartDate()).thenReturn(DateTime.now());
         when(diseaseGroup.getMinDistanceFromDiseaseExtentForTriggering()).thenReturn(0.0);
         when(diseaseGroup.getMaxEnvironmentalSuitabilityForTriggering()).thenReturn(0.0);

@@ -45,9 +45,13 @@ define([
                 selectedValidatorDiseaseGroup: wrap({ id: 3 })
             };
             var modelRunParametersViewModel = {
+                maxDaysBetweenModelRuns: wrap(7),
                 minNewLocations: wrap(1),
                 maxEnvironmentalSuitabilityForTriggering: wrap(0.2),
                 minDistanceFromDiseaseExtentForTriggering: wrap(-300),
+                modelMode: wrap("Bhatt2013"),
+                agentType: wrap("VIRUS"),
+                filterBiasDataByAgentType: wrap(true),
                 minDataVolume: wrap(2),
                 minDistinctCountries: wrap(3),
                 minHighFrequencyCountries: wrap(4),
@@ -60,9 +64,7 @@ define([
                 maxMonthsAgoForHigherOccurrenceScore: wrap(24),
                 higherOccurrenceScore: wrap(2),
                 lowerOccurrenceScore: wrap(1),
-                minValidationWeighting: wrap(0.6),
-                minOccurrencesForPossiblePresence: wrap(2),
-                minOccurrencesForPresence: wrap(5)
+                minValidationWeighting: wrap(0.6)
             };
             var expectedParams =
             "{" +
@@ -72,8 +74,12 @@ define([
                 "\"abbreviation\":\"ABBREV\"," +
                 "\"groupType\":\"MICROCLUSTER\"," +
                 "\"isGlobal\":true," +
+                "\"modelMode\":\"Bhatt2013\"," +
+                "\"agentType\":\"VIRUS\"," +
+                "\"filterBiasDataByAgentType\":true," +
                 "\"parentDiseaseGroup\":{\"id\":2}," +
                 "\"validatorDiseaseGroup\":{\"id\":3}," +
+                "\"maxDaysBetweenModelRuns\":7," +
                 "\"minNewLocations\":1," +
                 "\"maxEnvironmentalSuitabilityForTriggering\":0.2," +
                 "\"minDistanceFromDiseaseExtentForTriggering\":-300," +
@@ -88,9 +94,7 @@ define([
                     "\"maxMonthsAgoForHigherOccurrenceScore\":24," +
                     "\"lowerOccurrenceScore\":1," +
                     "\"higherOccurrenceScore\":2," +
-                    "\"minValidationWeighting\":0.6," +
-                    "\"minOccurrencesForPresence\":5," +
-                    "\"minOccurrencesForPossiblePresence\":2" +
+                    "\"minValidationWeighting\":0.6" +
                 "}" +
             "}";
 
@@ -209,9 +213,13 @@ define([
                 selectedValidatorDiseaseGroup: wrap(undefined)
             };
             var modelRunParametersViewModel = {
+                maxDaysBetweenModelRuns: wrap(""),
                 minNewLocations: wrap(""),
                 maxEnvironmentalSuitabilityForTriggering: wrap(""),
                 minDistanceFromDiseaseExtentForTriggering: wrap(""),
+                modelMode: wrap("Bhatt2013"),
+                agentType: wrap(""),
+                filterBiasDataByAgentType: wrap(false),
                 minDataVolume: wrap(""),
                 minDistinctCountries: wrap(""),
                 minHighFrequencyCountries: wrap(""),
@@ -224,12 +232,13 @@ define([
                 maxMonthsAgoForHigherOccurrenceScore: wrap(""),
                 higherOccurrenceScore: wrap(""),
                 lowerOccurrenceScore: wrap(""),
-                minValidationWeighting: wrap(""),
-                minOccurrencesForPossiblePresence: wrap(""),
-                minOccurrencesForPresence: wrap("")
+                minValidationWeighting: wrap("")
             };
             var expectedParams = "{\"name\":\"Name\"," +
                 "\"groupType\":\"MICROCLUSTER\"," +
+                "\"modelMode\":\"Bhatt2013\"," +
+                "\"agentType\":\"\"," +
+                "\"filterBiasDataByAgentType\":false," +
                 "\"parentDiseaseGroup\":{\"id\":null}," +
                 "\"validatorDiseaseGroup\":{\"id\":null}," +
                 "\"diseaseExtentParameters\":{}}";

@@ -13,11 +13,13 @@ if [[ ! -d "$ABRAID_SUPPORT_PATH/modeloutput" ]]; then
   mkdir -p "$ABRAID_SUPPORT_PATH/modeloutput/"
 fi
 
-echo "[[ MW | Checking waterbodies mask raster file ]]"
-fileAsk "$REMOTE_USER@${deploy_props[waterbodies.source]}/waterbodies.tif" "$ABRAID_SUPPORT_PATH/modeloutput/waterbodies.tif" "waterbodies mask raster"
+if [[ ! -f "$ABRAID_SUPPORT_PATH/modeloutput/waterbodies.tif" ]]; then
+  echo "[[ MW | Getting waterbodies mask raster file ]]"
+  fileAsk "$REMOTE_USER@${deploy_props[waterbodies.source]}/waterbodies.tif" "$ABRAID_SUPPORT_PATH/modeloutput/waterbodies.tif" "waterbodies mask raster"
+fi
 
 echo "[[ MO | Ensuring correct file permissions ]]"
-permissionFix "tomcat7:tomcat7" "$ABRAID_SUPPORT_PATH/results/"
-permissionFix "tomcat7:tomcat7" "$ABRAID_SUPPORT_PATH/modeloutput/"
+permissionFix "tomcat7" "tomcat7" "$ABRAID_SUPPORT_PATH/results/"
+permissionFix "tomcat7" "tomcat7" "$ABRAID_SUPPORT_PATH/modeloutput/"
 
 echo "[[ MO | Done ]]"

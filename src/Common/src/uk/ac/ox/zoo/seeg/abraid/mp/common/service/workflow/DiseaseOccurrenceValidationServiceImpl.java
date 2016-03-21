@@ -10,7 +10,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ModelRunService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.DistanceFromDiseaseExtentHelper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.EnvironmentalSuitabilityHelper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.MachineWeightingPredictor;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.util.RasterUtils;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.util.raster.RasterUtils;
 
 import java.util.List;
 
@@ -45,16 +45,16 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
     public void addValidationParametersWithChecks(DiseaseOccurrence occurrence) {
         // By default, set the occurrence to status READY
         clearAndSetToReady(occurrence);
-        if (hasPassedQc(occurrence)) {
-            if (isGoldStandard(occurrence)) {
-                handleGoldStandard(occurrence);
-            } else if (automaticModelRunsEnabled(occurrence)) {
-                handleAutomaticModelRunsEnabled(occurrence);
-            } else {
-                handleAutomaticModelRunsDisabled(occurrence);
-            }
-        } else {
+        if (hasFailedQc(occurrence)) {
             setToFailedQc(occurrence);
+        } else if (isBias(occurrence)) {
+            setToBias(occurrence);
+        } else if (isGoldStandard(occurrence)) {
+            handleGoldStandard(occurrence);
+        } else if (automaticModelRunsEnabled(occurrence)) {
+            handleAutomaticModelRunsEnabled(occurrence);
+        } else {
+            handleAutomaticModelRunsDisabled(occurrence);
         }
     }
 
@@ -70,15 +70,18 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
         if (diseaseGroup != null) {
             // Get the latest mean prediction raster for the disease group, and then use it to add validation parameters
             // to all occurrences
-            GridCoverage2D raster = null;
+            GridCoverage2D suitabilityRaster = null;
+            GridCoverage2D[] adminRasters = null;
             try {
-                raster = esHelper.getLatestMeanPredictionRaster(diseaseGroup);
+                suitabilityRaster = esHelper.getLatestMeanPredictionRaster(diseaseGroup);
+                adminRasters = esHelper.getAdminRasters();
                 for (DiseaseOccurrence occurrence : occurrences) {
                     clearAndSetToReady(occurrence);
-                    addValidationParameters(occurrence, raster);
+                    addValidationParameters(occurrence, suitabilityRaster, adminRasters);
                 }
             } finally {
-                RasterUtils.disposeRaster(raster);
+                RasterUtils.disposeRaster(suitabilityRaster);
+                RasterUtils.disposeRasters(adminRasters);
             }
         }
     }
@@ -95,8 +98,12 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
         occurrence.setStatus(DiseaseOccurrenceStatus.READY);
     }
 
-    private boolean hasPassedQc(DiseaseOccurrence occurrence) {
-        return (occurrence.getLocation() != null) && occurrence.getLocation().hasPassedQc();
+    private boolean hasFailedQc(DiseaseOccurrence occurrence) {
+        return (occurrence.getLocation() == null) || !occurrence.getLocation().hasPassedQc();
+    }
+
+    private boolean isBias(DiseaseOccurrence occurrence) {
+        return occurrence.getBiasDisease() != null;
     }
 
     private boolean isGoldStandard(DiseaseOccurrence occurrence) {
@@ -105,6 +112,10 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
 
     private void setToFailedQc(DiseaseOccurrence occurrence) {
         occurrence.setStatus(DiseaseOccurrenceStatus.DISCARDED_FAILED_QC);
+    }
+
+    private void setToBias(DiseaseOccurrence occurrence) {
+        occurrence.setStatus(DiseaseOccurrenceStatus.BIAS);
     }
 
     private boolean automaticModelRunsEnabled(DiseaseOccurrence occurrence) {
@@ -134,17 +145,22 @@ public class DiseaseOccurrenceValidationServiceImpl implements DiseaseOccurrence
     }
 
     private void addValidationParameters(DiseaseOccurrence occurrence) {
-        GridCoverage2D raster = null;
+        GridCoverage2D suitabilityRaster = null;
+        GridCoverage2D[] adminRasters = null;
         try {
-            raster = esHelper.getLatestMeanPredictionRaster(occurrence.getDiseaseGroup());
-            addValidationParameters(occurrence, raster);
+            suitabilityRaster = esHelper.getLatestMeanPredictionRaster(occurrence.getDiseaseGroup());
+            adminRasters = esHelper.getSingleAdminRaster(occurrence.getLocation().getPrecision());
+            addValidationParameters(occurrence, suitabilityRaster, adminRasters);
         } finally {
-            RasterUtils.disposeRaster(raster);
+            RasterUtils.disposeRaster(suitabilityRaster);
+            RasterUtils.disposeRasters(adminRasters);
         }
     }
 
-    private void addValidationParameters(DiseaseOccurrence occurrence, GridCoverage2D raster) {
-        occurrence.setEnvironmentalSuitability(esHelper.findEnvironmentalSuitability(occurrence, raster));
+    private void addValidationParameters(
+            DiseaseOccurrence occurrence, GridCoverage2D predictionRaster, GridCoverage2D[] adminRasters) {
+        occurrence.setEnvironmentalSuitability(
+                esHelper.findEnvironmentalSuitability(occurrence, predictionRaster, adminRasters));
         occurrence.setDistanceFromDiseaseExtent(dfdeHelper.findDistanceFromDiseaseExtent(occurrence));
         findAndSetMachineWeightingAndInReview(occurrence);
     }

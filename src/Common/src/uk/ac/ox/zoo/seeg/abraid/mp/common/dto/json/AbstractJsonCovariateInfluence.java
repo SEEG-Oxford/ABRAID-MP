@@ -11,7 +11,7 @@ public abstract class AbstractJsonCovariateInfluence {
     private Double meanInfluence;
 
     public AbstractJsonCovariateInfluence(AbstractCovariateInfluence covariateInfluence) {
-        this.name = covariateInfluence.getCovariateDisplayName();
+        this.name = covariateInfluence.getCovariateFile().getName();
         this.meanInfluence = covariateInfluence.getMeanInfluence();
     }
 

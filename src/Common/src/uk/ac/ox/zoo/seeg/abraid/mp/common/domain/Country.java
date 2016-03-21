@@ -19,6 +19,10 @@ import javax.persistence.*;
         @NamedQuery(
                 name = "getCountriesForMinDataSpreadCalculation",
                 query = "select gaulCode from Country where forMinDataSpread = true"
+        ),
+        @NamedQuery(
+                name = "getCountryNamesForHealthMapReport",
+                query = "select name from Country where area > 115000 order by area desc"
         )
 })
 @Entity

@@ -149,7 +149,12 @@ public class HealthMapWebService {
         // Add the start date and end date if they are non-null
         addParameterIfNotNull(builder, startDateParameterName, startDate);
         addParameterIfNotNull(builder, endDateParameterName, endDate);
-        return builder.build().toString();
+        String url = builder.build().toString();
+        // As of 2015-10-07, HM's API no longer follows the W3 standard for URL encoding. Spaces in URL parameters need
+        // '%20' (normally only used in the resource path) instead of the correct '+'. The only '+' in the url will be
+        // the space in middle of the date strings (separating the date from the time), any others will have been
+        // replaced by '%2B'.
+        return url.replace("+", "%20");
     }
 
     /**

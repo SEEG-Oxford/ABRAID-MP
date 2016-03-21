@@ -68,6 +68,19 @@ public class GeometryServiceTest {
     }
 
     @Test
+    public void getCountryNamesForHealthMapReport() {
+        // Arrange
+        List<String> expected = Arrays.asList("A", "B", "C");
+        when(countryDao.getCountryNamesForHealthMapReport()).thenReturn(expected);
+
+        // Act
+        List<String> actual = geometryService.getCountryNamesForHealthMapReport();
+
+        // Assert
+        assertThat(actual).isSameAs(expected);
+    }
+
+    @Test
     public void getAllAdminUnits() {
         // Arrange
         List<AdminUnitQC> adminUnits = Arrays.asList(new AdminUnitQC());
@@ -215,13 +228,15 @@ public class GeometryServiceTest {
         // Arrange
         Point point = GeometryUtils.createPoint(1, 2);
         Integer expectedGaulCode = 123;
+        Country expectedCountry = mock(Country.class);
         when(nativeSQL.findCountryThatContainsPoint(point)).thenReturn(expectedGaulCode);
+        when(countryDao.getByGaulCode(expectedGaulCode)).thenReturn(expectedCountry);
 
         // Act
-        Integer actualGaulCode = geometryService.findCountryThatContainsPoint(point);
+        Country actualCountry = geometryService.findCountryThatContainsPoint(point);
 
         // Assert
-        assertThat(actualGaulCode).isEqualTo(expectedGaulCode);
+        assertThat(actualCountry).isSameAs(expectedCountry);
     }
 
     @Test

@@ -18,7 +18,12 @@
     <!-- Add specs here -->
     <script type="text/javascript">
         var specs = [
+            "app/spec/LeafletMapFactorySpec",
             "app/spec/LogInFormViewModelSpec",
+            "app/spec/admin/covariates/CovariatesListViewModelSpec",
+            "app/spec/admin/covariates/CovariatesListRowViewModelSpec",
+            "app/spec/admin/covariates/CovariatesSubFileViewModelSpec",
+            "app/spec/admin/covariates/CovariateUploadViewModelSpec",
             "app/spec/admin/diseasegroups/DiseaseExtentParametersViewModelSpec",
             "app/spec/admin/diseasegroups/DiseaseGroupAdministrationViewModelSpec",
             "app/spec/admin/diseasegroups/DiseaseGroupPayloadSpec",
@@ -26,11 +31,14 @@
             "app/spec/admin/diseasegroups/DiseaseGroupSetupViewModelSpec",
             "app/spec/admin/diseasegroups/DiseaseGroupsListViewModelSpec",
             "app/spec/admin/diseasegroups/ModelRunParametersViewModelSpec",
-            "app/spec/admin/diseasegroups/SyncDiseasesViewModelSpec",
             "app/spec/admin/ExpertAdministrationViewModelSpec",
+            "app/spec/admin/HealthMapAdministrationViewModelSpec",
+            "app/spec/admin/HealthMapDiseaseRowViewModelSpec",
+            "app/spec/admin/RepositoryViewModelSpec",
             "app/spec/atlas/AtlasViewSpec",
             "app/spec/atlas/CovariateInfluencesViewModelSpec",
             "app/spec/atlas/DownloadLinksViewModelSpec",
+            "app/spec/atlas/GeoJsonLayerFactorySpec",
             "app/spec/atlas/LayerSelectorViewModelSpec",
             "app/spec/atlas/LegendViewModelSpec",
             "app/spec/atlas/StatisticsViewModelSpec",
@@ -44,6 +52,7 @@
             "app/spec/datavalidation/SelectedPointViewModelSpec",
             "app/spec/datavalidation/SidePanelViewModelSpec",
             "app/spec/datavalidation/SpinnerViewModelSpec",
+            "app/spec/tools/DataExtractorViewModelSpec",
             "app/spec/tools/UploadCsvViewModelSpec",
             "app/spec/user/reset/PasswordResetProcessFormViewModelSpec",
             "app/spec/user/reset/PasswordResetRequestFormViewModelSpec",
@@ -84,12 +93,12 @@
                     }
 
                     if (includeConsole) {
+                        var resultString = "";
                         var ConsoleReporter = jasmineRequire.ConsoleReporter();
                         var options = {
-                            print: function () {
-                                console.log.apply(console, arguments);
-                            },
+                            print: function (msg) { resultString = resultString + msg; },
                             onComplete: function(state) {
+                                console.log(resultString);
                                 // Stash these so we can get them elsewhere
                                 window.coverage = includeCoverage ? document.getElementById("blanket-main").lastChild.childNodes[1].innerHTML : "NOT RUN!"; // Ugly
                                 window.exitCode = state ? 0 : 1;

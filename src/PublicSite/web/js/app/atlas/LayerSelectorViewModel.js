@@ -28,6 +28,7 @@ define([
             self.types.push({ display: "risk uncertainty", id: "uncertainty" });
         }
         self.types.push({ display: "disease extent", id: "extent" });
+        self.types.push({ display: "input occurrences", id: "occurrences" });
 
         self.selectedType = ko.observable(self.types[0]);
 
@@ -37,15 +38,13 @@ define([
         self.runs = ko.computed(function () {
             return _(self.selectedDisease().runs).sortBy("date").reverse();
         }, self);
-        self.selectedRun = ko.observable(self.runs()[0]).publishOn("selected-run");
+        self.selectedRun = ko.observable(self.runs()[0]);
 
         self.selectedLayer = ko.computed(function () {
-            return self.selectedRun().id ? self.selectedRun().id + "_" + self.selectedType().id : undefined;
+            return !self.selectedRun().id || !self.selectedType().id ? undefined : {
+                type: self.selectedType().id,
+                run: self.selectedRun()
+            };
         }, self).publishOn("active-atlas-layer");
-
-        ko.computed(function () {
-            return self.selectedType().id || "";
-        }, self).publishOn("active-atlas-type");
-
     };
 });

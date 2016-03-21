@@ -7,7 +7,17 @@
 define(["ko"], function (ko) {
     "use strict";
 
-    return function () {
-        this.visible = ko.observable(false).subscribeTo("map-view-update-in-progress");
+    return function (setTimeout) {
+        var self = this;
+        ko.postbox.subscribe("map-view-update-in-progress", function (value) {
+            if (value) {
+                self.visible(true);
+            } else {
+                setTimeout(function () {
+                    self.visible(false);
+                }, 1000);
+            }
+        });
+        self.visible = ko.observable(false);
     };
 });

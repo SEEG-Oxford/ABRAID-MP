@@ -37,7 +37,7 @@
             <tbody>
             <#list table.rows as row>
                 <tr>
-                    <td>${row.countryName}</td>
+                    <td>${row.countryName?html}</td>
                     <td>${row.isForMinimumDiseaseSpread?string("Yes","No")}</td>
                     <#list row.occurrenceCounts as occurrenceCount>
                         <td>${occurrenceCount?c}</td>

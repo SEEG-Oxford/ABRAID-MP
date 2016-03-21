@@ -51,7 +51,7 @@ public class BatchingHandlerHelper {
     public DateTime handle(ModelRun modelRun) {
         // Reload the model run, because this may be a new transaction and we may need to save the model run later on
         modelRun = modelRunService.getModelRunByName(modelRun.getName());
-        DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(modelRun.getDiseaseGroupId());
+        DiseaseGroup diseaseGroup = modelRun.getDiseaseGroup();
         DateTime batchingInitialisationDate = null;
 
         // If disease group is in the setup phase, set validation parameters on a batch of disease occurrences

@@ -1,21 +1,34 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.web;
 
+import org.apache.http.*;
+import org.apache.http.auth.AuthScheme;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.AuthState;
+import org.apache.http.auth.Credentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.HttpResponseException;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.RequestBuilder;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.LaxRedirectStrategy;
+import org.apache.http.protocol.HttpContext;
 import org.apache.log4j.Logger;
-import org.glassfish.jersey.apache.connector.ApacheClientProperties;
-import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
-import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.client.ClientProperties;
-import org.glassfish.jersey.client.RequestEntityProcessing;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 
-import javax.ws.rs.ProcessingException;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.SyncInvoker;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Acts as a web service client.
@@ -29,20 +42,32 @@ public class WebServiceClient {
     private static final String CALLED_WEB_SERVICE_MESSAGE =  "Call to web service URL \"%s\" took %d ms";
     private static final String STATUS_UNSUCCESSFUL_MESSAGE =
             "Web service returned status code %d (\"%s\"). Web service URL: \"%s\"";
+    private static final String INVALID_URL_MESSAGE =
+            "Error when accessing web service with URL \"%s\": Invalid URL - %s";
     private static final String GENERAL_ERROR_MESSAGE =
             "Error when accessing web service with URL \"%s\": %s";
 
     private static final Logger LOGGER = Logger.getLogger(WebServiceClient.class);
 
-    private int connectTimeoutMilliseconds;
-    private int readTimeoutMilliseconds;
+    private CloseableHttpClient httpClient;
+    private BasicResponseHandler responseHandler;
 
-    public void setConnectTimeoutMilliseconds(int connectTimeoutMilliseconds) {
-        this.connectTimeoutMilliseconds = connectTimeoutMilliseconds;
+    public WebServiceClient(int connectTimeoutMilliseconds, int readTimeoutMilliseconds) {
+        this.httpClient = createHttpClient(connectTimeoutMilliseconds, readTimeoutMilliseconds);
+        this.responseHandler = new BasicResponseHandler();
     }
 
-    public void setReadTimeoutMilliseconds(int readTimeoutMilliseconds) {
-        this.readTimeoutMilliseconds = readTimeoutMilliseconds;
+    private CloseableHttpClient createHttpClient(int connectTimeoutMilliseconds, int readTimeoutMilliseconds) {
+        RequestConfig.Builder requestBuilder = RequestConfig.custom();
+        requestBuilder = requestBuilder.setConnectTimeout(connectTimeoutMilliseconds);
+        requestBuilder = requestBuilder.setSocketTimeout(readTimeoutMilliseconds);
+        RequestConfig requestConfig = requestBuilder.build();
+        HttpClientBuilder clientBuilder = HttpClientBuilder.create();
+        clientBuilder = clientBuilder.setDefaultRequestConfig(requestConfig);
+        clientBuilder = clientBuilder.disableAutomaticRetries();
+        clientBuilder = clientBuilder.addInterceptorFirst(new PreemptiveAuthInterceptor());
+        clientBuilder = clientBuilder.setRedirectStrategy(new LaxRedirectStrategy());
+        return clientBuilder.build();
     }
 
     /**
@@ -54,34 +79,24 @@ public class WebServiceClient {
      */
     public String makeGetRequest(String url) throws WebServiceClientException {
         LOGGER.debug(String.format(GET_WEB_SERVICE_MESSAGE, url));
-        return request(url, new SyncInvokerAction() {
-            @Override
-            public Response invoke(SyncInvoker invoker) {
-                return invoker.get();
-            }
-        });
+        return request(createRequest(url, HttpMethod.GET).build());
     }
 
     /**
      * Calls a web service by making a POST request.
      * @param url The web service URL to call.
-     * @param bodyAsJson A string in JSON format that will be the body of the POST request.
+     * @param body A string in JSON format that will be the body of the POST request.
      * @return The web service response as a string.
      * @throws WebServiceClientException If a response could not be obtained from the web service for whatever reason,
      * or if a response status code other than "successful" is returned.
      */
-    public String makePostRequestWithJSON(String url, final String bodyAsJson) throws WebServiceClientException {
-        if (bodyAsJson == null) {
+    public String makePostRequestWithJSON(String url, final String body) throws WebServiceClientException {
+        if (body == null) {
             throw new IllegalArgumentException("POST body must be non-null");
         }
 
-        LOGGER.debug(String.format(POST_WEB_SERVICE_MESSAGE, url, bodyAsJson.length(), "characters"));
-        return request(url, new SyncInvokerAction() {
-            @Override
-            public Response invoke(SyncInvoker invoker) {
-                return invoker.post(Entity.entity(bodyAsJson, MediaType.APPLICATION_JSON_TYPE));
-            }
-        });
+        LOGGER.debug(String.format(POST_WEB_SERVICE_MESSAGE, url, body.length(), "characters"));
+        return request(createRequest(url, HttpMethod.POST, body, ContentType.APPLICATION_JSON).build());
     }
 
     /**
@@ -92,18 +107,17 @@ public class WebServiceClient {
      * @throws WebServiceClientException If a response could not be obtained from the web service for whatever reason,
      * or if a response status code other than "successful" is returned.
      */
-    public String makePostRequestWithBinary(String url, final byte[] body) throws WebServiceClientException {
-        if (body == null) {
+    public String makePostRequestWithBinary(String url, final File body) throws WebServiceClientException {
+        if (body == null || body.length() == 0) {
             throw new IllegalArgumentException("POST body must be non-null");
         }
 
-        LOGGER.debug(String.format(POST_WEB_SERVICE_MESSAGE, url, body.length, "bytes"));
-        return request(url, new SyncInvokerAction() {
-            @Override
-            public Response invoke(SyncInvoker invoker) {
-                return invoker.post(Entity.entity(body, MediaType.APPLICATION_OCTET_STREAM_TYPE));
-            }
-        });
+        LOGGER.debug(String.format(POST_WEB_SERVICE_MESSAGE, url, body.length(), "bytes"));
+        RequestBuilder request = createRequest(url, HttpMethod.POST, body);
+
+        HttpUriRequest build = request.build();
+
+        return request(build);
     }
 
     /**
@@ -120,12 +134,7 @@ public class WebServiceClient {
         }
 
         LOGGER.debug(String.format(PUT_WEB_SERVICE_MESSAGE, url, body.length(), "characters"));
-        return request(url, new SyncInvokerAction() {
-            @Override
-            public Response invoke(SyncInvoker invoker) {
-                return invoker.put(Entity.entity(body, MediaType.TEXT_PLAIN));
-            }
-        });
+        return request(createRequest(url, HttpMethod.PUT, body, ContentType.TEXT_PLAIN).build());
     }
 
     /**
@@ -142,12 +151,7 @@ public class WebServiceClient {
         }
 
         LOGGER.debug(String.format(POST_WEB_SERVICE_MESSAGE, url, body.length(), "characters"));
-        return request(url, new SyncInvokerAction() {
-            @Override
-            public Response invoke(SyncInvoker invoker) {
-                return invoker.post(Entity.entity(body, MediaType.TEXT_XML));
-            }
-        });
+        return request(createRequest(url, HttpMethod.POST, body, ContentType.APPLICATION_XML.withCharset("")).build());
     }
 
     /**
@@ -164,51 +168,47 @@ public class WebServiceClient {
         }
 
         LOGGER.debug(String.format(PUT_WEB_SERVICE_MESSAGE, url, body.length(), "characters"));
-        return request(url, new SyncInvokerAction() {
-            @Override
-            public Response invoke(SyncInvoker invoker) {
-                return invoker.put(Entity.entity(body, MediaType.TEXT_XML));
-            }
-        });
+        return request(createRequest(url, HttpMethod.PUT, body, ContentType.APPLICATION_XML.withCharset("")).build());
     }
 
-    private String request(String url, SyncInvokerAction action) throws WebServiceClientException {
+    private RequestBuilder createRequest(String url, HttpMethod method) {
         try {
-            ClientConfig clientConfig = new ClientConfig();
-            clientConfig.connectorProvider(new ApacheConnectorProvider());
-            Client client = ClientBuilder.newClient(clientConfig);
-            client.property(ClientProperties.CONNECT_TIMEOUT, connectTimeoutMilliseconds);
-            client.property(ClientProperties.READ_TIMEOUT, readTimeoutMilliseconds);
+            return RequestBuilder.create(method.name()).setUri(url);
+        } catch (IllegalArgumentException e) {
+            String message = String.format(INVALID_URL_MESSAGE, url, getInnermostExceptionMessage(e));
+            throw new WebServiceClientException(message, e);
+        }
+    }
 
-            // If HTTP Basic Auth credentials are provided (in the url) send them with the initial request, rather
-            // than waiting for a challenge request.
-            client.property(ApacheClientProperties.PREEMPTIVE_BASIC_AUTHENTICATION, true);
+    private RequestBuilder createRequest(String url, HttpMethod method, HttpEntity body) {
+        return createRequest(url, method).setEntity(body);
+    }
 
-            // Use buffered transfer encoding instead of chunked as we won't normally be sending data while it is
-            // still being generated. (Additionally httpbin.org - used in tests - doesn't handle chunked correctly).
-            client.property(ClientProperties.REQUEST_ENTITY_PROCESSING, RequestEntityProcessing.BUFFERED);
+    private RequestBuilder createRequest(String url, HttpMethod method, String body, ContentType contentType) {
+        return createRequest(url, method, new StringEntity(body, contentType));
+    }
+    private RequestBuilder createRequest(String url, HttpMethod method, File body) {
+        return createRequest(url, method, MultipartEntityBuilder.create().addPart("file", new FileBody(body)).build());
+    }
 
+    private String request(HttpUriRequest request) {
+        try {
             DateTime startDate = DateTime.now();
-            Response response = action.invoke(client.target(url).request());
-
-            // If the response's status code is not in the "successful" family, throw an exception
-            Response.StatusType statusType = response.getStatusInfo();
-            if (!statusType.getFamily().equals(Response.Status.Family.SUCCESSFUL)) {
-                String message = String.format(STATUS_UNSUCCESSFUL_MESSAGE, statusType.getStatusCode(),
-                        statusType.getReasonPhrase(), url);
-                throw new WebServiceClientException(message);
-            }
-
+            String response = httpClient.execute(request, responseHandler);
             DateTime endDate = DateTime.now();
-            long callDuration = new Duration(startDate, endDate).getMillis();
-            LOGGER.debug(String.format(CALLED_WEB_SERVICE_MESSAGE, url, callDuration));
 
-            return response.readEntity(String.class);
-        } catch (ProcessingException e) {
-            // Jersey wraps javax.ws.rs.ProcessingException around all sorts of exceptions (unknown host, illegal
-            // argument, time out, protocol not supported, etc.). We convert this to our WebServiceClientException;
-            // as well as being consistent and friendly, it hides callers from the javax.ws.rs library.
-            String message = String.format(GENERAL_ERROR_MESSAGE, url, getInnermostExceptionMessage(e));
+            long callDuration = new Duration(startDate, endDate).getMillis();
+            LOGGER.debug(String.format(CALLED_WEB_SERVICE_MESSAGE, request.getURI(), callDuration));
+
+            return response;
+        } catch (HttpResponseException e) {
+            String status = HttpStatus.valueOf(e.getStatusCode()).getReasonPhrase();
+            String message = String.format(STATUS_UNSUCCESSFUL_MESSAGE, e.getStatusCode(), status, request.getURI());
+            throw new WebServiceClientException(message);
+        } catch (IOException e) {
+            // We convert this to our WebServiceClientException; as well as being consistent and friendly,
+            // it hides callers from the http client implementation library.
+            String message = String.format(GENERAL_ERROR_MESSAGE, request.getURI(), getInnermostExceptionMessage(e));
             throw new WebServiceClientException(message, e);
         }
     }
@@ -222,9 +222,31 @@ public class WebServiceClient {
     }
 
     /**
-     * Performs an action on a SyncInvoker object. This is used to perform the desired type of HTTP request.
+     * A HttpRequestInterceptor to enable preemptive basic auth (ie 1 req, not 2) if credential specified in the url.
      */
-    private interface SyncInvokerAction {
-        Response invoke(SyncInvoker invoker);
+    private static class PreemptiveAuthInterceptor implements HttpRequestInterceptor {
+        @Override
+        public void process(final HttpRequest request, final HttpContext context) throws HttpException, IOException {
+            AuthState authState = (AuthState) context.getAttribute(HttpClientContext.TARGET_AUTH_STATE);
+
+            Credentials creds = getCredentials(context);
+            AuthScheme authScheme = getAuthScheme(authState);
+            if (creds != null && authScheme == null) {
+                // If credentials have been provided (i.e. basic auth in the URI), but there isn't an auth scheme setup
+                // then preemptively set up basic auth.
+                authState.update(new BasicScheme(), creds);
+            }
+        }
+
+        private AuthScheme getAuthScheme(AuthState authState) {
+            return authState == null ? null : authState.getAuthScheme();
+        }
+
+        private Credentials getCredentials(HttpContext context) {
+            CredentialsProvider credsProvider =
+                    (CredentialsProvider) context.getAttribute(HttpClientContext.CREDS_PROVIDER);
+            HttpHost targetHost = (HttpHost) context.getAttribute(HttpClientContext.HTTP_TARGET_HOST);
+            return credsProvider.getCredentials(new AuthScope(targetHost.getHostName(), targetHost.getPort()));
+        }
     }
 }

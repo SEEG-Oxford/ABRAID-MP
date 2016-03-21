@@ -8,13 +8,13 @@
             </optgroup>
         </select>
         <span data-bind="if: showDiseaseExtentLayer">
-            <select data-bind="options: selectedDiseaseSet().diseaseGroups, optionsText: 'name', value: selectedDisease, preventBubble: true"></select>
+            <select data-bind="options: selectedDiseaseSet().diseaseGroups, optionsText: 'name', value: selectedDisease, valueAllowUnset: true, preventBubble: true"></select>
         </span>
     </h4>
 
     <div class="alert alert-info" style="display: none" data-bind="visible: noFeaturesToReview()">
         <div data-bind="text: showDiseaseExtentLayer() ?
-            'There are no administrative units in need of review for this disease' :
+            'Use the right-hand dropdown box to select the specific disease of interest.' :
             'There are no occurrences in need of review for this disease'">
         </div>
     </div>

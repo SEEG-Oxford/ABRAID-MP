@@ -23,6 +23,12 @@ public interface GeometryService {
     List<HealthMapCountry> getAllHealthMapCountries();
 
     /**
+     * Gets the names of all countries to be shown in the HealthMap country report (sorted).
+     * @return The country names.
+     */
+    List<String> getCountryNamesForHealthMapReport();
+
+    /**
      * Gets a list of admin units for global or tropical diseases, depending on whether the specified disease group
      * is a global or a tropical disease.
      * @param diseaseGroup The disease group.
@@ -72,9 +78,9 @@ public interface GeometryService {
     /**
      * Finds the country that contains the specified point.
      * @param point The point.
-     * @return The GAUL code of the country that contains the specified point.
+     * @return The country that contains the specified point.
      */
-    Integer findCountryThatContainsPoint(Point point);
+    Country findCountryThatContainsPoint(Point point);
 
     /**
      * Determines whether one of the land-sea border geometries contains the point.

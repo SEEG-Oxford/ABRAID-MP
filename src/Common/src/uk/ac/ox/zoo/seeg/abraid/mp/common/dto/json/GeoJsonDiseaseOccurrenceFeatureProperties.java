@@ -1,11 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import org.joda.time.DateTime;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.LocationPrecision;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.DisplayJsonView;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.ModellingJsonView;
 
 /**
  * A DTO for the properties on a uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence object.
@@ -13,26 +9,13 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.views.ModellingJsonView;
  * Copyright (c) 2014 University of Oxford
  */
 public class GeoJsonDiseaseOccurrenceFeatureProperties {
-    @JsonView(DisplayJsonView.class)
     private String diseaseGroupPublicName;
 
-    @JsonView(DisplayJsonView.class)
     private String locationName;
 
-    @JsonView(DisplayJsonView.class)
     private GeoJsonAlert alert;
 
-    @JsonView(DisplayJsonView.class)
     private DateTime occurrenceDate;
-
-    @JsonView(ModellingJsonView.class)
-    private LocationPrecision locationPrecision;
-
-    @JsonView(ModellingJsonView.class)
-    private Double weighting;
-
-    @JsonView(ModellingJsonView.class)
-    private Integer gaulCode;
 
     public GeoJsonDiseaseOccurrenceFeatureProperties() {
     }
@@ -42,13 +25,6 @@ public class GeoJsonDiseaseOccurrenceFeatureProperties {
         setLocationName(occurrence.getLocation().getName());
         setOccurrenceDate(occurrence.getOccurrenceDate());
         setAlert(new GeoJsonAlert(occurrence.getAlert()));
-        setLocationPrecision(occurrence.getLocation().getPrecision());
-        setWeighting(occurrence.getFinalWeighting());
-        if (occurrence.getLocation().getPrecision().equals(LocationPrecision.COUNTRY)) {
-            setGaulCode(occurrence.getLocation().getCountryGaulCode());
-        } else {
-            setGaulCode(occurrence.getLocation().getAdminUnitQCGaulCode());
-        }
     }
 
     public String getDiseaseGroupPublicName() {
@@ -67,14 +43,6 @@ public class GeoJsonDiseaseOccurrenceFeatureProperties {
         return locationName;
     }
 
-    public LocationPrecision getLocationPrecision() {
-        return locationPrecision;
-    }
-
-    public Double getWeighting() {
-        return weighting;
-    }
-
     public void setDiseaseGroupPublicName(String diseaseGroupPublicName) {
         this.diseaseGroupPublicName = diseaseGroupPublicName;
     }
@@ -91,22 +59,6 @@ public class GeoJsonDiseaseOccurrenceFeatureProperties {
         this.locationName = locationName;
     }
 
-    public void setLocationPrecision(LocationPrecision locationPrecision) {
-        this.locationPrecision = locationPrecision;
-    }
-
-    public void setWeighting(Double weighting) {
-        this.weighting = weighting;
-    }
-
-    public Integer getGaulCode() {
-        return gaulCode;
-    }
-
-    public void setGaulCode(Integer gaulCode) {
-        this.gaulCode = gaulCode;
-    }
-
     ///COVERAGE:OFF - generated code
     ///CHECKSTYLE:OFF AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     @Override
@@ -120,9 +72,7 @@ public class GeoJsonDiseaseOccurrenceFeatureProperties {
         if (diseaseGroupPublicName != null ? !diseaseGroupPublicName.equals(that.diseaseGroupPublicName) : that.diseaseGroupPublicName != null)
             return false;
         if (locationName != null ? !locationName.equals(that.locationName) : that.locationName != null) return false;
-        if (locationPrecision != that.locationPrecision) return false;
         if (occurrenceDate != null ? !occurrenceDate.equals(that.occurrenceDate) : that.occurrenceDate != null) return false;
-        if (weighting != null ? !weighting.equals(that.weighting) : that.weighting != null) return false;
 
         return true;
     }
@@ -133,8 +83,6 @@ public class GeoJsonDiseaseOccurrenceFeatureProperties {
         result = 31 * result + (locationName != null ? locationName.hashCode() : 0);
         result = 31 * result + (alert != null ? alert.hashCode() : 0);
         result = 31 * result + (occurrenceDate != null ? occurrenceDate.hashCode() : 0);
-        result = 31 * result + (locationPrecision != null ? locationPrecision.hashCode() : 0);
-        result = 31 * result + (weighting != null ? weighting.hashCode() : 0);
         return result;
     }
     ///CHECKSTYLE:ON

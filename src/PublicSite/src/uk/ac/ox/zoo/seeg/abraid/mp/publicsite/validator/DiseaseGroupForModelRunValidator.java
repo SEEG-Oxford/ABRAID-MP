@@ -19,8 +19,6 @@ public class DiseaseGroupForModelRunValidator {
     private static final String GLOBAL_TROPICAL = "global/tropical";
     private static final String VALIDATOR_DISEASE_GROUP = "the validator disease group";
     private static final String MIN_VALIDATION_WEIGHTING = "minimum validation weighting";
-    private static final String MIN_OCCURRENCES_FOR_PRESENCE = "minimum occurrences for presence";
-    private static final String MIN_OCCURRENCES_FOR_POSSIBLE_PRESENCE = "minimum occurrences for possible presence";
     private static final String MAX_MONTHS_AGO_FOR_HIGHER_SCORE = "maximum months ago for higher occurrence score";
     private static final String LOWER_SCORE = "lower occurrence score";
     private static final String HIGHER_SCORE = "higher occurrence score";
@@ -96,12 +94,6 @@ public class DiseaseGroupForModelRunValidator {
             }
             if (parameters.getMinValidationWeighting() == null) {
                 return String.format(PARAMETER_MISSING_MESSAGE, MIN_VALIDATION_WEIGHTING);
-            }
-            if (parameters.getMinOccurrencesForPresence() == null) {
-                return String.format(PARAMETER_MISSING_MESSAGE, MIN_OCCURRENCES_FOR_PRESENCE);
-            }
-            if (parameters.getMinOccurrencesForPossiblePresence() == null) {
-                return String.format(PARAMETER_MISSING_MESSAGE, MIN_OCCURRENCES_FOR_POSSIBLE_PRESENCE);
             }
         }
         return null;

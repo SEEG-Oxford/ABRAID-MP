@@ -26,8 +26,12 @@ define([], function () {
             abbreviation: diseaseGroupSettingsViewModel.abbreviation(),
             groupType: diseaseGroupSettingsViewModel.selectedType(),
             isGlobal: diseaseGroupSettingsViewModel.isGlobal(),
+            modelMode: modelRunParametersViewModel.modelMode(),
+            agentType: modelRunParametersViewModel.agentType(),
+            filterBiasDataByAgentType: modelRunParametersViewModel.filterBiasDataByAgentType(),
             parentDiseaseGroup: { id: getId(diseaseGroupSettingsViewModel.selectedParentDiseaseGroup()) },
             validatorDiseaseGroup: { id: getId(diseaseGroupSettingsViewModel.selectedValidatorDiseaseGroup()) },
+            maxDaysBetweenModelRuns:  parseInteger(modelRunParametersViewModel.maxDaysBetweenModelRuns()),
             minNewLocations: parseInteger(modelRunParametersViewModel.minNewLocations()),
             maxEnvironmentalSuitabilityForTriggering:
                 parseNumber(modelRunParametersViewModel.maxEnvironmentalSuitabilityForTriggering()),
@@ -49,11 +53,7 @@ define([], function () {
                 higherOccurrenceScore:
                     parseInteger(diseaseExtentParametersViewModel.higherOccurrenceScore()),
                 minValidationWeighting:
-                    parseNumber(diseaseExtentParametersViewModel.minValidationWeighting()),
-                minOccurrencesForPresence:
-                    parseInteger(diseaseExtentParametersViewModel.minOccurrencesForPresence()),
-                minOccurrencesForPossiblePresence:
-                    parseInteger(diseaseExtentParametersViewModel.minOccurrencesForPossiblePresence())
+                    parseNumber(diseaseExtentParametersViewModel.minValidationWeighting())
             }
         };
     };

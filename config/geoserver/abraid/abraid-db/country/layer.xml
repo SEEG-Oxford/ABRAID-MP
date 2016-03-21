@@ -1,0 +1,20 @@
+<layer>
+  <name>country</name>
+  <id>LayerInfoImpl--18c73576:14f417349aa:-7ffd</id>
+  <type>VECTOR</type>
+  <defaultStyle>
+    <id>StyleInfoImpl--18c73576:14f417349aa:-7ff9</id>
+  </defaultStyle>
+  <styles class="linked-hash-set">
+    <style>
+      <id>StyleInfoImpl--2a002fe5:14f414c189b:22a3</id>
+    </style>
+  </styles>
+  <resource class="featureType">
+    <id>FeatureTypeInfoImpl--18c73576:14f417349aa:-7ffe</id>
+  </resource>
+  <attribution>
+    <logoWidth>0</logoWidth>
+    <logoHeight>0</logoHeight>
+  </attribution>
+</layer>

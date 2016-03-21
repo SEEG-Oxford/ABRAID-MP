@@ -29,12 +29,15 @@ import javax.persistence.Table;
         @NamedQuery(
                 name = "getDiseaseOccurrencesByDiseaseGroupIdAndStatuses",
                 query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
+                        "inner join fetch d.location.country " +
                         "where d.diseaseGroup.id=:diseaseGroupId and d.status in :statuses"
         ),
         @NamedQuery(
                 name = "getDiseaseOccurrencesForExistenceCheck",
                 query = "from DiseaseOccurrence where diseaseGroup=:diseaseGroup and location=:location " +
-                        "and alert=:alert and occurrenceDate=:occurrenceDate"
+                        "and alert=:alert and occurrenceDate=:occurrenceDate and biasDisease is null"
+                        // Using biasDisease instead of status BIAS, as bias points can be BIAS or FAILED_QC, neither
+                        // should be considered for duplicates as they may be purged
         ),
         @NamedQuery(
                 name = "getDiseaseOccurrencesYetToBeReviewedByExpert",
@@ -100,6 +103,53 @@ import javax.persistence.Table;
                         "and occurrenceDate between :startDate and :endDate"
         ),
         @NamedQuery(
+                name = "getCountOfUnfilteredBespokeBiasOccurrences",
+                query = "select count(*) " +
+                        "from DiseaseOccurrence d " +
+                        "where d.biasDisease.id=:diseaseGroupId"
+        ),
+        @NamedQuery(
+                name = "getEstimateCountOfFilteredBespokeBiasOccurrences",
+                // This only an estimate as we can not apply the occurrence date filter used in
+                // 'getBespokeBiasOccurrences' outside of the context of a model run as the date range is unknown
+                query = "select count(*) " +
+                        "from DiseaseOccurrence d " +
+                        "where d.biasDisease.id=:diseaseGroupId " +
+                        "and d.status = 'BIAS' " +
+                        DiseaseOccurrence.BIAS_OCCURRENCE_LOCATION_FILTER_CLAUSES
+        ),
+        @NamedQuery(
+                name = "getEstimateCountOfFilteredDefaultBiasOccurrences",
+                // This only an estimate as we can not apply the occurrence date filter used in
+                // 'getDefaultBiasOccurrencesForModelRun' outside of a model run as the date range is unknown
+                query = "select count(*) " +
+                        "from DiseaseOccurrence d " +
+                        "where d.diseaseGroup.id<>:diseaseGroupId " +
+                        "and d.status NOT IN ('DISCARDED_FAILED_QC', 'BIAS') " +
+                        DiseaseOccurrence.BIAS_OCCURRENCE_AGENT_TYPE_FILTER_CLAUSE +
+                        DiseaseOccurrence.BIAS_OCCURRENCE_LOCATION_FILTER_CLAUSES
+        ),
+        @NamedQuery(
+                name = "getBespokeBiasOccurrencesForModelRun",
+                query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
+                        "where d.biasDisease.id=:diseaseGroupId " +
+                        "and d.status = 'BIAS' " +
+                        DiseaseOccurrence.BIAS_OCCURRENCE_LOCATION_FILTER_CLAUSES +
+                        DiseaseOccurrence.OCCURRENCE_DATE_FILTER_CLAUSE
+        ),
+        @NamedQuery(
+                name = "getDefaultBiasOccurrencesForModelRun",
+                query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
+                        "where d.diseaseGroup.id<>:diseaseGroupId " +
+                        "and d.status NOT IN ('DISCARDED_FAILED_QC', 'BIAS') " +
+                        // As this data set is for sample bias, we don't need to apply our
+                        // normal filters (READY/final weighting), but we don't want bias points if there aren't
+                        // bias points uploaded for this disease
+                        DiseaseOccurrence.BIAS_OCCURRENCE_AGENT_TYPE_FILTER_CLAUSE +
+                        DiseaseOccurrence.BIAS_OCCURRENCE_LOCATION_FILTER_CLAUSES +
+                        DiseaseOccurrence.OCCURRENCE_DATE_FILTER_CLAUSE
+        ),
+        @NamedQuery(
                 name = "getDiseaseOccurrencesForTrainingPredictor",
                 query = DiseaseOccurrence.DISEASE_OCCURRENCE_BASE_QUERY +
                         "where d.diseaseGroup.id=:diseaseGroupId " +
@@ -109,6 +159,10 @@ import javax.persistence.Table;
                         "and d.environmentalSuitability is not null " +
                         "and d.expertWeighting is not null " +
                         "and d.occurrenceDate > :cutOffDate"
+        ),
+        @NamedQuery(
+                name = "deleteDiseaseOccurrencesByBiasDiseaseId",
+                query = "delete from DiseaseOccurrence where biasDisease.id=:diseaseGroupId"
         )
 })
 @Entity
@@ -165,7 +219,31 @@ public class DiseaseOccurrence {
      * "That were not used in the last model run"
      */
     public static final String NEW_LOCATION_COUNT_QUERY_NOT_IN_LAST_RUN_CLAUSE =
-        " and d.location.id not in :locationsFromLastModelRun";
+            " and d.location.id not in :locationsFromLastModelRun";
+
+    /** A HQL fragment to choose between global and tropical gaul codes. */
+    public static final String PICK_EXTENT_GAUL_CODE =
+            "CASE :isGlobal WHEN true " +
+            "  THEN d.location.adminUnitGlobalGaulCode " +
+            "  ELSE d.location.adminUnitTropicalGaulCode " +
+            "END";
+
+    /** A HQL fragment to filter occurrences by location when selecting a bias data set.
+     * Filters by model eligibiliy (size) and disease extent (within only)
+     */
+    public static final String BIAS_OCCURRENCE_LOCATION_FILTER_CLAUSES =
+            "and d.location.isModelEligible is TRUE " +
+            "and (" + DiseaseOccurrence.PICK_EXTENT_GAUL_CODE + ") " +
+            "in (" + AdminUnitDiseaseExtentClass.EXTENT_GAUL_CODES_BY_DISEASE_GROUP_ID + ") ";
+
+    /** A HQL fragment to filter occurrences by disease group agent type when selecting a bias data set.
+     */
+    public static final String BIAS_OCCURRENCE_AGENT_TYPE_FILTER_CLAUSE =
+            "and (:shouldFilterBiasDataByAgentType is FALSE or d.diseaseGroup.agentType=:agentType) ";
+
+    /** A HQL fragment to filter occurrences within an occurrence date range. */
+    public static final String OCCURRENCE_DATE_FILTER_CLAUSE =
+            "and d.occurrenceDate between :startDate and :endDate ";
 
     // The primary key.
     @Id
@@ -238,6 +316,11 @@ public class DiseaseOccurrence {
     @Column(name = "occurrence_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime occurrenceDate;
+
+    // The disease group for which this occurrence is part of a bias set (or null).
+    @ManyToOne
+    @JoinColumn(name = "bias_disease_group_id", nullable = true)
+    private DiseaseGroup biasDisease;
 
     public DiseaseOccurrence() {
     }
@@ -376,6 +459,14 @@ public class DiseaseOccurrence {
         this.occurrenceDate = occurrenceDate;
     }
 
+    public DiseaseGroup getBiasDisease() {
+        return biasDisease;
+    }
+
+    public void setBiasDisease(DiseaseGroup biasDisease) {
+        this.biasDisease = biasDisease;
+    }
+
     ///COVERAGE:OFF - generated code
     ///CHECKSTYLE:OFF AvoidInlineConditionalsCheck|LineLengthCheck|MagicNumberCheck|NeedBracesCheck - generated code
     @Override
@@ -407,7 +498,7 @@ public class DiseaseOccurrence {
         if (status != null ? !status.equals(that.status) : that.status != null) return false;
         if (validationWeighting != null ? !validationWeighting.equals(that.validationWeighting) : that.validationWeighting != null)
             return false;
-
+        if (biasDisease != null ? !biasDisease.equals(that.biasDisease) : that.biasDisease != null) return false;
         return true;
     }
 
@@ -427,6 +518,7 @@ public class DiseaseOccurrence {
         result = 31 * result + (finalWeighting != null ? finalWeighting.hashCode() : 0);
         result = 31 * result + (finalWeightingExcludingSpatial != null ? finalWeightingExcludingSpatial.hashCode() : 0);
         result = 31 * result + (occurrenceDate != null ? occurrenceDate.hashCode() : 0);
+        result = 31 * result + (biasDisease != null ? biasDisease.hashCode() : 0);
         return result;
     }
     ///CHECKSTYLE:ON

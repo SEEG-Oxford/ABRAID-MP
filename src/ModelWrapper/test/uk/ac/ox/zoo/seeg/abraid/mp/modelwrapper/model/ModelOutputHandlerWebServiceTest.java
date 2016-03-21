@@ -5,7 +5,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ConfigurationService;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ModelWrapperConfigurationService;
 
 import java.io.File;
 
@@ -28,13 +28,13 @@ public class ModelOutputHandlerWebServiceTest {
         File testBodyFile = testFolder.newFile();
         FileUtils.writeByteArrayToFile(testBodyFile, testBody);
 
-        ConfigurationService configurationService = mock(ConfigurationService.class);
+        ModelWrapperConfigurationService configurationService = mock(ModelWrapperConfigurationService.class);
         String rootUrl = "http://localhost:8080/modeloutputhandler/";
         when(configurationService.getModelOutputHandlerRootUrl()).thenReturn(rootUrl);
 
         WebServiceClient webServiceClient = mock(WebServiceClient.class);
         String expectedUrl = rootUrl + "handleoutputs";
-        when(webServiceClient.makePostRequestWithBinary(expectedUrl, testBody)).thenReturn("expected Result");
+        when(webServiceClient.makePostRequestWithBinary(expectedUrl, testBodyFile)).thenReturn("expected Result");
 
         ModelOutputHandlerWebService target = new ModelOutputHandlerWebService(webServiceClient, configurationService);
 
@@ -43,6 +43,6 @@ public class ModelOutputHandlerWebServiceTest {
 
         // Assert
         assertThat(actualResponse).isEqualTo("expected Result");
-        verify(webServiceClient).makePostRequestWithBinary(expectedUrl, testBody);
+        verify(webServiceClient).makePostRequestWithBinary(expectedUrl, testBodyFile);
     }
 }

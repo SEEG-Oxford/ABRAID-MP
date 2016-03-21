@@ -38,31 +38,36 @@
                 <li><a href="<@spring.url "/experts"/>">Contributors</a></li>
             </ul>
         </li>
-        <@security.authorize ifAnyGranted="ROLE_ADMIN">
-            <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tools<span class="caret"></span></a>
-                <ul class="dropdown-menu" role="menu">
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tools<span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+                <li><a href="<@spring.url "/tools/location/"/>">Data Extractor</a></li>
+                <@security.authorize ifAnyGranted="ROLE_ADMIN">
                     <li><a href="<@spring.url "/tools/uploadcsv/"/>">Upload CSV</a></li>
                     <li><a href="<@spring.url "/admin/diseases/"/>">Administration - Diseases</a></li>
                     <li><a href="<@spring.url "/admin/experts/"/>">Administration - Experts</a></li>
-                </ul>
-            </li>
-        </@security.authorize>
-
+                    <li><a href="<@spring.url "/admin/covariates/"/>">Administration - Covariates</a></li>
+                    <li><a href="<@spring.url "/admin/healthmap/"/>">Administration - HealthMap</a></li>
+                    <li><a href="<@spring.url "/admin/model/"/>">Administration - Model</a></li>
+                    <li><a href="<@spring.url "/admin/report/healthMapByCountry/"/>">Report - HealthMap Country</a></li>
+                    <li><a href="<@spring.url "/admin/report/healthMapByDisease/"/>">Report - HealthMap Disease</a></li>
+                </@security.authorize>
+            </ul>
+        </li>
     </ul>
 
     <@security.authorize ifAnyGranted="ROLE_USER">
         <ul class="collapse navbar-collapse nav navbar-nav navbar-right" id="user-nav">
-            <li class="centered-nav"><a href="#" class="collapse-only">Signed in as: <br><strong><@security.authentication property="principal.fullName"/></strong></a></li>
+            <li class="centered-nav"><a href="#" class="collapse-only">Signed in as: <br><strong><@security.authentication property="principal.fullName" htmlEscape="true"/></strong></a></li>
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                     <span class="fa fa-lg fa-user"></span>
                     <span class="collapse-only">Profile <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu" role="menu">
-                    <li class="centered-nav expand-only"><a href="#">Signed in as: <br /><strong><@security.authentication property="principal.fullName"/></strong></a></li>
+                    <li class="centered-nav expand-only"><a href="#">Signed in as: <br /><strong><@security.authentication property="principal.fullName" htmlEscape="true"/></strong></a></li>
                     <li><a title="Edit profile" href="<@spring.url "/account/edit"/>">Edit profile</a></li>
-                    <li><a title="Change password" href="<@spring.url "/account/email"/>">Change email</a></li>
+                    <li><a title="Change email" href="<@spring.url "/account/email"/>">Change email</a></li>
                     <li><a title="Change password" href="<@spring.url "/account/password"/>">Change password</a></li>
                 </ul>
             </li>

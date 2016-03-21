@@ -2,10 +2,14 @@ package uk.ac.ox.zoo.seeg.abraid.mp.datamanager;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Polygon;
+import net.lingala.zip4j.exception.ZipException;
+import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.mockito.ArgumentMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -20,6 +24,7 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModelRunWorkf
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.GeometryUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.util.*;
 
@@ -28,6 +33,7 @@ import static org.assertj.core.api.Assertions.offset;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.startsWith;
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.contains;
 import static org.mockito.Mockito.eq;
@@ -39,13 +45,18 @@ import static org.mockito.Mockito.same;
  * Copyright (c) 2014 University of Oxford
  */
 public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTests {
-    public static final String HEALTHMAP_URL_PREFIX = "http://healthmap.org";
-    public static final String GEONAMES_URL_PREFIX = "http://api.geonames.org/getJSON?username=fakekey&geonameId=";
-    public static final String MODELWRAPPER_URL_PREFIX = "http://api:key-to-access-model-wrapper@localhost:8080/modelwrapper/api";
-    public static final String LARGE_RASTER_FILENAME =
+    private static final String HEALTHMAP_URL_PREFIX = "http://healthmap.org";
+    private static final String GEONAMES_URL_PREFIX = "http://api.geonames.org/getJSON?username=fakekey&geonameId=";
+    private static final String MODELWRAPPER_URL_PREFIX = "http://api:key-to-access-model-wrapper@localhost:8080/modelwrapper/api";
+    private static final String LARGE_RASTER_FILENAME =
             "Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/service/workflow/support/testdata/test_raster_large_double.tif";
+    private static final String ADMIN_RASTER_FILENAME =
+            "Common/test/uk/ac/ox/zoo/seeg/abraid/mp/common/service/workflow/support/testdata/admin_raster_large_double.tif";
 
-    public static final String EXPECTED_PREDICTION_FAILURE_RESPONSE = "No prediction";
+    private static final String EXPECTED_PREDICTION_FAILURE_RESPONSE = "No prediction";
+
+    @Rule
+    public TemporaryFolder testFolder = new TemporaryFolder(); ///CHECKSTYLE:SUPPRESS VisibilityModifier
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -72,6 +83,12 @@ public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTest
     public void before() {
         // Sun, 27 Apr 2014 09:45:41
         DateTimeUtils.setCurrentMillisFixed(1398591941000L);
+        when(rasterFilePathFactory.getAdminRaster(0))
+                .thenReturn(new File(ADMIN_RASTER_FILENAME));
+        when(rasterFilePathFactory.getAdminRaster(1))
+                .thenReturn(new File(ADMIN_RASTER_FILENAME));
+        when(rasterFilePathFactory.getAdminRaster(2))
+                .thenReturn(new File(ADMIN_RASTER_FILENAME));
     }
 
     @Test
@@ -80,10 +97,12 @@ public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTest
         int diseaseGroupId = 87;
         mockHealthMapRequest();
         mockGeoNamesRequests();
+        mockCovariateList();
+        File expectedZip = mockPackageBuilder();
         mockModelWrapperRequest();
         mockMachineWeightingPredictorRequest();
         createAndSaveTestModelRun(diseaseGroupId);
-        insertTestDiseaseExtent(diseaseGroupId, GeometryUtils.createMultiPolygon(getFivePointedPolygon()));
+        insertTestDiseaseExtent(diseaseGroupId, GeometryUtils.createMultiPolygon(getFivePointedPolygon()), GeometryUtils.createMultiPolygon(getShiftedFivePointedPolygon()));
         setDiseaseGroupParametersToEnsureHelperReturnsOccurrences(diseaseGroupId);
         setFixedCountryAreas();
 
@@ -94,7 +113,7 @@ public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTest
         assertThatDiseaseOccurrencesAreCorrect();
         assertThatDiseaseOccurrenceValidationParametersAreCorrect();
         assertThatRelevantDiseaseOccurrencesHaveFinalWeightings();
-        assertThatModelWrapperWebServiceWasCalledCorrectly();
+        assertThatModelWrapperWebServiceWasCalledCorrectly(expectedZip);
         assertThatRollbackDidNotOccur();
     }
 
@@ -104,6 +123,7 @@ public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTest
         diseaseGroup.setOccursInAfrica(false);
         diseaseGroup.setMinDistinctCountries(null);
         diseaseGroup.setAutomaticModelRunsStartDate(DateTime.now());
+        diseaseGroup.setModelMode("Shearer2016");
         diseaseGroupDao.save(diseaseGroup);
     }
 
@@ -114,14 +134,19 @@ public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTest
     }
 
     @Test
-    public void mainMethodAcquiresDataFromFiles() {
+    public void mainMethodAcquiresDataFromFiles() throws IOException, ZipException {
         // Arrange
         String[] fileNames = {
                 "DataManager/test/uk/ac/ox/zoo/seeg/abraid/mp/datamanager/healthmap_json1.txt",
                 "DataManager/test/uk/ac/ox/zoo/seeg/abraid/mp/datamanager/healthmap_json2.txt"
         };
+        mockCovariateList();
         mockGeoNamesRequests();
         mockModelWrapperRequest();
+        File expectedZip = mockPackageBuilder();
+        mockMachineWeightingPredictorRequest();
+        createAndSaveTestModelRun(87);
+        insertTestDiseaseExtent(87, GeometryUtils.createMultiPolygon(getFivePointedPolygon()), GeometryUtils.createMultiPolygon(getShiftedFivePointedPolygon()));
         setDiseaseGroupParametersToEnsureHelperReturnsOccurrences(87);
 
         // Act
@@ -130,7 +155,7 @@ public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTest
         // Assert
         assertThatDiseaseOccurrencesAreCorrect();
         assertThatRelevantDiseaseOccurrencesHaveFinalWeightings();
-        assertThatModelWrapperWebServiceWasCalledCorrectly();
+        assertThatModelWrapperWebServiceWasCalledCorrectly(expectedZip);
         assertThatRollbackDidNotOccur();
     }
 
@@ -139,8 +164,13 @@ public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTest
         // Arrange
         mockHealthMapRequest();
         mockGeoNamesRequests();
+        mockCovariateList();
+        mockMachineWeightingPredictorRequest();
+        createAndSaveTestModelRun(87);
+        insertTestDiseaseExtent(87, GeometryUtils.createMultiPolygon(getFivePointedPolygon()), GeometryUtils.createMultiPolygon(getShiftedFivePointedPolygon()));
         setDiseaseGroupParametersToEnsureHelperReturnsOccurrences(87);
-        when(webServiceClient.makePostRequestWithJSON(startsWith(MODELWRAPPER_URL_PREFIX), anyString()))
+        setFixedCountryAreas();
+        when(webServiceClient.makePostRequestWithBinary(startsWith(MODELWRAPPER_URL_PREFIX), any(File.class)))
                 .thenThrow(new ModelRunWorkflowException("Test message"));
 
         // Act
@@ -167,10 +197,11 @@ public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTest
         List<DiseaseOccurrence> occurrences = getLastTwoDiseaseOccurrences();
 
         DiseaseOccurrence validatedOccurrence = occurrences.get(0);
-        assertThatDiseaseOccurrenceValidationParametersAreCorrect(validatedOccurrence, 0.46, 8814.186615);
+        assertThatDiseaseOccurrenceValidationParametersAreCorrect(validatedOccurrence, 0.46, -8251.080507);
 
+        boolean hasGeoms = countryDao.getByName("France").getGeom() != null;
         DiseaseOccurrence validatedOccurrence2 = occurrences.get(1);
-        assertThatDiseaseOccurrenceValidationParametersAreCorrect(validatedOccurrence2, 0.62, 12524.775729);
+        assertThatDiseaseOccurrenceValidationParametersAreCorrect(validatedOccurrence2, 0.62, hasGeoms ? 12013.566370 : 12461.351955);
     }
 
     private void assertThatDiseaseOccurrenceValidationParametersAreCorrect(DiseaseOccurrence occurrence,
@@ -190,16 +221,24 @@ public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTest
         assertThat(occurrence.getStatus()).isEqualTo(DiseaseOccurrenceStatus.READY);
     }
 
-    private void assertThatModelWrapperWebServiceWasCalledCorrectly() {
+    private void assertThatModelWrapperWebServiceWasCalledCorrectly(File expectedZip) throws IOException, ZipException {
         // Assert that the model wrapper web service has been called once for dengue (disease group 87), with
         // the specified number of occurrence points and disease extent classes
-        verify(modelWrapperWebService, atLeastOnce()).startRun(
-                eq(URI.create(MODELWRAPPER_URL_PREFIX)),
+        verify(modelRunPackageBuilder, atLeastOnce()).buildPackage(
+                startsWith("deng_"),
                 argThat(new DiseaseGroupIdMatcher(87)),
                 argThat(new ListSizeMatcher<DiseaseOccurrence>(27)),
-                argThat(new MapSizeMatcher<Integer, Integer>(451)));
-        verify(webServiceClient, atLeastOnce()).makePostRequestWithJSON(
-                startsWith(MODELWRAPPER_URL_PREFIX), anyString());
+                argThat(new ListSizeMatcher<AdminUnitDiseaseExtentClass>(451)),
+                argThat(new ListSizeMatcher<DiseaseOccurrence>(5)),
+                argThat(new ListSizeMatcher<CovariateFile>(0)),
+                eq(System.getProperty("user.home") + "/AppData/Local/abraid/covariates"));
+
+        verify(modelWrapperWebService, atLeastOnce()).startRun(
+                URI.create(MODELWRAPPER_URL_PREFIX), expectedZip
+        );
+
+        verify(webServiceClient, atLeastOnce()).makePostRequestWithBinary(
+                startsWith(MODELWRAPPER_URL_PREFIX), eq(expectedZip));
     }
 
     private void assertThatRelevantDiseaseOccurrencesHaveFinalWeightings() {
@@ -224,6 +263,11 @@ public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTest
         return transactionManager.getTransaction(null).isRollbackOnly();
     }
 
+    private void mockCovariateList() {
+        when(covariateFileDao.getCovariateFilesByDiseaseGroup(any(DiseaseGroup.class)))
+                .thenReturn(new ArrayList<CovariateFile>());
+    }
+
     private void mockHealthMapRequest() {
         when(webServiceClient.makeGetRequest(startsWith(HEALTHMAP_URL_PREFIX))).thenReturn(getHealthMapJson());
     }
@@ -236,8 +280,22 @@ public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTest
     }
 
     private void mockModelWrapperRequest() {
-        when(webServiceClient.makePostRequestWithJSON(startsWith(MODELWRAPPER_URL_PREFIX), anyString()))
+        when(webServiceClient.makePostRequestWithBinary(startsWith(MODELWRAPPER_URL_PREFIX), any(File.class)))
                 .thenReturn("{\"modelRunName\":\"testname\"}");
+    }
+
+    private File mockPackageBuilder() throws IOException {
+        File zip = testFolder.newFile();
+        FileUtils.writeStringToFile(zip, "Expected content");
+        when(modelRunPackageBuilder.buildPackage(startsWith("deng_"),
+                argThat(new DiseaseGroupIdMatcher(87)),
+                argThat(new ListSizeMatcher<DiseaseOccurrence>(27)),
+                argThat(new ListSizeMatcher<AdminUnitDiseaseExtentClass>(451)),
+                argThat(new ListSizeMatcher<DiseaseOccurrence>(5)),
+                argThat(new ListSizeMatcher<CovariateFile>(0)),
+                eq(System.getProperty("user.home") + "/AppData/Local/abraid/covariates"))
+        ).thenReturn(zip);
+        return zip;
     }
 
     private void mockMachineWeightingPredictorRequest() {
@@ -423,7 +481,7 @@ public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTest
     }
 
     private void createAndSaveTestModelRun(int diseaseGroupId) {
-        ModelRun modelRun = new ModelRun("test" + diseaseGroupId, diseaseGroupId, "localhost", DateTime.now().minusDays(1), DateTime.now(), DateTime.now());
+        ModelRun modelRun = new ModelRun("test" + diseaseGroupId, diseaseGroupDao.getById(diseaseGroupId), "localhost", DateTime.now().minusDays(1), DateTime.now(), DateTime.now());
         modelRun.setStatus(ModelRunStatus.COMPLETED);
         modelRun.setResponseDate(DateTime.now());
         modelRunService.saveModelRun(modelRun);
@@ -432,13 +490,17 @@ public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTest
                 .thenReturn(new File(LARGE_RASTER_FILENAME));
     }
 
-    private void insertTestDiseaseExtent(int diseaseGroupId, Geometry geom) {
-        executeSQLUpdate("UPDATE disease_extent SET geom=:geom WHERE disease_group_id=:diseaseGroupId",
-                "diseaseGroupId", diseaseGroupId, "geom", geom);
+    private void insertTestDiseaseExtent(int diseaseGroupId, Geometry geom, Geometry outsideGeom) {
+        executeSQLUpdate("UPDATE disease_extent SET geom=:geom, outside_geom=:outsideGeom WHERE disease_group_id=:diseaseGroupId",
+                "diseaseGroupId", diseaseGroupId, "geom", geom, "outsideGeom", outsideGeom);
     }
 
     private Polygon getFivePointedPolygon() {
         return GeometryUtils.createPolygon(163, 74, 165, 81, 172, 78, 169, 75, 165, 76, 163, 74);
+    }
+
+    private Polygon getShiftedFivePointedPolygon() {
+        return GeometryUtils.createPolygon(63, 74, 65, 81, 72, 78, 69, 75, 65, 76, 63, 74);
     }
 
     /**
@@ -470,22 +532,6 @@ public class MainIntegrationTest extends AbstractWebServiceClientIntegrationTest
         @Override
         public boolean matches(Object actualCollection) {
             return expectedSize.equals(((Collection) actualCollection).size());
-        }
-    }
-
-    /**
-     * Used to assert the size of a map that is passed in as a parameter.
-     */
-    private class MapSizeMatcher<K, V> extends ArgumentMatcher<Map<K, V>> {
-        private Integer expectedSize;
-
-        public MapSizeMatcher(int expectedSize) {
-            this.expectedSize = expectedSize;
-        }
-
-        @Override
-        public boolean matches(Object actualMap) {
-            return expectedSize.equals(((Map) actualMap).size());
         }
     }
 }

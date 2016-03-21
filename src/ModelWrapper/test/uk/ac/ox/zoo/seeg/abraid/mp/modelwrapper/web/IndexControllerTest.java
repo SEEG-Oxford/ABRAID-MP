@@ -7,26 +7,25 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.ui.Model;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ConfigurationService;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model.SourceCodeManager;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ModelWrapperConfigurationService;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
+import static uk.ac.ox.zoo.seeg.abraid.mp.testutils.GeneralTestUtils.captorForClass;
 
 /**
- * Tests for IndexController.
- * Copyright (c) 2014 University of Oxford
- */
+* Tests for IndexController.
+* Copyright (c) 2014 University of Oxford
+*/
 public class IndexControllerTest {
 
     @Test
     public void showIndexPageReturnsCorrectFreemarkerTemplateName() {
         // Arrange
-        IndexController target = new IndexController(mock(ConfigurationService.class), mock(SourceCodeManager.class));
+        IndexController target = new IndexController(mock(ModelWrapperConfigurationService.class));
 
         // Act
         String result = target.showIndexPage(mock(Model.class));
@@ -38,62 +37,32 @@ public class IndexControllerTest {
     @Test
     public void showIndexPageSetsCorrectModelData() throws Exception {
         // Arrange
-        String expectedUrl = "foo1";
-        String expectedVersion = "foo2";
-        List<String> expectedVersions = Arrays.asList("1", "2", "3");
         int expectedDuration = 1234;
         String expectedRPath = "foo3";
-        String expectedCovariateDir = "man";
 
-        ConfigurationService configurationService = mock(ConfigurationService.class);
-        SourceCodeManager sourceCodeManager = mock(SourceCodeManager.class);
+        ModelWrapperConfigurationService configurationService = mock(ModelWrapperConfigurationService.class);
 
-        when(configurationService.getModelRepositoryUrl()).thenReturn(expectedUrl);
-        when(configurationService.getModelRepositoryVersion()).thenReturn(expectedVersion);
-        when(sourceCodeManager.getAvailableVersions()).thenReturn(expectedVersions);
         when(configurationService.getMaxModelRunDuration()).thenReturn(expectedDuration);
         when(configurationService.getRExecutablePath()).thenReturn(expectedRPath);
-        when(configurationService.getCovariateDirectory()).thenReturn(expectedCovariateDir);
 
         Model model = mock(Model.class);
-        IndexController target = new IndexController(configurationService, sourceCodeManager);
+        IndexController target = new IndexController(configurationService);
 
         // Act
         target.showIndexPage(model);
 
         // Assert
-        verify(model).addAttribute("repository_url", expectedUrl);
-        verify(model).addAttribute("model_version", expectedVersion);
-        verify(model).addAttribute("available_versions", expectedVersions);
         verify(model).addAttribute("r_path", expectedRPath);
         verify(model).addAttribute("run_duration", expectedDuration);
-        verify(model).addAttribute("covariate_directory", expectedCovariateDir);
-    }
-
-    @Test
-    public void showIndexPageSetsEmptyVersionListIfRepositoryCheckFails() throws Exception {
-        // Arrange
-        SourceCodeManager sourceCodeManager = mock(SourceCodeManager.class);
-        when(sourceCodeManager.getAvailableVersions()).thenThrow(new IOException());
-        Model model = mock(Model.class);
-        IndexController target = new IndexController(mock(ConfigurationService.class), sourceCodeManager);
-
-        // Act
-        target.showIndexPage(model);
-
-        // Assert
-        ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
-        verify(model).addAttribute(eq("available_versions"), captor.capture());
-        assertThat(captor.getValue()).hasSize(0);
     }
 
     @Test
     public void showIndexPageSetsEmptyRPathIfConfigurationCheckFails() throws Exception {
         // Arrange
-        ConfigurationService configurationService = mock(ConfigurationService.class);
+        ModelWrapperConfigurationService configurationService = mock(ModelWrapperConfigurationService.class);
         when(configurationService.getRExecutablePath()).thenThrow(new ConfigurationException());
         Model model = mock(Model.class);
-        IndexController target = new IndexController(configurationService, mock(SourceCodeManager.class));
+        IndexController target = new IndexController(configurationService);
 
         // Act
         target.showIndexPage(model);
@@ -105,8 +74,8 @@ public class IndexControllerTest {
     @Test
     public void updateAuthenticationDetailsCallConfigurationServiceWithCorrectParams() {
         // Arrange
-        ConfigurationService mockConfService = mock(ConfigurationService.class);
-        IndexController target = new IndexController(mockConfService, null);
+        ModelWrapperConfigurationService mockConfService = mock(ModelWrapperConfigurationService.class);
+        IndexController target = new IndexController(mockConfService);
         String expectedPassword = "PasswordOne1";
         String expectedUser = "user";
 
@@ -114,8 +83,8 @@ public class IndexControllerTest {
         ResponseEntity result = target.updateAuthenticationDetails(expectedUser, expectedPassword, expectedPassword);
 
         // Assert
-        ArgumentCaptor<String> usernameCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> passwordCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> usernameCaptor = captorForClass(String.class);
+        ArgumentCaptor<String> passwordCaptor = captorForClass(String.class);
         verify(mockConfService).setAuthenticationDetails(usernameCaptor.capture(), passwordCaptor.capture());
         assertThat(usernameCaptor.getValue()).isEqualTo(expectedUser);
         assertThat(BCrypt.checkpw(expectedPassword, passwordCaptor.getValue())).isTrue();
@@ -126,8 +95,8 @@ public class IndexControllerTest {
     public void updateAuthenticationDetailsRejectsInvalidUserNames() {
         // Arrange
         List<String> invalidUserNames = Arrays.asList("", null, "u", "^273", "user name");
-        ConfigurationService mockConfService = mock(ConfigurationService.class);
-        IndexController target = new IndexController(mockConfService, null);
+        ModelWrapperConfigurationService mockConfService = mock(ModelWrapperConfigurationService.class);
+        IndexController target = new IndexController(mockConfService);
 
         for (String username : invalidUserNames) {
             // Act
@@ -142,8 +111,8 @@ public class IndexControllerTest {
     public void updateAuthenticationDetailsRejectsInvalidPassword() {
         // Arrange
         List<String> invalidPasswords = Arrays.asList("", null, "u", "^273", "user name");
-        ConfigurationService mockConfService = mock(ConfigurationService.class);
-        IndexController target = new IndexController(mockConfService, null);
+        ModelWrapperConfigurationService mockConfService = mock(ModelWrapperConfigurationService.class);
+        IndexController target = new IndexController(mockConfService);
 
         for (String password : invalidPasswords) {
             // Act
@@ -158,8 +127,8 @@ public class IndexControllerTest {
     public void updateAuthenticationDetailsRejectsInvalidPasswordConfirmation() {
         // Arrange
         List<String> invalidPasswordConfirmations = Arrays.asList(null, "not_a_match");
-        ConfigurationService mockConfService = mock(ConfigurationService.class);
-        IndexController target = new IndexController(mockConfService, null);
+        ModelWrapperConfigurationService mockConfService = mock(ModelWrapperConfigurationService.class);
+        IndexController target = new IndexController(mockConfService);
 
         for (String passwordConfirmation : invalidPasswordConfirmations) {
             // Act

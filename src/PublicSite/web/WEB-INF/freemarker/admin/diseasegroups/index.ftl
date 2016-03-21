@@ -10,6 +10,7 @@
     // bootstrapped data for js viewmodels
     var diseaseGroups = ${diseaseGroups};
     var validatorDiseaseGroups = ${validatorDiseaseGroups};
+    var supportedModes = ${supportedModes};
 </script>
 </#assign>
 
@@ -22,7 +23,9 @@
     #disease-group-settings label, #model-run-parameters label, #disease-extent-parameters label {
         text-align: left;
     }
-
+    #disease-groups-list {
+        padding-bottom: 15px;
+    }
     @media (min-width: 730px) {
         #disease-groups-list .right-buttons {
             float: right;
@@ -48,16 +51,11 @@
 <div class="container">
     <div id="disease-groups-list">
         <div class="right-buttons">
-            <span data-bind="with: diseaseGroupsListViewModel">
+            <span>
                 <button type="button" class="btn btn-primary" data-bind="click: add">Add new disease</button>
             </span>
-            <span data-bind="with: syncDiseasesViewModel">
-                <form id="sync-diseases-form" action="" data-bind="formSubmit: submit" style="display: inline-block; margin: 0">
-                    <button type="submit" class="btn btn-primary disabled" data-bind="formButton: { submitting: 'Syncing ...', standard: 'Sync all diseases to model' }" disabled>Sync all diseases to model</button>
-                </form>
-            </span>
         </div>
-        <div class="left-control" data-bind="with: diseaseGroupsListViewModel">
+        <div class="left-control">
             <label for="disease-group-picker" class="side-by-side">Selected Disease</label>
             <span class="input-group">
                 <span class="input-group-addon">
@@ -67,11 +65,6 @@
             </span>
         </div>
         <div style="clear: both;"></div>
-        <!-- ko with: syncDiseasesViewModel -->
-            <div class="form-group" data-bind="foreach: notices">
-                <div data-bind="alert: $data"></div>
-            </div>
-        <!-- /ko -->
     </div>
     <div class="panel panel-default">
         <div class="panel-body" id="disease-group-administration-panel">

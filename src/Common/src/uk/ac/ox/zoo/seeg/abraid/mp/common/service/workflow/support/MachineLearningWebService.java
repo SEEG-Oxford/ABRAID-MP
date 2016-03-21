@@ -2,6 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import org.springframework.web.util.UriComponentsBuilder;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonDiseaseOccurrenceDataPoint;
@@ -9,7 +10,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonDiseaseOccurrenceDataSet;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClient;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.web.WebServiceClientException;
 
-import javax.ws.rs.core.UriBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,9 +23,9 @@ public class MachineLearningWebService {
     /** Server response indicating that a trusted prediction was not returned and point should be validated manually. */
     private static final String EXPECTED_PREDICTION_FAILURE_RESPONSE = "No prediction";
     /** URL component for training method name. */
-    private static final String TRAIN_METHOD = "train";
+    private static final String TRAIN_METHOD = "/train";
     /** URL component for prediction method name. */
-    private static final String PREDICT_METHOD = "predict";
+    private static final String PREDICT_METHOD = "/predict";
 
     private WebServiceClient webServiceClient;
     private AbraidJsonObjectMapper objectMapper;
@@ -81,8 +81,8 @@ public class MachineLearningWebService {
     }
 
     private String buildUrl(int diseaseGroupId, String action) {
-        UriBuilder builder = UriBuilder.fromUri(rootUrl)
-                .path(Integer.toString(diseaseGroupId))
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(rootUrl)
+                .path("/" + Integer.toString(diseaseGroupId))
                 .path(action);
         return builder.build().toString();
     }

@@ -1,12 +1,11 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.model;
 
-import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.GeoJsonDiseaseOccurrenceFeatureCollection;
 import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.run.RunConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Provides an entry point for model runs.
@@ -20,18 +19,14 @@ public class ModelRunnerImpl implements ModelRunner {
     private static final String[] R_OPTIONS = {"--no-save", "--slave", "-f", "${" + SCRIPT_FILE_ID + "}"};
 
     private ProcessRunnerFactory processRunnerFactory;
-    private WorkspaceProvisioner workspaceProvisioner;
 
-    public ModelRunnerImpl(ProcessRunnerFactory processRunnerFactory, WorkspaceProvisioner workspaceProvisioner) {
+    public ModelRunnerImpl(ProcessRunnerFactory processRunnerFactory) {
         this.processRunnerFactory = processRunnerFactory;
-        this.workspaceProvisioner = workspaceProvisioner;
     }
 
     /**
      * Starts a new model run with the given configuration.
      * @param configuration The model run configuration.
-     * @param occurrenceData The occurrence data to model with.
-     * @param extentWeightings The mapping from GAUL code to disease extent class weighting.
      * @param modelStatusReporter The status reporter to call with the results of the model.
      * @return The process handler for the launched process.
      * @throws ProcessException Thrown in response to errors in the model.
@@ -39,12 +34,9 @@ public class ModelRunnerImpl implements ModelRunner {
      */
     @Override
     public ModelProcessHandler runModel(RunConfiguration configuration,
-                                        GeoJsonDiseaseOccurrenceFeatureCollection occurrenceData,
-                                        Map<Integer, Integer> extentWeightings,
                                         ModelStatusReporter modelStatusReporter)
             throws ProcessException, IOException {
-        // Provision workspace
-        File scriptFile = workspaceProvisioner.provisionWorkspace(configuration, occurrenceData, extentWeightings);
+        File scriptFile = Paths.get(configuration.getWorkingDirectoryPath().toString(), "modelRun.R").toFile();
 
         // Run model
         HashMap<String, File> fileArguments = new HashMap<>();

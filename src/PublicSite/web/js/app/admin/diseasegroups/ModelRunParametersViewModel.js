@@ -4,15 +4,20 @@
 define(["ko"], function (ko) {
     "use strict";
 
-    return function (baseUrl, diseaseGroupSelectedEventName) {
+    return function (baseUrl, diseaseGroupSelectedEventName, supportedModes) {
         var self = this;
 
         self.diseaseGroupId = ko.observable("");
 
         // Triggering a Model Run
+        self.maxDaysBetweenModelRuns = ko.observable().extend({ required: true, digit: true, min: 1 });
         self.minNewLocations = ko.observable().extend({ digit: true, min: 0 });
         self.maxEnvironmentalSuitabilityForTriggering = ko.observable().extend({ number: true, min: 0, max: 1 });
         self.minDistanceFromDiseaseExtentForTriggering = ko.observable().extend({ number: true });
+        self.modelMode = ko.observable().extend({ required: true, inList: supportedModes });
+        self.filterBiasDataByAgentType = ko.observable();
+        self.agentTypes = [ "ALGA", "BACTERIA", "FUNGUS", "PARASITE", "PRION", "VIRUS" ];
+        self.agentType = ko.observable().extend({ required: self.filterBiasDataByAgentType });
 
         // Machine Learning
         self.useMachineLearning = ko.observable();
@@ -56,11 +61,13 @@ define(["ko"], function (ko) {
 
         ko.postbox.subscribe(diseaseGroupSelectedEventName, function (diseaseGroup) {
             self.diseaseGroupId(ko.utils.normaliseInput(diseaseGroup.id));
+            self.maxDaysBetweenModelRuns(ko.utils.normaliseInput(diseaseGroup.maxDaysBetweenModelRuns));
             self.minNewLocations(ko.utils.normaliseInput(diseaseGroup.minNewLocations));
             self.maxEnvironmentalSuitabilityForTriggering(
                 ko.utils.normaliseInput(diseaseGroup.maxEnvironmentalSuitabilityForTriggering));
             self.minDistanceFromDiseaseExtentForTriggering(
                 ko.utils.normaliseInput(diseaseGroup.minDistanceFromDiseaseExtentForTriggering));
+            self.modelMode(ko.utils.normaliseInput(diseaseGroup.modelMode));
             self.minDataVolume(ko.utils.normaliseInput(diseaseGroup.minDataVolume));
             self.minDistinctCountries(ko.utils.normaliseInput(diseaseGroup.minDistinctCountries));
             self.minHighFrequencyCountries(ko.utils.normaliseInput(diseaseGroup.minHighFrequencyCountries));
@@ -69,6 +76,8 @@ define(["ko"], function (ko) {
             self.useMachineLearning(diseaseGroup.useMachineLearning);
             self.maxEnvironmentalSuitabilityWithoutML(ko.utils.normaliseInput(
                 diseaseGroup.maxEnvironmentalSuitabilityWithoutML));
+            self.agentType(diseaseGroup.agentType);
+            self.filterBiasDataByAgentType(diseaseGroup.filterBiasDataByAgentType);
         });
     };
 });

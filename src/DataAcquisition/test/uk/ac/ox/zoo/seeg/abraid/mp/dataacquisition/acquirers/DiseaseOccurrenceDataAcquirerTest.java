@@ -63,6 +63,22 @@ public class DiseaseOccurrenceDataAcquirerTest {
     }
 
     @Test
+    public void acquireDoSaveEvenIfOccurrenceAlreadyForBias() {
+        // Arrange
+        DiseaseOccurrence occurrence = createDefaultDiseaseOccurrence();
+        occurrence.setBiasDisease(mock(DiseaseGroup.class));
+        locationIsKnownToAlreadyExist(occurrence);
+        mockDiseaseOccurrenceAlreadyExists(occurrence, true);
+
+        // Act
+        boolean result = acquirer.acquire(occurrence);
+
+        // Assert
+        assertThat(result).isTrue();
+        verify(diseaseService).saveDiseaseOccurrence(occurrence);
+    }
+
+    @Test
     public void acquireSavesUsingExistingLocationIfLocationAlreadyExistsWithoutGeoNameOnEitherLocation() {
         // Arrange
         DiseaseOccurrence occurrence = createDefaultDiseaseOccurrence();
@@ -291,12 +307,30 @@ public class DiseaseOccurrenceDataAcquirerTest {
         catchException(acquirer).acquire(occurrence);
 
         // Assert
-        assertThat(caughtException()).hasMessage("Occurrence date for occurrence is older than the max allowable age.");
+        assertThat(caughtException()).hasMessage("Occurrence date for occurrence is older than the max allowable age");
         verify(diseaseService, never()).saveDiseaseOccurrence(any(DiseaseOccurrence.class));
     }
 
     @Test
-    public void acquireSavesOutdatedGoldStandardDiseaseOccurrence() {
+    public void acquireSavesOutdatedGoldStandardCSVDiseaseOccurrence() {
+        // Arrange
+        DiseaseOccurrence occurrence = createGoldStandardOccurrence();
+        occurrence.setOccurrenceDate(DateTime.now().minusYears(1).minusDays(1));
+        mockGetLocationsByPointAndPrecision(occurrence.getLocation().getGeom(), occurrence.getLocation().getPrecision(),
+                new ArrayList<Location>());
+        mockRunQC(occurrence.getLocation(), true);
+
+        // Act
+        boolean result = acquirer.acquire(occurrence);
+
+        // Assert
+        assertThat(occurrence.getLocation().hasPassedQc()).isTrue();
+        verify(postQcManager).runPostQCProcesses(same(occurrence.getLocation()));
+        verifySuccessfulSave(occurrence, true, result);
+    }
+
+    @Test
+    public void acquireSavesOutdatedNoGoldStandardCSVDiseaseOccurrence() {
         // Arrange
         DiseaseOccurrence occurrence = createGoldStandardOccurrence();
         occurrence.setOccurrenceDate(DateTime.now().minusYears(1).minusDays(1));
@@ -323,7 +357,7 @@ public class DiseaseOccurrenceDataAcquirerTest {
         catchException(acquirer).acquire(occurrence);
 
         // Assert
-        assertThat(caughtException()).hasMessage("Occurrence date for occurrence is in the future.");
+        assertThat(caughtException()).hasMessage("Occurrence date for occurrence is in the future");
         verify(diseaseService, never()).saveDiseaseOccurrence(any(DiseaseOccurrence.class));
     }
 
@@ -350,7 +384,7 @@ public class DiseaseOccurrenceDataAcquirerTest {
         Location location = new Location(20, 10, LocationPrecision.ADMIN1);
         occurrence.setLocation(location);
         occurrence.setOccurrenceDate(DateTime.now());
-        setAlert(occurrence, false);
+        setAlert(occurrence, ProvenanceNames.HEALTHMAP);
         return occurrence;
     }
 
@@ -359,12 +393,20 @@ public class DiseaseOccurrenceDataAcquirerTest {
         Location location = new Location(20, 10, LocationPrecision.ADMIN1);
         occurrence.setLocation(location);
         occurrence.setOccurrenceDate(DateTime.now());
-        setAlert(occurrence, true);
+        setAlert(occurrence, ProvenanceNames.MANUAL_GOLD_STANDARD);
         return occurrence;
     }
 
-    private void setAlert(DiseaseOccurrence occurrence, boolean isGoldStandard) {
-        String provenanceName = isGoldStandard ? ProvenanceNames.MANUAL_GOLD_STANDARD : ProvenanceNames.MANUAL;
+    private DiseaseOccurrence createManualCSVOccurrence() {
+        DiseaseOccurrence occurrence = new DiseaseOccurrence();
+        Location location = new Location(20, 10, LocationPrecision.ADMIN1);
+        occurrence.setLocation(location);
+        occurrence.setOccurrenceDate(DateTime.now());
+        setAlert(occurrence, ProvenanceNames.MANUAL);
+        return occurrence;
+    }
+
+    private void setAlert(DiseaseOccurrence occurrence, String provenanceName) {
         Feed feed = new Feed("Manual data", new Provenance(provenanceName));
         Alert alert = new Alert();
         alert.setFeed(feed);

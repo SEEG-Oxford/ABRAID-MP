@@ -16,10 +16,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ConfigurationService;
+import uk.ac.ox.zoo.seeg.abraid.mp.modelwrapper.config.ModelWrapperConfigurationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.testutils.SpringockitoWebContextLoader;
 
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -46,7 +45,7 @@ public class MiscControllerIntegrationTest extends BaseWebIntegrationTests {
 
     @ReplaceWithMock
     @Autowired
-    private ConfigurationService configurationService;
+    private ModelWrapperConfigurationService configurationService;
 
     @Before
     public void setup() {
@@ -113,39 +112,6 @@ public class MiscControllerIntegrationTest extends BaseWebIntegrationTests {
         this.mockMvc
                 .perform(post("/misc/runduration")
                         .param("value", "not_number"))
-                .andExpect(status().isBadRequest());
-    }
-
-    private MockHttpServletRequestBuilder requestToCovariateDirectory(HttpMethod method) {
-        return request(method, "/misc/covariatedirectory")
-                .param("value", "dir");
-    }
-
-    @Test
-    public void covariateDirectoryPageOnlyAcceptsPOST() throws Exception {
-        when(configurationService.getCovariateDirectory()).thenReturn("dir");
-        this.mockMvc.perform(requestToCovariateDirectory(HttpMethod.GET)).andExpect(status().isMethodNotAllowed());
-        this.mockMvc.perform(requestToCovariateDirectory(HttpMethod.POST)).andExpect(status().isNoContent());
-        this.mockMvc.perform(requestToCovariateDirectory(HttpMethod.PUT)).andExpect(status().isMethodNotAllowed());
-        this.mockMvc.perform(requestToCovariateDirectory(HttpMethod.DELETE)).andExpect(status().isMethodNotAllowed());
-        this.mockMvc.perform(requestToCovariateDirectory(HttpMethod.PATCH)).andExpect(status().isMethodNotAllowed());
-    }
-
-    @Test
-    public void covariateDirectoryPageAcceptsValidRequest() throws Exception {
-        when(configurationService.getCovariateDirectory()).thenReturn("dir");
-        this.mockMvc
-                .perform(post("/misc/covariatedirectory")
-                        .param("value", testFolder.newFolder().getAbsolutePath()))
-                .andExpect(status().isNoContent());
-    }
-
-    @Test
-    public void covariateDirectoryPageRejectsInvalidRequest() throws Exception {
-        when(configurationService.getCovariateDirectory()).thenReturn("dir");
-        this.mockMvc
-                .perform(post("/misc/covariatedirectory")
-                        .param("value", ""))
                 .andExpect(status().isBadRequest());
     }
 }

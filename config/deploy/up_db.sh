@@ -41,6 +41,12 @@ echo "application.username=${db_props[jdbc.username]}" >> "database.properties"
 echo "application.password=${db_props[jdbc.password]}" >> "database.properties"
 echo "database.name=${db_props[jdbc.database.name]}" >> "database.properties"
 
+echo "[[ DB | Setting up backups ]]"
+export DB_SNAPSHOT_CRON_SCRIPT_PATH='/etc/cron.daily/abraid_db'
+declare -r DB_SNAPSHOT_CRON_SCRIPT_PATH
+echo -e "#\x21/bin/sh\n\nsudo rm /opt/abraid_db.backup\nsudo PGPASSWORD=${deploy_props[database.root.password]} pg_dump -U postgres -d abraid_mp -f /opt/abraid_db.backup -F custom -Z 9" > "$DB_SNAPSHOT_CRON_SCRIPT_PATH"
+chmod o+x "$DB_SNAPSHOT_CRON_SCRIPT_PATH"
+
 if [[ $(psql -U postgres -l | grep "${db_props[jdbc.database.name]}" | wc -l) -eq 1 ]]; then
   # If a database exists with the correct name - upgrade it
   echo "[[ DB | Performing database upgrade (db.log) ]]"
@@ -49,9 +55,6 @@ else
   # If no database exists with the correct name - create it
   echo "[[ DB | Performing database creation checks ]]"
   : "${deploy_props[shapefile.source]:?"Variable must be set"}"
-  : "${deploy_props[healthmap.source]:?"Variable must be set"}"
-  : "${deploy_props[geonames.source]:?"Variable must be set"}"
-  : "${deploy_props[reviews.source]:?"Variable must be set"}"
 
   echo "[[ DB | Writing database creation properties ]]"
   echo "shapefiles.path=$PWD/external/admin_units" >> "database.properties"
@@ -62,35 +65,13 @@ else
   cd "external"
     echo "Getting admin unit data"
     rsync -crm "$REMOTE_USER@${deploy_props[shapefile.source]}/*" "./admin_units/" --include="*.shp" --include="*.dbf" --include="*.prj" --include="*.shx" --include="*.sbx" --include="*/" --exclude="*"
-    echo "Getting initial healthmap data"
-    rsync -crm "$REMOTE_USER@${deploy_props[healthmap.source]}/*" "./healthmap/" --include="*.txt" --include="*.sql" --include="*/" --exclude="*"
-    echo "Getting initial geonames data"
-    rsync -crm "$REMOTE_USER@${deploy_props[geonames.source]}/*" "./geonames/" --include="*.txt" --include="*.sql" --include="*/" --exclude="*"
-    echo "Getting initial review and expert data"
-    rsync -crm "$REMOTE_USER@${deploy_props[reviews.source]}/*" "./reviews/" --exclude="export_from_abraid.sql"
   cd ..
 
   echo "[[ DB | Creating database (db.log) ]]"
   ant "create.database" > "../config/deploy/db.log"
 
-  echo "[[ DB | Importing initial data ]]"
-  cd "external"
-    cd "healthmap"
-      echo "Importing historic healthmap data"
-      psql -wq -v "ON_ERROR_STOP=1" -U "postgres" -d "${db_props[jdbc.database.name]}" -f "import_into_abraid.sql" > /dev/null
-    cd ".."
-    cd "geonames"
-      echo "Importing geonames data"
-      psql -wq -v "ON_ERROR_STOP=1" -U "postgres" -d "${db_props[jdbc.database.name]}" -f "import_into_abraid.sql" > /dev/null
-    cd ..
-    cd "reviews"
-      echo "Importing review and expert data"
-      psql -wq -v "ON_ERROR_STOP=1" -U "postgres" -d "${db_props[jdbc.database.name]}" -f "import_into_abraid.sql" > /dev/null
-    cd ".."
-  cd ".."
-
   echo "[[ DB | Setting initial retrieval date ready for daily process ]]"
-  psql -wq -v "ON_ERROR_STOP=1" -U "postgres" -d "${db_props[jdbc.database.name]}" --command "UPDATE provenance SET last_retrieval_end_date = (select max(reviewed_date) from alert) WHERE name = 'HealthMap';" > /dev/null
+  psql -wq -v "ON_ERROR_STOP=1" -U "postgres" -d "${db_props[jdbc.database.name]}" --command "UPDATE provenance SET last_retrieval_end_date = now() WHERE name = 'HealthMap';" > /dev/null
 fi
 
 echo "[[ DB | Performing cleanup ]]"

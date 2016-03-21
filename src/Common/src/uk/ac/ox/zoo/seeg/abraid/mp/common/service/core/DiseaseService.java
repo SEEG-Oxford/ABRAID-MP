@@ -14,18 +14,6 @@ import java.util.Map;
  */
 public interface DiseaseService {
     /**
-     * Gets all HealthMap diseases.
-     * @return All HealthMap diseases.
-     */
-    List<HealthMapDisease> getAllHealthMapDiseases();
-
-    /**
-     * Gets all HealthMap sub-diseases.
-     * @return All HealthMap sub-diseases.
-     */
-    List<HealthMapSubDisease> getAllHealthMapSubDiseases();
-
-    /**
      * Gets all disease groups.
      * @return All disease groups.
      */
@@ -56,6 +44,20 @@ public interface DiseaseService {
      * @return The map, from the name of the validator disease group, to the disease groups belonging to it.
      */
     Map<String, List<DiseaseGroup>> getValidatorDiseaseGroupMap();
+
+    /**
+     * Gets a list of the disease groups for which there are occurrences waiting to be reviewed, by the given expert.
+     * @param expert The expert.
+     * @return A list of disease groups.
+     */
+    List<DiseaseGroup> getDiseaseGroupsNeedingOccurrenceReviewByExpert(Expert expert);
+
+    /**
+     * Gets a list of the disease groups for which there are admin units waiting to be reviewed, by the given expert.
+     * @param expert The expert.
+     * @return A list of disease groups.
+     */
+    List<DiseaseGroup> getDiseaseGroupsNeedingExtentReviewByExpert(Expert expert);
 
     /**
      * Gets the disease occurrence with the specified ID.
@@ -180,25 +182,19 @@ public interface DiseaseService {
     List<DiseaseOccurrenceReview> getAllDiseaseOccurrenceReviews();
 
     /**
-     * Gets all reviews (for all time) for the disease occurrences which are in review.
-     * @param diseaseGroupId The ID of the disease group.
-     * @return A list of disease occurrence reviews.
-     */
-    List<DiseaseOccurrenceReview> getAllDiseaseOccurrenceReviewsForOccurrencesInValidation(Integer diseaseGroupId);
-
-    /**
      * Gets the reviews submitted by reliable experts (whose weighting is greater than the threshold) for the disease
-     * occurrences which are in review.
+     * occurrences which are in review.  "I don't know" response are excluded.
      * @param diseaseGroupId The ID of the disease group.
      * @param expertWeightingThreshold Reviews by experts with a weighting greater than this value will be considered.
      * @return A list of disease occurrence reviews.
      */
-    List<DiseaseOccurrenceReview> getDiseaseOccurrenceReviewsForUpdatingWeightings(Integer diseaseGroupId,
-                                                                                   Double expertWeightingThreshold);
+    List<DiseaseOccurrenceReview> getDiseaseOccurrenceReviewsForOccurrencesInValidationForUpdatingWeightings(
+            Integer diseaseGroupId, Double expertWeightingThreshold);
 
     /**
      * Determines whether the specified disease occurrence already exists in the database. This is true if an
-     * occurrence exists with the same disease group, location, alert and occurrence start date.
+     * occurrence (excluding bias occurrences) exists with the same disease group, location, alert and occurrence
+     * start date.
      * @param occurrence The disease occurrence.
      * @return True if the occurrence already exists in the database, otherwise false.
      */
@@ -215,12 +211,6 @@ public interface DiseaseService {
      * @param diseaseGroup The disease group to save.
      */
     void saveDiseaseGroup(DiseaseGroup diseaseGroup);
-
-    /**
-     * Saves a HealthMap disease.
-     * @param disease The disease to save.
-     */
-    void saveHealthMapDisease(HealthMapDisease disease);
 
     /**
      * Saves a disease extent class that is associated with an admin unit (global or tropical).
@@ -282,6 +272,59 @@ public interface DiseaseService {
     long getNumberOfDiseaseOccurrencesEligibleForModelRun(int diseaseGroupId, DateTime startDate, DateTime endDate);
 
     /**
+     * Gets the number of bespoke bias occurrences that have been uploaded for use with a specified disease group,
+     * regardless of suitability.
+     * @param diseaseGroup The disease group being modelled.
+     * @return The number of bias occurrences.
+     */
+    long getCountOfUnfilteredBespokeBiasOccurrences(DiseaseGroup diseaseGroup);
+
+    /**
+     * Gets the estimate of number of bespoke bias occurrences that have been uploaded for use with a specified disease
+     * group, which are suitable for use in a model. This is only an estimate as the occurrence date filter that is
+     * applied during model runs is not applied.
+     * @param diseaseGroup The disease group being modelled.
+     * @return The number of bias occurrences.
+     */
+    long getEstimateCountOfFilteredBespokeBiasOccurrences(DiseaseGroup diseaseGroup);
+
+    /**
+     * Gets the estimate of number of occurrences that are available for use as a default/fallback bias set for a
+     * specified disease group, which are suitable for use in a model. This is only an estimate as the occurrence
+     * date filter that is applied during model runs is not applied.
+     * @param diseaseGroup The disease group being modelled.
+     * @return The number of bias occurrences.
+     */
+    long getEstimateCountOfFilteredDefaultBiasOccurrences(DiseaseGroup diseaseGroup);
+
+    /**
+     * Gets the bespoke bias occurrences that are should be used with a model run (for sample bias).
+     * @param diseaseGroup The disease group being modelled.
+     * @param startDate The start date of the model run input data range.
+     * @param endDate The end date  of the model run input data range.
+     * @return The bias occurrences.
+     */
+    List<DiseaseOccurrence> getBespokeBiasOccurrencesForModelRun(
+            DiseaseGroup diseaseGroup, DateTime startDate, DateTime endDate);
+
+    /**
+     * Gets the occurrences that are available for use as a default/fallback bias set for a specified disease group.
+     * This should be used when a bespoke dataset hasn't been provided.
+     * @param diseaseGroup The disease group being modelled (will be excluded from bias set).
+     * @param startDate The start date of the model run input data range.
+     * @param endDate The end date  of the model run input data range.
+     * @return The bias occurrences.
+     */
+    List<DiseaseOccurrence> getDefaultBiasOccurrencesForModelRun(
+            DiseaseGroup diseaseGroup, DateTime startDate, DateTime endDate);
+
+    /**
+     * Gets the names of all disease groups to be shown in the HealthMap disease report (sorted).
+     * @return The disease groups names.
+     */
+    List<String> getDiseaseGroupNamesForHealthMapReport();
+
+    /**
      * Returns the input date, with the max number of days on the validator subtracted.
      * @param dateTime The input date.
      * @return The input date minus the max number of days on the validator.
@@ -289,9 +332,17 @@ public interface DiseaseService {
     LocalDate subtractMaxDaysOnValidator(DateTime dateTime);
 
     /**
-     * Returns the input date, with the number of days between scheduled model runs subtracted.
-     * @param dateTime The input date.
-     * @return The input date minus the number of days between scheduled model runs.
+     * Delete all of the occurrence that are labelled as bias for the specified disease group.
+     * @param biasDisease Disease group for which to remove the bias points
+     *                       (i.e. bias_disease_group_id, not disease_group_id).
      */
-    LocalDate subtractDaysBetweenModelRuns(DateTime dateTime);
+    void deleteBiasDiseaseOccurrencesForDisease(DiseaseGroup biasDisease);
+
+    /**
+     * Determines whether the specified disease group require bias data for model runs based on the disease's
+     * model mode.
+     * @param diseaseGroup The disease group.
+     * @return True if bias data is required.
+     */
+    boolean modelModeRequiresBiasDataForDisease(DiseaseGroup diseaseGroup);
 }

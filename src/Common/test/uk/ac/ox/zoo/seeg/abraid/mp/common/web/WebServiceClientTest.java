@@ -1,6 +1,12 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.web;
 
+import org.apache.commons.io.FileUtils;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+
+import java.io.File;
+import java.io.IOException;
 
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
@@ -12,6 +18,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Copyright (c) 2014 University of Oxford
  */
 public class WebServiceClientTest {
+    @Rule
+    public TemporaryFolder testFolder = new TemporaryFolder(); ///CHECKSTYLE:SUPPRESS VisibilityModifier
+
     private static final String GET_URL = "http://www.google.co.uk";
 
     // This is a POST data echo service
@@ -21,7 +30,7 @@ public class WebServiceClientTest {
     @Test
     public void makeGetRequestThrowsExceptionIfUnknownHost() {
         // Arrange
-        WebServiceClient client = new WebServiceClient();
+        WebServiceClient client = new WebServiceClient(60000, 60000);
 
         // Act
         catchException(client).makeGetRequest("http://uywnevoweiumoiunasdkjhaskjdhiouyncwiuec.be");
@@ -33,7 +42,7 @@ public class WebServiceClientTest {
     @Test
     public void makeGetRequestThrowsExceptionIfMalformedURL() {
         // Arrange
-        WebServiceClient client = new WebServiceClient();
+        WebServiceClient client = new WebServiceClient(60000, 60000);
 
         // Act
         catchException(client).makeGetRequest("this is malformed");
@@ -45,7 +54,7 @@ public class WebServiceClientTest {
     @Test
     public void makeGetRequestThrowsExceptionIfUnknownPage() {
         // Arrange
-        WebServiceClient client = new WebServiceClient();
+        WebServiceClient client = new WebServiceClient(60000, 60000);
 
         // Act
         catchException(client).makeGetRequest("http://www.google.co.uk/kjhdfgoiunewrpoimclsd");
@@ -57,7 +66,7 @@ public class WebServiceClientTest {
     @Test
     public void makeGetRequestSuccessfullyGetsValidURL() {
         // Arrange
-        WebServiceClient client = new WebServiceClient();
+        WebServiceClient client = new WebServiceClient(60000, 60000);
 
         // Act
         String response = client.makeGetRequest(GET_URL);
@@ -69,7 +78,7 @@ public class WebServiceClientTest {
     @Test
     public void makePostRequestWithJSONThrowsExceptionIfUnknownHost() {
         // Arrange
-        WebServiceClient client = new WebServiceClient();
+        WebServiceClient client = new WebServiceClient(60000, 60000);
 
         // Act
         catchException(client).makePostRequestWithJSON("http://uywnevoweiumoiunasdkjhaskjdhiouyncwiuec.be", "");
@@ -81,7 +90,7 @@ public class WebServiceClientTest {
     @Test
     public void makePostRequestWithJSONThrowsExceptionIfMalformedURL() {
         // Arrange
-        WebServiceClient client = new WebServiceClient();
+        WebServiceClient client = new WebServiceClient(60000, 60000);
 
         // Act
         catchException(client).makePostRequestWithJSON("this is malformed", "");
@@ -93,7 +102,7 @@ public class WebServiceClientTest {
     @Test
     public void makePostRequestWithJSONSuccessfullyPostsToValidURL() {
         // Arrange
-        WebServiceClient client = new WebServiceClient();
+        WebServiceClient client = new WebServiceClient(60000, 60000);
         String name = "Harry Hill";
 
         // Act
@@ -108,7 +117,7 @@ public class WebServiceClientTest {
     @Test
     public void makePostRequestWithXMLThrowsExceptionIfUnknownHost() {
         // Arrange
-        WebServiceClient client = new WebServiceClient();
+        WebServiceClient client = new WebServiceClient(60000, 60000);
 
         // Act
         catchException(client).makePostRequestWithXML("http://uywnevoweiumoiunasdkjhaskjdhiouyncwiuec.be", "");
@@ -120,7 +129,7 @@ public class WebServiceClientTest {
     @Test
     public void makePostRequestWithXMLThrowsExceptionIfMalformedURL() {
         // Arrange
-        WebServiceClient client = new WebServiceClient();
+        WebServiceClient client = new WebServiceClient(60000, 60000);
 
         // Act
         catchException(client).makePostRequestWithXML("this is malformed", "");
@@ -132,14 +141,14 @@ public class WebServiceClientTest {
     @Test
     public void makePostRequestWithXMLSuccessfullyPostsToValidURL() {
         // Arrange
-        WebServiceClient client = new WebServiceClient();
+        WebServiceClient client = new WebServiceClient(60000, 60000);
         String xml = "<test><name>Harry Hill</name></test>";
 
         // Act
         String response = client.makePostRequestWithXML(POST_URL, xml);
 
         // Assert
-        assertThat(response).containsIgnoringCase("\"Content-Type\": \"text/xml\"");
+        assertThat(response).containsIgnoringCase("\"Content-Type\": \"application/xml\"");
         assertThat(response).containsIgnoringCase("\"data\": \"" + xml + "\"");
         assertThat(response).containsIgnoringCase("\"url\": \"" + POST_URL + "\"");
     }
@@ -147,7 +156,7 @@ public class WebServiceClientTest {
     @Test
     public void makePutRequestWithXMLThrowsExceptionIfUnknownHost() {
         // Arrange
-        WebServiceClient client = new WebServiceClient();
+        WebServiceClient client = new WebServiceClient(60000, 60000);
 
         // Act
         catchException(client).makePutRequestWithXML("http://uywnevoweiumoiunasdkjhaskjdhiouyncwiuec.be", "");
@@ -159,7 +168,7 @@ public class WebServiceClientTest {
     @Test
     public void makePutRequestWithXMLThrowsExceptionIfMalformedURL() {
         // Arrange
-        WebServiceClient client = new WebServiceClient();
+        WebServiceClient client = new WebServiceClient(60000, 60000);
 
         // Act
         catchException(client).makePutRequestWithXML("this is malformed", "");
@@ -171,54 +180,83 @@ public class WebServiceClientTest {
     @Test
     public void makePutRequestWithXMLSuccessfullyPostsToValidURL() {
         // Arrange
-        WebServiceClient client = new WebServiceClient();
+        WebServiceClient client = new WebServiceClient(60000, 60000);
         String xml = "<test><name>Harry Hill</name></test>";
 
         // Act
         String response = client.makePutRequestWithXML(PUT_URL, xml);
 
         // Assert
-        assertThat(response).containsIgnoringCase("\"Content-Type\": \"text/xml\"");
+        assertThat(response).containsIgnoringCase("\"Content-Type\": \"application/xml\"");
         assertThat(response).containsIgnoringCase("\"data\": \"" + xml + "\"");
         assertThat(response).containsIgnoringCase("\"url\": \"" + PUT_URL + "\"");
     }
 
-
     @Test
-    public void makePostRequestWithByteArrayThrowsExceptionIfUnknownHost() {
+    public void makePostRequestWithBinaryThrowsExceptionIfUnknownHost() throws IOException {
         // Arrange
-        WebServiceClient client = new WebServiceClient();
+        WebServiceClient client = new WebServiceClient(60000, 60000);
 
         // Act
-        catchException(client).makePostRequestWithBinary("http://uywnevoweiumoiunasdkjhaskjdhiouyncwiuec.be", new byte[]{});
+        catchException(client).makePostRequestWithBinary("http://uywnevoweiumoiunasdkjhaskjdhiouyncwiuec.be", getFile(null));
 
         // Assert
         assertThat(caughtException()).isInstanceOf(WebServiceClientException.class);
     }
 
     @Test
-    public void makePostRequestWithByteArrayThrowsExceptionIfMalformedURL() {
+    public void makePostRequestWithBinaryThrowsExceptionIfMalformedURL() throws IOException {
         // Arrange
-        WebServiceClient client = new WebServiceClient();
+        WebServiceClient client = new WebServiceClient(60000, 60000);
 
         // Act
-        catchException(client).makePostRequestWithBinary("this is malformed", new byte[]{});
+        catchException(client).makePostRequestWithBinary("this is malformed", getFile(null));
 
         // Assert
         assertThat(caughtException()).isInstanceOf(WebServiceClientException.class);
     }
 
     @Test
-    public void makePostRequestWithByteArraySuccessfullyPostsToValidURL() {
+    public void makePostRequestWithBinarySuccessfullyPostsToValidURL() throws IOException {
         // Arrange
-        WebServiceClient client = new WebServiceClient();
+        WebServiceClient client = new WebServiceClient(60000, 60000);
         String bodyAsString = "Test body";
 
         // Act
-        String response = client.makePostRequestWithBinary(POST_URL, bodyAsString.getBytes());
+        String response = client.makePostRequestWithBinary(POST_URL, getFile(bodyAsString));
 
         // Assert
-        assertThat(response).containsIgnoringCase("application/octet-stream");
-        assertThat(response).containsIgnoringCase(bodyAsString);
+        assertThat(response).containsIgnoringCase("multipart/form-data");
+        assertThat(response).containsIgnoringCase("\"file\": \"" + bodyAsString + "\"");
+    }
+
+    @Test
+    public void makeGetRequestWithBasicAuth() throws IOException {
+        // Arrange
+        WebServiceClient client = new WebServiceClient(60000, 60000);
+
+        // Act
+        String response = client.makeGetRequest("https://abc:efg@httpbin.org/basic-auth/abc/efg");
+
+        // Assert
+        assertThat(response).containsIgnoringCase("\"authenticated\": true");
+    }
+
+    @Test
+    public void followRedirect() throws IOException {
+        // Arrange
+        WebServiceClient client = new WebServiceClient(60000, 60000);
+
+        // Act
+        String response = client.makeGetRequest("https://httpbin.org/redirect/6");
+
+        // Assert
+        assertThat(response).containsIgnoringCase("\"url\": \"https://httpbin.org/get\"");
+    }
+
+    private File getFile(String content) throws IOException {
+        File file = testFolder.newFile();
+        FileUtils.writeStringToFile(file, content == null ? "1234" : content);
+        return file;
     }
 }
