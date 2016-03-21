@@ -221,7 +221,7 @@ dirAsk() {
 export -f dirAsk
 
 permissionFix() {
-  find "$3" \( \( ! -user "$1" \) -or \( ! -group "$2"\) \) -exec chown "$1:$2" {} \;
+  find "$3" \( \( ! -user "$1" \) -or \( ! -group "$2" \) \) -exec chown "$1:$2" {} \;
   find "$3" -type f ! -perm 664 -exec chmod 664 {} \;
   find "$3" -type d ! -perm 775 -exec chmod 775 {} \;
 }
