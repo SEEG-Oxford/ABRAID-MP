@@ -33,6 +33,6 @@ fi
 )
 
 echo "[[ CONFIG | Ensuring correct file permissions ]]"
-permissionFix "tomcat7:tomcat7" "$ABRAID_SUPPORT_PATH/conf"
+permissionFix "tomcat7" "tomcat7" "$ABRAID_SUPPORT_PATH/conf"
 
 echo "[[ CONFIG | Done ]]"

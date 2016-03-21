@@ -108,7 +108,7 @@ export WEBAPP_PATH
 ( cd "../geoserver/gwc-layers" && find . -type "f" -exec bash -c '"$GS_UPDATE_CMD" "$0" "$WEBAPP_PATH/geoserver/data/gwc-layers/$0"' {} \; )
 
 echo "[[ GS | Ensuring correct file permissions ]]"
-permissionFix "tomcat7:tomcat7" "$WEBAPP_PATH/geoserver/"
+permissionFix "tomcat7" "tomcat7" "$WEBAPP_PATH/geoserver/"
 
 echo "[[ GS | Done ]]"
 rm -rf "$GS_TEMP_DIR"

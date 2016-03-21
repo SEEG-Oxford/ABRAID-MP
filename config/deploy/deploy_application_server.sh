@@ -58,7 +58,7 @@ source "functions.sh"
 if [[ ! -d "$ABRAID_SUPPORT_PATH" ]]; then
   echo "[[ Creating support directory ]]"
   mkdir -p "$ABRAID_SUPPORT_PATH"
-  permissionFix "tomcat7:tomcat7" "$ABRAID_SUPPORT_PATH"
+  permissionFix "tomcat7" "tomcat7" "$ABRAID_SUPPORT_PATH"
 fi
 
 # Getting config

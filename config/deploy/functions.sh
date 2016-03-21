@@ -221,9 +221,9 @@ dirAsk() {
 export -f dirAsk
 
 permissionFix() {
-  chown -R "$1" "$2"
-  find "$2" -type f -exec chmod 664 {} \;
-  find "$2" -type d -exec chmod 775 {} \;
+  find "$3" \( \( ! -user "$1" \) -or \( ! -group "$2"\) \) -exec chown "$1:$2" {} \;
+  find "$3" -type f ! -perm 664 -exec chmod 664 {} \;
+  find "$3" -type d ! -perm 775 -exec chmod 775 {} \;
 }
 export -f permissionFix
 
@@ -248,7 +248,7 @@ installWar() {
   dirAsk "$WAR_TEMP_DIR/$WAR_PATH" "$WEBAPP_PATH/$WAR_PATH"
 
   echo "[[ $WAR_ID | Ensuring correct file permissions ]]"
-  permissionFix "tomcat7:tomcat7" "$WEBAPP_PATH/$WAR_PATH"
+  permissionFix "tomcat7" "tomcat7" "$WEBAPP_PATH/$WAR_PATH"
 
   echo "[[ $WAR_ID | War Done ]]"
   rm -rf "$WAR_TEMP_DIR"

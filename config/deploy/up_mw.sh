@@ -18,13 +18,13 @@ installWar "MW" "../../ABRAID-MP_ModelWrapper.war" "${deploy_props[modelwrapper.
 # Note this must be specified in /etc/default/R/Renvironment.site
 if [[ ! -d "$ABRAID_SUPPORT_PATH/r/libs/" ]]; then
   mkdir -p "$ABRAID_SUPPORT_PATH/r/libs/"
-  permissionFix "tomcat7:tomcat7" "$ABRAID_SUPPORT_PATH/r/"
+  permissionFix "tomcat7" "tomcat7" "$ABRAID_SUPPORT_PATH/r/"
 fi
 
 echo "[[ MW | Ensuring correct file permissions ]]"
 if [[ ! -d "$ABRAID_SUPPORT_PATH/modelwrapper/" ]]; then
   mkdir -p "$ABRAID_SUPPORT_PATH/modelwrapper/"
 fi
-permissionFix "tomcat7:tomcat7" "$ABRAID_SUPPORT_PATH/modelwrapper/"
+permissionFix "tomcat7" "tomcat7" "$ABRAID_SUPPORT_PATH/modelwrapper/"
 
 echo "[[ MW | Done ]]"

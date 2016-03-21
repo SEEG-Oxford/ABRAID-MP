@@ -23,7 +23,7 @@ if [[ ! -d "$ABRAID_SUPPORT_PATH/machinelearning/pickles/" ]]; then
 fi
 
 echo "[[ ML | Ensuring correct file permissions ]]"
-permissionFix "www-data:www-data" "$ABRAID_SUPPORT_PATH/machinelearning/"
+permissionFix "www-data" "www-data" "$ABRAID_SUPPORT_PATH/machinelearning/"
 
 echo "[[ ML | Done ]]"
 cd "../config/deploy/"
