@@ -21,7 +21,7 @@ attempt_model_run <- function() {
     parallel_flag <- TRUE
 
     # Disease ID
-    disease <-  1234
+    disease <- 1234
 
     # Model mode
     mode <- "bhatt"
@@ -37,14 +37,28 @@ attempt_model_run <- function() {
 
     # Define covariates to use.
     # If you would like to use these covariate files please contact abraid@zoo.ox.ac.uk, as we cannot release them in all circumstances.
-    covariate_files <- list.files(path="covariates", recursive=TRUE)
-    covariate_paths <- if(length(covariate_files)==0) c() else paste("covariates", covariate_files, sep="/")
+    covariate_paths <- list(
+        "id1"="covariates/c1.tif",
+        "id2"=list(
+            "2015-01"="covariates/c2.tif_1",
+            "2015-02"="covariates/c2.tif_2"
+        ),
+        "id3"="covariates/sub/c3.tif"
+    )
+    covariate_factors <- list(
+        "id1"=TRUE,
+        "id2"=FALSE,
+        "id3"=TRUE
+    )
 
     # Define admin unit rasters to use.
     # If you would like to use these admin unit rasters (or related shape files) please contact abraid@zoo.ox.ac.uk, as we cannot release them in all circumstances.
-    admin0_path <- "admins/admin0.tif"
-    admin1_path <- "admins/admin1.tif"
-    admin2_path <- "admins/admin2.tif"
+    admin_paths <- list(
+        "admin0"="admins/admin0.tif",
+        "admin1"="admins/admin1.tif",
+        "admin2"="admins/admin2.tif",
+        "admin3"="admins/admin2.tif"  # This one wont be used, but is needed for compatablity with older bits of seegSDM
+    )
 
     # Create a temp dir for intermediate rasters
     dir.create('temp')

@@ -25,7 +25,7 @@ attempt_model_run <- function() {
     parallel_flag <- TRUE
 
     # Disease ID
-    disease <-  ${disease?c}
+    disease <- ${disease?c}
 
     # Model mode
     mode <- "${mode?string}"
@@ -41,14 +41,33 @@ attempt_model_run <- function() {
 
     # Define covariates to use.
     # If you would like to use these covariate files please contact abraid@zoo.ox.ac.uk, as we cannot release them in all circumstances.
-    covariate_files <- list.files(path="covariates", recursive=TRUE)
-    covariate_paths <- if(length(covariate_files)==0) c() else paste("covariates", covariate_files, sep="/")
+    covariate_paths <- list(
+<#list covariates as covariate><#assign files=covariate.getFiles()>
+<#if files?size == 1>
+        "id${covariate.getId()?c}"="covariates/${files?first.getFile()}"<#-- comment to prevent newline in output
+--><#else>
+        "id${covariate.getId()?c}"=list(
+<#list covariate.getFiles() as file>
+            "${file.getQualifier()}"="covariates/${file.getFile()}"<#sep>,</#sep>
+</#list>
+        )<#--  comment to prevent newline in output
+--></#if><#sep>,</#sep>
+</#list>
+    )
+    covariate_factors <- list(
+<#list covariates as covariate>
+        "id${covariate.getId()?c}"=${covariate.getDiscrete()?string("TRUE","FALSE")}<#sep>,</#sep>
+</#list>
+    )
 
     # Define admin unit rasters to use.
     # If you would like to use these admin unit rasters (or related shape files) please contact abraid@zoo.ox.ac.uk, as we cannot release them in all circumstances.
-    admin0_path <- "admins/admin0.tif"
-    admin1_path <- "admins/admin1.tif"
-    admin2_path <- "admins/admin2.tif"
+    admin_paths <- list(
+        "admin0"="admins/admin0.tif",
+        "admin1"="admins/admin1.tif",
+        "admin2"="admins/admin2.tif",
+        "admin3"="admins/admin2.tif"  # This one wont be used, but is needed for compatablity with older bits of seegSDM
+    )
 
     # Create a temp dir for intermediate rasters
     dir.create('temp')
@@ -170,11 +189,9 @@ attempt_model_run <- function() {
             occurrence_path,
             extent_path,
             supplementary_occurrence_path,
-            admin0_path,
-            admin1_path,
-            admin2_path,
+            admin_paths,
             covariate_paths,
-            rep(FALSE, length(covariate_paths)),
+            covariate_factors,
             verbose,
             max_cpus,
             load_seegSDM,

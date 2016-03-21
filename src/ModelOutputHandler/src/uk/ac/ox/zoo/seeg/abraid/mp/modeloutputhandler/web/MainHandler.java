@@ -224,7 +224,7 @@ public class MainHandler {
                         .convert(new Converter<CsvCovariateInfluence, CovariateInfluence>() {
                             @Override
                             public CovariateInfluence convert(CsvCovariateInfluence csv) {
-                                CovariateFile covariate = findCovariateFile(csv.getCovariateFilePath());
+                                CovariateFile covariate = findCovariateFile(csv.getName());
                                 return new CovariateInfluence(covariate, csv, modelRun);
                             }
                         });
@@ -236,13 +236,12 @@ public class MainHandler {
         }
     }
 
-    private CovariateFile findCovariateFile(String covariateFilePath) {
-        String path = (covariateFilePath.startsWith(COVARIATE_DIR)) ?
-                covariateFilePath.replaceFirst(COVARIATE_DIR, "") : covariateFilePath;
-        CovariateFile covariateFile = covariateService.getCovariateFileByPath(path);
+    private CovariateFile findCovariateFile(String csvName) {
+        int id = Integer.parseInt(csvName.substring(2)); // Of the form "id1234", just skip the first two letters
+        CovariateFile covariateFile = covariateService.getCovariateFileById(id);
         if (covariateFile == null) {
             throw new RuntimeException(String.format(
-                    UNKNOWN_COVARIATE_FILE_REFERENCED, covariateFilePath));
+                    UNKNOWN_COVARIATE_FILE_REFERENCED, id));
         }
         return covariateFile;
     }
@@ -258,7 +257,7 @@ public class MainHandler {
                         .convert(new Converter<CsvEffectCurveCovariateInfluence, EffectCurveCovariateInfluence>() {
                             @Override
                             public EffectCurveCovariateInfluence convert(CsvEffectCurveCovariateInfluence csv) {
-                                CovariateFile covariate = findCovariateFile(csv.getCovariateFilePath());
+                                CovariateFile covariate = findCovariateFile(csv.getName());
                                 return new EffectCurveCovariateInfluence(covariate, csv, modelRun);
                             }
                         });

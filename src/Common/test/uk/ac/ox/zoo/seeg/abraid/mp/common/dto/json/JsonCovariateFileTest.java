@@ -15,18 +15,19 @@ public class JsonCovariateFileTest {
     @Test
     public void bindsFieldsCorrectly() {
         // Arrange
-        String path = "path";
+        int id = 123;
         String name = "name";
         String info = "info";
         boolean hide = true;
         boolean discrete = false;
         List<Integer> enabled = new ArrayList<>();
+        List<JsonCovariateSubFile> subFiles = new ArrayList<>();
 
-        // Act
-        JsonCovariateFile result = new JsonCovariateFile(path, name, info, hide, discrete, enabled);
+        //Act
+        JsonCovariateFile result = new JsonCovariateFile(id, subFiles, name, info, hide, discrete, enabled);
 
         // Assert
-        assertThat(result.getPath()).isEqualTo(path);
+        assertThat(result.getSubFiles()).isEqualTo(subFiles);
         assertThat(result.getName()).isEqualTo(name);
         assertThat(result.getInfo()).isEqualTo(info);
         assertThat(result.getHide()).isEqualTo(hide);

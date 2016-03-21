@@ -3,6 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json;
 import org.junit.Test;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateInfluence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateSubFile;
 
 import java.util.Arrays;
 import java.util.List;
@@ -27,7 +28,9 @@ public class JsonCovariateInfluenceTest {
 
         CovariateInfluence covariateInfluence = mock(CovariateInfluence.class);
         CovariateFile covariateFile = mock(CovariateFile.class);
-        when(covariateFile.getFile()).thenReturn(name);
+        CovariateSubFile subObj = mock(CovariateSubFile.class);
+        when(subObj.getFile()).thenReturn(name);
+        when(covariateFile.getFiles()).thenReturn(Arrays.asList(subObj));
         when(covariateFile.getName()).thenReturn(displayName);
         when(covariateFile.getInfo()).thenReturn(info);
         when(covariateFile.getDiscrete()).thenReturn(discrete);

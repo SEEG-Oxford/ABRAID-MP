@@ -3,6 +3,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.runrequest;
 import com.vividsolutions.jts.geom.Point;
 import net.lingala.zip4j.core.ZipFile;
 import org.apache.commons.io.FileUtils;
+import org.joda.time.DateTime;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -23,6 +24,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -106,10 +108,10 @@ public class ModelRunPackageBuilderIntegrationTest {
         String runName = "runName12356";
         DiseaseGroup diseaseGroup = createDiseaseGroup(1234, "disease name", "disease abbr", true, mode);
         List<DiseaseOccurrence> occurrences = Arrays.asList(
-                createOccurrence(diseaseGroup, 1, 2, 3, LocationPrecision.PRECISE, 4, 5),
-                createOccurrence(diseaseGroup, 6, 7, 8, LocationPrecision.COUNTRY, 9, 10),
-                createOccurrence(diseaseGroup, 11, 12, 13, LocationPrecision.ADMIN1, 14, 15),
-                createOccurrence(diseaseGroup, 16, 17, 18, LocationPrecision.ADMIN2, 19, 20)
+                createOccurrence(diseaseGroup, createGeom(1, 2), 3, LocationPrecision.PRECISE, 4, 5, new DateTime("2014-01-02")),
+                createOccurrence(diseaseGroup, createGeom(6, 7), 8, LocationPrecision.COUNTRY, 9, 10, new DateTime("2015-01-02")),
+                createOccurrence(diseaseGroup, createGeom(11, 12), 13, LocationPrecision.ADMIN1, 14, 15, new DateTime("2014-02-01")),
+                createOccurrence(diseaseGroup, createGeom(16, 17), 18, LocationPrecision.ADMIN2, 19, 20, new DateTime("2014-01-21"))
         );
         Collection<AdminUnitDiseaseExtentClass> extent = Arrays.asList(
                 createAdminUnitDiseaseExtentClass(1, -100),
@@ -121,15 +123,15 @@ public class ModelRunPackageBuilderIntegrationTest {
         DiseaseGroup diseaseGroupA = createDiseaseGroup(23141, "disease name A", "disease abbr A", true, "meh");
         DiseaseGroup diseaseGroupB = createDiseaseGroup(1111, "disease name B", "disease abbr B", true, "meh");
         List<DiseaseOccurrence> supplementaryOccurrences = Arrays.asList(
-                createOccurrence(diseaseGroupA, 2, 4, 12, LocationPrecision.PRECISE, 13, 43),
-                createOccurrence(diseaseGroupA, 4, 2, 3, LocationPrecision.COUNTRY, 19, 11),
-                createOccurrence(diseaseGroupA, 6, 13, 5, LocationPrecision.ADMIN1, 14, 12),
-                createOccurrence(diseaseGroupB, 1, 35, 11, LocationPrecision.ADMIN2, 11, 22)
+                createOccurrence(diseaseGroupA, createGeom(2, 4), 12, LocationPrecision.PRECISE, 13, 43, new DateTime("2014-01-02")),
+                createOccurrence(diseaseGroupA, createGeom(4, 2), 3, LocationPrecision.COUNTRY, 19, 11, new DateTime("2016-01-02")),
+                createOccurrence(diseaseGroupA, createGeom(6, 13), 5, LocationPrecision.ADMIN1, 14, 12, new DateTime("2014-01-12")),
+                createOccurrence(diseaseGroupB, createGeom(1, 35), 11, LocationPrecision.ADMIN2, 11, 22, new DateTime("2014-09-02"))
         );
         Collection<CovariateFile> covariateFiles = Arrays.asList(
-                createCovariateFile("c1.tif"),
-                createCovariateFile("c2.tif"),
-                createCovariateFile("sub/c3.tif")
+                createCovariateFile(1, "c1.tif", true, 1),
+                createCovariateFile(2, "c2.tif", false, 2),
+                createCovariateFile(3, "sub/c3.tif", true, 1)
         );
         String covariateDirectory = DATA_DIR + "covariates/";
 
@@ -152,17 +154,22 @@ public class ModelRunPackageBuilderIntegrationTest {
         return obj;
     }
 
-    private DiseaseOccurrence createOccurrence(DiseaseGroup diseaseGroup, double x, double y, double weight, LocationPrecision precision, int countryGaul, int qcGaul) {
+    private Point createGeom(double x, double y) {
+        Point point = mock(Point.class);
+        when(point.getX()).thenReturn(x);
+        when(point.getY()).thenReturn(y);
+        return point;
+    }
+    private DiseaseOccurrence createOccurrence(DiseaseGroup diseaseGroup, Point geom, double weight, LocationPrecision precision, int countryGaul, int qcGaul, DateTime occurrenceDate) {
         DiseaseOccurrence obj = mock(DiseaseOccurrence.class);
         when(obj.getLocation()).thenReturn(mock(Location.class));
         when(obj.getLocation().getPrecision()).thenReturn(precision);
-        when(obj.getLocation().getGeom()).thenReturn(mock(Point.class));
+        when(obj.getLocation().getGeom()).thenReturn(geom);
         when(obj.getDiseaseGroup()).thenReturn(diseaseGroup);
-        when(obj.getLocation().getGeom().getX()).thenReturn(x);
-        when(obj.getLocation().getGeom().getY()).thenReturn(y);
         when(obj.getFinalWeighting()).thenReturn(weight);
         when(obj.getLocation().getAdminUnitQCGaulCode()).thenReturn(qcGaul);
         when(obj.getLocation().getCountryGaulCode()).thenReturn(countryGaul);
+        when(obj.getOccurrenceDate()).thenReturn(occurrenceDate);
         return obj;
     }
 
@@ -175,9 +182,18 @@ public class ModelRunPackageBuilderIntegrationTest {
         return obj;
     }
 
-    private CovariateFile createCovariateFile(String file) {
+    private CovariateFile createCovariateFile(int id, String file, boolean discrete, int subCount) {
         CovariateFile obj = mock(CovariateFile.class);
-        when(obj.getFile()).thenReturn(file);
+        List<CovariateSubFile> covariateSubFiles = new ArrayList<>();
+        for (int i = 1; i <= subCount; i++) {
+            CovariateSubFile subObj = mock(CovariateSubFile.class);
+            when(subObj.getQualifier()).thenReturn(subCount == 1 ? null : "2015-0" + i);
+            when(subObj.getFile()).thenReturn(subCount == 1 ? file : file + "_" + i);
+            covariateSubFiles.add(subObj);
+        }
+        when(obj.getFiles()).thenReturn(covariateSubFiles);
+        when(obj.getId()).thenReturn(id);
+        when(obj.getDiscrete()).thenReturn(discrete);
         return obj;
     }
 
@@ -240,8 +256,10 @@ public class ModelRunPackageBuilderIntegrationTest {
         Collection<File> files = FileUtils.listFiles(dir, null, true);
         assertThat(files).contains(Paths.get(dir.toString(), "c1.tif").toFile());
         assertThat(Paths.get(dir.toString(), "c1.tif").toFile()).hasContentEqualTo(Paths.get(DATA_DIR, "covariates/c1.tif").toFile());
-        assertThat(files).contains(Paths.get(dir.toString(), "c2.tif").toFile());
-        assertThat(Paths.get(dir.toString(), "c2.tif").toFile()).hasContentEqualTo(Paths.get(DATA_DIR, "covariates/c2.tif").toFile());
+        assertThat(files).contains(Paths.get(dir.toString(), "c2.tif_1").toFile());
+        assertThat(Paths.get(dir.toString(), "c2.tif_1").toFile()).hasContentEqualTo(Paths.get(DATA_DIR, "covariates/c2.tif_1").toFile());
+        assertThat(files).contains(Paths.get(dir.toString(), "c2.tif_2").toFile());
+        assertThat(Paths.get(dir.toString(), "c2.tif_2").toFile()).hasContentEqualTo(Paths.get(DATA_DIR, "covariates/c2.tif_2").toFile());
         assertThat(files).contains(Paths.get(dir.toString(), "sub/c3.tif").toFile());
         assertThat(Paths.get(dir.toString(), "sub/c3.tif").toFile()).hasContentEqualTo(Paths.get(DATA_DIR, "covariates/sub/c3.tif").toFile());
     }
@@ -265,11 +283,11 @@ public class ModelRunPackageBuilderIntegrationTest {
         assertThat(files).contains(Paths.get(dir.toString(), "occurrences.csv").toFile());
         String content = FileUtils.readFileToString(Paths.get(dir.toString(), "occurrences.csv").toFile());
         assertThat(content).isEqualTo(
-                "Longitude,Latitude,Weight,Admin,GAUL,Disease\n" +
-                "1.0,2.0,3.0,-999,NA,1234\n" +
-                "6.0,7.0,8.0,0,9,1234\n" +
-                "11.0,12.0,13.0,1,15,1234\n" +
-                "16.0,17.0,18.0,2,20,1234\n");
+                "Longitude,Latitude,Weight,Admin,GAUL,Disease,Date\n" +
+                "1.0,2.0,3.0,-999,NA,1234,2014-01-02\n" +
+                "6.0,7.0,8.0,0,9,1234,2015-01-02\n" +
+                "11.0,12.0,13.0,1,15,1234,2014-02-01\n" +
+                "16.0,17.0,18.0,2,20,1234,2014-01-21\n");
     }
 
     private void buildPackageShouldCreateAZipContainingSupplementaryOccurrenceInput(Path directory) throws Exception {
@@ -280,11 +298,11 @@ public class ModelRunPackageBuilderIntegrationTest {
         Collection<File> files = FileUtils.listFiles(dir, null, true);
         assertThat(files).contains(Paths.get(dir.toString(), "supplementary_occurrences.csv").toFile());
         String content = FileUtils.readFileToString(Paths.get(dir.toString(), "supplementary_occurrences.csv").toFile());
-        assertThat(content).isEqualTo("Longitude,Latitude,Admin,GAUL,Disease\n" +
-                        "2.0,4.0,-999,NA,23141\n" +
-                        "4.0,2.0,0,19,23141\n" +
-                        "6.0,13.0,1,12,23141\n" +
-                        "1.0,35.0,2,22,1111\n");
+        assertThat(content).isEqualTo("Longitude,Latitude,Admin,GAUL,Disease,Date\n" +
+                        "2.0,4.0,-999,NA,23141,2014-01-02\n" +
+                        "4.0,2.0,0,19,23141,2016-01-02\n" +
+                        "6.0,13.0,1,12,23141,2014-01-12\n" +
+                        "1.0,35.0,2,22,1111,2014-09-02\n");
     }
 
     private void buildPackageDeletesWorkspace() throws Exception {

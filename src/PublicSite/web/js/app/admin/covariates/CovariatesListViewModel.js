@@ -19,7 +19,7 @@ define([
 
         BaseFormViewModel.call(self, true, true, baseUrl, "admin/covariates/config");
 
-        BaseTableViewModel.call(self, initialValue.files, "path", false, [ "name", "path" ], function (file) {
+        BaseTableViewModel.call(self, initialValue.files, "name", false, [ "name" ], function (file) {
             return new CovariatesListRowViewModel(self, file, self.selectedDisease().id);
         });
 

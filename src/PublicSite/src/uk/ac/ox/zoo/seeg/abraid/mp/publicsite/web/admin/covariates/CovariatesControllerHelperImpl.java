@@ -1,16 +1,20 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.covariates;
 
+import ch.lambdaj.collection.LambdaMap;
 import ch.lambdaj.function.convert.Converter;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.DoubleRange;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateFile;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateSubFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateValueBin;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateFile;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateSubFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelDisease;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.CovariateService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
@@ -23,12 +27,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static ch.lambdaj.Lambda.*;
+import static ch.lambdaj.collection.LambdaCollections.with;
 
 /**
  * Helper for the AccountController, separated out into a class to isolate the transaction/exception rollback.
@@ -77,8 +79,10 @@ public class CovariatesControllerHelperImpl implements CovariatesControllerHelpe
                 convert(covariateService.getAllCovariateFiles(), new Converter<CovariateFile, JsonCovariateFile>() {
                     @Override
                     public JsonCovariateFile convert(CovariateFile covariateFile) {
+                        List<JsonCovariateSubFile> subFiles = extractSubFiles(covariateFile);
                         return new JsonCovariateFile(
-                                covariateFile.getFile(),
+                                covariateFile.getId(),
+                                subFiles,
                                 covariateFile.getName(),
                                 covariateFile.getInfo(),
                                 covariateFile.getHide(),
@@ -86,30 +90,58 @@ public class CovariatesControllerHelperImpl implements CovariatesControllerHelpe
                                 extract(covariateFile.getEnabledDiseaseGroups(), on(DiseaseGroup.class).getId())
                         );
                     }
+
+
                 })
         );
     }
 
+    private List<JsonCovariateSubFile> extractSubFiles(CovariateFile covariateFile) {
+        return convert(covariateFile.getFiles(), new Converter<CovariateSubFile, JsonCovariateSubFile>() {
+            @Override
+            public JsonCovariateSubFile convert(CovariateSubFile covariateSubFile) {
+                return new JsonCovariateSubFile(
+                        covariateSubFile.getId(),
+                        covariateSubFile.getFile(),
+                        covariateSubFile.getQualifier()
+                );
+            }
+        });
+    }
+
     /**
      * Persist the JSON version of the covariate configuration into the database.
+     * Note: Id's have been checked by this point in CovariatesControllerValidator.
      * @param config The covariate configuration
      */
     @Override
     public  void setCovariateConfiguration(JsonCovariateConfiguration config) {
-        Map<String, CovariateFile> allCovariateFiles =
-                index(covariateService.getAllCovariateFiles(), on(CovariateFile.class).getFile());
-        final Map<Integer, DiseaseGroup> allDiseaseGroups =
-                index(diseaseService.getAllDiseaseGroups(), on(DiseaseGroup.class).getId());
+        final LambdaMap<Integer, CovariateFile> allCovariateFiles = with(covariateService.getAllCovariateFiles())
+                .index(on(CovariateFile.class).getId());
+        final LambdaMap<Integer, DiseaseGroup> allDiseaseGroups = with(diseaseService.getAllDiseaseGroups())
+                .index(on(DiseaseGroup.class).getId());
 
         for (JsonCovariateFile jsonFile : config.getFiles()) {
             boolean changed = false;
-            CovariateFile dbFile = allCovariateFiles.get(jsonFile.getPath());
-            if (dbFile.getName() == null || !dbFile.getName().equals(jsonFile.getName())) {
+            CovariateFile dbFile = allCovariateFiles.get(jsonFile.getId());
+            LambdaMap<Integer, CovariateSubFile> dbSubFiles = with(dbFile.getFiles())
+                    .index(on(CovariateSubFile.class).getId());
+
+            for (JsonCovariateSubFile jsonSubFile : jsonFile.getSubFiles()) {
+                CovariateSubFile dbSubFile = dbSubFiles.get(jsonSubFile.getId());
+
+                if (!StringUtils.equals(dbSubFile.getQualifier(), jsonSubFile.getQualifier())) {
+                    dbSubFile.setQualifier(jsonSubFile.getQualifier());
+                    changed = true;
+                }
+            }
+
+            if (!StringUtils.equals(dbFile.getName(), jsonFile.getName())) {
                 dbFile.setName(jsonFile.getName());
                 changed = true;
             }
 
-            if (dbFile.getInfo() == null || !dbFile.getInfo().equals(jsonFile.getInfo())) {
+            if (!StringUtils.equals(dbFile.getInfo(), jsonFile.getInfo())) {
                 dbFile.setInfo(jsonFile.getInfo());
                 changed = true;
             }
@@ -132,6 +164,7 @@ public class CovariatesControllerHelperImpl implements CovariatesControllerHelpe
                 changed = true;
             }
 
+
             if (changed) {
                 covariateService.saveCovariateFile(dbFile);
             }
@@ -140,25 +173,53 @@ public class CovariatesControllerHelperImpl implements CovariatesControllerHelpe
 
     /**
      * Persist a single new covariate file to the filesystem and database.
-     * @param name The display name for the covariate.
+     * @param name The display name for the covariate (null if a sub file).
+     * @param qualifier The qualifier name for the covariate sub file (ie the year/month).
+     * @param parentId The ID of the parent covariate for this file (or null if this is the first file).
      * @param isDiscrete True if this covariate contains discrete values
      * @param path The location to store the covariate.
      * @param file The covariate.
      * @throws IOException Thrown if the covariate director can not be writen to.
      */
     @Override
-    public void saveNewCovariateFile(String name, boolean isDiscrete, String path, MultipartFile file)
+    public void saveNewCovariateFile(String name, String qualifier, Integer parentId, boolean isDiscrete,
+                                     String path, MultipartFile file)
             throws IOException {
         File rasterFile = writeCovariateFileToDisk(file, path);
-        Map<DoubleRange, Integer> binnedCovariateValueData = generateCovariateValuesHistogram(rasterFile, isDiscrete);
-        addCovariateToDatabase(name, isDiscrete, extractRelativePath(path), binnedCovariateValueData);
+
+        CovariateFile covariateFile = null;
+
+        if (parentId == null) {
+            // Create top level covariate - Histogram is always taken from first uploaded
+            Map<DoubleRange, Integer> binnedCovariateValueData =
+                    generateCovariateValuesHistogram(rasterFile, isDiscrete);
+            covariateFile = createDatabaseCovariate(name, isDiscrete, binnedCovariateValueData);
+        } else {
+            // Find top level covariate
+            covariateFile = covariateService.getCovariateFileById(parentId);
+        }
+
+        CovariateSubFile subFile = new CovariateSubFile(covariateFile, qualifier, extractRelativePath(path));
+        addSubFileToCovariate(covariateFile, subFile);
+
+        covariateService.saveCovariateFile(covariateFile);
     }
 
-    private void addCovariateToDatabase(String name, boolean isDiscrete, String path,
+    private void addSubFileToCovariate(CovariateFile covariateFile, CovariateSubFile subFile) {
+        List<CovariateSubFile> files = covariateFile.getFiles();
+        if (files == null) {
+            // Safe add
+            files = new ArrayList<>();
+            covariateFile.setFiles(files);
+        }
+        files.add(subFile);
+    }
+
+    private CovariateFile createDatabaseCovariate(String name, boolean isDiscrete,
                                         Map<DoubleRange, Integer> binnedCovariateValueData) throws IOException {
+
         CovariateFile covariateFile = new CovariateFile(
                 name,
-                path,
                 false,
                 isDiscrete,
                 ""
@@ -170,8 +231,9 @@ public class CovariatesControllerHelperImpl implements CovariatesControllerHelpe
                     bin.getKey().getMinimumDouble(), bin.getKey().getMaximumDouble(), bin.getValue()));
         }
         covariateFile.setCovariateValueHistogramData(bins);
+        covariateFile.setFiles(new ArrayList<CovariateSubFile>());
 
-        covariateService.saveCovariateFile(covariateFile);
+        return covariateFile;
     }
 
     private File writeCovariateFileToDisk(MultipartFile file, String path) throws IOException {

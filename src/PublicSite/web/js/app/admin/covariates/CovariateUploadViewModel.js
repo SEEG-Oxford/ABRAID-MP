@@ -14,19 +14,29 @@ define([
         self.buildSubmissionData = function () {
             return {
                 name: self.name(),
-                discrete: self.discrete(),
-                subdirectory: self.subdirectory()
+                discrete:  self.discrete(),
+                subdirectory: self.subdirectory(),
+                qualifier: self.qualifier(),
+                parentId: self.parent() ? self.parent().id : -1
             };
         };
         self.postSuccessAction = refresh;
 
         self.discrete = ko.observable(false);
 
+        self.parentList = covariatesListViewModel.entries;
+        self.parent = ko.observable(undefined);
+        self.parent.subscribe(function (value) {
+            self.name(value ? "not-used" : "");
+        });
+
         self.name = ko.observable("")
             .extend({ required: true, isUniqueProperty: {
                 array: covariatesListViewModel.visibleEntries,
                 property: "name"
             }});
+
+        self.qualifier = ko.observable("").extend({ required: true });
 
         self.subdirectory = ko.observable("./")
             .extend({ required: true, startWith: "./", endWith: "/", notContain: ["/../", "/./", "//", "\\"] });

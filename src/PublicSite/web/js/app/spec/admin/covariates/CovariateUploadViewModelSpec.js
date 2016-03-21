@@ -10,13 +10,13 @@ define([
 
     describe("The covariate upload view model", function () {
         var vm, covariateListVM, refreshSpy;
-
+        var covariates = [ { id: 1, path: "1" }, { id: 2, path: "2" }, { id: 3, path: "3" } ];
         beforeEach(function () {
             refreshSpy = jasmine.createSpy("refresh");
             covariateListVM = {
                 hasUnsavedChanges: ko.observable(false),
                 visibleEntries: ko.observableArray([ { name: "1" }, { name: "2" }, { name: "3" } ]),
-                entries: ko.observableArray([ { path: "1" }, { path: "2" }, { path: "3" } ])
+                entries: ko.observableArray(covariates)
             };
             vm = new CovariateUploadViewModel("baseUrl", covariateListVM, refreshSpy);
         });
@@ -39,6 +39,43 @@ define([
                     array: covariateListVM.visibleEntries,
                     property: "name"
                 }});
+            });
+        });
+
+        describe("holds a 'qualifier' field which", function () {
+            it("is observable", function () {
+                expect(vm.name).toBeObservable();
+            });
+
+            it("starts empty", function () {
+                expect(vm.name()).toBe("");
+            });
+
+            it("is a required field", function () {
+                expect(vm.name).toHaveValidationRule({ name: "required", params: true });
+            });
+
+            it("is required to be unique within the list of covariate names", function () {
+                expect(vm.name).toHaveValidationRule({ name: "isUniqueProperty", params: {
+                    array: covariateListVM.visibleEntries,
+                    property: "name"
+                }});
+            });
+        });
+
+        describe("holds a 'parent' field which", function () {
+            it("is observable", function () {
+                expect(vm.parent).toBeObservable();
+            });
+
+            it("starts false", function () {
+                expect(vm.parent()).toBeUndefined();
+            });
+        });
+
+        describe("holds a 'parentList' field which", function () {
+            it("is the list of known covariates", function () {
+                expect(vm.parentList()).toBe(covariates);
             });
         });
 
@@ -142,14 +179,33 @@ define([
                 );
             });
 
-            it("a custom buildSubmissionData function, which builds the correct data", function () {
+            it("a custom buildSubmissionData function, which builds the correct data, for new covariate", function () {
+                vm.parent(undefined);
                 vm.name("abc");
                 vm.discrete(true);
+                vm.qualifier("123");
                 vm.subdirectory("def");
                 expect(vm.buildSubmissionData()).toEqual({
                     name: "abc",
+                    qualifier: "123",
                     discrete: true,
-                    subdirectory: "def"
+                    subdirectory: "def",
+                    parentId: -1
+                });
+            });
+
+            it("a custom buildSubmissionData function, which builds the correct data, for sub covariate", function () {
+                vm.parent(covariates[0]);
+                vm.name("abc");
+                vm.discrete(false);
+                vm.qualifier("123");
+                vm.subdirectory("def");
+                expect(vm.buildSubmissionData()).toEqual({
+                    name: "abc",
+                    qualifier: "123",
+                    discrete: false,
+                    subdirectory: "def",
+                    parentId: 1
                 });
             });
 

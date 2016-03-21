@@ -7,10 +7,7 @@ import net.lingala.zip4j.model.ZipParameters;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.config.ModellingConfiguration;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.AdminUnitDiseaseExtentClass;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateFile;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.AbraidJsonObjectMapper;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelDisease;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonModelRun;
@@ -26,6 +23,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
+
+import static ch.lambdaj.Lambda.extract;
+import static ch.lambdaj.Lambda.flatten;
+import static ch.lambdaj.Lambda.on;
 
 /**
  * Builds a zip, representing a model run from a set of inputs.
@@ -105,7 +106,7 @@ public class ModelRunPackageBuilder {
             addData(workingDirectory, diseaseGroup, occurrencesForModelRun, diseaseExtent, supplementaryOccurrences);
             addCovariates(workingDirectory, covariateFiles, covariateDirectory);
             addGaulLayers(workingDirectory);
-            addRModelCode(workingDirectory, diseaseGroup);
+            addRModelCode(workingDirectory, diseaseGroup, covariateFiles);
 
             LOGGER.info(String.format(LOG_WORKSPACE_SUCCESSFULLY_PROVISIONED, workingDirectory.toString()));
 
@@ -197,7 +198,8 @@ public class ModelRunPackageBuilder {
                                String covariateStorageDirectory) throws IOException {
         File covariatesDirectory = Paths.get(workingDirectory.toString(), COVARIATES_DATA_DIRECTORY_NAME).toFile();
         // Covariate data
-        for (CovariateFile file : covariateFiles) {
+        List<CovariateSubFile> files = flatten(extract(covariateFiles, on(CovariateFile.class).getFiles()));
+        for (CovariateSubFile file : files) {
             FileUtils.copyFile(
                     Paths.get(covariateStorageDirectory, file.getFile()).toFile(),
                     Paths.get(covariatesDirectory.toString(), file.getFile()).toFile()
@@ -222,14 +224,14 @@ public class ModelRunPackageBuilder {
         );
     }
 
-    private void addRModelCode(Path workingDirectory, DiseaseGroup diseaseGroup)
+    private void addRModelCode(Path workingDirectory, DiseaseGroup diseaseGroup, Collection<CovariateFile> covariates)
             throws IOException {
         File modelDirectory = Paths.get(workingDirectory.toString(), MODEL_CODE_DIRECTORY_NAME).toFile();
         // Copy model
         sourceCodeManager.provision(modelDirectory);
 
         // Template script
-        scriptGenerator.generateScript(modellingConfiguration, workingDirectory.toFile(), diseaseGroup);
+        scriptGenerator.generateScript(modellingConfiguration, workingDirectory.toFile(), diseaseGroup, covariates);
     }
 
     private void zipWorkspace(Path workingDirectoryPath, Path zipFilePath) throws ZipException {

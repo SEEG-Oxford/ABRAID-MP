@@ -66,20 +66,20 @@ public class CovariateServiceTest {
     }
 
     @Test
-    public void getCovariateFileByPathCallsDao() {
+    public void getCovariateFileByIdCallsDao() {
         // Arrange
         CovariateFileDao covariateFileDao = mock(CovariateFileDao.class);
         CovariateFile expectation = mock(CovariateFile.class);
-        String path = "path";
-        when(covariateFileDao.getByFilePath(path)).thenReturn(expectation);
+        int id = 1;
+        when(covariateFileDao.getById(id)).thenReturn(expectation);
         CovariateService target = new CovariateServiceImpl("covariateDirectory", covariateFileDao);
 
         // Act
-        CovariateFile result = target.getCovariateFileByPath(path);
+        CovariateFile result = target.getCovariateFileById(id);
 
         // Assert
         assertThat(result).isSameAs(expectation);
-        verify(covariateFileDao).getByFilePath(path);
+        verify(covariateFileDao).getById(id);
     }
 
     @Test

@@ -1,10 +1,12 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.runrequest;
 
 import uk.ac.ox.zoo.seeg.abraid.mp.common.config.ModellingConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 
 /**
  * Interface to provide a mechanism for generating model run scripts.
@@ -16,9 +18,11 @@ public interface ScriptGenerator {
      * @param modellingConfiguration The model run configuration.
      * @param workingDirectory The directory in which the script should be created.
      * @param diseaseGroup The disease group being modelled.
+     * @param covariates The covariate file to use in the model.
      * @return The script file.
      * @throws IOException Thrown in response to issues creating the script file.
      */
-    File generateScript(ModellingConfiguration modellingConfiguration, File workingDirectory, DiseaseGroup diseaseGroup)
+    File generateScript(ModellingConfiguration modellingConfiguration, File workingDirectory, DiseaseGroup diseaseGroup,
+                        Collection<CovariateFile> covariates)
             throws IOException;
 }

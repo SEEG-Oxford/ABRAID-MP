@@ -20,10 +20,7 @@ import org.springframework.test.context.ContextConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.AbstractCommonSpringIntegrationTests;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.config.ConfigurationService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.ModelRunDao;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateFile;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.ModelRun;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.CovariateService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
@@ -173,7 +170,9 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
 
     private CovariateFile createMockCovariateFile(String path) throws IOException {
         CovariateFile covariateFile = mock(CovariateFile.class);
-        when(covariateFile.getFile()).thenReturn(path);
+        CovariateSubFile subObj = mock(CovariateSubFile.class);
+        when(subObj.getFile()).thenReturn(path);
+        when(covariateFile.getFiles()).thenReturn(Arrays.asList(subObj));
         File file = Paths.get(testFolder.getRoot().getAbsolutePath(), path).toFile();
         FileUtils.writeStringToFile(file, path);
         return covariateFile;
@@ -285,34 +284,34 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
     private void assertSplitFeatures(List<String> splitFeatures) {
         assertThat(splitFeatures).hasSize(27 + 1);
         assertThat(splitFeatures).contains(
-                "Longitude,Latitude,Weight,Admin,GAUL,Disease",
-                "121.06667,14.53333,0.95,-999,NA,87",
-                "-46.60972,-20.71889,0.825,-999,NA,87",
-                "-42.91651,-22.17062,0.775,2,9970,87",
-                "-42.66564,-22.18996,0.675,1,683,87",
-                "-43.04112,-22.81555,0.85,2,9966,87",
-                "-54.66252,-28.05186,0.775,2,10593,87",
-                "-54.0,-30.0,0.625,1,685,87",
-                "-67.81,-9.97472,0.8,-999,NA,87",
-                "-76.42313,8.84621,0.925,-999,NA,87",
-                "73.85674,18.52043,0.975,-999,NA,87",
-                "102.25616,2.20569,0.975,-999,NA,87",
-                "-45.88694,-23.17944,0.8,-999,NA,87",
-                "114.0,1.0,1.0,-999,NA,87",
-                "-47.09179,-21.76979,0.775,-999,NA,87",
-                "-49.06055,-22.31472,0.9,-999,NA,87",
-                "103.80805,1.29162,0.875,-999,NA,87",
-                "126.08934,7.30416,0.7,1,67161,87",
-                "126.33333,7.16667,0.85,2,24269,87",
-                "126.0,7.5,0.75,2,24266,87",
-                "126.17626,7.51252,0.975,-999,NA,87",
-                "-98.28333,26.08333,0.9,-999,NA,87",
-                "39.21917,21.51694,0.85,-999,NA,87",
-                "-51.38889,-22.12556,0.85,-999,NA,87",
-                "177.46666,-17.61667,0.825,-999,NA,87",
-                "177.41667,-17.8,0.925,-999,NA,87",
-                "-61.5,-17.5,0.7,1,40449,87",
-                "-80.63333,-5.2,0.875,-999,NA,87"
+                "Longitude,Latitude,Weight,Admin,GAUL,Disease,Date",
+                "121.06667,14.53333,0.95,-999,NA,87,2014-02-27",
+                "-46.60972,-20.71889,0.825,-999,NA,87,2014-02-26",
+                "-42.91651,-22.17062,0.775,2,9970,87,2014-02-26",
+                "-42.66564,-22.18996,0.675,1,683,87,2014-02-26",
+                "-43.04112,-22.81555,0.85,2,9966,87,2014-02-26",
+                "-54.66252,-28.05186,0.775,2,10593,87,2014-02-26",
+                "-54.0,-30.0,0.625,1,685,87,2014-02-26",
+                "-67.81,-9.97472,0.8,-999,NA,87,2014-02-26",
+                "-76.42313,8.84621,0.925,-999,NA,87,2014-02-26",
+                "73.85674,18.52043,0.975,-999,NA,87,2014-02-26",
+                "102.25616,2.20569,0.975,-999,NA,87,2014-02-26",
+                "-45.88694,-23.17944,0.8,-999,NA,87,2014-02-25",
+                "114.0,1.0,1.0,-999,NA,87,2014-02-25",
+                "-47.09179,-21.76979,0.775,-999,NA,87,2014-02-25",
+                "-49.06055,-22.31472,0.9,-999,NA,87,2014-02-25",
+                "103.80805,1.29162,0.875,-999,NA,87,2014-02-25",
+                "126.08934,7.30416,0.7,1,67161,87,2014-02-25",
+                "126.33333,7.16667,0.85,2,24269,87,2014-02-25",
+                "126.0,7.5,0.75,2,24266,87,2014-02-25",
+                "126.17626,7.51252,0.975,-999,NA,87,2014-02-25",
+                "-98.28333,26.08333,0.9,-999,NA,87,2014-02-25",
+                "39.21917,21.51694,0.85,-999,NA,87,2014-02-24",
+                "-51.38889,-22.12556,0.85,-999,NA,87,2014-02-24",
+                "177.46666,-17.61667,0.825,-999,NA,87,2014-02-24",
+                "177.41667,-17.8,0.925,-999,NA,87,2014-02-24",
+                "-61.5,-17.5,0.7,1,40449,87,2014-02-24",
+                "-80.63333,-5.2,0.875,-999,NA,87,2014-02-24"
         );
     }
 

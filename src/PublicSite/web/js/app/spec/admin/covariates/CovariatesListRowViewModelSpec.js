@@ -105,12 +105,12 @@ define([ "app/admin/covariates/CovariatesListRowViewModel" ], function (Covariat
             });
         });
 
-        describe("holds a path field which", function () {
-            it("has the same value as the parent file (prefixed with './')", function () {
-                vm = new CovariatesListRowViewModel({}, { enabled: [], path: "foobar" }, 0);
-                expect(vm.path).toBe("./foobar");
-            });
-        });
+//        describe("holds a path field which", function () {
+//            it("has the same value as the parent file (prefixed with './')", function () {
+//                vm = new CovariatesListRowViewModel({}, { enabled: [], path: "foobar" }, 0);
+//                expect(vm.path).toBe("./foobar");
+//            });
+//        });
 
         describe("holds an info field which", function () {
             var parentFile = {};

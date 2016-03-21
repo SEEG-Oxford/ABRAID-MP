@@ -36,7 +36,7 @@ public class OccurrenceDataWriterTest {
         String result = arrangeAndActWriteDataTest(defaultDiseaseOccurrence(), false, true);
 
         // Assert - Values must be in the order: longitude, latitude, occurrence weighting, admin level value, gaul code
-        assertThat(result).isEqualTo("Longitude,Latitude,Weight,Admin,GAUL,Disease" + "\n" + "-1.0,1.0,0.5,1,102,123" + "\n");
+        assertThat(result).isEqualTo("Longitude,Latitude,Weight,Admin,GAUL,Disease,Date" + "\n" + "-1.0,1.0,0.5,1,102,123,1970-01-01" + "\n");
     }
 
     @Test
@@ -49,7 +49,7 @@ public class OccurrenceDataWriterTest {
         String result = arrangeAndActWriteDataTest(defaultDiseaseOccurrence(), true, true);
 
         // Assert - Values must be in the order: longitude, latitude, occurrence weighting, admin level value, gaul code
-        assertThat(result).isEqualTo("Longitude,Latitude,Weight,Admin,GAUL,Disease" + "\n" + "-1.0,1.0,0.5,-999,102,123" + "\n");
+        assertThat(result).isEqualTo("Longitude,Latitude,Weight,Admin,GAUL,Disease,Date" + "\n" + "-1.0,1.0,0.5,-999,102,123,1970-01-01" + "\n");
     }
 
     @Test
@@ -61,7 +61,7 @@ public class OccurrenceDataWriterTest {
         String result = arrangeAndActWriteDataTest(occurrence, false, true);
 
         // Assert
-        assertThat(result).isEqualTo("Longitude,Latitude,Weight,Admin,GAUL,Disease" + "\n" + "-1.0,1.0,0.5,-999,NA,123" + "\n");
+        assertThat(result).isEqualTo("Longitude,Latitude,Weight,Admin,GAUL,Disease,Date" + "\n" + "-1.0,1.0,0.5,-999,NA,123,1970-01-01" + "\n");
     }
 
     @Test
@@ -73,7 +73,7 @@ public class OccurrenceDataWriterTest {
         String result = arrangeAndActWriteDataTest(occurrence, false, true);
 
         // Assert
-        assertThat(result).isEqualTo("Longitude,Latitude,Weight,Admin,GAUL,Disease" + "\n" + "-1.0,1.0,0.5,1,102,123" + "\n");
+        assertThat(result).isEqualTo("Longitude,Latitude,Weight,Admin,GAUL,Disease,Date" + "\n" + "-1.0,1.0,0.5,1,102,123,1970-01-01" + "\n");
     }
 
     @Test
@@ -85,7 +85,7 @@ public class OccurrenceDataWriterTest {
         String result = arrangeAndActWriteDataTest(occurrence, false, true);
 
         // Assert
-        assertThat(result).isEqualTo("Longitude,Latitude,Weight,Admin,GAUL,Disease" + "\n" + "-1.0,1.0,0.5,2,102,123" + "\n");
+        assertThat(result).isEqualTo("Longitude,Latitude,Weight,Admin,GAUL,Disease,Date" + "\n" + "-1.0,1.0,0.5,2,102,123,1970-01-01" + "\n");
     }
 
     @Test
@@ -103,7 +103,7 @@ public class OccurrenceDataWriterTest {
         String result = arrangeAndActWriteDataTest(occurrence, false, true);
 
         // Assert
-        assertThat(result).isEqualTo("Longitude,Latitude,Weight,Admin,GAUL,Disease" + "\n" + "-1.0,1.0,0.5,0,201,123" + "\n");
+        assertThat(result).isEqualTo("Longitude,Latitude,Weight,Admin,GAUL,Disease,Date" + "\n" + "-1.0,1.0,0.5,0,201,123,1970-01-01" + "\n");
     }
 
     @Test
@@ -111,7 +111,7 @@ public class OccurrenceDataWriterTest {
         String result = arrangeAndActWriteDataTest(defaultDiseaseOccurrence(), false, false);
 
         // Assert - Values must be in the order: longitude, latitude, occurrence weighting, admin level value, gaul code
-        assertThat(result).isEqualTo("Longitude,Latitude,Admin,GAUL,Disease" + "\n" + "-1.0,1.0,1,102,123" + "\n");
+        assertThat(result).isEqualTo("Longitude,Latitude,Admin,GAUL,Disease,Date" + "\n" + "-1.0,1.0,1,102,123,1970-01-01" + "\n");
     }
 
     @Test
@@ -124,7 +124,7 @@ public class OccurrenceDataWriterTest {
         String result = arrangeAndActWriteDataTest(defaultDiseaseOccurrence(), true, false);
 
         // Assert - Values must be in the order: longitude, latitude, occurrence weighting, admin level value, gaul code
-        assertThat(result).isEqualTo("Longitude,Latitude,Admin,GAUL,Disease" + "\n" + "-1.0,1.0,-999,102,123" + "\n");
+        assertThat(result).isEqualTo("Longitude,Latitude,Admin,GAUL,Disease,Date" + "\n" + "-1.0,1.0,-999,102,123,1970-01-01" + "\n");
     }
 
     @Test
@@ -136,7 +136,7 @@ public class OccurrenceDataWriterTest {
         String result = arrangeAndActWriteDataTest(occurrence, false, false);
 
         // Assert
-        assertThat(result).isEqualTo("Longitude,Latitude,Admin,GAUL,Disease" + "\n" + "-1.0,1.0,-999,NA,123" + "\n");
+        assertThat(result).isEqualTo("Longitude,Latitude,Admin,GAUL,Disease,Date" + "\n" + "-1.0,1.0,-999,NA,123,1970-01-01" + "\n");
     }
 
     @Test
@@ -148,7 +148,7 @@ public class OccurrenceDataWriterTest {
         String result = arrangeAndActWriteDataTest(occurrence, false, false);
 
         // Assert
-        assertThat(result).isEqualTo("Longitude,Latitude,Admin,GAUL,Disease" + "\n" + "-1.0,1.0,1,102,123" + "\n");
+        assertThat(result).isEqualTo("Longitude,Latitude,Admin,GAUL,Disease,Date" + "\n" + "-1.0,1.0,1,102,123,1970-01-01" + "\n");
     }
 
     @Test
@@ -160,7 +160,7 @@ public class OccurrenceDataWriterTest {
         String result = arrangeAndActWriteDataTest(occurrence, false, false);
 
         // Assert
-        assertThat(result).isEqualTo("Longitude,Latitude,Admin,GAUL,Disease" + "\n" + "-1.0,1.0,2,102,123" + "\n");
+        assertThat(result).isEqualTo("Longitude,Latitude,Admin,GAUL,Disease,Date" + "\n" + "-1.0,1.0,2,102,123,1970-01-01" + "\n");
     }
 
     @Test
@@ -178,7 +178,7 @@ public class OccurrenceDataWriterTest {
         String result = arrangeAndActWriteDataTest(occurrence, false, false);
 
         // Assert
-        assertThat(result).isEqualTo("Longitude,Latitude,Admin,GAUL,Disease" + "\n" + "-1.0,1.0,0,201,123" + "\n");
+        assertThat(result).isEqualTo("Longitude,Latitude,Admin,GAUL,Disease,Date" + "\n" + "-1.0,1.0,0,201,123,1970-01-01" + "\n");
     }
 
     private String arrangeAndActWriteDataTest(DiseaseOccurrence occurrence, boolean adjustPrecision, boolean includeWeight) throws Exception {

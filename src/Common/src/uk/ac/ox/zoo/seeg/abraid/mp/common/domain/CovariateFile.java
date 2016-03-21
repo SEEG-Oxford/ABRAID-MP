@@ -5,18 +5,15 @@ import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.List;
 
 /**
- * Represents a covariate file.
+ * Represents a covariate surface (can be a single file, or multiple temporally resolved files).
  * Copyright (c) 2015 University of Oxford
  */
 @Entity
 @Table(name = "covariate_file")
 @NamedQueries({
-        @NamedQuery(
-                name = "getCovariateByPath",
-                query = "from CovariateFile where file=:path"
-        ),
         @NamedQuery(
                 name = "getCovariateFilesByDiseaseGroup",
                 query = "select c from CovariateFile c " +
@@ -32,8 +29,10 @@ public class CovariateFile {
     @Column
     private String name;
 
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "covariateFile")
+    @Fetch(FetchMode.SELECT)
     @Column(nullable = false, updatable = false)
-    private String file;
+    private List<CovariateSubFile> files;
 
     @Column(nullable = false)
     private Boolean hide;
@@ -58,9 +57,8 @@ public class CovariateFile {
     public CovariateFile() {
     }
 
-    public CovariateFile(String name, String file, Boolean hide, Boolean discrete, String info) {
+    public CovariateFile(String name, Boolean hide, Boolean discrete, String info) {
         setName(name);
-        setFile(file);
         setHide(hide);
         setDiscrete(discrete);
         setInfo(info);
@@ -82,12 +80,12 @@ public class CovariateFile {
         this.name = name;
     }
 
-    public String getFile() {
-        return file;
+    public List<CovariateSubFile> getFiles() {
+        return files;
     }
 
-    public void setFile(String file) {
-        this.file = file;
+    public void setFiles(List<CovariateSubFile> files) {
+        this.files = files;
     }
 
     public Boolean getHide() {
@@ -139,7 +137,6 @@ public class CovariateFile {
 
         CovariateFile that = (CovariateFile) o;
 
-        if (file != null ? !file.equals(that.file) : that.file != null) return false;
         if (hide != null ? !hide.equals(that.hide) : that.hide != null) return false;
         if (discrete != null ? !discrete.equals(that.discrete) : that.discrete != null) return false;
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
@@ -153,7 +150,6 @@ public class CovariateFile {
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (file != null ? file.hashCode() : 0);
         result = 31 * result + (hide != null ? hide.hashCode() : 0);
         result = 31 * result + (discrete != null ? discrete.hashCode() : 0);
         result = 31 * result + (info != null ? info.hashCode() : 0);

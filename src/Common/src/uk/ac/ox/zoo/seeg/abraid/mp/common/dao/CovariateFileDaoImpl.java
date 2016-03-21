@@ -21,14 +21,4 @@ public class CovariateFileDaoImpl extends AbstractDao<CovariateFile, Integer> im
     public List<CovariateFile> getCovariateFilesByDiseaseGroup(DiseaseGroup diseaseGroup) {
         return listNamedQuery("getCovariateFilesByDiseaseGroup", "diseaseGroupId", diseaseGroup.getId());
     }
-
-    /**
-     * Gets a covariate file by path.
-     * @param path The path.
-     * @return The covariate file, or null if not found.
-     */
-    @Override
-    public CovariateFile getByFilePath(String path) {
-        return uniqueResultNamedQuery("getCovariateByPath", "path", path);
-    }
 }

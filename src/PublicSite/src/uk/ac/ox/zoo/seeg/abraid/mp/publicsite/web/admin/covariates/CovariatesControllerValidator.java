@@ -1,13 +1,17 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin.covariates;
 
 import ch.lambdaj.collection.LambdaList;
+import ch.lambdaj.collection.LambdaMap;
+import ch.lambdaj.collection.LambdaSet;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateFile;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.CovariateSubFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateConfiguration;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateFile;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dto.json.JsonCovariateSubFile;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.CovariateService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 
@@ -28,13 +32,15 @@ import static org.hamcrest.Matchers.isIn;
 public class CovariatesControllerValidator {
     private static final String FAIL_FILE_MISSING = "File missing.";
     private static final String FAIL_NAME_MISSING = "Name missing.";
+    private static final String FAIL_INVALID_PARENT = "Parent ID not valid.";
+    private static final String FAIL_QUALIFIER_MISSING = "Qualifier missing.";
     private static final String FAIL_SUBDIRECTORY_MISSING = "Subdirectory missing.";
     private static final String FAIL_SUBDIRECTORY_NOT_VALID = "Subdirectory not valid.";
     private static final String FAIL_NAME_NOT_UNIQUE = "Name not unique.";
     private static final String FAIL_FILE_ALREADY_EXISTS = "File already exists.";
     private static final String FAIL_TARGET_PATH_NOT_VALID = "Target path not valid.";
     private static final String FAIL_FILES_IS_NULL = "'files' is null.";
-    private static final String FAIL_FILES_PATH_DO_NOT_MATCH = "Unexpected file listed or missing.";
+    private static final String FAIL_FILES_PATH_DO_NOT_MATCH = "Unexpected file or subfile listed or missing.";
     private static final String FAIL_ENABLED_DISEASE_IDS_CONTAINS_DUPLICATES =
             "Enabled disease ids contains duplicates.";
     private static final String FAIL_UNKNOWN_DISEASE_ID_REFERENCED_BY_FILE =
@@ -51,22 +57,32 @@ public class CovariatesControllerValidator {
 
     /**
      * Validate the user input from a covariate upload.
-     * @param name Name of the covariate file.
+     * @param name The display name for the covariate (null if a sub file).
+     * @param qualifier The qualifier name for the covariate sub file (ie the year/month).
+     * @param parentId The ID of the parent covariate for this file (or null if this is the first file).
      * @param subdirectory The directory to add the file to.
      * @param file The covariate file.
      * @param targetPath The location to store the file.
      * @return A set of validation failures.
      */
-    public Collection<String> validateCovariateUpload(
-            String name, String subdirectory, MultipartFile file, String targetPath) {
+    public Collection<String> validateCovariateUpload(String name, String qualifier, Integer parentId,
+                                                      String subdirectory, MultipartFile file, String targetPath) {
         List<String> messages = new ArrayList<>();
 
         if (file == null || file.isEmpty()) {
             messages.add(FAIL_FILE_MISSING);
         }
 
-        if (StringUtils.isEmpty(name)) {
+        if (parentId != null && covariateService.getCovariateFileById(parentId) == null) {
+            messages.add(FAIL_INVALID_PARENT);
+        }
+
+        if (parentId == null && StringUtils.isEmpty(name)) {
             messages.add(FAIL_NAME_MISSING);
+        }
+
+        if (StringUtils.isEmpty(qualifier)) {
+            messages.add(FAIL_QUALIFIER_MISSING);
         }
 
         if (StringUtils.isEmpty(subdirectory)) {
@@ -125,7 +141,7 @@ public class CovariatesControllerValidator {
         if (!checkFilesFieldForNull(config)) {
             messages.add(FAIL_FILES_IS_NULL);
         } else {
-            if (!checkFilePaths(config)) {
+            if (!checkFileListAndSubFiles(config)) {
                 messages.add(FAIL_FILES_PATH_DO_NOT_MATCH);
             }
 
@@ -145,13 +161,64 @@ public class CovariatesControllerValidator {
         return (config != null && config.getFiles() != null);
     }
 
-    private boolean checkFilePaths(JsonCovariateConfiguration config) {
-        LambdaList<String> knownFiles = with(covariateService.getAllCovariateFiles())
-                .extract(on(CovariateFile.class).getFile()).sort(on(String.class));
-        LambdaList<String> configFiles = with(config.getFiles())
-                .extract(on(JsonCovariateFile.class).getPath()).sort(on(String.class));
-        return knownFiles.equals(configFiles);
+    private boolean checkFileListAndSubFiles(JsonCovariateConfiguration config) {
+        List<CovariateFile> knownCovariates = covariateService.getAllCovariateFiles();
+        List<JsonCovariateFile> configCovariates = config.getFiles();
+
+        LambdaMap<Integer, CovariateFile> knownCovariatesById = with(knownCovariates)
+                .index(on(CovariateFile.class).getId());
+
+        LambdaMap<Integer, JsonCovariateFile> configCovariatesById = with(configCovariates)
+                .index(on(JsonCovariateFile.class).getId());
+
+        // The IDs of the covariates must match the ones in the db
+        LambdaSet<Integer> knowIds = knownCovariatesById.keySet();
+        LambdaSet<Integer> configIds = configCovariatesById.keySet();
+
+        if (!knowIds.equals(configIds)) {
+            return false;
+        }
+
+        // Check Subfiles
+        for (Integer id : knowIds) {
+            CovariateFile knownCovariate = knownCovariatesById.get(id);
+            JsonCovariateFile configCovariate = configCovariatesById.get(id);
+
+            if (!checkSubFile(knownCovariate, configCovariate)) {
+                return false;
+            }
+        }
+
+        return true;
     }
+
+    private boolean checkSubFile(CovariateFile knownCovariate, JsonCovariateFile configCovariate) {
+        List<CovariateSubFile> knownCovariateSubFiles = knownCovariate.getFiles();
+        List<JsonCovariateSubFile> configCovariateSubFiles = configCovariate.getSubFiles();
+
+        // The IDs of the sub files for this covariate must match the ones in the db
+        LambdaList<Integer> knownSubFileIds = with(knownCovariateSubFiles)
+                .extract(on(CovariateSubFile.class).getId());
+        LambdaList<Integer> configSubFileIds = with(configCovariateSubFiles)
+                .extract(on(JsonCovariateSubFile.class).getId());
+
+        if (!knownSubFileIds.equals(configSubFileIds)) {
+            return false;
+        }
+
+        // The file paths of the sub files for this covariate must match the ones in the db
+        LambdaList<String> knownSubFilePaths = with(knownCovariateSubFiles)
+                .extract(on(CovariateSubFile.class).getFile());
+        LambdaList<String> configSubFilePaths = with(configCovariateSubFiles)
+                .extract(on(JsonCovariateSubFile.class).getPath());
+
+        if (!knownSubFilePaths.equals(configSubFilePaths)) {
+            return false;
+        }
+
+        return true;
+    }
+
 
     private boolean checkEnabledDiseaseUniqueness(JsonCovariateConfiguration config) {
         for (JsonCovariateFile file : config.getFiles()) {
