@@ -67,6 +67,16 @@ define([
             });
         });
 
+        describe("holds the sample bias text which", function () {
+            it("is an observable", function () {
+                expect(vm.sampleBiasText).toBeObservable();
+            });
+
+            it("starts empty", function () {
+                expect(vm.sampleBiasText()).toBe("");
+            });
+        });
+
         describe("holds whether or not the model can be run (server response) which", function () {
             it("is an observable", function () {
                 expect(vm.canRunModel).toBeObservable();
@@ -324,6 +334,7 @@ define([
             // Arrange
             vm.lastModelRunText("a");
             vm.diseaseOccurrencesText("b");
+            vm.sampleBiasText("f");
             vm.batchEndDate("c");
             vm.batchDateMinimum("d");
             vm.batchDateMaximum("e");
@@ -338,6 +349,7 @@ define([
             // Assert
             expect(vm.lastModelRunText()).toBe("");
             expect(vm.diseaseOccurrencesText()).toBe("");
+            expect(vm.sampleBiasText()).toBe("");
             expect(vm.batchEndDate()).toBe("");
             expect(vm.batchDateMinimum()).toBe("");
             expect(vm.batchDateMaximum()).toBe("");
@@ -440,6 +452,7 @@ define([
                     var response = {
                         lastModelRunText: "a",
                         diseaseOccurrencesText: "b",
+                        sampleBiasText: "j",
                         batchStartDateDefault: "c",
                         batchEndDateDefault: "d",
                         batchDateMinimum: "e",
@@ -460,6 +473,7 @@ define([
                     // Arrange
                     expect(vm.lastModelRunText()).toBe(response.lastModelRunText);
                     expect(vm.diseaseOccurrencesText()).toBe(response.diseaseOccurrencesText);
+                    expect(vm.sampleBiasText()).toBe(response.sampleBiasText);
                     expect(vm.batchStartDate()).toBe(response.batchStartDateDefault);
                     expect(vm.batchEndDate()).toBe(response.batchEndDateDefault);
                     expect(vm.batchDateMinimum()).toBe(response.batchDateMinimum);

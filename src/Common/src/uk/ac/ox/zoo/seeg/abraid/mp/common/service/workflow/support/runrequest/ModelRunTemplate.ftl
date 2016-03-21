@@ -36,8 +36,8 @@ attempt_model_run <- function() {
     # Define disease extent data
     extent_path <- "data/extent.tif"
 
-    # Define supplementary occurrence data
-    supplementary_occurrence_path <- "data/supplementary_occurrences.csv"
+    # Define bias occurrence data
+    sample_bias_path <- "data/sample_bias.csv"
 
     # Define covariates to use.
     # If you would like to use these covariate files please contact abraid@zoo.ox.ac.uk, as we cannot release them in all circumstances.
@@ -188,7 +188,7 @@ attempt_model_run <- function() {
             disease,
             occurrence_path,
             extent_path,
-            supplementary_occurrence_path,
+            sample_bias_path,
             admin_paths,
             covariate_paths,
             covariate_factors,

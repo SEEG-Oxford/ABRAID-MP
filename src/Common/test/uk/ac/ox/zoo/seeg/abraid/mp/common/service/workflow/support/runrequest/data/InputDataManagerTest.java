@@ -52,7 +52,7 @@ public class InputDataManagerTest {
     }
 
     @Test
-    public void writeOccurrenceDataCallsOccurrenceDataWriterWithCorrectSupplementaryTargetFile() throws Exception {
+    public void writeOccurrenceDataCallsOccurrenceDataWriterWithCorrectBiasTargetFile() throws Exception {
         // Arrange
         OccurrenceDataWriter mockOccurrenceWriter = mock(OccurrenceDataWriter.class);
         InputDataManager target = new InputDataManagerImpl(mock(ExtentDataWriter.class), mockOccurrenceWriter);
@@ -62,11 +62,11 @@ public class InputDataManagerTest {
         target.writeOccurrenceData(new ArrayList<DiseaseOccurrence>(), dataDir, true);
 
         // Assert
-        verify(mockOccurrenceWriter).write(anyListOf(DiseaseOccurrence.class), eq(Paths.get(dataDir.toString(), "supplementary_occurrences.csv").toFile()), eq(false));
+        verify(mockOccurrenceWriter).write(anyListOf(DiseaseOccurrence.class), eq(Paths.get(dataDir.toString(), "sample_bias.csv").toFile()), eq(false));
     }
 
     @Test
-    public void writeOccurrenceDataCallsOccurrenceDataWriterWithCorrectSupplementaryData() throws Exception {
+    public void writeOccurrenceDataCallsOccurrenceDataWriterWithCorrectBiasData() throws Exception {
         // Arrange
         OccurrenceDataWriter mockOccurrenceWriter = mock(OccurrenceDataWriter.class);
         InputDataManager target = new InputDataManagerImpl(mock(ExtentDataWriter.class), mockOccurrenceWriter);

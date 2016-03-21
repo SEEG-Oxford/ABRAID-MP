@@ -47,7 +47,7 @@ public class ModelRunRequester {
                              ModelRunPackageBuilder modelRunPackageBuilder,
                              CovariateService covariateService,
                              DiseaseService diseaseService, ModelRunService modelRunService,
-                             String[] modelWrapperUrlCollection) {
+                             List<String> modelWrapperUrlCollection) {
         this.modelWrapperWebService = modelWrapperWebService;
         this.modelRunPackageBuilder = modelRunPackageBuilder;
         this.diseaseService = diseaseService;
@@ -84,8 +84,13 @@ public class ModelRunRequester {
             String covariateDirectory = covariateService.getCovariateDirectory();
             DateTime startDate = min(occurrencesForModelRun, on(DiseaseOccurrence.class).getOccurrenceDate());
             DateTime endDate = max(occurrencesForModelRun, on(DiseaseOccurrence.class).getOccurrenceDate());
-            List<DiseaseOccurrence> supplementaryOccurrences =
-                    diseaseService.getSupplementaryOccurrencesForModelRun(diseaseGroupId, startDate, endDate);
+
+            List<DiseaseOccurrence> biasOccurrences = null;
+            if (diseaseService.modelModeRequiresBiasDataForDisease(diseaseGroup)) {
+                biasOccurrences = (diseaseService.getCountOfUnfilteredBespokeBiasOccurrences(diseaseGroup) != 0) ?
+                        diseaseService.getBespokeBiasOccurrencesForModelRun(diseaseGroup, startDate, endDate) :
+                        diseaseService.getDefaultBiasOccurrencesForModelRun(diseaseGroup, startDate, endDate);
+            }
 
             // Pick a blade
             URI modelWrapperUrl = selectLeastBusyModelWrapperUrl();
@@ -95,7 +100,7 @@ public class ModelRunRequester {
                 // Build the work package
                 String name = buildRunName(diseaseGroup.getAbbreviation());
                 runPackage = modelRunPackageBuilder.buildPackage(name, diseaseGroup, occurrencesForModelRun,
-                        diseaseExtent, supplementaryOccurrences, covariateFiles, covariateDirectory);
+                        diseaseExtent, biasOccurrences, covariateFiles, covariateDirectory);
 
                 // Submit the run
                 logRequest(diseaseGroup, occurrencesForModelRun);

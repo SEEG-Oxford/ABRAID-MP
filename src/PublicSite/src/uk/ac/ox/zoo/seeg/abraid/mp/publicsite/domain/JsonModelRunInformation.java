@@ -15,6 +15,7 @@ public class JsonModelRunInformation {
     private String batchStartDateDefault;
     private String batchEndDateDefault;
     private boolean hasGoldStandardOccurrences;
+    private String sampleBiasText;
 
     public String getLastModelRunText() {
         return lastModelRunText;
@@ -30,6 +31,14 @@ public class JsonModelRunInformation {
 
     public void setDiseaseOccurrencesText(String diseaseOccurrencesText) {
         this.diseaseOccurrencesText = diseaseOccurrencesText;
+    }
+
+    public String getSampleBiasText() {
+        return sampleBiasText;
+    }
+
+    public void setSampleBiasText(String sampleBiasText) {
+        this.sampleBiasText = sampleBiasText;
     }
 
     // The strange method name is necessary for JSON serialization to include this field

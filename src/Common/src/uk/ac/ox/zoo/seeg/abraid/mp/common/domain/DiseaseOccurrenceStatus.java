@@ -29,5 +29,9 @@ public enum DiseaseOccurrenceStatus {
     /**
      * The occurrence has not yet become part of a batch during disease group set-up.
      */
-    AWAITING_BATCHING
+    AWAITING_BATCHING,
+    /**
+     * The occurrence should only be used for sample bias modelling data sets.
+     */
+    BIAS
 }

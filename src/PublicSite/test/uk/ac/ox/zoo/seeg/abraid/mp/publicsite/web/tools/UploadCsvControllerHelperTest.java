@@ -6,7 +6,10 @@ import org.joda.time.DateTimeUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InOrder;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.config.SmtpConfiguration;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailServiceImpl;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.EmailFactory;
@@ -27,6 +30,7 @@ import static org.mockito.Mockito.*;
 public class UploadCsvControllerHelperTest {
     private DataAcquisitionService dataAcquisitionService;
     private EmailService emailService;
+    private DiseaseService diseaseService;
     private Email email;
     private UploadCsvControllerHelper helper;
 
@@ -36,7 +40,8 @@ public class UploadCsvControllerHelperTest {
     public void setUp() throws Exception {
         dataAcquisitionService = mock(DataAcquisitionService.class);
         emailService = createEmailService();
-        helper = new UploadCsvControllerHelper(dataAcquisitionService, emailService);
+        diseaseService = mock(DiseaseService.class);
+        helper = new UploadCsvControllerHelper(dataAcquisitionService, diseaseService, emailService);
 
         DateTimeUtils.setCurrentMillisFixed(DateTime.now().getMillis());
     }
@@ -54,7 +59,10 @@ public class UploadCsvControllerHelperTest {
     public void acquireCsvDataSendsCorrectEmail() throws Exception {
         // Arrange
         byte[] csv = "Test csv".getBytes();
+        boolean isBias = false;
         boolean isGoldStandard = false;
+        DiseaseGroup biasDisease = mock(DiseaseGroup.class);
+        when(biasDisease.getName()).thenReturn("name");
         String userEmailAddress = "user@email.com";
         String filePath = "/path/to/test.csv";
 
@@ -67,10 +75,10 @@ public class UploadCsvControllerHelperTest {
                 "Found 10 CSV file line(s) to convert.",
                 "Saved 10 disease occurrence(s) in 8 location(s) (of which 7 location(s) passed QC)."
         );
-        when(dataAcquisitionService.acquireCsvData(csv, isGoldStandard)).thenReturn(messages);
+        when(dataAcquisitionService.acquireCsvData(csv, isBias, isGoldStandard, biasDisease)).thenReturn(messages);
 
         // Act
-        helper.acquireCsvData(csv, isGoldStandard, userEmailAddress, filePath);
+        helper.acquireCsvData(csv, isBias, isGoldStandard, biasDisease, userEmailAddress, filePath);
 
         // Assert
         String nowString = DateTimeFormat.longDateTime().print(DateTime.now());
@@ -78,10 +86,88 @@ public class UploadCsvControllerHelperTest {
                 "Here are the results of the CSV upload that you submitted.\n" +
                 "\n" +
                 "File: \"/path/to/test.csv\".\n" +
+                "Gold standard: No\n" +
                 "Submitted on: " + nowString + ".\n" +
                 "Completed on: " + nowString + ".\n" +
                 "\n" + expectedEmailEnd)));
         verify(email).setSubject(eq(expectedSubject));
         verify(email).addTo(eq(userEmailAddress));
+    }
+
+    @Test
+    public void acquireCsvDataSendsCorrectBiasEmail() throws Exception {
+        // Arrange
+        byte[] csv = "Test csv".getBytes();
+        boolean isBias = true;
+        boolean isGoldStandard = false;
+        DiseaseGroup biasDisease = mock(DiseaseGroup.class);
+        when(biasDisease.getName()).thenReturn("name");
+        String userEmailAddress = "user@email.com";
+        String filePath = "/path/to/test.csv";
+
+        String expectedSubject = "CSV upload results";
+        String expectedEmailEnd =
+                "Found 10 CSV file line(s) to convert.\n" +
+                        "Saved 10 disease occurrence(s) in 8 location(s) (of which 7 location(s) passed QC).\n";
+
+        List<String> messages = Arrays.asList(
+                "Found 10 CSV file line(s) to convert.",
+                "Saved 10 disease occurrence(s) in 8 location(s) (of which 7 location(s) passed QC)."
+        );
+        when(dataAcquisitionService.acquireCsvData(csv, isBias, isGoldStandard, biasDisease)).thenReturn(messages);
+
+        // Act
+        helper.acquireCsvData(csv, isBias, isGoldStandard, biasDisease, userEmailAddress, filePath);
+
+        // Assert
+        String nowString = DateTimeFormat.longDateTime().print(DateTime.now());
+        verify(email).setMsg(argThat(equalToIgnoringWhiteSpace(
+                "Here are the results of the CSV upload that you submitted.\n" +
+                        "\n" +
+                        "File: \"/path/to/test.csv\".\n" +
+                        "Background dataset for: name\n" +
+                        "Submitted on: " + nowString + ".\n" +
+                        "Completed on: " + nowString + ".\n" +
+                        "\n" + expectedEmailEnd)));
+        verify(email).setSubject(eq(expectedSubject));
+        verify(email).addTo(eq(userEmailAddress));
+    }
+
+    @Test
+    public void acquireCsvDataHandlesNonBiasCorrectly() throws Exception {
+        // Act
+        byte[] csv = "Test csv".getBytes();
+        boolean isBias = false;
+        boolean isGoldStandard = false;
+        DiseaseGroup biasDisease = mock(DiseaseGroup.class);
+        when(biasDisease.getId()).thenReturn(1);
+
+        // Act
+        helper.acquireCsvData(csv, isBias, isGoldStandard, biasDisease, "a@b.c", "foo");
+
+        // Assert
+        InOrder order = inOrder(dataAcquisitionService, diseaseService);
+        order.verify(diseaseService, never()).deleteBiasDiseaseOccurrencesForDisease(biasDisease);
+        order.verify(dataAcquisitionService).acquireCsvData(csv, isBias, isGoldStandard, biasDisease);
+        order.verifyNoMoreInteractions();
+    }
+
+    @Test
+    public void acquireCsvDataHandlesBiasCorrectly() throws Exception {
+        // Act
+        byte[] csv = "Test csv".getBytes();
+        boolean isBias = true;
+        boolean isGoldStandard = false;
+        DiseaseGroup biasDisease = mock(DiseaseGroup.class);
+        when(biasDisease.getId()).thenReturn(1);
+
+        // Act
+        helper.acquireCsvData(csv, isBias, isGoldStandard, biasDisease, "a@b.c", "foo");
+
+        // Assert
+        InOrder order = inOrder(dataAcquisitionService, diseaseService);
+        order.verify(diseaseService).deleteBiasDiseaseOccurrencesForDisease(biasDisease);
+        order.verify(dataAcquisitionService).acquireCsvData(csv, isBias, isGoldStandard, biasDisease);
+        order.verifyNoMoreInteractions();
     }
 }

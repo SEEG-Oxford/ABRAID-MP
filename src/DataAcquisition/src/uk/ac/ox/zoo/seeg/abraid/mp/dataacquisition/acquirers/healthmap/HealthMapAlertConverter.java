@@ -1,5 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap;
 
+import ch.lambdaj.Lambda;
+import ch.lambdaj.function.convert.Converter;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.log4j.Logger;
 import org.springframework.util.ObjectUtils;
@@ -8,7 +10,6 @@ import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.AlertService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.EmailService;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.HealthMapService;
-import uk.ac.ox.zoo.seeg.abraid.mp.common.util.ParseUtils;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.healthmap.domain.HealthMapAlert;
 
 import java.util.*;
@@ -49,18 +50,17 @@ public class HealthMapAlertConverter {
 
     public HealthMapAlertConverter(AlertService alertService, EmailService emailService,
                                    HealthMapLookupData lookupData, HealthMapService healthMapService,
-                                   String placeCategoriesToIgnore) {
+                                   List<String> placeCategoriesToIgnore) {
         this.alertService = alertService;
         this.emailService = emailService;
         this.lookupData = lookupData;
         this.healthMapService = healthMapService;
-
-        // This comes in as a comma-separated list, so split it and make it lowercase (for case-insensitive comparison)
-        if (placeCategoriesToIgnore != null) {
-            this.placeCategoriesToIgnore = ParseUtils.splitCommaDelimitedString(placeCategoriesToIgnore.toLowerCase());
-        } else {
-            this.placeCategoriesToIgnore = null;
-        }
+        this.placeCategoriesToIgnore = Lambda.convert(placeCategoriesToIgnore, new Converter<String, String>() {
+            @Override
+            public String convert(String place) {
+                return place.toLowerCase();
+            }
+        });
     }
 
     /**

@@ -100,8 +100,8 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
     }
 
     /**
-     * Get disease occurrences that match the specified disease group, location, alert and occurrence start date.
-     * Used to check for the existence of a disease occurrence.
+     * Get disease occurrences (excluding bias occurrences) that match the specified disease group, location, alert
+     * and occurrence start date. Used to check for the existence of a disease occurrence.
      * @param diseaseGroup The disease group.
      * @param location The location.
      * @param alert The alert.
@@ -311,16 +311,94 @@ public class DiseaseOccurrenceDaoImpl extends AbstractDao<DiseaseOccurrence, Int
     }
 
     /**
-     * Gets the supplementary occurrences that are should be used with a model run (for sample bias).
-     * @param diseaseGroupId The disease group ID being modelled (will be excluded from supplementary set).
-     * @param startDate The start date of the model run input data range.
-     * @param endDate The end date  of the model run input data range.
-     * @return The supplementary occurrences.
+     * Gets the number of bespoke bias occurrences that have been uploaded for use with a specified diseases group,
+     * regardless of suitability.
+     * @param diseaseGroup The disease group being modelled.
+     * @return The number of bias occurrences.
      */
     @Override
-    public List<DiseaseOccurrence> getSupplementaryOccurrencesForModelRun(
-            int diseaseGroupId, DateTime startDate, DateTime endDate) {
-       return listNamedQuery("getSupplementaryOccurrencesForModelRun", "diseaseGroupId",
-                diseaseGroupId, "startDate", startDate, "endDate", endDate);
+    public long getCountOfUnfilteredBespokeBiasOccurrences(DiseaseGroup diseaseGroup) {
+        return  (long) getParameterisedNamedQuery("getCountOfUnfilteredBespokeBiasOccurrences",
+                "diseaseGroupId", diseaseGroup.getId()).uniqueResult();
+    }
+
+
+    /**
+     * Gets an estimate of number of bespoke bias occurrences that have been uploaded for use with a specified diseases
+     * group, which are suitable for use in a model. This is only an estimate as the occurrence date filter that is
+     * applied during model runs is not applied.
+     * @param diseaseGroup The disease group being modelled.
+     * @return The number of bias occurrences.
+     */
+    @Override
+    public long getEstimateCountOfFilteredBespokeBiasOccurrences(DiseaseGroup diseaseGroup) {
+        return (long) getParameterisedNamedQuery("getEstimateCountOfFilteredBespokeBiasOccurrences",
+                "diseaseGroupId", diseaseGroup.getId(),
+                "isGlobal", diseaseGroup.isGlobal()
+        ).uniqueResult();
+    }
+
+    /**
+     * Gets the estimate of number of occurrences that are available for use as a default/fallback bias set for a
+     * specified disease group, which are suitable for use in a model. This is only an estimate as the occurrence date
+     * filter that is applied during model runs is not applied.
+     * @param diseaseGroup The disease group being modelled.
+     * @return The number of bias occurrences.
+     */
+    @Override
+    public long getEstimateCountOfFilteredDefaultBiasOccurrences(DiseaseGroup diseaseGroup) {
+        return (long) getParameterisedNamedQuery("getEstimateCountOfFilteredDefaultBiasOccurrences",
+                "diseaseGroupId", diseaseGroup.getId(),
+                "isGlobal", diseaseGroup.isGlobal(),
+                "shouldFilterBiasDataByAgentType", diseaseGroup.shouldFilterBiasDataByAgentType(),
+                "agentType", diseaseGroup.getAgentType()
+        ).uniqueResult();
+    }
+
+    /**
+     * Gets the bespoke bias occurrences that are should be used with a model run (for sample bias).
+     * @param diseaseGroup The disease group being modelled.
+     * @param startDate The start date of the model run input data range.
+     * @param endDate The end date  of the model run input data range.
+     * @return The bias occurrences.
+     */
+    @Override
+    public List<DiseaseOccurrence> getBespokeBiasOccurrencesForModelRun(
+            DiseaseGroup diseaseGroup, DateTime startDate, DateTime endDate) {
+        return listNamedQuery("getBespokeBiasOccurrencesForModelRun",
+                "diseaseGroupId", diseaseGroup.getId(),
+                "isGlobal", diseaseGroup.isGlobal(),
+                "startDate", startDate,
+                "endDate", endDate);
+    }
+
+    /**
+     * Gets the default/fallback bias occurrences that are should be used with a model run (for sample bias).
+     * This should be used when a bespoke dataset hasn't been provided.
+     * @param diseaseGroup The disease group being modelled (will be excluded from bias set).
+     * @param startDate The start date of the model run input data range.
+     * @param endDate The end date  of the model run input data range.
+     * @return The bias occurrences.
+     */
+    @Override
+    public List<DiseaseOccurrence> getDefaultBiasOccurrencesForModelRun(
+            DiseaseGroup diseaseGroup, DateTime startDate, DateTime endDate) {
+       return listNamedQuery("getDefaultBiasOccurrencesForModelRun",
+               "diseaseGroupId", diseaseGroup.getId(),
+               "isGlobal", diseaseGroup.isGlobal(),
+               "shouldFilterBiasDataByAgentType", diseaseGroup.shouldFilterBiasDataByAgentType(),
+               "agentType", diseaseGroup.getAgentType(),
+               "startDate", startDate,
+               "endDate", endDate);
+    }
+
+    /**
+     * Delete all of the occurrence that are labelled as bias for the specified disease group.
+     * @param diseaseGroupId Disease group for which to remove the bias points
+     *                       (i.e. bias_disease_group_id, not disease_group_id).
+     */
+    @Override
+    public void deleteDiseaseOccurrencesByBiasDiseaseId(int diseaseGroupId) {
+        noResultNamedQuery("deleteDiseaseOccurrencesByBiasDiseaseId", "diseaseGroupId", diseaseGroupId);
     }
 }

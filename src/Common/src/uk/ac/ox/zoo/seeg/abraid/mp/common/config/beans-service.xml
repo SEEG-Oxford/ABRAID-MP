@@ -8,9 +8,11 @@
        xsi:schemaLocation="
          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="modelWrapperUrls" class="org.springframework.util.StringUtils" factory-method="tokenizeToStringArray">
-        <constructor-arg type="java.lang.String" value="${model.wrapper.instance.list}"/>
-        <constructor-arg type="java.lang.String" value=" "/>
+    <!-- Config -->
+    <bean id="modellingConfiguration" class="uk.ac.ox.zoo.seeg.abraid.mp.common.config.ModellingConfiguration">
+        <constructor-arg name="maxCPUs" value="${model.max.cpu}"/>
+        <constructor-arg name="dryRun" value="${model.dry.run}"/>
+        <constructor-arg name="verbose" value="${model.verbose}"/>
     </bean>
 
     <!-- Core services -->
@@ -20,6 +22,11 @@
     </bean>
     <bean id="diseaseService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.DiseaseServiceImpl" autowire="constructor">
         <constructor-arg name="maxDaysOnValidator" value="${max.days.for.occurrences.on.validator}" />
+        <constructor-arg name="biasModelModes">
+            <bean class="uk.ac.ox.zoo.seeg.abraid.mp.common.util.ParseUtils" factory-method="splitSpaceDelimitedString">
+                <constructor-arg name="text" type="java.lang.String" value="${model.modes.using.bias.data}"/>
+            </bean>
+        </constructor-arg>
     </bean>
     <bean id="expertService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ExpertServiceImpl" autowire="constructor"/>
     <bean id="locationService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.LocationServiceImpl" autowire="constructor"/>
@@ -30,20 +37,8 @@
     <bean id="validationParameterCacheService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.core.ValidationParameterCacheServiceImpl" autowire="constructor"/>
     <import resource="classpath:uk/ac/ox/zoo/seeg/abraid/mp/common/config/beans-email-service.xml"/>
 
-    <!-- Config -->
     <bean id="configurationService" class="uk.ac.ox.zoo.seeg.abraid.mp.common.config.ConfigurationServiceImpl">
         <constructor-arg name="basicProperties" value="${application.managed.properties.file}" />
-    </bean>
-
-    <bean id="gaulsToAdjust" class="org.springframework.util.StringUtils" factory-method="tokenizeToStringArray">
-        <constructor-arg type="java.lang.String" value="${gaul.codes.to.model.as.precise}"/>
-        <constructor-arg type="java.lang.String" value=" "/>
-    </bean>
-
-    <bean id="modellingConfiguration" class="uk.ac.ox.zoo.seeg.abraid.mp.common.config.ModellingConfiguration">
-        <constructor-arg name="maxCPUs" value="${model.max.cpu}"/>
-        <constructor-arg name="dryRun" value="${model.dry.run}"/>
-        <constructor-arg name="verbose" value="${model.verbose}"/>
     </bean>
 
     <!-- Business workflow services -->
@@ -65,7 +60,11 @@
         <constructor-arg name="expertWeightingThreshold" value="${expert.weighting.threshold}" />
     </bean>
     <bean id="modelRunRequester" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.runrequest.ModelRunRequester" autowire="constructor">
-        <constructor-arg name="modelWrapperUrlCollection" ref="modelWrapperUrls" />
+        <constructor-arg name="modelWrapperUrlCollection">
+            <bean class="uk.ac.ox.zoo.seeg.abraid.mp.common.util.ParseUtils" factory-method="splitSpaceDelimitedString">
+                <constructor-arg name="text" type="java.lang.String" value="${model.wrapper.instance.list}"/>
+            </bean>
+        </constructor-arg>
     </bean>
     <bean id="modelRunPackageBuilder" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.runrequest.ModelRunPackageBuilder" autowire="constructor"/>
     <bean id="scriptGenerator" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.runrequest.FreemarkerScriptGenerator" />
@@ -76,7 +75,11 @@
     <bean id="extentDataWriter" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.runrequest.data.ExtentDataWriterImpl" />
     <bean id="inputDataManager" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.runrequest.data.InputDataManagerImpl" autowire="constructor" />
     <bean id="modellingLocationPrecisionAdjuster" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.ModellingLocationPrecisionAdjuster" autowire="constructor" >
-        <constructor-arg name="gaulsToAdjust" ref="gaulsToAdjust" />
+        <constructor-arg name="gaulsToAdjust">
+            <bean class="uk.ac.ox.zoo.seeg.abraid.mp.common.util.ParseUtils" factory-method="splitSpaceDelimitedString">
+                <constructor-arg name="text" type="java.lang.String" value="${gaul.codes.to.model.as.precise}"/>
+            </bean>
+        </constructor-arg>
     </bean>
     <bean id="environmentalSuitabilityHelper" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.EnvironmentalSuitabilityHelper" autowire="constructor"/>
     <bean id="distanceFromDiseaseExtentHelper" class="uk.ac.ox.zoo.seeg.abraid.mp.common.service.workflow.support.DistanceFromDiseaseExtentHelper" autowire="constructor"/>

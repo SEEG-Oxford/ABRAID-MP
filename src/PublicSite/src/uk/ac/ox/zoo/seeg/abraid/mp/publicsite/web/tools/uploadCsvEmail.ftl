@@ -5,6 +5,7 @@
 Here are the results of the CSV upload that you submitted.
 
 File: "${filePath}".
+${detail}
 Submitted on: ${submissionDate?string.long}.
 Completed on: ${completionDate?string.long}.
 

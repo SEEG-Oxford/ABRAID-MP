@@ -33,7 +33,7 @@ public class HealthMapAlertConverterTest {
     private AlertService alertService;
     private HealthMapService healthMapService;
     private EmailService emailService;
-    private String placeCategoriesToIgnore;
+    private List<String> placeCategoriesToIgnore;
 
     @Before
     public void setUp() {
@@ -46,7 +46,7 @@ public class HealthMapAlertConverterTest {
         alertService = mock(AlertService.class);
         healthMapService = mock(HealthMapService.class);
         emailService = mock(EmailService.class);
-        placeCategoriesToIgnore = "imported case";
+        placeCategoriesToIgnore = Arrays.asList("imported case");
 
         alertConverter = new HealthMapAlertConverter(alertService, emailService, lookupData, healthMapService,
                 placeCategoriesToIgnore);

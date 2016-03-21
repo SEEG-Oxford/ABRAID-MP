@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kubek2k.springockito.annotations.ReplaceWithMock;
 import org.springframework.beans.factory.annotation.Autowired;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseGroupDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.dao.DiseaseOccurrenceDao;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.*;
 import uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.AbstractDataAcquisitionSpringIntegrationTests;
@@ -43,6 +44,9 @@ public class CsvDataAcquirerIntegrationTest extends AbstractDataAcquisitionSprin
     @Autowired
     private DiseaseOccurrenceDao diseaseOccurrenceDao;
 
+    @Autowired
+    private DiseaseGroupDao diseaseGroupDao;
+
     @Before
     public void setup() {
         // Sun, 27 Apr 2014 09:45:41
@@ -52,16 +56,24 @@ public class CsvDataAcquirerIntegrationTest extends AbstractDataAcquisitionSprin
 
     @Test
     public void acquireIsSuccessful() {
-        List<DiseaseOccurrence> occurrences = acquire(false);
+        List<DiseaseOccurrence> occurrences = acquire(false, false, null);
         assertNormalValidationParameters(occurrences.get(0));
         assertNormalValidationParameters(occurrences.get(1));
     }
 
     @Test
     public void acquireGoldStandardIsSuccessful() {
-        List<DiseaseOccurrence> occurrences = acquire(true);
+        List<DiseaseOccurrence> occurrences = acquire(false, true, null);
         assertGoldStandardValidationParameters(occurrences.get(0));
         assertGoldStandardValidationParameters(occurrences.get(1));
+    }
+
+    @Test
+    public void acquireBiasIsSuccessful() {
+        DiseaseGroup disease = diseaseGroupDao.getById(87);
+        List<DiseaseOccurrence> occurrences = acquire(true, false, disease);
+        assertBiasParameters(occurrences.get(0), disease);
+        assertBiasParameters(occurrences.get(1), disease);
     }
 
     @Test
@@ -70,7 +82,7 @@ public class CsvDataAcquirerIntegrationTest extends AbstractDataAcquisitionSprin
         byte[] csv = FileUtils.readFileToByteArray(new File(TEST_FOLDER, TEST_ISO_8859_1_FILE));
 
         // Act
-        List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv, false);
+        List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv, false, false, null);
 
         // Assert
         assertThat(messages).hasSize(3);
@@ -89,7 +101,7 @@ public class CsvDataAcquirerIntegrationTest extends AbstractDataAcquisitionSprin
         byte[] csv = csvString.getBytes();
 
         // Act
-        List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv, false);
+        List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv, false, false, null);
 
         // Assert
         assertThat(messages).hasSize(4);
@@ -104,6 +116,7 @@ public class CsvDataAcquirerIntegrationTest extends AbstractDataAcquisitionSprin
         assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNull();
         assertThat(occurrence.getFinalWeighting()).isNull();
         assertThat(occurrence.getAlert().getFeed().getProvenance().getName()).isEqualTo("Manual dataset");
+        assertThat(occurrence.getBiasDisease()).isNull();
     }
 
     private void assertGoldStandardValidationParameters(DiseaseOccurrence occurrence) {
@@ -111,12 +124,21 @@ public class CsvDataAcquirerIntegrationTest extends AbstractDataAcquisitionSprin
         assertThat(occurrence.getFinalWeightingExcludingSpatial()).isEqualTo(1.0);
         assertThat(occurrence.getFinalWeighting()).isEqualTo(1.0);
         assertThat(occurrence.getAlert().getFeed().getProvenance().getName()).isEqualTo("Manual gold standard dataset");
+        assertThat(occurrence.getBiasDisease()).isNull();
     }
 
-    private List<DiseaseOccurrence> acquire(boolean isGoldStandard) {
+    private void assertBiasParameters(DiseaseOccurrence occurrence, DiseaseGroup biasDisease) {
+        assertThat(occurrence.getStatus()).isEqualTo(DiseaseOccurrenceStatus.BIAS);
+        assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNull();
+        assertThat(occurrence.getFinalWeighting()).isNull();
+        assertThat(occurrence.getAlert().getFeed().getProvenance().getName()).isEqualTo("Manual dataset");
+        assertThat(occurrence.getBiasDisease()).isEqualTo(biasDisease);
+    }
+
+    private List<DiseaseOccurrence> acquire(boolean isBias, boolean isGoldStandard, DiseaseGroup biasDisease) {
         String csvString = CSV_HEADER + CSV_OCCURRENCE1 + CSV_OCCURRENCE2;
         byte[] csv = csvString.getBytes();
-        List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv, isGoldStandard);
+        List<String> messages = csvDataAcquirer.acquireDataFromCsv(csv, isBias, isGoldStandard, biasDisease);
         assertThat(messages).hasSize(2);
         assertThat(messages.get(0)).isEqualTo("Found 2 CSV file line(s) to convert.");
         assertThat(messages.get(1)).isEqualTo(

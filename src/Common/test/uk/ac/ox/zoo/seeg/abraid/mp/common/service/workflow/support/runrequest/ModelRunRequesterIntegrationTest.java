@@ -106,8 +106,8 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
 
     @Before
     public void before() throws Exception {
-        when(configurationService.getModelRepositoryUrl()).thenReturn("https://github.com/laurence-hudson-tessella/seegSDM.git");
-        when(configurationService.getModelRepositoryVersion()).thenReturn("0.1-7");
+        when(configurationService.getModelRepositoryUrl()).thenReturn("https://github.com/SEEG-Oxford/seegSDM.git");
+        when(configurationService.getModelRepositoryVersion()).thenReturn("0.1-9");
         gitSourceCodeManager.updateRepository();
         when(rasterFilePathFactory.getAdminRaster(0)).thenReturn(new File(DATA_DIR + "admin/a0.tif"));
         when(rasterFilePathFactory.getAdminRaster(1)).thenReturn(new File(DATA_DIR + "admin/a1.tif"));
@@ -157,7 +157,7 @@ public class ModelRunRequesterIntegrationTest extends AbstractCommonSpringIntegr
         DiseaseGroup diseaseGroup = diseaseService.getDiseaseGroupById(diseaseGroupId);
         diseaseGroup.setMinDataVolume(27);
         diseaseGroup.setOccursInAfrica(null);
-        diseaseGroup.setModelMode("bhatt");
+        diseaseGroup.setModelMode("Bhatt2013");
         List<CovariateFile> covariateFiles = Arrays.asList(
                 createMockCovariateFile("a"),
                 createMockCovariateFile("b"),

@@ -1,6 +1,7 @@
 package uk.ac.ox.zoo.seeg.abraid.mp.publicsite.web.admin;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -131,6 +132,16 @@ public class AdminDiseaseGroupController extends AbstractController {
         List<DiseaseOccurrence> goldStandardOccurrences = diseaseService.getDiseaseOccurrencesForModelRunRequest(
                 diseaseGroupId, true);
 
+        boolean useBias = diseaseService.modelModeRequiresBiasDataForDisease(diseaseGroup);
+        long bespokeBiasCount = 0;
+        long usableBiasEstimate = 0;
+        if (useBias) {
+            bespokeBiasCount = diseaseService.getCountOfUnfilteredBespokeBiasOccurrences(diseaseGroup);
+            usableBiasEstimate = bespokeBiasCount == 0 ?
+                    diseaseService.getEstimateCountOfFilteredDefaultBiasOccurrences(diseaseGroup) :
+                    diseaseService.getEstimateCountOfFilteredBespokeBiasOccurrences(diseaseGroup);
+        }
+
         JsonModelRunInformation info = new JsonModelRunInformationBuilder()
                 .populateLastModelRunText(lastRequestedModelRun)
                 .populateHasModelBeenSuccessfullyRun(lastCompletedModelRun)
@@ -138,6 +149,7 @@ public class AdminDiseaseGroupController extends AbstractController {
                 .populateCanRunModelWithReason(diseaseGroup)
                 .populateBatchDateParameters(lastCompletedModelRun, statistics)
                 .populateHasGoldStandardOccurrences(goldStandardOccurrences)
+                .populateBiasMessage(useBias, bespokeBiasCount, usableBiasEstimate)
                 .get();
 
         return new ResponseEntity<>(info, HttpStatus.OK);
@@ -342,7 +354,9 @@ public class AdminDiseaseGroupController extends AbstractController {
         diseaseGroup.setShortName(settings.getShortName());
         diseaseGroup.setAbbreviation(settings.getAbbreviation());
         diseaseGroup.setGroupType(DiseaseGroupType.valueOf(settings.getGroupType()));
+        diseaseGroup.setAgentType(parseAgentType(settings.getAgentType()));
         diseaseGroup.setGlobal(settings.getIsGlobal());
+        diseaseGroup.setFilterBiasDataByAgentType(settings.getFilterBiasDataByAgentType());
         diseaseGroup.setModelMode(settings.getModelMode());
         diseaseGroup.setMaxDaysBetweenModelRuns(settings.getMaxDaysBetweenModelRuns());
         diseaseGroup.setMinNewLocationsTrigger(settings.getMinNewLocations());
@@ -364,6 +378,10 @@ public class AdminDiseaseGroupController extends AbstractController {
         } else {
             return false;
         }
+    }
+
+    private DiseaseGroupAgentType parseAgentType(String agentType) {
+        return StringUtils.isEmpty(agentType) ? null : DiseaseGroupAgentType.valueOf(agentType);
     }
 
     private boolean setParentDiseaseGroup(DiseaseGroup diseaseGroup, JsonDiseaseGroup settings) {

@@ -27,6 +27,8 @@ define([], function () {
             groupType: diseaseGroupSettingsViewModel.selectedType(),
             isGlobal: diseaseGroupSettingsViewModel.isGlobal(),
             modelMode: modelRunParametersViewModel.modelMode(),
+            agentType: modelRunParametersViewModel.agentType(),
+            filterBiasDataByAgentType: modelRunParametersViewModel.filterBiasDataByAgentType(),
             parentDiseaseGroup: { id: getId(diseaseGroupSettingsViewModel.selectedParentDiseaseGroup()) },
             validatorDiseaseGroup: { id: getId(diseaseGroupSettingsViewModel.selectedValidatorDiseaseGroup()) },
             maxDaysBetweenModelRuns:  parseInteger(modelRunParametersViewModel.maxDaysBetweenModelRuns()),

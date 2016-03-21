@@ -42,6 +42,18 @@
                 <div class="form-horizontal">
                     SDM:<br>
                     <@formGroup id="model-mode" title="Model Mode" bind="formValue: modelMode"></@formGroup>
+                    <div class="form-group">
+                        <label for="agent-type" class="col-sm-6 control-label">Agent Type</label>
+                        <div class="input-group col-sm-6">
+                            <select class="form-control" id="agent-type" data-bind="options: agentTypes, value: agentType, optionsCaption:'Select one...', bootstrapDisable: find('isSubmitting')"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="filter-bias-data" class="col-sm-8 control-label">Filter Background Data By Agent Type</label>
+                        <div class="col-sm-4">
+                            <input type="checkbox" id="filter-bias-data" data-bind="formChecked: filterBiasDataByAgentType">
+                        </div>
+                    </div>
                     Minimum Data Volume and Minimum Data Spread:
                     <br>
                     <@formGroup id="min-data-volume" title="Min. Data Volume" bind="formValue: minDataVolume"></@formGroup>

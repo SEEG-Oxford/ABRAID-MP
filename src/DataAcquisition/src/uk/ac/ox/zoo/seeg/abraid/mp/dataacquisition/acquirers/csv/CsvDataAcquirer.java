@@ -2,6 +2,7 @@ package uk.ac.ox.zoo.seeg.abraid.mp.dataacquisition.acquirers.csv;
 
 import org.apache.log4j.Logger;
 import org.hamcrest.core.IsEqual;
+import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseGroup;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.DiseaseOccurrence;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.domain.Location;
 import uk.ac.ox.zoo.seeg.abraid.mp.common.util.CharacterSetUtils;
@@ -53,18 +54,22 @@ public class CsvDataAcquirer {
     /**
      * Acquires data from a generic CSV file.
      * @param csv The content of the CSV file.
-     * @param isGoldStandard Whether or not this is a "gold standard" data set.
+     * @param isBias Whether or not this is a "bias" data set.
+     * @param isGoldStandard Whether or not this is a "gold standard" data set (only relevant for non-bias data sets).
+     * @param biasDisease The ID of the disease for which this is a bias data set (only relevant for bias data sets).
      * @return A list of messages resulting from the data acquisition.
      */
-    public List<String> acquireDataFromCsv(byte[] csv, boolean isGoldStandard) {
+    public List<String> acquireDataFromCsv(
+            byte[] csv, boolean isBias, boolean isGoldStandard, DiseaseGroup biasDisease) {
         List<String> messages = new ArrayList<>();
 
         List<CsvDiseaseOccurrence> csvDiseaseOccurrences = retrieveDataFromCsv(csv, messages);
         if (csvDiseaseOccurrences != null) {
             addConversionMessage(csvDiseaseOccurrences, messages);
             int initialMessageCount = messages.size();
-            Set<DiseaseOccurrence> convertedOccurrences = convert(csvDiseaseOccurrences, isGoldStandard, messages);
-            if (!isGoldStandard) {
+            Set<DiseaseOccurrence> convertedOccurrences =
+                    convert(csvDiseaseOccurrences, isBias, isGoldStandard, biasDisease, messages);
+            if (!isBias && !isGoldStandard) {
                 manualValidationEnforcer.addRandomSubsetToManualValidation(convertedOccurrences);
             }
             addCountMessage(convertedOccurrences, messages, initialMessageCount);
@@ -103,8 +108,8 @@ public class CsvDataAcquirer {
         return new String(convertedInput, StandardCharsets.UTF_8);
     }
 
-    private Set<DiseaseOccurrence> convert(List<CsvDiseaseOccurrence> csvDiseaseOccurrences, boolean isGoldStandard,
-                                            List<String> messages) {
+    private Set<DiseaseOccurrence> convert(List<CsvDiseaseOccurrence> csvDiseaseOccurrences, boolean isBias,
+                                           boolean isGoldStandard, DiseaseGroup biasDisease, List<String> messages) {
         Set<DiseaseOccurrence> convertedOccurrences = new HashSet<>();
 
         for (int i = 0; i < csvDiseaseOccurrences.size(); i++) {
@@ -112,6 +117,9 @@ public class CsvDataAcquirer {
             try {
                 // Convert the CSV disease occurrence into an ABRAID disease occurrence
                 DiseaseOccurrence occurrence = converter.convert(csvDiseaseOccurrence, isGoldStandard);
+                if (isBias) {
+                    occurrence.setBiasDisease(biasDisease);
+                }
                 // Now acquire the ABRAID disease occurrence
                 if (diseaseOccurrenceDataAcquirer.acquire(occurrence)) {
                     convertedOccurrences.add(occurrence);

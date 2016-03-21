@@ -69,8 +69,8 @@ public class AdminDiseaseGroupControllerTest {
         when(diseaseService.getAllDiseaseGroups()).thenReturn(diseaseGroups);
         when(sourceCodeManager.getSupportedModesForCurrentVersion()).thenReturn(new HashSet<String>(Arrays.asList("mode1", "mode2", "mode3")));
         String expectedJson = "[" +
-                "{\"id\":87,\"name\":\"dengue\",\"publicName\":\"dengue\",\"shortName\":\"dengue\",\"abbreviation\":\"deng\",\"groupType\":\"SINGLE\",\"maxDaysBetweenModelRuns\":6,\"isGlobal\":false,\"validatorDiseaseGroup\":{\"id\":4},\"weighting\":1.0,\"automaticModelRuns\":false,\"minDataVolume\":0,\"useMachineLearning\":true}," +
-                "{\"id\":188,\"name\":\"Leishmaniases\",\"publicName\":\"leishmaniases\",\"shortName\":\"leishmaniases\",\"abbreviation\":\"leish\",\"groupType\":\"MICROCLUSTER\",\"maxDaysBetweenModelRuns\":7,\"isGlobal\":true,\"parentDiseaseGroup\":{\"id\":5,\"name\":\"leishmaniases\"},\"validatorDiseaseGroup\":{\"id\":9},\"weighting\":0.5,\"automaticModelRuns\":false,\"minDataVolume\":0,\"useMachineLearning\":true}]";
+                "{\"id\":87,\"name\":\"dengue\",\"publicName\":\"dengue\",\"shortName\":\"dengue\",\"abbreviation\":\"deng\",\"groupType\":\"SINGLE\",\"maxDaysBetweenModelRuns\":6,\"isGlobal\":false,\"filterBiasDataByAgentType\":false,\"validatorDiseaseGroup\":{\"id\":4},\"weighting\":1.0,\"automaticModelRuns\":false,\"minDataVolume\":0,\"useMachineLearning\":true}," +
+                "{\"id\":188,\"name\":\"Leishmaniases\",\"publicName\":\"leishmaniases\",\"shortName\":\"leishmaniases\",\"abbreviation\":\"leish\",\"groupType\":\"MICROCLUSTER\",\"maxDaysBetweenModelRuns\":7,\"isGlobal\":true,\"filterBiasDataByAgentType\":false,\"parentDiseaseGroup\":{\"id\":5,\"name\":\"leishmaniases\"},\"validatorDiseaseGroup\":{\"id\":9},\"weighting\":0.5,\"automaticModelRuns\":false,\"minDataVolume\":0,\"useMachineLearning\":true}]";
 
         ValidatorDiseaseGroup validator1 = new ValidatorDiseaseGroup(3, "Japanese encephalitis");
         ValidatorDiseaseGroup validator2 = new ValidatorDiseaseGroup(2, "cholera");
@@ -89,7 +89,7 @@ public class AdminDiseaseGroupControllerTest {
     }
 
     @Test
-    public void getModelRunInformation() {
+    public void getModelRunInformationWithBespokeBias() {
         // Arrange
         int diseaseGroupId = 87;
         ModelRun lastRequestedModelRun = new ModelRun("dengue 1", createMockDiseaseGroup(87), "host", new DateTime("2014-07-02T14:15:16"), DateTime.now(), DateTime.now());
@@ -103,6 +103,12 @@ public class AdminDiseaseGroupControllerTest {
         when(diseaseService.getDiseaseOccurrenceStatistics(diseaseGroupId)).thenReturn(statistics);
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
 
+        when(diseaseService.modelModeRequiresBiasDataForDisease(diseaseGroup)).thenReturn(true);
+        when(diseaseService.getCountOfUnfilteredBespokeBiasOccurrences(diseaseGroup)).thenReturn(1L);
+        when(diseaseService.getEstimateCountOfFilteredBespokeBiasOccurrences(diseaseGroup)).thenReturn(2L);
+        when(diseaseService.getEstimateCountOfFilteredDefaultBiasOccurrences(diseaseGroup)).thenReturn(3L);
+
+
         // Act
         ResponseEntity<JsonModelRunInformation> entity = controller.getModelRunInformation(diseaseGroupId);
 
@@ -113,6 +119,75 @@ public class AdminDiseaseGroupControllerTest {
         assertThat(entity.getBody().isHasModelBeenSuccessfullyRun()).isTrue();
         assertThat(entity.getBody().isCanRunModel()).isFalse();
         assertThat(entity.getBody().getCannotRunModelReason()).isEqualTo("the public name is missing");
+        assertThat(entity.getBody().getSampleBiasText()).isEqualTo("1 bespoke background data points have been provided, approximately 2 of which are suitable.");
+    }
+
+    @Test
+    public void getModelRunInformationWithoutBespokeBias() {
+        // Arrange
+        int diseaseGroupId = 87;
+        ModelRun lastRequestedModelRun = new ModelRun("dengue 1", createMockDiseaseGroup(87), "host", new DateTime("2014-07-02T14:15:16"), DateTime.now(), DateTime.now());
+        ModelRun lastCompletedModelRun = new ModelRun();
+        DiseaseOccurrenceStatistics statistics = new DiseaseOccurrenceStatistics(0, 0, null, null);
+        DiseaseGroup diseaseGroup = new DiseaseGroup(87);
+
+        when(modelRunService.getLastRequestedModelRun(diseaseGroupId)).thenReturn(lastRequestedModelRun);
+        when(modelRunService.getMostRecentlyFinishedModelRunWhichCompleted(diseaseGroupId))
+                .thenReturn(lastCompletedModelRun);
+        when(diseaseService.getDiseaseOccurrenceStatistics(diseaseGroupId)).thenReturn(statistics);
+        when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
+
+        when(diseaseService.modelModeRequiresBiasDataForDisease(diseaseGroup)).thenReturn(true);
+        when(diseaseService.getCountOfUnfilteredBespokeBiasOccurrences(diseaseGroup)).thenReturn(0L);
+        when(diseaseService.getEstimateCountOfFilteredBespokeBiasOccurrences(diseaseGroup)).thenReturn(2L);
+        when(diseaseService.getEstimateCountOfFilteredDefaultBiasOccurrences(diseaseGroup)).thenReturn(3L);
+
+        // Act
+        ResponseEntity<JsonModelRunInformation> entity = controller.getModelRunInformation(diseaseGroupId);
+
+        // Assert
+        assertThat(entity.getStatusCode().value()).isEqualTo(200);
+        assertThat(entity.getBody().getLastModelRunText()).isEqualTo("requested on 2 Jul 2014 14:15:16");
+        assertThat(entity.getBody().getDiseaseOccurrencesText()).isEqualTo("none");
+        assertThat(entity.getBody().isHasModelBeenSuccessfullyRun()).isTrue();
+        assertThat(entity.getBody().isCanRunModel()).isFalse();
+        assertThat(entity.getBody().getCannotRunModelReason()).isEqualTo("the public name is missing");
+        assertThat(entity.getBody().getSampleBiasText()).isEqualTo("0 bespoke background data points have been provided, approximately 3 ABRAID occurrences are suitable.");
+    }
+
+    @Test
+    public void getModelRunInformationNotUsingBias() {
+        // Arrange
+        int diseaseGroupId = 87;
+        ModelRun lastRequestedModelRun = new ModelRun("dengue 1", createMockDiseaseGroup(87), "host", new DateTime("2014-07-02T14:15:16"), DateTime.now(), DateTime.now());
+        ModelRun lastCompletedModelRun = new ModelRun();
+        DiseaseOccurrenceStatistics statistics = new DiseaseOccurrenceStatistics(0, 0, null, null);
+        DiseaseGroup diseaseGroup = new DiseaseGroup(87);
+
+
+        when(modelRunService.getLastRequestedModelRun(diseaseGroupId)).thenReturn(lastRequestedModelRun);
+        when(modelRunService.getMostRecentlyFinishedModelRunWhichCompleted(diseaseGroupId))
+                .thenReturn(lastCompletedModelRun);
+        when(diseaseService.getDiseaseOccurrenceStatistics(diseaseGroupId)).thenReturn(statistics);
+        when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
+
+        when(diseaseService.modelModeRequiresBiasDataForDisease(diseaseGroup)).thenReturn(false);
+        when(diseaseService.getCountOfUnfilteredBespokeBiasOccurrences(diseaseGroup)).thenReturn(1L);
+        when(diseaseService.getEstimateCountOfFilteredBespokeBiasOccurrences(diseaseGroup)).thenReturn(2L);
+        when(diseaseService.getEstimateCountOfFilteredDefaultBiasOccurrences(diseaseGroup)).thenReturn(3L);
+
+
+        // Act
+        ResponseEntity<JsonModelRunInformation> entity = controller.getModelRunInformation(diseaseGroupId);
+
+        // Assert
+        assertThat(entity.getStatusCode().value()).isEqualTo(200);
+        assertThat(entity.getBody().getLastModelRunText()).isEqualTo("requested on 2 Jul 2014 14:15:16");
+        assertThat(entity.getBody().getDiseaseOccurrencesText()).isEqualTo("none");
+        assertThat(entity.getBody().isHasModelBeenSuccessfullyRun()).isTrue();
+        assertThat(entity.getBody().isCanRunModel()).isFalse();
+        assertThat(entity.getBody().getCannotRunModelReason()).isEqualTo("the public name is missing");
+        assertThat(entity.getBody().getSampleBiasText()).isEqualTo("The current model mode for this disease group does not use background data.");
     }
 
     @Test
@@ -331,7 +406,7 @@ public class AdminDiseaseGroupControllerTest {
         DiseaseGroup diseaseGroup = createDiseaseGroup(diseaseGroupId, 87, "Name", "Parent Name", DiseaseGroupType.SINGLE, "Public name", "Short name", "ABBREV", true, 4, 1.0, 7);
         when(diseaseService.getDiseaseGroupById(diseaseGroupId)).thenReturn(diseaseGroup);
         when(diseaseService.getValidatorDiseaseGroupById(4)).thenReturn(new ValidatorDiseaseGroup());
-        JsonDiseaseGroup newValues = createJsonDiseaseGroup("New name", "New public name", "New short name", "NEWABBREV", "CLUSTER", false, 87, 4, "not_bhatt");
+        JsonDiseaseGroup newValues = createJsonDiseaseGroup("New name", "New public name", "New short name", "NEWABBREV", "CLUSTER", false, 87, 4, "not_Bhatt2013");
 
         // Act
         ResponseEntity result = controller.save(1, newValues);
@@ -345,7 +420,7 @@ public class AdminDiseaseGroupControllerTest {
     public void saveReturnsBadRequestForInvalidDiseaseGroup() throws Exception {
         // Arrange
         when(diseaseService.getDiseaseGroupById(anyInt())).thenReturn(null);
-        JsonDiseaseGroup newValues = createJsonDiseaseGroup("New name", "New public name", "New short name", "NEWABBREV", "CLUSTER", false, 87, 4, "bhatt");
+        JsonDiseaseGroup newValues = createJsonDiseaseGroup("New name", "New public name", "New short name", "NEWABBREV", "CLUSTER", false, 87, 4, "Bhatt2013");
 
         // Act
         ResponseEntity result = controller.save(1, newValues);
@@ -358,7 +433,7 @@ public class AdminDiseaseGroupControllerTest {
     public void saveReturnsBadRequestForMissingName() throws Exception {
         // Arrange
         when(diseaseService.getDiseaseGroupById(anyInt())).thenReturn(new DiseaseGroup());
-        JsonDiseaseGroup newValues = createJsonDiseaseGroup(null, "New public name", "New short name", "NEWABBREV", "CLUSTER", false, 87, 4, "bhatt");
+        JsonDiseaseGroup newValues = createJsonDiseaseGroup(null, "New public name", "New short name", "NEWABBREV", "CLUSTER", false, 87, 4, "Bhatt2013");
 
         // Act
         ResponseEntity result = controller.save(1, newValues);
@@ -371,7 +446,7 @@ public class AdminDiseaseGroupControllerTest {
     public void saveReturnsBadRequestForMissingGroupType() throws Exception {
         // Arrange
         when(diseaseService.getDiseaseGroupById(anyInt())).thenReturn(new DiseaseGroup());
-        JsonDiseaseGroup newValues = createJsonDiseaseGroup("New name", "New public name", "New short name", "NEWABBREV", null, false, 87, 4, "bhatt");
+        JsonDiseaseGroup newValues = createJsonDiseaseGroup("New name", "New public name", "New short name", "NEWABBREV", null, false, 87, 4, "Bhatt2013");
 
         // Act
         ResponseEntity result = controller.save(1, newValues);
@@ -388,7 +463,7 @@ public class AdminDiseaseGroupControllerTest {
         DiseaseGroup diseaseGroup = createDiseaseGroup(diseaseGroupId, parentId, "Name", "Parent name", DiseaseGroupType.SINGLE, "Public name", "Short name", "ABBREV", true, 4, 1.0, 7);
         when(diseaseService.getDiseaseGroupById(1)).thenReturn(diseaseGroup);
         when(diseaseService.getDiseaseGroupById(parentId)).thenReturn(null);
-        JsonDiseaseGroup newValues = createJsonDiseaseGroup("New name", "New public name", "New short name", "NEWABBREV", "MICROCLUSTER", false, parentId, 4, "bhatt");
+        JsonDiseaseGroup newValues = createJsonDiseaseGroup("New name", "New public name", "New short name", "NEWABBREV", "MICROCLUSTER", false, parentId, 4, "Bhatt2013");
 
         // Act
         ResponseEntity result = controller.save(diseaseGroupId, newValues);
@@ -403,7 +478,7 @@ public class AdminDiseaseGroupControllerTest {
         // Arrange
         int validatorId = 4;
         when(diseaseService.getValidatorDiseaseGroupById(validatorId)).thenReturn(null);
-        JsonDiseaseGroup newValues = createJsonDiseaseGroup("New name", "New public name", "New short name", "NEWABBREV", "CLUSTER", false, 87, validatorId, "bhatt");
+        JsonDiseaseGroup newValues = createJsonDiseaseGroup("New name", "New public name", "New short name", "NEWABBREV", "CLUSTER", false, 87, validatorId, "Bhatt2013");
 
         // Act
         ResponseEntity result = controller.save(1, newValues);
@@ -417,7 +492,7 @@ public class AdminDiseaseGroupControllerTest {
         // Arrange
         int validatorId = 4;
         when(diseaseService.getValidatorDiseaseGroupById(validatorId)).thenReturn(null);
-        JsonDiseaseGroup newValues = createJsonDiseaseGroup("New name", "New public name", "New short name", "NEWABBREV", "invalid", false, 87, validatorId, "bhatt");
+        JsonDiseaseGroup newValues = createJsonDiseaseGroup("New name", "New public name", "New short name", "NEWABBREV", "invalid", false, 87, validatorId, "Bhatt2013");
 
         // Act
         ResponseEntity result = controller.save(1, newValues);
@@ -431,7 +506,7 @@ public class AdminDiseaseGroupControllerTest {
         // Arrange
         when(diseaseService.getDiseaseGroupById(87)).thenReturn(new DiseaseGroup());
         when(diseaseService.getValidatorDiseaseGroupById(4)).thenReturn(new ValidatorDiseaseGroup());
-        JsonDiseaseGroup values = createJsonDiseaseGroup("Name", "Public name", "Short name", "ABBREV", "MICROCLUSTER", false, 87, 4, "bhatt");
+        JsonDiseaseGroup values = createJsonDiseaseGroup("Name", "Public name", "Short name", "ABBREV", "MICROCLUSTER", false, 87, 4, "Bhatt2013");
 
         // Act
         ResponseEntity result = controller.add(values);
@@ -446,21 +521,21 @@ public class AdminDiseaseGroupControllerTest {
 
     @Test
     public void addReturnsBadRequestForMissingName() throws Exception {
-        JsonDiseaseGroup values = createJsonDiseaseGroup(null, "Public name", "Short name", "ABBREV", "MICROCLUSTER", false, 87, 4, "bhatt");
+        JsonDiseaseGroup values = createJsonDiseaseGroup(null, "Public name", "Short name", "ABBREV", "MICROCLUSTER", false, 87, 4, "Bhatt2013");
         ResponseEntity result = controller.add(values);
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @Test
     public void addReturnsBadRequestForMissingGroupType() throws Exception {
-        JsonDiseaseGroup values = createJsonDiseaseGroup("Name", "Public name", "Short name", "ABBREV", null, false, 87, 4, "bhatt");
+        JsonDiseaseGroup values = createJsonDiseaseGroup("Name", "Public name", "Short name", "ABBREV", null, false, 87, 4, "Bhatt2013");
         ResponseEntity result = controller.add(values);
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @Test
     public void addReturnsBadRequestForInvalidGroupType() throws Exception {
-        JsonDiseaseGroup values = createJsonDiseaseGroup("Name", "Public name", "Short name", "ABBREV", "invalid", false, 87, 4, "bhatt");
+        JsonDiseaseGroup values = createJsonDiseaseGroup("Name", "Public name", "Short name", "ABBREV", "invalid", false, 87, 4, "Bhatt2013");
         ResponseEntity result = controller.add(values);
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
@@ -470,7 +545,7 @@ public class AdminDiseaseGroupControllerTest {
         // Arrange
         int parentId = 87;
         when(diseaseService.getDiseaseGroupById(parentId)).thenReturn(null);
-        JsonDiseaseGroup values = createJsonDiseaseGroup("Name", "Public name", "Short name", "ABBREV", "MICROCLUSTER", false, parentId, 4, "bhatt");
+        JsonDiseaseGroup values = createJsonDiseaseGroup("Name", "Public name", "Short name", "ABBREV", "MICROCLUSTER", false, parentId, 4, "Bhatt2013");
 
         // Act
         ResponseEntity result = controller.add(values);
@@ -485,7 +560,7 @@ public class AdminDiseaseGroupControllerTest {
         // Arrange
         int validatorId = 4;
         when(diseaseService.getValidatorDiseaseGroupById(validatorId)).thenReturn(null);
-        JsonDiseaseGroup values = createJsonDiseaseGroup("Name", "Public name", "Short name", "ABBREV", "MICROCLUSTER", false, 87, validatorId, "bhatt");
+        JsonDiseaseGroup values = createJsonDiseaseGroup("Name", "Public name", "Short name", "ABBREV", "MICROCLUSTER", false, 87, validatorId, "Bhatt2013");
 
         // Act
         ResponseEntity result = controller.add(values);

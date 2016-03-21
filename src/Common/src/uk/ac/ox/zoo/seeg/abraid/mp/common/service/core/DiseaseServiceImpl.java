@@ -28,6 +28,7 @@ public class DiseaseServiceImpl implements DiseaseService {
     private ModelRunDao modelRunDao;
     private DiseaseExtentClassDao diseaseExtentClassDao;
     private int maxDaysOnValidator;
+    private List<String> biasModelModes;
     private NativeSQL nativeSQL;
 
     public DiseaseServiceImpl(DiseaseOccurrenceDao diseaseOccurrenceDao,
@@ -38,6 +39,7 @@ public class DiseaseServiceImpl implements DiseaseService {
                               ModelRunDao modelRunDao,
                               DiseaseExtentClassDao diseaseExtentClassDao,
                               int maxDaysOnValidator,
+                              List<String> biasModelModes,
                               NativeSQL nativeSQL) {
         this.diseaseOccurrenceDao = diseaseOccurrenceDao;
         this.diseaseOccurrenceReviewDao = diseaseOccurrenceReviewDao;
@@ -47,6 +49,7 @@ public class DiseaseServiceImpl implements DiseaseService {
         this.modelRunDao = modelRunDao;
         this.diseaseExtentClassDao = diseaseExtentClassDao;
         this.maxDaysOnValidator = maxDaysOnValidator;
+        this.biasModelModes = biasModelModes;
         this.nativeSQL = nativeSQL;
     }
 
@@ -358,7 +361,8 @@ public class DiseaseServiceImpl implements DiseaseService {
 
     /**
      * Determines whether the specified disease occurrence already exists in the database. This is true if an
-     * occurrence exists with the same disease group, location, alert and occurrence start date.
+     * occurrence (excluding bias occurrences) exists with the same disease group, location, alert and occurrence
+     * start date.
      * @param occurrence The disease occurrence.
      * @return True if the occurrence already exists in the database, otherwise false.
      */
@@ -486,16 +490,66 @@ public class DiseaseServiceImpl implements DiseaseService {
     }
 
     /**
-     * Gets the supplementary occurrences that are should be used with a model run (for sample bias).
-     * @param diseaseGroupId The disease group ID being modelled (will be excluded from supplementary set).
-     * @param startDate The start date of the model run input data range.
-     * @param endDate The end date  of the model run input data range.
-     * @return The supplementary occurrences.
+     * Gets the number of bespoke bias occurrences that have been uploaded for use with a specified diseases group,
+     * regardless of suitability.
+     * @param diseaseGroup The disease group being modelled.
+     * @return The number of bias occurrences.
      */
     @Override
-    public List<DiseaseOccurrence> getSupplementaryOccurrencesForModelRun(
-            int diseaseGroupId, DateTime startDate, DateTime endDate) {
-        return diseaseOccurrenceDao.getSupplementaryOccurrencesForModelRun(diseaseGroupId, startDate, endDate);
+    public long getCountOfUnfilteredBespokeBiasOccurrences(DiseaseGroup diseaseGroup) {
+        return diseaseOccurrenceDao.getCountOfUnfilteredBespokeBiasOccurrences(diseaseGroup);
+    }
+
+    /**
+     * Gets the estimate of number of bespoke bias occurrences that have been uploaded for use with a specified disease
+     * group, which are suitable for use in a model. This is only an estimate as the occurrence date filter that is
+     * applied during model runs is not applied.
+     * @param diseaseGroup The disease group being modelled.
+     * @return The number of bias occurrences.
+     */
+    @Override
+    public long getEstimateCountOfFilteredBespokeBiasOccurrences(DiseaseGroup diseaseGroup) {
+        return diseaseOccurrenceDao.getEstimateCountOfFilteredBespokeBiasOccurrences(diseaseGroup);
+    }
+
+    /**
+     * Gets the estimate of number of occurrences that are available for use as a default/fallback bias set for a
+     * specified disease group, which are suitable for use in a model. This is only an estimate as the occurrence date
+     * filter that is applied during model runs is not applied.
+     * @param diseaseGroup The disease group being modelled.
+     * @return The number of bias occurrences.
+     */
+    @Override
+    public long getEstimateCountOfFilteredDefaultBiasOccurrences(DiseaseGroup diseaseGroup) {
+        return diseaseOccurrenceDao.getEstimateCountOfFilteredDefaultBiasOccurrences(diseaseGroup);
+    }
+
+
+    /**
+     * Gets the bespoke bias occurrences that are should be used with a model run (for sample bias).
+     * @param diseaseGroup The disease group being modelled.
+     * @param startDate The start date of the model run input data range.
+     * @param endDate The end date  of the model run input data range.
+     * @return The bias occurrences.
+     */
+    @Override
+    public List<DiseaseOccurrence> getBespokeBiasOccurrencesForModelRun(
+            DiseaseGroup diseaseGroup, DateTime startDate, DateTime endDate) {
+        return diseaseOccurrenceDao.getBespokeBiasOccurrencesForModelRun(diseaseGroup, startDate, endDate);
+    }
+
+    /**
+     * Gets the occurrences that are available for use as a default/fallback bias set for a specified disease group.
+     * This should be used when a bespoke dataset hasn't been provided.
+     * @param diseaseGroup The disease group being modelled (will be excluded from bias set).
+     * @param startDate The start date of the model run input data range.
+     * @param endDate The end date  of the model run input data range.
+     * @return The bias occurrences.
+     */
+    @Override
+    public List<DiseaseOccurrence> getDefaultBiasOccurrencesForModelRun(
+            DiseaseGroup diseaseGroup, DateTime startDate, DateTime endDate) {
+        return diseaseOccurrenceDao.getDefaultBiasOccurrencesForModelRun(diseaseGroup, startDate, endDate);
     }
 
     /**
@@ -514,6 +568,27 @@ public class DiseaseServiceImpl implements DiseaseService {
     @Override
     public LocalDate subtractMaxDaysOnValidator(DateTime dateTime) {
         return dateTime.toLocalDate().minusDays(maxDaysOnValidator);
+    }
+
+    /**
+     * Delete all of the occurrence that are labelled as bias for the specified disease group.
+     * @param biasDisease Disease group for which to remove the bias points
+     *                       (i.e. bias_disease_group_id, not disease_group_id).
+     */
+    @Override
+    public void deleteBiasDiseaseOccurrencesForDisease(DiseaseGroup biasDisease) {
+        diseaseOccurrenceDao.deleteDiseaseOccurrencesByBiasDiseaseId(biasDisease.getId());
+    }
+
+    /**
+     * Determines whether the specified disease group require bias data for model runs based on the disease's
+     * model mode.
+     * @param diseaseGroup The disease group.
+     * @return True if bias data is required.
+     */
+    @Override
+    public boolean modelModeRequiresBiasDataForDisease(DiseaseGroup diseaseGroup) {
+        return biasModelModes.contains(diseaseGroup.getModelMode());
     }
 
     private boolean isDiseaseGroupGlobal(Integer diseaseGroupId) {

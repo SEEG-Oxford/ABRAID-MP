@@ -33,6 +33,25 @@ import java.util.Collection;
 @Entity
 @Table(name = "admin_unit_disease_extent_class")
 public class AdminUnitDiseaseExtentClass extends AbstractAdminUnitDiseaseExtentClass {
+    /** A HQL fragment to choose between global and tropical gaul codes. */
+    public static final String PICK_EXTENT_GAUL_CODE =
+            "CASE :isGlobal WHEN true " +
+            "  THEN a.adminUnitGlobal.gaulCode " +
+            "  ELSE a.adminUnitTropical.gaulCode " +
+            "END";
+
+    /** A HQL query to select the gaul codes within a disease's extent.
+     *  (Used as a subquery in DiseaseOccurrence's named queries)
+     */
+    public static final String EXTENT_GAUL_CODES_BY_DISEASE_GROUP_ID =
+            "select (" + AdminUnitDiseaseExtentClass.PICK_EXTENT_GAUL_CODE + ") " +
+            "from AdminUnitDiseaseExtentClass a " +
+            "where a.diseaseGroup.id=:diseaseGroupId " +
+            "and a.diseaseExtentClass in (" +
+            "    '" +  DiseaseExtentClass.POSSIBLE_PRESENCE + "', " +
+            "    '" +  DiseaseExtentClass.PRESENCE + "'" +
+            ")";
+
     // The disease group.
     @ManyToOne
     @JoinColumn(name = "disease_group_id")

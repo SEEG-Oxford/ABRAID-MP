@@ -328,6 +328,14 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         return occurrence;
     }
 
+    private DiseaseOccurrence createBiasDiseaseOccurrence(int id, DiseaseGroup diseaseGroup, DiseaseOccurrenceStatus status, int locationId, DateTime occurrenceDate, DiseaseGroup biasDisease) {
+        DiseaseOccurrence occurrence = createDiseaseOccurrence(id, diseaseGroup, DiseaseOccurrenceStatus.READY, locationId, occurrenceDate);
+        occurrence.setStatus(status);
+        occurrence.setBiasDisease(biasDisease);
+        diseaseOccurrenceDao.save(occurrence);
+        return occurrence;
+    }
+
     @Test
     public void saveThenReloadDiseaseOccurrence() {
         // Arrange
@@ -394,6 +402,55 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     }
 
     @Test
+    public void saveThenReloadBiasDiseaseOccurrence() {
+        // Arrange
+        DiseaseGroup diseaseGroup = diseaseGroupDao.getById(87);
+        DiseaseGroup biasDiseaseGroup = diseaseGroupDao.getById(64);
+        Location location = locationDao.getById(80);
+        Alert alert = new Alert();
+        alert.setFeed(testFeed);
+
+        DiseaseOccurrence occurrence = new DiseaseOccurrence();
+        occurrence.setDiseaseGroup(diseaseGroup);
+        occurrence.setLocation(location);
+        occurrence.setAlert(alert);
+        occurrence.setStatus(DiseaseOccurrenceStatus.BIAS);
+        occurrence.setOccurrenceDate(DateTime.now());
+        occurrence.setBiasDisease(biasDiseaseGroup);
+
+        // Act
+        diseaseOccurrenceDao.save(occurrence);
+
+        // Assert
+        assertThat(occurrence.getCreatedDate()).isNotNull();
+        assertThat(occurrence.getAlert()).isNotNull();
+        assertThat(occurrence.getAlert().getId()).isNotNull();
+        assertThat(occurrence.getAlert().getCreatedDate()).isNotNull();
+        assertThat(occurrence.getLocation()).isNotNull();
+        assertThat(occurrence.getLocation().getId()).isNotNull();
+        assertThat(occurrence.getLocation().getCreatedDate()).isNotNull();
+
+        Integer id = occurrence.getId();
+        flushAndClear();
+        occurrence = diseaseOccurrenceDao.getById(id);
+
+        assertThat(occurrence.getAlert().getId()).isNotNull();
+        assertThat(occurrence.getCreatedDate()).isNotNull();
+        assertThat(occurrence.getLocation().getId()).isEqualTo(80);
+        assertThat(occurrence.getStatus()).isEqualTo(DiseaseOccurrenceStatus.BIAS);
+        assertThat(occurrence.getEnvironmentalSuitability()).isNull();
+        assertThat(occurrence.getDistanceFromDiseaseExtent()).isNull();
+        assertThat(occurrence.getExpertWeighting()).isNull();
+        assertThat(occurrence.getMachineWeighting()).isNull();
+        assertThat(occurrence.getValidationWeighting()).isNull();
+        assertThat(occurrence.getFinalWeighting()).isNull();
+        assertThat(occurrence.getFinalWeightingExcludingSpatial()).isNull();
+        assertThat(occurrence.getDiseaseGroup().getId()).isEqualTo(87);
+        assertThat(occurrence.getOccurrenceDate()).isNotNull();
+        assertThat(occurrence.getBiasDisease().getId()).isEqualTo(64);
+    }
+
+    @Test
     public void getDiseaseOccurrencesForExistenceCheckExists() {
         DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(272407);
         List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForExistenceCheck(
@@ -439,6 +496,32 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForExistenceCheck(
                 occurrence.getDiseaseGroup(), occurrence.getLocation(), occurrence.getAlert(),
                 occurrenceDate);
+        assertThat(occurrences).hasSize(0);
+    }
+
+    @Test
+    public void getDiseaseOccurrencesForExistenceCheckIgnoresExistingBiasPoints() {
+        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(272407);
+        occurrence.setBiasDisease(diseaseGroupDao.getById(87));
+        occurrence.setStatus(DiseaseOccurrenceStatus.BIAS);
+        diseaseOccurrenceDao.save(occurrence);
+
+        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForExistenceCheck(
+                occurrence.getDiseaseGroup(), occurrence.getLocation(), occurrence.getAlert(),
+                occurrence.getOccurrenceDate());
+        assertThat(occurrences).hasSize(0);
+    }
+
+    @Test
+    public void getDiseaseOccurrencesForExistenceCheckIgnoresExistingFailedBiasPoints() {
+        DiseaseOccurrence occurrence = diseaseOccurrenceDao.getById(272407);
+        occurrence.setBiasDisease(diseaseGroupDao.getById(87));
+        occurrence.setStatus(DiseaseOccurrenceStatus.DISCARDED_FAILED_QC);
+        diseaseOccurrenceDao.save(occurrence);
+
+        List<DiseaseOccurrence> occurrences = diseaseOccurrenceDao.getDiseaseOccurrencesForExistenceCheck(
+                occurrence.getDiseaseGroup(), occurrence.getLocation(), occurrence.getAlert(),
+                occurrence.getOccurrenceDate());
         assertThat(occurrences).hasSize(0);
     }
 
@@ -867,7 +950,133 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
     }
 
     @Test
-    public void getSupplementaryOccurrencesForModelRun() {
+    public void getDefaultBiasOccurrencesForModelRun() {
+        // Arrange
+        DiseaseGroup deng = diseaseGroupDao.getById(87);
+        DiseaseGroup asc = diseaseGroupDao.getById(22);
+        DateTime startDate = new DateTime("2014-02-25T00:00:00");
+        DateTime endDate = new DateTime("2014-02-27T03:00:00");
+        int initialAscCount = diseaseOccurrenceDao.getDefaultBiasOccurrencesForModelRun(asc, startDate, endDate).size();
+        int initialDengCount = diseaseOccurrenceDao.getDefaultBiasOccurrencesForModelRun(deng, startDate, endDate).size();
+        assertThat(initialAscCount).isEqualTo(0);
+        assertThat(initialDengCount).isEqualTo(1);
+
+        // Act
+        createDiseaseOccurrence(1, deng, DiseaseOccurrenceStatus.DISCARDED_UNREVIEWED, 80, new DateTime("2014-02-26T00:00:00"));
+        createDiseaseOccurrence(2, deng, DiseaseOccurrenceStatus.DISCARDED_UNUSED, 80, new DateTime("2014-02-26T00:00:00"));
+        createDiseaseOccurrence(3, deng, DiseaseOccurrenceStatus.AWAITING_BATCHING, 80, new DateTime("2014-02-26T00:00:00"));
+        createDiseaseOccurrence(4, deng, DiseaseOccurrenceStatus.IN_REVIEW, 80, new DateTime("2014-02-26T00:00:00"));
+        createDiseaseOccurrence(5, deng, DiseaseOccurrenceStatus.READY, 6, new DateTime("2014-02-26T00:00:00")); // model ineligible
+        createDiseaseOccurrence(6, deng, DiseaseOccurrenceStatus.READY, 80, new DateTime("2014-02-26T00:00:00"));
+        createDiseaseOccurrence(7, deng, DiseaseOccurrenceStatus.DISCARDED_FAILED_QC, 80, new DateTime("2014-02-26T00:00:00"));
+        createBiasDiseaseOccurrence(8, deng, DiseaseOccurrenceStatus.BIAS, 80, new DateTime("2014-02-26T00:00:00"), deng);
+        createDiseaseOccurrence(9, deng, DiseaseOccurrenceStatus.READY, 6, new DateTime("2014-02-26T00:00:00")); // outside extent
+
+        List<DiseaseOccurrence> resultAsc = diseaseOccurrenceDao.getDefaultBiasOccurrencesForModelRun(asc, startDate, endDate);
+        List<DiseaseOccurrence> resultDeng = diseaseOccurrenceDao.getDefaultBiasOccurrencesForModelRun(deng, startDate, endDate);
+
+        // Assert
+        assertThat(resultAsc).hasSize(initialAscCount + 5);
+        assertThat(resultDeng).hasSize(initialDengCount);
+    }
+
+    @Test
+    public void getDefaultBiasOccurrencesForModelRunWithAgentFilter() {
+        // Arrange
+        DiseaseGroup deng = diseaseGroupDao.getById(87);
+        deng.setFilterBiasDataByAgentType(true);
+        deng.setAgentType(DiseaseGroupAgentType.VIRUS);
+        diseaseGroupDao.save(deng);
+        DiseaseGroup asc = diseaseGroupDao.getById(22);
+        asc.setAgentType(DiseaseGroupAgentType.BACTERIA);
+        asc.setFilterBiasDataByAgentType(true);
+        diseaseGroupDao.save(asc);
+        DateTime startDate = new DateTime("2014-02-25T00:00:00");
+        DateTime endDate = new DateTime("2014-02-27T03:00:00");
+        int initialAscCount = diseaseOccurrenceDao.getDefaultBiasOccurrencesForModelRun(asc, startDate, endDate).size();
+        int initialDengCount = diseaseOccurrenceDao.getDefaultBiasOccurrencesForModelRun(deng, startDate, endDate).size();
+        assertThat(initialAscCount).isEqualTo(0);
+        assertThat(initialDengCount).isEqualTo(0); // The 1 from the filter-less variant is no longer added
+
+        // Act
+        createDiseaseOccurrence(1, deng, DiseaseOccurrenceStatus.DISCARDED_UNREVIEWED, 80, new DateTime("2014-02-26T00:00:00"));
+        createDiseaseOccurrence(2, deng, DiseaseOccurrenceStatus.DISCARDED_UNUSED, 80, new DateTime("2014-02-26T00:00:00"));
+        createDiseaseOccurrence(3, deng, DiseaseOccurrenceStatus.AWAITING_BATCHING, 80, new DateTime("2014-02-26T00:00:00"));
+        createDiseaseOccurrence(4, deng, DiseaseOccurrenceStatus.IN_REVIEW, 80, new DateTime("2014-02-26T00:00:00"));
+        createDiseaseOccurrence(5, deng, DiseaseOccurrenceStatus.READY, 6, new DateTime("2014-02-26T00:00:00")); // model ineligible
+        createDiseaseOccurrence(6, deng, DiseaseOccurrenceStatus.READY, 80, new DateTime("2014-02-26T00:00:00"));
+        createDiseaseOccurrence(7, deng, DiseaseOccurrenceStatus.DISCARDED_FAILED_QC, 80, new DateTime("2014-02-26T00:00:00"));
+        createBiasDiseaseOccurrence(8, deng, DiseaseOccurrenceStatus.BIAS, 80, new DateTime("2014-02-26T00:00:00"), deng);
+        createDiseaseOccurrence(9, deng, DiseaseOccurrenceStatus.READY, 6, new DateTime("2014-02-26T00:00:00")); // outside extent
+
+        List<DiseaseOccurrence> resultAsc = diseaseOccurrenceDao.getDefaultBiasOccurrencesForModelRun(asc, startDate, endDate);
+        List<DiseaseOccurrence> resultDeng = diseaseOccurrenceDao.getDefaultBiasOccurrencesForModelRun(deng, startDate, endDate);
+
+        // Assert
+        assertThat(resultAsc).hasSize(initialAscCount); // No of the act deng points get added as deng has different agent
+        assertThat(resultDeng).hasSize(initialDengCount);
+    }
+
+    @Test
+    public void getBespokeBiasOccurrencesForModelRun() {
+        // Arrange
+        DiseaseGroup deng = diseaseGroupDao.getById(87);
+        DiseaseGroup malaria = diseaseGroupDao.getById(202);
+        createBiasDiseaseOccurrence(1, malaria, DiseaseOccurrenceStatus.BIAS, 12, new DateTime("2014-02-26T00:00:00"), deng);
+        createBiasDiseaseOccurrence(2, malaria, DiseaseOccurrenceStatus.DISCARDED_FAILED_QC, 12, new DateTime("2014-02-26T00:00:00"), deng); // failed qc
+        createBiasDiseaseOccurrence(3, malaria, DiseaseOccurrenceStatus.BIAS, 6, new DateTime("2014-02-26T00:00:00"), deng); // outside extent
+        createBiasDiseaseOccurrence(4, malaria, DiseaseOccurrenceStatus.BIAS, 12, new DateTime("2014-02-28T00:00:00"), deng); // out of date range
+        createBiasDiseaseOccurrence(5, malaria, DiseaseOccurrenceStatus.BIAS, 40, new DateTime("2014-02-26T00:00:00"), deng); // model ineligible
+        DateTime startDate = new DateTime("2014-02-25T00:00:00");
+        DateTime endDate = new DateTime("2014-02-27T03:00:00");
+
+        // Act
+        List<DiseaseOccurrence> result = diseaseOccurrenceDao.getBespokeBiasOccurrencesForModelRun(deng, startDate, endDate);
+
+        // Assert
+        assertThat(result).hasSize(1);
+    }
+
+    @Test
+    public void getCountOfUnfilteredBespokeBiasOccurrences() {
+        // Arrange
+        DiseaseGroup deng = diseaseGroupDao.getById(87);
+        DiseaseGroup malaria = diseaseGroupDao.getById(202);
+        createBiasDiseaseOccurrence(1, malaria, DiseaseOccurrenceStatus.BIAS, 12, new DateTime("2014-02-26T00:00:00"), deng);
+        createBiasDiseaseOccurrence(2, malaria, DiseaseOccurrenceStatus.DISCARDED_FAILED_QC, 12, new DateTime("2014-02-26T00:00:00"), deng); // failed qc
+        createBiasDiseaseOccurrence(3, malaria, DiseaseOccurrenceStatus.BIAS, 6, new DateTime("2014-02-26T00:00:00"), deng); // outside extent
+        createBiasDiseaseOccurrence(4, malaria, DiseaseOccurrenceStatus.BIAS, 12, new DateTime("2014-02-28T00:00:00"), deng); // out of date range
+        createBiasDiseaseOccurrence(5, malaria, DiseaseOccurrenceStatus.BIAS, 40, new DateTime("2014-02-26T00:00:00"), deng); // model ineligible
+        DateTime startDate = new DateTime("2014-02-25T00:00:00");
+        DateTime endDate = new DateTime("2014-02-27T03:00:00");
+
+        // Act
+        long result = diseaseOccurrenceDao.getCountOfUnfilteredBespokeBiasOccurrences(deng);
+
+        // Assert
+        assertThat(result).isEqualTo(5);
+    }
+
+    @Test
+    public void getEstimateCountOfFilteredBespokeBiasOccurrences() {
+        // Arrange
+        DiseaseGroup deng = diseaseGroupDao.getById(87);
+        DiseaseGroup malaria = diseaseGroupDao.getById(202);
+        createBiasDiseaseOccurrence(1, malaria, DiseaseOccurrenceStatus.BIAS, 12, new DateTime("2014-02-26T00:00:00"), deng);
+        createBiasDiseaseOccurrence(2, malaria, DiseaseOccurrenceStatus.DISCARDED_FAILED_QC, 12, new DateTime("2014-02-26T00:00:00"), deng); // failed qc
+        createBiasDiseaseOccurrence(3, malaria, DiseaseOccurrenceStatus.BIAS, 6, new DateTime("2014-02-26T00:00:00"), deng); // outside extent
+        createBiasDiseaseOccurrence(4, malaria, DiseaseOccurrenceStatus.BIAS, 12, new DateTime("2014-02-28T00:00:00"), deng); // out of date range
+        createBiasDiseaseOccurrence(5, malaria, DiseaseOccurrenceStatus.BIAS, 40, new DateTime("2014-02-26T00:00:00"), deng); // model ineligible
+
+        // Act
+        long result = diseaseOccurrenceDao.getEstimateCountOfFilteredBespokeBiasOccurrences(deng);
+
+        // Assert
+        assertThat(result).isEqualTo(2);
+    }
+
+    @Test
+     public void getEstimateCountOfFilteredDefaultBiasOccurrences() {
         // Arrange
         DiseaseGroup deng = diseaseGroupDao.getById(87);
         createDiseaseOccurrence(1, deng, DiseaseOccurrenceStatus.DISCARDED_UNREVIEWED, 80, new DateTime("2014-02-26T00:00:00"));
@@ -875,18 +1084,39 @@ public class DiseaseOccurrenceDaoTest extends AbstractCommonSpringIntegrationTes
         createDiseaseOccurrence(3, deng, DiseaseOccurrenceStatus.AWAITING_BATCHING, 80, new DateTime("2014-02-26T00:00:00"));
         createDiseaseOccurrence(4, deng, DiseaseOccurrenceStatus.IN_REVIEW, 80, new DateTime("2014-02-26T00:00:00"));
         createDiseaseOccurrence(5, deng, DiseaseOccurrenceStatus.READY, 6, new DateTime("2014-02-26T00:00:00")); // model ineligible
-        DateTime startDate = new DateTime("2014-02-25T00:00:00");
-        DateTime endDate = new DateTime("2014-02-27T03:00:00");
+        createDiseaseOccurrence(6, deng, DiseaseOccurrenceStatus.READY, 80, new DateTime("2014-02-26T00:00:00"));
+        createDiseaseOccurrence(7, deng, DiseaseOccurrenceStatus.DISCARDED_FAILED_QC, 80, new DateTime("2014-02-26T00:00:00"));
+        createBiasDiseaseOccurrence(8, deng, DiseaseOccurrenceStatus.BIAS, 80, new DateTime("2014-02-26T00:00:00"), deng);
+        createDiseaseOccurrence(9, deng, DiseaseOccurrenceStatus.READY, 6, new DateTime("2014-02-26T00:00:00")); // outside extent
 
         // Act
-        List<DiseaseOccurrence> result202 = diseaseOccurrenceDao.getSupplementaryOccurrencesForModelRun(202, startDate, endDate);
-        List<DiseaseOccurrence> result87 = diseaseOccurrenceDao.getSupplementaryOccurrencesForModelRun(87, startDate, endDate);
+        long result = diseaseOccurrenceDao.getEstimateCountOfFilteredDefaultBiasOccurrences(deng);
 
         // Assert
-        // There are 60 non-202 occurrences in the test db + 5 from arrange, but 10 are model ineligible, 1 is failed qc & 18 are out of the time window
-        assertThat(result202).hasSize(36);
-        // There are 17 non-dengue occurrences in the test db, but 1 is failed qc and & 9 are out of the time window
-        assertThat(result87).hasSize(7);
+        assertThat(result).isEqualTo(5);
+    }
+
+    @Test
+    public void getEstimateCountOfFilteredDefaultBiasOccurrencesWithAgentFilter() {
+        // Arrange
+        DiseaseGroup deng = diseaseGroupDao.getById(87);
+        deng.setFilterBiasDataByAgentType(true);
+        diseaseGroupDao.save(deng);
+        createDiseaseOccurrence(1, deng, DiseaseOccurrenceStatus.DISCARDED_UNREVIEWED, 80, new DateTime("2014-02-26T00:00:00"));
+        createDiseaseOccurrence(2, deng, DiseaseOccurrenceStatus.DISCARDED_UNUSED, 80, new DateTime("2014-02-26T00:00:00"));
+        createDiseaseOccurrence(3, deng, DiseaseOccurrenceStatus.AWAITING_BATCHING, 80, new DateTime("2014-02-26T00:00:00"));
+        createDiseaseOccurrence(4, deng, DiseaseOccurrenceStatus.IN_REVIEW, 80, new DateTime("2014-02-26T00:00:00"));
+        createDiseaseOccurrence(5, deng, DiseaseOccurrenceStatus.READY, 6, new DateTime("2014-02-26T00:00:00")); // model ineligible
+        createDiseaseOccurrence(6, deng, DiseaseOccurrenceStatus.READY, 80, new DateTime("2014-02-26T00:00:00"));
+        createDiseaseOccurrence(7, deng, DiseaseOccurrenceStatus.DISCARDED_FAILED_QC, 80, new DateTime("2014-02-26T00:00:00"));
+        createBiasDiseaseOccurrence(8, deng, DiseaseOccurrenceStatus.BIAS, 80, new DateTime("2014-02-26T00:00:00"), deng);
+        createDiseaseOccurrence(9, deng, DiseaseOccurrenceStatus.READY, 6, new DateTime("2014-02-26T00:00:00")); // outside extent
+
+        // Act
+        long result = diseaseOccurrenceDao.getEstimateCountOfFilteredDefaultBiasOccurrences(deng);
+
+        // Assert
+        assertThat(result).isEqualTo(4);
     }
 
     private void getDiseaseOccurrencesForDiseaseExtent(int diseaseGroupId, Double minimumValidationWeight,

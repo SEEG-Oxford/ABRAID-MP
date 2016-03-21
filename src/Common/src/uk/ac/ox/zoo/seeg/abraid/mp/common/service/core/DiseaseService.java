@@ -193,7 +193,8 @@ public interface DiseaseService {
 
     /**
      * Determines whether the specified disease occurrence already exists in the database. This is true if an
-     * occurrence exists with the same disease group, location, alert and occurrence start date.
+     * occurrence (excluding bias occurrences) exists with the same disease group, location, alert and occurrence
+     * start date.
      * @param occurrence The disease occurrence.
      * @return True if the occurrence already exists in the database, otherwise false.
      */
@@ -271,14 +272,51 @@ public interface DiseaseService {
     long getNumberOfDiseaseOccurrencesEligibleForModelRun(int diseaseGroupId, DateTime startDate, DateTime endDate);
 
     /**
-     * Gets the supplementary occurrences that are should be used with a model run (for sample bias).
-     * @param diseaseGroupId The disease group ID being modelled (will be excluded from supplementary set).
+     * Gets the number of bespoke bias occurrences that have been uploaded for use with a specified disease group,
+     * regardless of suitability.
+     * @param diseaseGroup The disease group being modelled.
+     * @return The number of bias occurrences.
+     */
+    long getCountOfUnfilteredBespokeBiasOccurrences(DiseaseGroup diseaseGroup);
+
+    /**
+     * Gets the estimate of number of bespoke bias occurrences that have been uploaded for use with a specified disease
+     * group, which are suitable for use in a model. This is only an estimate as the occurrence date filter that is
+     * applied during model runs is not applied.
+     * @param diseaseGroup The disease group being modelled.
+     * @return The number of bias occurrences.
+     */
+    long getEstimateCountOfFilteredBespokeBiasOccurrences(DiseaseGroup diseaseGroup);
+
+    /**
+     * Gets the estimate of number of occurrences that are available for use as a default/fallback bias set for a
+     * specified disease group, which are suitable for use in a model. This is only an estimate as the occurrence
+     * date filter that is applied during model runs is not applied.
+     * @param diseaseGroup The disease group being modelled.
+     * @return The number of bias occurrences.
+     */
+    long getEstimateCountOfFilteredDefaultBiasOccurrences(DiseaseGroup diseaseGroup);
+
+    /**
+     * Gets the bespoke bias occurrences that are should be used with a model run (for sample bias).
+     * @param diseaseGroup The disease group being modelled.
      * @param startDate The start date of the model run input data range.
      * @param endDate The end date  of the model run input data range.
-     * @return The supplementary occurrences.
+     * @return The bias occurrences.
      */
-    List<DiseaseOccurrence> getSupplementaryOccurrencesForModelRun(
-            int diseaseGroupId, DateTime startDate, DateTime endDate);
+    List<DiseaseOccurrence> getBespokeBiasOccurrencesForModelRun(
+            DiseaseGroup diseaseGroup, DateTime startDate, DateTime endDate);
+
+    /**
+     * Gets the occurrences that are available for use as a default/fallback bias set for a specified disease group.
+     * This should be used when a bespoke dataset hasn't been provided.
+     * @param diseaseGroup The disease group being modelled (will be excluded from bias set).
+     * @param startDate The start date of the model run input data range.
+     * @param endDate The end date  of the model run input data range.
+     * @return The bias occurrences.
+     */
+    List<DiseaseOccurrence> getDefaultBiasOccurrencesForModelRun(
+            DiseaseGroup diseaseGroup, DateTime startDate, DateTime endDate);
 
     /**
      * Gets the names of all disease groups to be shown in the HealthMap disease report (sorted).
@@ -292,4 +330,19 @@ public interface DiseaseService {
      * @return The input date minus the max number of days on the validator.
      */
     LocalDate subtractMaxDaysOnValidator(DateTime dateTime);
+
+    /**
+     * Delete all of the occurrence that are labelled as bias for the specified disease group.
+     * @param biasDisease Disease group for which to remove the bias points
+     *                       (i.e. bias_disease_group_id, not disease_group_id).
+     */
+    void deleteBiasDiseaseOccurrencesForDisease(DiseaseGroup biasDisease);
+
+    /**
+     * Determines whether the specified disease group require bias data for model runs based on the disease's
+     * model mode.
+     * @param diseaseGroup The disease group.
+     * @return True if bias data is required.
+     */
+    boolean modelModeRequiresBiasDataForDisease(DiseaseGroup diseaseGroup);
 }

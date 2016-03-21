@@ -40,18 +40,21 @@
     </div>
     <div class="panel-collapse collapse in" id="disease-group-setup">
         <div class="panel-body">
+            <!-- Information text -->
+            <div>
+                <label for="last-model-run-text">Last Model Run:</label>
+                <span id="last-model-run-text" data-bind="text: lastModelRunText"></span>
+            </div>
+            <div>
+                <label for="disease-occurrences-text">Disease Occurrences:</label>
+                <span id="disease-occurrences-text" data-bind="text: diseaseOccurrencesText"></span>
+            </div>
+            <div>
+                <label for="bias-occurrences-text">Background data:</label>
+                <span id="bias-occurrences-text" data-bind="text: sampleBiasText"></span>
+            </div>
+            <br>
             <div data-bind="ifnot: isAutomaticModelRunsEnabled">
-                <!-- Information text -->
-                <div>
-                    <label for="last-model-run-text">Last Model Run:</label>
-                    <span id="last-model-run-text" data-bind="text: lastModelRunText"></span>
-                </div>
-                <div>
-                    <label for="disease-occurrences-text">Disease Occurrences:</label>
-                    <span id="disease-occurrences-text" data-bind="text: diseaseOccurrencesText"></span>
-                </div>
-
-                <br>
                 <div class="form-group" data-bind="if: selectedDiseaseGroupId">
                     <!-- Use gold standard occurrences (yes/no) -->
                     <div data-bind="if: hasGoldStandardOccurrences">
