@@ -20,7 +20,7 @@ import java.util.Map;
  */
 public class GeoserverRestService {
     private static final Logger LOGGER = Logger.getLogger(WebServiceClient.class);
-    public static final String ERROR_GEOSERVER_FIRST_ATTEMPT =
+    private static final String ERROR_GEOSERVER_FIRST_ATTEMPT =
             "Error communicating with geoserver on first attempt, retrying (%s)";
 
     private static final String CREATE_COVERAGE_URL =
