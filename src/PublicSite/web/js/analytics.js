@@ -9,15 +9,7 @@ define(["require", "ko", "jquery", "domReady!"], function (require, ko, $) {
     "use strict";
     var noop = function () {};
 
-    // Setup temporary Google Analytics objects.
-    window.GoogleAnalyticsObject = "ga";
-    window.ga = function () { (window.ga.q = window.ga.q || []).push(arguments); };
-    window.ga.l = 1 * new Date();
-
-    // Setup analytics account
-    window.ga("create", "UA-366737-6", {
-        "cookieDomain": "www.abraid.ox.ac.uk"
-    });
+    // Temporary Google Analytics objects (window.ga) setup in common.ftl with account.
 
     //If not in an iframe (avoids maps/help double counting)
     if (window.location === window.parent.location) {

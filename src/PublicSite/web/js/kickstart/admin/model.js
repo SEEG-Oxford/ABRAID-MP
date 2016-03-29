@@ -10,7 +10,8 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
         "ko",
         "app/admin/RepositoryViewModel",
         "domReady!",
-        "shared/navbar"
+        "shared/navbar",
+        "analytics"
     ], function (ko, RepositoryViewModel, doc) {
         ko.applyBindings(
             ko.validatedObservable(new RepositoryViewModel(initialRepoData, baseUrl)),
