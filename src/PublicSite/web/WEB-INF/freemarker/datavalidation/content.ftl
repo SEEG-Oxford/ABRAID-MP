@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="<@spring.url "/ext/jquery/flipclock/flipclock.css" />">
     <link rel="stylesheet" href="<@spring.url "/css/map.css" />">
     <link rel="stylesheet" href="<@spring.url "/css/dataValidation.css" />">
+    <#include "../analytics.ftl"/>
 </head>
 <body>
     <div id="dataValidation">

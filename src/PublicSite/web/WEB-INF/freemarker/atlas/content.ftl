@@ -26,6 +26,7 @@
     <link rel="stylesheet" href="<@spring.url "/ext/jquery/flipclock/flipclock.css" />">
     <link rel="stylesheet" href="<@spring.url "/css/map.css" />">
     <link rel="stylesheet" href="<@spring.url "/css/atlas.css" />">
+    <#include "../analytics.ftl"/>
 </head>
 <body>
     <div id="map">
