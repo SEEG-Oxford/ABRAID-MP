@@ -136,6 +136,28 @@ public class MainHandler {
     }
 
     /**
+     * Marks a model run as failed in the database. This is to ensure that we don't have models sitting the "running"
+     * state forever if there is an error processing the output of the model.
+     * @param modelRunZipFile The zip file resulting from the model run.
+     * @throws ZipException if a zip-related error occurs
+     * @throws IOException if an IO-related error occurs
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void markAsFailed(File modelRunZipFile) throws ZipException, IOException {
+        ZipFile zipFile = new ZipFile(modelRunZipFile);
+        JsonModelOutputsMetadata metadata = extractMetadata(zipFile);
+        // Retrieve the model run from the database with the specified name
+        ModelRun modelRun = getModelRun(metadata.getModelRunName());
+
+        // Transfer the metadata to the model run from the database
+        modelRun.setStatus(ModelRunStatus.FAILED);
+        modelRun.setResponseDate(DateTime.now());
+        modelRun.setOutputText("Failed to process outputs");
+        modelRun.setErrorText("Failed to process outputs");
+        modelRunService.saveModelRun(modelRun);
+    }
+
+    /**
      * Handles the deletion of old model outputs. These are limited to pre-masking raster files that are no longer the
      * newest model run, for the given disease group.
      * @param diseaseGroupId The given disease group's id.

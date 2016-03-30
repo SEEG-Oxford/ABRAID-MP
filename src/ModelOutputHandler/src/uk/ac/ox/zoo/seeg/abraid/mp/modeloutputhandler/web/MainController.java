@@ -85,6 +85,16 @@ public class MainController extends AbstractController {
             handlersAsyncWrapper.handle(modelRun);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
+
+            // if there is processing error, we should mark the run as failed
+            if (modelRunZipFile != null) {
+                try {
+                    mainHandler.markAsFailed(modelRunZipFile);
+                } catch (Exception e1) {
+                    LOGGER.error(e1.getMessage(), e1);
+                }
+            }
+
             return createErrorResponse(String.format(INTERNAL_SERVER_ERROR_MESSAGE, e.getMessage()),
                     HttpStatus.INTERNAL_SERVER_ERROR);
         } finally {

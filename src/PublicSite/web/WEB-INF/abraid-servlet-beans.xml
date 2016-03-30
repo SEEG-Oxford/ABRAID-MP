@@ -41,6 +41,7 @@
             <map>
                 <entry key="baseWmsUrl" value="${base.wms.url}" />
                 <entry key="applicationVersion" value="${application.version}" />
+                <entry key="googleAnalyticsKey" value="${google.analytics.key}" />
             </map>
         </property>
     </bean>

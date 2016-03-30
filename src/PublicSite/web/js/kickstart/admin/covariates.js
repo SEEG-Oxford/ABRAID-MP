@@ -11,7 +11,8 @@ require([baseUrl + "js/shared/require.conf.js"], function () {
         "app/admin/covariates/CovariatesListViewModel",
         "app/admin/covariates/CovariateUploadViewModel",
         "domReady!",
-        "shared/navbar"
+        "shared/navbar",
+        "analytics"
     ], function (ko, CovariatesListViewModel, CovariateUploadViewModel, doc) {
         var refresh = function () {
             window.top.location.reload();
